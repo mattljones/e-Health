@@ -1,19 +1,16 @@
 import sqlite3
 
 # Create a database
-conn = sqlite3.connect('db_comp0066.db')
+conn = sqlite3.connect('config/db_comp0066.db')
 
 # Create cursor
 c = conn.cursor()
 
-# Create users table
+# Drop tables
 c.execute("""DROP TABLE users;""")
-
-# Create gp table
 c.execute("""DROP TABLE gp;""")
-
-# Create patient table
 c.execute("""DROP TABLE patient;""")
+c.execute("""DROP TABLE admin;""")
 
 # Check
 print("DB successfully dropped")
