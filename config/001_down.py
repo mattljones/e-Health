@@ -7,10 +7,12 @@ conn = sqlite3.connect('config/db_comp0066.db')
 c = conn.cursor()
 
 # Drop tables
-c.execute("""DROP TABLE users;""")
-c.execute("""DROP TABLE gp;""")
-c.execute("""DROP TABLE patient;""")
-c.execute("""DROP TABLE admin;""")
+c.execute("""DROP TABLE IF EXISTS users;""")
+c.execute("""DROP TABLE IF EXISTS gp;""")
+c.execute("""DROP TABLE IF EXISTS patient;""")
+c.execute("""DROP TABLE IF EXISTS availability;""")
+c.execute("""DROP TABLE IF EXISTS gp_department;""")
+c.execute("""DROP TABLE IF EXISTS gp_specialisation;""")
 
 # Check
 print("DB successfully dropped")

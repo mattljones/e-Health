@@ -3,6 +3,9 @@
 ## Database
 ### Dummy data
 We are currently developing some dummy data.
+
+[Link to NHS Drug List](https://www.england.nhs.uk/wp-content/uploads/2017/04/NHS-England-drugs-list-v15-2020-2021.pdf)
+
 ### Users
 #### Admin
 
