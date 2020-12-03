@@ -1,6 +1,9 @@
 # COMP0066_Coursework
 
 ## Database
+Current status of Work:  
+Set up the whole database, need to put more thinking around the whole foreign keys relationship.
+
 ### Dummy data
 We are currently developing some dummy data.
 
