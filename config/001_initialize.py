@@ -23,35 +23,48 @@ c.execute("""
 # Create gp table
 c.execute("""
     CREATE TABLE IF NOT EXISTS gp (
-    gp_id INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE);
+    gp_id INT PRIMARY KEY NOT NULL UNIQUE REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    gp_working_days INT NOT NULL,
+    gp_department_id INTEGER NOT NULL,
+    gp_specialisation_id INTEGER NOT NULL);
 """)
 
 # Create patient table
 c.execute("""
     CREATE TABLE IF NOT EXISTS patient (
-    patient_id INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    gp_id REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
+    patient_id INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE, 
+    gp_id INTEGER REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL UNIQUE, 
+    patient_NHS_blood_donor TEXT NOT NULL CHECK(patient_NHS_blood_donor = "yes" or patient_status = "no"), 
+    patient_NHS_organ_donor TEXT NOT NULL CHECK(patient_NHS_organ_donor = "yes" or patient_NHS_organ_donor = "no"), 
+    patient_status TEXT NOT NULL CHECK(patient_status = "inactive" or patient_status = "active"));
 """)
 
 # Create gp_specialisation table
 c.execute("""
     CREATE TABLE IF NOT EXISTS gp_specialisation (
-    gp_specialisation_id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+    gp_specialisation_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
     gp_specialisation_name TEXT NOT NULL UNIQUE);
 """)
 
 # Create gp_department table
 c.execute("""
-    CREATE TABLE gp_department (
-    gp_department_id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+    CREATE TABLE IF NOT EXISTS gp_department (
+    gp_department_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
     gp_department TEXT UNIQUE NOT NULL);
 """)
 
 # Create availability table
 c.execute("""
-    CREATE TABLE availability (
-    availability_id INTEGER  PRIMARY KEY UNIQUE NOT NULL,
-    availability_status TEXT NOT NULL,
+    CREATE TABLE IF NOT EXISTS availability (
+    availability_id INTEGER  PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    availability_status TEXT NOT NULL CHECK(
+        availability_status = "available" or
+        availability_status = "booked" or
+        availability_status = "confirmed" or
+        availability_status = "rejected" or
+        availability_status = "cancelled" or
+        availability_status = "time off" or
+        availability_status = "sick leave"),
     avalability_date DATE NOT NULL,
     availability_status_change_time DATETIME NOT NULL,
     availability_agenda TEXT,
@@ -60,6 +73,24 @@ c.execute("""
     availability_notes TEXT NOT NULL,
     gp_id INTEGER  REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
     patient_id INTEGER  REFERENCES patient (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
+""")
+
+# Create prescription table
+c.execute("""
+    CREATE TABLE IF NOT EXISTS prescription (
+    prescription_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+    prescription_timestamp DATETIME NOT NULL,
+    prescription_expiry_date DATETIME NOT NULL,
+    drug_id NOT NULL, availability_id REFERENCES availability (availability_status) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
+""")
+
+# Create drug table
+c.execute("""
+    CREATE TABLE IF NOT EXISTS drug (
+    drug_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    drug_name TEXT NOT NULL,
+    drug_dosage TEXT NOT NULL,
+    drug_frequency_dosage TEXT NOT NULL);
 """)
 
 # Create Admin in user table

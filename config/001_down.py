@@ -13,6 +13,8 @@ c.execute("""DROP TABLE IF EXISTS patient;""")
 c.execute("""DROP TABLE IF EXISTS availability;""")
 c.execute("""DROP TABLE IF EXISTS gp_department;""")
 c.execute("""DROP TABLE IF EXISTS gp_specialisation;""")
+c.execute("""DROP TABLE IF EXISTS drug;""")
+c.execute("""DROP TABLE IF EXISTS prescription;""")
 
 # Check
 print("DB successfully dropped")
