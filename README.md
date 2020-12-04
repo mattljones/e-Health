@@ -2,7 +2,13 @@
 
 ## Database
 Current status of Work:  
-Set up the whole database, need to put more thinking around the whole foreign keys relationship.
+Done:  
+- Set up the whole database
+- changed er diagramm  
+
+Todo:  
+- need to put more thinking around the whole foreign keys relationship.
+- dummy data especially for the availability
 
 ### Dummy data
 We are currently developing some dummy data.
