@@ -9,6 +9,7 @@ Done:
 Todo:  
 - need to put more thinking around the whole foreign keys relationship.
 - dummy data especially for the availability
+- set indexes
 
 ### Dummy data
 We are currently developing some dummy data.
