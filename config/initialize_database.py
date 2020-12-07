@@ -32,7 +32,7 @@ c.execute("""
 # Creating the gp table.
 c.execute("""
     CREATE TABLE IF NOT EXISTS gp (
-    gp_id INT PRIMARY KEY NOT NULL UNIQUE,
+    gp_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
     gp_first_name TEXT NOT NULL,
     gp_last_name TEXT NOT NULL,
     gp_gender NOT NULL CHECK(
@@ -40,7 +40,7 @@ c.execute("""
         gp_gender = "male" or
         gp_gender = "female" or
         gp_gender = "not applicable"),
-    gp_brith_date DATE NOT NULL,
+    gp_birth_date DATE NOT NULL,
     gp_email TEXT NOT NULL,
     gp_password TEXT NOT NULL,
     gp_registration_date DATETIME NOT NULL,
@@ -52,7 +52,7 @@ c.execute("""
 # Creating the patient table.
 c.execute("""
     CREATE TABLE IF NOT EXISTS patient (
-    patient_id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+    patient_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
     patient_first_name TEXT NOT NULL,
     patient_last_name TEXT NOT NULL,
     patient_gender NOT NULL CHECK(
@@ -111,14 +111,12 @@ c.execute("""
     CREATE TABLE IF NOT EXISTS availability (
     availability_id INTEGER  PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
     availability_status TEXT NOT NULL CHECK(
-        availability_status = "available" or
         availability_status = "booked" or
         availability_status = "confirmed" or
         availability_status = "rejected" or
         availability_status = "cancelled" or
         availability_status = "time off" or
         availability_status = "sick leave"),
-    availability_date DATE NOT NULL,
     availability_status_change_time DATETIME NOT NULL,
     availability_agenda TEXT,
     availability_start_time DATETIME NOT NULL,
