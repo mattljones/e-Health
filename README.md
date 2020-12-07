@@ -1,16 +1,30 @@
 # COMP0066_Coursework
 
 ## Database
+Current status of Work:  
+Done:  
+- Set up the whole database
+- changed er diagramm  
+
+Todo:  
+- need to put more thinking around the whole foreign keys relationship.
+- dummy data especially for the availability
+- set indexes
+
 ### Dummy data
 We are currently developing some dummy data.
+
+[Link to NHS Drug List](https://www.england.nhs.uk/wp-content/uploads/2017/04/NHS-England-drugs-list-v15-2020-2021.pdf)
+
 ### Users
 #### Admin
 
 Admin is user No. 1 with user_id = 1, please see all details below:
 
-| user\_id | user\_first\_name | user\_last\_name | user\_brith\_date | user\_email | user\_password | user\_registration\_date | user\_type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Admin | Admin | 2020-01-01 | admin@email.com | admin | 2020-12-03 16:26:47 | admin |
+| user\_id | user\_first\_name | user\_last\_name | user\_gender | user\_brith\_date | user\_email | user\_password | user\_registration\_date | user\_type |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | Admin | Admin | not known | 2020-01-01 | admin@email.com | admin | 2020-12-03 22:40:21 | admin |
+
 
 #### GP
 
