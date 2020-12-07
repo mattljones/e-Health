@@ -99,7 +99,7 @@ c.execute("""
         availability_status = "cancelled" or
         availability_status = "time off" or
         availability_status = "sick leave"),
-    avalability_date DATE NOT NULL,
+    availability_date DATE NOT NULL,
     availability_status_change_time DATETIME NOT NULL,
     availability_agenda TEXT,
     availability_start_time DATETIME NOT NULL,
@@ -108,7 +108,7 @@ c.execute("""
         availability_type = 'offline'),
     availability_notes TEXT NOT NULL,
     gp_id INTEGER  REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
-    patient_id INTEGER  REFERENCES patient (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
+    patient_id INTEGER  REFERENCES patient (gp_id) ON DELETE CASCADE ON UPDATE CASCADE);
 """)
 
 # Creating the prescription table.

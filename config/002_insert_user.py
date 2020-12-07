@@ -14,7 +14,7 @@ c.execute("""
         user_first_name,
         user_last_name,
         user_gender,
-        user_brith_date,
+        user_birth_date,
         user_email,
         user_password,
         user_registration_date,
