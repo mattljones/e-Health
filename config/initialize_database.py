@@ -4,37 +4,46 @@
 import sqlite3
 
 # Create a database
-conn = sqlite3.connect('config/db_comp0066.db')
+conn = sqlite3.connect('database/db_comp0066.db')
 
 # Create cursor
 c = conn.cursor()
 
-# Creating the users table.
+## Creating the database tables.
 # For user_gender ISO/IEC 5218 is used.
+
+# Creating the admin table.
 c.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-    user_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
-    user_first_name TEXT NOT NULL,
-    user_last_name TEXT NOT NULL,
-    user_gender NOT NULL CHECK(
-        user_gender = "not known" or
-        user_gender = "male" or
-        user_gender = "female" or
-        user_gender = "not applicable"),
-    user_brith_date DATE NOT NULL,
-    user_email TEXT NOT NULL,
-    user_password TEXT NOT NULL,
-    user_registration_date DATETIME NOT NULL,
-    user_type TEXT NOT NULL CHECK(
-        user_type = "admin" or
-        user_type = "gp" or
-        user_type = "patient"));
+    CREATE TABLE IF NOT EXISTS admin (
+    admin_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    admin_first_name TEXT NOT NULL,
+    admin_last_name TEXT NOT NULL,
+    admin_gender NOT NULL CHECK(
+        admin_gender = "not known" or
+        admin_gender = "male" or
+        admin_gender = "female" or
+        admin_gender = "not applicable"),
+    admin_brith_date DATE NOT NULL,
+    admin_email TEXT NOT NULL,
+    admin_password TEXT NOT NULL,
+    admin_registration_date DATETIME NOT NULL);
 """)
 
 # Creating the gp table.
 c.execute("""
     CREATE TABLE IF NOT EXISTS gp (
-    gp_id INT PRIMARY KEY NOT NULL UNIQUE REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    gp_id INT PRIMARY KEY NOT NULL UNIQUE,
+    gp_first_name TEXT NOT NULL,
+    gp_last_name TEXT NOT NULL,
+    gp_gender NOT NULL CHECK(
+        gp_gender = "not known" or
+        gp_gender = "male" or
+        gp_gender = "female" or
+        gp_gender = "not applicable"),
+    gp_brith_date DATE NOT NULL,
+    gp_email TEXT NOT NULL,
+    gp_password TEXT NOT NULL,
+    gp_registration_date DATETIME NOT NULL,
     gp_working_days INT NOT NULL,
     gp_department_id INTEGER NOT NULL,
     gp_specialisation_id INTEGER NOT NULL);
@@ -43,8 +52,18 @@ c.execute("""
 # Creating the patient table.
 c.execute("""
     CREATE TABLE IF NOT EXISTS patient (
-    patient_id INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE, 
-    gp_id INTEGER REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL UNIQUE, 
+    patient_id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+    patient_first_name TEXT NOT NULL,
+    patient_last_name TEXT NOT NULL,
+    patient_gender NOT NULL CHECK(
+        patient_gender = "not known" or
+        patient_gender = "male" or
+        patient_gender = "female" or
+        patient_gender = "not applicable"),
+    patient_birth_date DATE NOT NULL,
+    patient_email TEXT NOT NULL,
+    patient_password TEXT NOT NULL,
+    patient_registration_date DATETIME NOT NULL,
     patient_NHS_blood_donor TEXT NOT NULL CHECK(
         patient_NHS_blood_donor = "yes" or
         patient_status = "no"), 
@@ -132,15 +151,14 @@ c.execute("""
 # Inserting an admin in user table.
 c.execute("""
     INSERT INTO
-        users (
-        user_first_name,
-        user_last_name,
-        user_gender,
-        user_brith_date,
-        user_email,
-        user_password,
-        user_registration_date,
-        user_type)
+        admin (
+        admin_first_name,
+        admin_last_name,
+        admin_gender,
+        admin_brith_date,
+        admin_email,
+        admin_password,
+        admin_registration_date)
     VALUES
         ('Admin',
         'Admin',
@@ -148,8 +166,7 @@ c.execute("""
         '2020-01-01',
         'admin@email.com',
         'admin',
-        datetime('now'),
-        'admin');
+        datetime('now'));
 """)
 
 # Outputting outcome to user

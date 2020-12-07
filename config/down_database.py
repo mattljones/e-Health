@@ -4,13 +4,13 @@
 import sqlite3
 
 # Create a database
-conn = sqlite3.connect('config/db_comp0066.db')
+conn = sqlite3.connect('database/db_comp0066.db')
 
 # Create cursor
 c = conn.cursor()
 
 # Drop tables
-c.execute("""DROP TABLE IF EXISTS users;""")
+c.execute("""DROP TABLE IF EXISTS admin;""")
 c.execute("""DROP TABLE IF EXISTS gp;""")
 c.execute("""DROP TABLE IF EXISTS patient;""")
 c.execute("""DROP TABLE IF EXISTS availability;""")
