@@ -22,11 +22,11 @@ class GP():
         GP class method printing GP's details from database when asked to print an instance of the class.
         '''
         
-        conn = sql.connect("config/db_comp0066.db")
+        conn = sql.connect("database/db_comp0066.db")
         df = pd.read_sql_query("SELECT * FROM gp WHERE gp_id =" + str(self.gp_id) + ";", conn)
         conn.close()
 
-        return(str(df.head()))
+        return("\n" + str(df.head()) + "\n")
 
 
 
@@ -38,4 +38,5 @@ class GP():
 ### DEVELOPMENT ###
 
 if __name__ == "__main__":
-    pass
+    gp1 = GP(1)
+    print(gp1)
