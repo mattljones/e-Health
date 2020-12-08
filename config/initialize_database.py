@@ -107,9 +107,11 @@ c.execute("""
 
 # Creating the availability table.
 # TODO: we might need to add a separate table for the availability_status later on.
+# I have deleted availability_date as we can extract this from availability_start_time
 c.execute("""
     CREATE TABLE IF NOT EXISTS availability (
     availability_id INTEGER  PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    availability_start_time DATETIME NOT NULL,
     availability_status TEXT NOT NULL CHECK(
         availability_status = "booked" or
         availability_status = "confirmed" or
@@ -119,7 +121,6 @@ c.execute("""
         availability_status = "sick leave"),
     availability_status_change_time DATETIME NOT NULL,
     availability_agenda TEXT,
-    availability_start_time DATETIME NOT NULL,
     availability_type TEXT NOT NULL CHECK(
         availability_type = 'online' or
         availability_type = 'offline'),

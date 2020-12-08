@@ -37,7 +37,7 @@ c.execute("""
 
 
 # Check
-print("User successfully inserted")
+print("GP successfully inserted")
 
 # Commit to db
 conn.commit()
