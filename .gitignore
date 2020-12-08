@@ -3,6 +3,7 @@
 
 # PyCharm
 .idea
+.idea/*
 
 # Visual Studio Code
 .vscode/*
