@@ -45,24 +45,27 @@ conn.close()
 
 # Producing the DF for a day
 today = datetime.date.today()
-today_10min_split = today.strftime("%d-%m-%Y 8:00")
+today_10min_split = today.strftime("%Y-%m-%d 8:00")
 day_name = today.strftime("%A")
 
 rng = pd.date_range(today_10min_split, periods=54, freq='10T')
-df_raw = pd.DataFrame({ 'availability_start_time': rng, day_name : 'Availability' })
+df_raw = pd.DataFrame({ 'availability_start_time': rng})
 
 
 # Read sqlite query results into a pandas DataFrame
 conn = sqlite3.connect("database/db_comp0066.db")
-df_db = pd.read_sql_query("SELECT * FROM availability;", conn)
-
-# print df
-print(df.head())
-
+df_db = pd.read_sql_query("SELECT availability_start_time, availability_status, availability_agenda FROM availability;", conn)
 conn.close()
 
-## TODO: make a good join or merge
-df_raw.merge(df_db, on='availability_start_time', how='left')
+# change data type to perform join
+df_db.availability_start_time = df_db.availability_start_time.astype('datetime64[ns]')
+
+# perform join
+df_new = pd.merge(df_raw, df_db, on='availability_start_time', how='left')
+# replace nan values with 'Available'
+df_new["availability_status"].fillna("Available", inplace = True)
+
+
 
 
 
