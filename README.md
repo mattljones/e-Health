@@ -1,15 +1,16 @@
 # COMP0066_Coursework
 
 ## Database
-Current status of Work:  
-Done:  
-- Set up the whole database
-- changed er diagramm  
 
-Todo:  
-- need to put more thinking around the whole foreign keys relationship.
-- dummy data especially for the availability
-- set indexes
+### Current status 
+**Done**  
+- Set up sqlite db
+- Updated ER diagram  
+
+**Todo**  
+- Need to put more thinking around the whole foreign keys relationship.
+- Dummy data (especially for availability)
+- Set indexes
 
 ### Dummy data
 We are currently developing some dummy data.
