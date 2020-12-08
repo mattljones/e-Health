@@ -21,7 +21,7 @@ class Patient():
         Patient class method printing patient's details from database when asked to print an instance of the class.
         '''
 
-        conn = sql.connect("config/db_comp0066.db")
+        conn = sql.connect("database/db_comp0066.db")
         df = pd.read_sql_query("SELECT * FROM patient WHERE patient_id =" + str(self.patient_id) + ";", conn)
         conn.close()
 
