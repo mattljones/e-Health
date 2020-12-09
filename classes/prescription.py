@@ -5,6 +5,7 @@ import pandas as pd
 import sqlite3 as sql
 import datetime
 
+
 class Prescription:
     '''
     Class defining all 'prescription' related methods.
@@ -17,21 +18,20 @@ class Prescription:
         self.drug_id = ""
         self.availability_id = ""
 
-    def insert(self): # INSERT - INSTANCE
+    def insert(self):  # INSERT - INSTANCE
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
         c.execute("INSERT INTO prescription VALUES (NULL, ?, ?, ?, ?);",
                   (self.prescription_timestamp,
-                  self.prescription_expiry_date,
-                  self.drug_id,
-                  self.availability_id)
+                   self.prescription_expiry_date,
+                   self.drug_id,
+                   self.availability_id)
                   )
 
         conn.commit()
         conn.close()
 
-
-    @staticmethod # SELECT_list - STATIC
+    @staticmethod  # SELECT_list - STATIC
     ## TODO: make it specific (1 drug based on name) and unspecific (all drugs)
     def select_drug(drug_for_prescription):
         '''
@@ -40,11 +40,13 @@ class Prescription:
         :return:
         '''
         conn = sql.connect("database/db_comp0066.db")
-        drugs = pd.read_sql_query("SELECT drug_id, drug_name, drug_dosage, drug_frequency_dosage FROM drug WHERE drug_name = ?;", conn, params=(drug_for_prescription,))
+        drugs = pd.read_sql_query(
+            "SELECT drug_id, drug_name, drug_dosage, drug_frequency_dosage FROM drug WHERE drug_name = ?;", conn,
+            params=(drug_for_prescription,))
         conn.close()
         return drugs
 
-    @staticmethod # SELECT patient - STATIC
+    @staticmethod  # SELECT patient - STATIC
     # TODO: make it specific (1 patient based on name) and unspecific (!all patients)
     def select_patient(patient_for_prescription):
         '''
@@ -53,7 +55,9 @@ class Prescription:
         :return:
         '''
         conn = sql.connect("database/db_comp0066.db")
-        patient = pd.read_sql_query("SELECT patient_id, patient_first_name, patient_last_name FROM patient WHERE patient_id = ?;", conn, params=(patient_for_prescription,))
+        patient = pd.read_sql_query(
+            "SELECT patient_id, patient_first_name, patient_last_name FROM patient WHERE patient_id = ?;", conn,
+            params=(patient_for_prescription,))
         conn.close()
         return patient
 

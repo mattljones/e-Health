@@ -6,12 +6,13 @@ import sqlite3 as sql
 import datetime
 from tabulate import tabulate
 
+
 class Schedule:
     '''
     Class defining all 'schedule' related methods.
     '''
 
-    @staticmethod # SELECT day - STATIC
+    @staticmethod  # SELECT day - STATIC
     def select_day(gp_id, date):
         '''
         Selection of all database entries for a specific day
@@ -24,9 +25,11 @@ class Schedule:
         # this is the same date as below but in format '%Y-%m-%d'
         day_selection = date_values.date()
 
-        #database queries
+        # database queries
         conn = sql.connect("database/db_comp0066.db")
-        schedule_day = pd.read_sql_query("SELECT strftime('%Y-%m-%d', availability_start_time) av_dates, strftime('%H:%M', availability_start_time) av_hours, availability_status, availability_agenda, availability_type, patient_id FROM availability WHERE gp_id = ? AND av_dates = ?;", conn, params=(gp_id, day_selection))
+        schedule_day = pd.read_sql_query(
+            "SELECT strftime('%Y-%m-%d', availability_start_time) av_dates, strftime('%H:%M', availability_start_time) av_hours, availability_status, availability_agenda, availability_type, patient_id FROM availability WHERE gp_id = ? AND av_dates = ?;",
+            conn, params=(gp_id, day_selection))
         conn.close()
 
         # DataFrame Production
@@ -36,13 +39,14 @@ class Schedule:
 
         # produce a DateTimeIndex of daily_slots
         daily_slots = pd.date_range(today_10min_split, periods=54, freq='10T')
-        df_raw = pd.DataFrame({ 'availability_start_time': daily_slots})
+        df_raw = pd.DataFrame({'availability_start_time': daily_slots})
 
         # transform datatype to be able to join later
         schedule_day.av_hours = schedule_day.av_hours.astype('datetime64[ns]')
 
         # perform join
-        df_select_day = pd.merge(df_raw, schedule_day, left_on='availability_start_time', right_on='av_hours', how='left')
+        df_select_day = pd.merge(df_raw, schedule_day, left_on='availability_start_time', right_on='av_hours',
+                                 how='left')
 
         # drop av_dates and av_hours as they are not needed anymore
         df_select_day = df_select_day.drop(columns=['av_dates', 'av_hours'])
@@ -51,7 +55,6 @@ class Schedule:
         df_select_day = df_select_day.fillna("")
 
         return print(tabulate(df_select_day, headers='keys', tablefmt='psql'))
-
 
     @staticmethod  # SELECT week - STATIC
     def select_week(gp_id, year, month, day):
@@ -70,8 +73,7 @@ class Schedule:
         # return schedule_week
         pass
 
-
-    @staticmethod # COMBINED SELECT
+    @staticmethod  # COMBINED SELECT
     def select_custom(gp_id, **kwargs):
         if len(kwargs) == 1:
             # select_day, defined here or elsewhere
@@ -81,8 +83,7 @@ class Schedule:
             return len(kwargs)
         pass
 
-
-    @staticmethod # SELECT select_upcoming_timeoff - STATIC
+    @staticmethod  # SELECT select_upcoming_timeoff - STATIC
     def select_upcoming_timeoff(gp_id):
         '''
         Select all upcoming time offs (sick leave and time off) for a gp
@@ -91,11 +92,13 @@ class Schedule:
         '''
         current_time = datetime.datetime.now()
         conn = sql.connect("database/db_comp0066.db")
-        upcoming_timeoff = pd.read_sql_query("SELECT availability_start_time AS av_t, availability_status, availability_agenda, availability_type, patient_id FROM availability WHERE gp_id = ? AND av_t >= ? AND availability_status IN ('time off', 'sick leave');", conn, params=(gp_id, current_time))
+        upcoming_timeoff = pd.read_sql_query(
+            "SELECT availability_start_time AS av_t, availability_status, availability_agenda, availability_type, patient_id FROM availability WHERE gp_id = ? AND av_t >= ? AND availability_status IN ('time off', 'sick leave');",
+            conn, params=(gp_id, current_time))
         conn.close()
         return print(tabulate(upcoming_timeoff, headers='keys', tablefmt='psql'))
 
-    @staticmethod # SELECT select_upcoming_timeoff - STATIC
+    @staticmethod  # SELECT select_upcoming_timeoff - STATIC
     # TODO: whole method
     def check_timeoff_conflict(gp_id, start_date, end_date):
         '''
@@ -108,7 +111,7 @@ class Schedule:
 
         pass
 
-    @staticmethod # INSERT insert_timeoff_day  - STATIC
+    @staticmethod  # INSERT insert_timeoff_day  - STATIC
     ## TODO: prevent insertion for non-working hours slots
     def insert_timeoff_day(gp_id, timeoff_type, date):
         '''
@@ -130,7 +133,7 @@ class Schedule:
         # Create cursor
         c = conn.cursor()
         # insert into database
-        for i in range(0,len(timeoff_range)):
+        for i in range(0, len(timeoff_range)):
             c.execute("""
                             INSERT INTO
                                 availability (
@@ -159,12 +162,12 @@ class Schedule:
 
         return 'daily insertion done'
 
-    @staticmethod # INSERT insert_timeoff_day  - STATIC
+    @staticmethod  # INSERT insert_timeoff_day  - STATIC
     ## TODO: whole method
     def insert_timeoff_week(gp_id, timeoff_type, day1):
         pass
 
-    @staticmethod # INSERT insert_timeoff_custom  - STATIC
+    @staticmethod  # INSERT insert_timeoff_custom  - STATIC
     ## TODO: prevent insertion for non-working hours slots
     def insert_timeoff_custom(gp_id, timeoff_type, start_date, end_date):
         '''
@@ -182,7 +185,7 @@ class Schedule:
         # Create cursor
         c = conn.cursor()
         # insert into database
-        for i in range(0,len(timeoff_range)):
+        for i in range(0, len(timeoff_range)):
             c.execute("""
                     INSERT INTO
                         availability (
@@ -211,8 +214,7 @@ class Schedule:
 
         return 'custom insertion done'
 
-
-    @staticmethod # DELETE all - STATIC
+    @staticmethod  # DELETE all - STATIC
     ## TODO: maybe limit it to only future timeoffs and make timeoff_type optional
     def delete_timeoff_all(gp_id, timeoff_type):
         '''
@@ -236,8 +238,7 @@ class Schedule:
         conn.close()
         return 'all entries were deleted'
 
-
-    @staticmethod # DELETE day - STATIC
+    @staticmethod  # DELETE day - STATIC
     ## TODO: maybe limit it to only future timeoffs, make timeoffs specific and make timeoff_type optional
     def delete_timeoff_day(gp_id, timeoff_type, date):
         '''
@@ -269,12 +270,12 @@ class Schedule:
         conn.close()
         return 'all entries for that day were deleted'
 
-    @staticmethod # DELETE week - STATIC
+    @staticmethod  # DELETE week - STATIC
     ## TODO: whole method
     def delete_timeoff_week():
         pass
 
-    @staticmethod # DELETE custom - STATIC
+    @staticmethod  # DELETE custom - STATIC
     ## TODO: whole method
     def delete_timeoff_custom():
         pass
@@ -284,8 +285,6 @@ class Schedule:
 
 if __name__ == "__main__":
     pass
-
-
 
 ### TESTING ###
 # call classes
@@ -298,13 +297,13 @@ schedule.select_day(1, '2020-12-9')
 schedule.select_upcoming_timeoff(1)
 
 ## testing insert_timeoff_day
-schedule.insert_timeoff_day(1,'sick leave', '2020-12-10')
+schedule.insert_timeoff_day(1, 'sick leave', '2020-12-10')
 
 ## testing insert_timeoff_custom
-schedule.insert_timeoff_custom(1,'time off', '2020-12-11 8:00', '2020-12-13 15:00')
+schedule.insert_timeoff_custom(1, 'time off', '2020-12-11 8:00', '2020-12-13 15:00')
 
 ## testing delete_timeoff_all
-schedule.delete_timeoff_all(1,'sick leave')
+schedule.delete_timeoff_all(1, 'sick leave')
 
 ## testing delete_timeoff_day
 schedule.delete_timeoff_day(1, 'time off', '2020-12-13')
