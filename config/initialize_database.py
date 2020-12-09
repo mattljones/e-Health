@@ -24,7 +24,7 @@ c.execute("""
         admin_gender = "male" or
         admin_gender = "female" or
         admin_gender = "not applicable"),
-    admin_brith_date DATE NOT NULL,
+    admin_birth_date DATE NOT NULL,
     admin_email TEXT NOT NULL,
     admin_password TEXT NOT NULL,
     admin_registration_date DATETIME NOT NULL);
@@ -122,10 +122,10 @@ c.execute("""
         availability_status = "sick leave"),
     availability_status_change_time DATETIME NOT NULL,
     availability_agenda TEXT,
-    availability_type TEXT NOT NULL CHECK(
+    availability_type TEXT CHECK(
         availability_type = 'online' or
         availability_type = 'offline'),
-    availability_notes TEXT NOT NULL,
+    availability_notes TEXT,
     gp_id INTEGER  REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
     patient_id INTEGER  REFERENCES patient (gp_id) ON DELETE CASCADE ON UPDATE CASCADE);
 """)
@@ -136,7 +136,8 @@ c.execute("""
     prescription_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
     prescription_timestamp DATETIME NOT NULL,
     prescription_expiry_date DATETIME NOT NULL,
-    drug_id NOT NULL, availability_id REFERENCES availability (availability_status) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
+    drug_id NOT NULL,
+    availability_id REFERENCES availability (availability_status) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
 """)
 
 # Creating the drug table.

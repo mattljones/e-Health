@@ -23,7 +23,7 @@ c.execute("""
         patient_id)
     VALUES
         (NULL,
-        '2020-12-08 08:00:00',
+        '2020-12-09 15:00:00',
         'booked',
         datetime('now'),
         'initial slot',
