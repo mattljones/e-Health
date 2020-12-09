@@ -2,10 +2,10 @@
 
 
 class User:
-    '''
+    """
     Parent class to Patient and GP subclasses.
-    Contains attributes in common to both.
-    '''
+    Contains attributes common to both.
+    """
 
     def __init__(self, id_, first_name, last_name, gender, birth_date, email, password, registration_date):
         self.id = id_
@@ -18,7 +18,7 @@ class User:
         self.registration_date = registration_date
 
 
-### DEVELOPMENT ###
+# DEVELOPMENT #
 
 if __name__ == "__main__":
     pass
