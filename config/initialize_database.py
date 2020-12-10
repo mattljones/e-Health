@@ -46,14 +46,15 @@ c.execute("""
     gp_password TEXT NOT NULL,
     gp_registration_date DATETIME NOT NULL,
     gp_working_days INT NOT NULL,
-    gp_department_id INTEGER NOT NULL,
-    gp_specialisation_id INTEGER NOT NULL);
+    gp_department_id INTEGER REFERENCES gp_department (gp_department_id) NOT NULL,
+    gp_specialisation_id INTEGER REFERENCES gp_specialisation (gp_specialisation_id) NOT NULL);
 """)
 
 # Creating the patient table.
 c.execute("""
     CREATE TABLE IF NOT EXISTS patient (
     patient_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+    gp_id INTEGER REFERENCES gp (gp_id) NOT NULL,
     patient_first_name TEXT NOT NULL,
     patient_last_name TEXT NOT NULL,
     patient_gender NOT NULL CHECK(
@@ -126,7 +127,7 @@ c.execute("""
         availability_type = 'online' or
         availability_type = 'offline'),
     availability_notes TEXT,
-    gp_id INTEGER  REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+    gp_id INTEGER REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
     patient_id INTEGER  REFERENCES patient (gp_id) ON DELETE CASCADE ON UPDATE CASCADE);
 """)
 
@@ -136,17 +137,17 @@ c.execute("""
     prescription_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
     prescription_timestamp DATETIME NOT NULL,
     prescription_expiry_date DATETIME NOT NULL,
-    drug_id NOT NULL,
-    availability_id REFERENCES availability (availability_status) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
+    drug_id INTEGER REFERENCES drug (drug_id),
+    drug_dosage TEXT NOT NULL,
+    drug_frequency_dosage TEXT NOT NULL,
+    availability_id REFERENCES availability (availability_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
 """)
 
 # Creating the drug table.
 c.execute("""
     CREATE TABLE IF NOT EXISTS drug (
     drug_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
-    drug_name TEXT NOT NULL,
-    drug_dosage TEXT NOT NULL,
-    drug_frequency_dosage TEXT NOT NULL);
+    drug_name TEXT NOT NULL);
 """)
 
 # Inserting an admin in admin table.
@@ -160,7 +161,7 @@ c.executemany("INSERT INTO admin VALUES (?, ?, ?, ?, ?, ?, ?, ?)", admin_rows)
 # would need to change the dummydata.csv primary key value or take the database down.
 drug_csv = open("config/drug_dummydata.csv")
 drug_rows = csv.reader(drug_csv)
-c.executemany("INSERT INTO drug VALUES (?, ?, ?, ?)", drug_rows)
+c.executemany("INSERT INTO drug VALUES (?, ?)", drug_rows)
 
 # Outputting outcome to user
 print("DB successfully created")
