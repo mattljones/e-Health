@@ -126,7 +126,7 @@ c.execute("""
 # I have deleted booking_date as we can extract this from booking_start_time
 c.execute("""
     CREATE TABLE IF NOT EXISTS booking (
-    booking_id INTEGER  PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    booking_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
     booking_start_time DATETIME NOT NULL,
     booking_status TEXT NOT NULL CHECK(
         booking_status = 'booked' or
@@ -183,7 +183,7 @@ admin_rows = csv.reader(admin_csv)
 c.executemany("INSERT INTO admin VALUES (?, ?, ?, ?, ?, ?, ?, ?)", admin_rows)
 
 # booking table dummy data
-# 50 bookings (appointments only as time-off/sick-leave require block-booking lots of slots) before 2020-12-24
+# 50 bookings (appointments only as time-off/sick-leave require block-booking lots of slots) before 2020-12-25
 booking_csv = open("config/dummy_data/booking_dummydata.csv")
 booking_rows = csv.reader(booking_csv)
 c.executemany("INSERT INTO booking VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", booking_rows)
