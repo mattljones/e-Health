@@ -1,4 +1,4 @@
-## COMP0066 Coursework Group 7
+# COMP0066 Coursework Group 7
 # This script initializes the sqlite database
 
 import sqlite3
@@ -10,7 +10,7 @@ conn = sqlite3.connect('database/db_comp0066.db')
 # Create cursor
 c = conn.cursor()
 
-## Creating the database tables.
+# Creating the database tables.
 # For user_gender ISO/IEC 5218 is used.
 
 # Creating the admin table.
@@ -20,10 +20,10 @@ c.execute("""
     admin_first_name TEXT NOT NULL,
     admin_last_name TEXT NOT NULL,
     admin_gender NOT NULL CHECK(
-        admin_gender = "not known" or
-        admin_gender = "male" or
-        admin_gender = "female" or
-        admin_gender = "not applicable"),
+        admin_gender = 'not known' or
+        admin_gender = 'male' or
+        admin_gender = 'female' or
+        admin_gender = 'not applicable'),
     admin_birth_date DATE NOT NULL,
     admin_email TEXT NOT NULL,
     admin_password TEXT NOT NULL,
@@ -35,15 +35,15 @@ c.execute("""
     CREATE TABLE IF NOT EXISTS gp (
     gp_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
     gp_status NOT NULL CHECK(
-        gp_status = "active" or
-        gp_gender = "male")
+        gp_status = 'active' or
+        gp_gender = 'male'),
     gp_first_name TEXT NOT NULL,
     gp_last_name TEXT NOT NULL,
     gp_gender NOT NULL CHECK(
-        gp_gender = "not known" or
-        gp_gender = "male" or
-        gp_gender = "female" or
-        gp_gender = "not applicable"),
+        gp_gender = 'not known' or
+        gp_gender = 'male' or
+        gp_gender = 'female' or
+        gp_gender = 'not applicable'),
     gp_birth_date DATE NOT NULL,
     gp_email TEXT NOT NULL,
     gp_password TEXT NOT NULL,
@@ -64,23 +64,23 @@ c.execute("""
     patient_first_name TEXT NOT NULL,
     patient_last_name TEXT NOT NULL,
     patient_gender NOT NULL CHECK(
-        patient_gender = "not known" or
-        patient_gender = "male" or
-        patient_gender = "female" or
-        patient_gender = "not applicable"),
+        patient_gender = 'not known' or
+        patient_gender = 'male' or
+        patient_gender = 'female' or
+        patient_gender = 'not applicable'),
     patient_birth_date DATE NOT NULL,
     patient_email TEXT NOT NULL,
     patient_password TEXT NOT NULL,
     patient_registration_date DATETIME NOT NULL,
     patient_NHS_blood_donor TEXT NOT NULL CHECK(
-        patient_NHS_blood_donor = "yes" or
-        patient_status = "no"), 
+        patient_NHS_blood_donor = 'yes' or
+        patient_status = 'no'), 
     patient_NHS_organ_donor TEXT NOT NULL CHECK(
-        patient_NHS_organ_donor = "yes" or
-        patient_NHS_organ_donor = "no"), 
+        patient_NHS_organ_donor = 'yes' or
+        patient_NHS_organ_donor = 'no'), 
     patient_status TEXT NOT NULL CHECK(
-        patient_status = "inactive" or
-        patient_status = "active"));
+        patient_status = 'inactive' or
+        patient_status = 'active'));
 """)
 
 # Creating the patient_medical_condition_type table.
@@ -94,7 +94,8 @@ c.execute("""
 c.execute("""
     CREATE TABLE IF NOT EXISTS patient_medical_condition (
     patient_id INTEGER REFERENCES patient (patient_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
-    patient_medical_condition_type_id TEXT REFERENCES patient_medical_condition_type (patient_medical_condition_type_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+    patient_medical_condition_type_id TEXT REFERENCES patient_medical_condition_type (patient_medical_condition_type_id)
+    ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
     PRIMARY KEY (patient_id, patient_medical_condition_type_id));
 """)
 
@@ -121,12 +122,12 @@ c.execute("""
     booking_id INTEGER  PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
     booking_start_time DATETIME NOT NULL,
     booking_status TEXT NOT NULL CHECK(
-        booking_status = "booked" or
-        booking_status = "confirmed" or
-        booking_status = "rejected" or
-        booking_status = "cancelled" or
-        booking_status = "time off" or
-        booking_status = "sick leave"),
+        booking_status = 'booked' or
+        booking_status = 'confirmed' or
+        booking_status = 'rejected' or
+        booking_status = 'cancelled' or
+        booking_status = 'time off' or
+        booking_status = 'sick leave'),
     booking_status_change_time DATETIME NOT NULL,
     booking_agenda TEXT,
     booking_type TEXT CHECK(
