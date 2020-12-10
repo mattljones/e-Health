@@ -105,11 +105,28 @@ def validate(user_input):
     except LenghtError:
         print("Input is too long.")
 
-def login(username, password):
+def login(user_id, password):
+    # TODO: generalize to all user types and assign globals.usr_type
     """Check login credentials."""
-    # query db for username and pw 
-    # assign username to global var 
-    pass
+
+    u = (user_id, )
+
+    conn = sqlite3.connect("config/db_comp0066.db")
+    c = conn.cursor()
+    c.execute('SELECT pw_hash FROM users WHERE user_id=?;', u)
+
+    pw_hash = c.fetchone()
+
+    conn.close()
+
+    # TODO: apply hashing
+    if pw_hash == password:
+        print("Login successful.")
+        globals.usr_id = user_id
+        return True
+    else:
+        print("Login failed.")
+        return False
 
 def logout():
     """Logout user and return to main page."""
@@ -169,18 +186,18 @@ def register(first_name, last_name, gender, birth_date, email, pw, type):
 
     # Output message
     print("""Successfully registered. 
-        You can login using your email %s and password.""" % email )
+        You can now login using your email %s and password.""" % email )
 
     # Close db
     conn.close()
 
 def user_type(user_id):
     """Print user type of a specified user."""
-    t = (user_id, )
+    u = (user_id, )
 
     conn = sqlite3.connect("config/db_comp0066.db")
     c = conn.cursor()
-    c.execute('SELECT type FROM users WHERE user_id=?;', t)
+    c.execute('SELECT type FROM users WHERE user_id=?;', u)
 
     print(c.fetchone())
 
