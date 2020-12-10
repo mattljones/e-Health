@@ -1,14 +1,15 @@
-# Notes for util funcs
+# Utility functions
 
-# imports
 from pathlib import Path
 import sys 
+import sqlite3
+import datetime
 
 # Change python path for imports
 p = Path(__file__).parents[1]
 sys.path.insert(1, str(p))
 
-# import global variables from globals.py
+# Import global variables from globals.py
 from system import globals
 
 
@@ -68,13 +69,15 @@ def display(dict):
         return display(dict)
 
 
+# User is logged in if it has both type and id
 def logged():
     """Check whether user is logged in or not.""" 
-    # Z: decorator
-    pass
+    return True if globals.usr_type in ("patient","gp","admin") else False 
 
 def validate():
     # decorator
+    # not empty
+    # lenght < n
     """Validate user input."""
     pass
 
@@ -86,20 +89,71 @@ def login(username, password):
     # assign username to global var 
     pass
 
-def logout(username):
-    """Logout user."""
-    # empty global username var
-    # reset user_status
-    pass
+def logout():
+    """Logout user and return to main page."""
+    globals.usr_type = ""
+    globals.usr_id = ""
+    return display(register_login_flow.main_flow)
 
-def register():
-    """Register a new user."""
-    # pass
-    pass
+def register(first_name, last_name, gender, birth_date, email, pw, type):
+    """
+    Register a new user by inserting user inputs in database.
+    
+    Assumes inputs already validated and sanitized.  
 
-def check():
+    Arguments included 
+        - First name                
+        - Last name                 
+        - Gender                    
+        - Birth date                
+        - Email address
+        - Password (TODO: hash)
+        - Registration date         [default: now]
+        - User type 
+    
+    """
+    # Create connection to db
+    conn = sqlite3.connect('config/db_comp0066.db')
+
+    # Create cursor
+    c = conn.cursor()
+
+    # Insert into user
+    c.execute("""
+        INSERT INTO
+            users (
+            user_first_name,
+            user_last_name,
+            user_gender,
+            user_birth_date,
+            user_email,
+            user_password,
+            user_registration_date,
+            user_type)
+        VALUES
+            (first_name,
+            last_name,
+            gender,
+            birth_date,
+            email,
+            pw,
+            datetime('now'),
+            type);
+    """)
+
+    # Commit to db
+    conn.commit()
+
+    # Output message
+    print("""Successfully registered. 
+        You can login using your email %s and password.""" % email )
+
+    # Close db
+    conn.close()
+
+def user_type():
     """Check user type."""
-    pass
+    
 
 def select():
     """ Select options from menu."""
