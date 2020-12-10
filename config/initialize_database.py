@@ -2,6 +2,7 @@
 # This script initializes the sqlite database
 
 import sqlite3
+import csv
 
 # Create a database
 conn = sqlite3.connect('database/db_comp0066.db')
@@ -147,26 +148,18 @@ c.execute("""
     drug_frequency_dosage TEXT NOT NULL);
 """)
 
-# Inserting an admin in user table.
-c.execute("""
-    INSERT INTO
-        admin (
-        admin_first_name,
-        admin_last_name,
-        admin_gender,
-        admin_brith_date,
-        admin_email,
-        admin_password,
-        admin_registration_date)
-    VALUES
-        ('Admin',
-        'Admin',
-        'not known',
-        '2020-01-01',
-        'admin@email.com',
-        'admin',
-        datetime('now'));
-""")
+# Inserting an admin in admin table.
+admin_csv = open("config/admin_dummydata.csv")
+admin_rows = csv.reader(admin_csv)
+c.executemany("INSERT INTO admin VALUES (?, ?, ?, ?, ?, ?, ?, ?)", admin_rows)
+
+# inserting drugs from config/drug_dummydata.csv
+# Important: the autoincrement Primary Keys have to be unique and Not Null in the dummydata.csv file
+# Otherwise, the import would not work. Meaning one can only import the dummydata.csv once, and then
+# would need to change the dummydata.csv primary key value or take the database down.
+drug_csv = open("config/drug_dummydata.csv")
+drug_rows = csv.reader(drug_csv)
+c.executemany("INSERT INTO drug VALUES (?, ?, ?, ?)", drug_rows)
 
 # Outputting outcome to user
 print("DB successfully created")
