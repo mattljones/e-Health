@@ -34,6 +34,9 @@ c.execute("""
 c.execute("""
     CREATE TABLE IF NOT EXISTS gp (
     gp_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+    gp_status NOT NULL CHECK(
+        gp_status = "active" or
+        gp_gender = "male")
     gp_first_name TEXT NOT NULL,
     gp_last_name TEXT NOT NULL,
     gp_gender NOT NULL CHECK(
@@ -47,7 +50,9 @@ c.execute("""
     gp_registration_date DATETIME NOT NULL,
     gp_working_days INT NOT NULL,
     gp_department_id INTEGER REFERENCES gp_department (gp_department_id) NOT NULL,
+    -- We are not including gp_department_id in the user flow
     gp_specialisation_id INTEGER REFERENCES gp_specialisation (gp_specialisation_id) NOT NULL);
+    -- We are not including gp_specialisation_id in the user flow
 """)
 
 # Creating the patient table.
@@ -55,6 +60,7 @@ c.execute("""
     CREATE TABLE IF NOT EXISTS patient (
     patient_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
     gp_id INTEGER REFERENCES gp (gp_id) NOT NULL,
+    -- If GP gets deleted, this situation is handled in the Admin user flow 
     patient_first_name TEXT NOT NULL,
     patient_last_name TEXT NOT NULL,
     patient_gender NOT NULL CHECK(
@@ -107,27 +113,30 @@ c.execute("""
     gp_department TEXT UNIQUE NOT NULL);
 """)
 
-# Creating the availability table.
-# TODO: we might need to add a separate table for the availability_status later on.
-# I have deleted availability_date as we can extract this from availability_start_time
+# Creating the booking table.
+# TODO: we might need to add a separate table for the booking_status later on.
+# I have deleted booking_date as we can extract this from booking_start_time
 c.execute("""
-    CREATE TABLE IF NOT EXISTS availability (
-    availability_id INTEGER  PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
-    availability_start_time DATETIME NOT NULL,
-    availability_status TEXT NOT NULL CHECK(
-        availability_status = "booked" or
-        availability_status = "confirmed" or
-        availability_status = "rejected" or
-        availability_status = "cancelled" or
-        availability_status = "time off" or
-        availability_status = "sick leave"),
-    availability_status_change_time DATETIME NOT NULL,
-    availability_agenda TEXT,
-    availability_type TEXT CHECK(
-        availability_type = 'online' or
-        availability_type = 'offline'),
-    availability_notes TEXT,
-    gp_id INTEGER REFERENCES gp (gp_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+    CREATE TABLE IF NOT EXISTS booking (
+    booking_id INTEGER  PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    booking_start_time DATETIME NOT NULL,
+    booking_status TEXT NOT NULL CHECK(
+        booking_status = "booked" or
+        booking_status = "confirmed" or
+        booking_status = "rejected" or
+        booking_status = "cancelled" or
+        booking_status = "time off" or
+        booking_status = "sick leave"),
+    booking_status_change_time DATETIME NOT NULL,
+    booking_agenda TEXT,
+    booking_type TEXT CHECK(
+        booking_type = 'online' or
+        booking_type = 'offline'),
+    booking_notes TEXT,
+    gp_id INTEGER REFERENCES gp (gp_id) NOT NULL,
+    -- For the future appointments, Admin will update the GP
+    -- For the appointments in the past, the GP id will remain in the booking table after the GP gets deleted,
+    -- assuming that the hospital keeps an archive of GPs 
     patient_id INTEGER  REFERENCES patient (gp_id) ON DELETE CASCADE ON UPDATE CASCADE);
 """)
 
@@ -138,9 +147,10 @@ c.execute("""
     prescription_timestamp DATETIME NOT NULL,
     prescription_expiry_date DATETIME NOT NULL,
     drug_id INTEGER REFERENCES drug (drug_id),
+    -- We are not including gp_specialisation_id in the user flow
     drug_dosage TEXT NOT NULL,
     drug_frequency_dosage TEXT NOT NULL,
-    availability_id REFERENCES availability (availability_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
+    booking_id REFERENCES booking (booking_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
 """)
 
 # Creating the drug table.
