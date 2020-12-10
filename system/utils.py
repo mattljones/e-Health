@@ -12,7 +12,19 @@ sys.path.insert(1, str(p))
 # Import global variables from globals.py
 from system import globals
 
+# Custom errors
+class Error(Exception):
+    pass
 
+class EmptyError(Error):
+    """Raised when input is empty."""
+    pass
+
+class LenghtError(Error):
+    """Raised when input is too long."""
+    pass
+
+# Display function for menu
 def display(dict):
     '''
     Display function called to display menu and run the 
@@ -74,18 +86,28 @@ def logged():
     """Check whether user is logged in or not.""" 
     return True if globals.usr_type in ("patient","gp","admin") else False 
 
-def validate():
-    # decorator
-    # not empty
-    # lenght < n
-    """Validate user input."""
-    pass
+def validate(user_input):
+    """
+    Validate user input.  
+    
+    Custom errors:
+        - Empty field
+        - Input too long (> 15 chars)
+    """
+    # NOTE: This func could be used as decorator
+    try:
+        if user_input == '':
+            raise EmptyError
+        elif len(user_input) > 15:
+            raise LenghtError
+    except EmptyError:
+        print("You need to input a value.")
+    except LenghtError:
+        print("Input is too long.")
 
 def login(username, password):
     """Check login credentials."""
-    # exception for empty > prompt
-    # if not empty, query db for pw 
-    # if match, login | else, message > prompt
+    # query db for username and pw 
     # assign username to global var 
     pass
 
@@ -174,13 +196,15 @@ def help():
     pass
 
 def update():
+    """ Update specified values. """
     # pass
     pass
 
 def export():
-    # pass
+    """ Export content of the page in .csv """
+    # NOTE: advanced feature
     pass
 
 def sqlhelper():
-    # pass
+    # NOTE: in separate file?
     pass
