@@ -96,6 +96,7 @@ def logout():
     return display(register_login_flow.main_flow)
 
 def register(first_name, last_name, gender, birth_date, email, pw, type):
+    # TODO: update using real args + patient_id / gp_id
     """
     Register a new user by inserting user inputs in database.
     
@@ -151,9 +152,17 @@ def register(first_name, last_name, gender, birth_date, email, pw, type):
     # Close db
     conn.close()
 
-def user_type():
-    """Check user type."""
-    
+def user_type(user_id):
+    """Print user type of a specified user."""
+    t = (user_id, )
+
+    conn = sqlite3.connect("config/db_comp0066.db")
+    c = conn.cursor()
+    c.execute('SELECT type FROM users WHERE user_id=?;', t)
+
+    print(c.fetchone())
+
+    conn.close()
 
 def select():
     """ Select options from menu."""
