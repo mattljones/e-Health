@@ -106,7 +106,7 @@ def validate(user_input):
         print("Input is too long.")
 
 def login(user_id, password):
-    # TODO: generalize to all user types and assign globals.usr_type
+    # TODO: generalize to all user types
     """Check login credentials."""
 
     u = (user_id, )
@@ -119,14 +119,12 @@ def login(user_id, password):
 
     conn.close()
 
-    # TODO: apply hashing
+    # TODO: apply hashing - assign usr_type - go to next page in menu flow
     if pw_hash == password:
         print("Login successful.")
         globals.usr_id = user_id
-        return True
     else:
         print("Login failed.")
-        return False
 
 def logout():
     """Logout user and return to main page."""
@@ -135,7 +133,7 @@ def logout():
     return display(register_login_flow.main_flow)
 
 def register(first_name, last_name, gender, birth_date, email, pw, type):
-    # TODO: update using real args + patient_id / gp_id
+    # TODO: update using real args - patient_id / gp_id - next page
     """
     Register a new user by inserting user inputs in database.
     
