@@ -1,4 +1,4 @@
-# schedule.py
+# user.py
 
 # import libraries
 import pandas as pd
@@ -10,13 +10,12 @@ import sys
 p = Path(__file__).parents[1]
 sys.path.insert(1, str(p))
 
-class Schedule:
+class User:
     '''
-    Class defining all 'schedule' related methods.
+    Class defining all 'user' related methods.
     '''
-    
-    pass
 
+    pass
 
 
 

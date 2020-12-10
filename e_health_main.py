@@ -1,20 +1,21 @@
 # e_health_main.py
 
-# Importing classes defined in the 'classes' package
-from classes.patient import Patient
-from classes.gp import GP
-from classes.appointment import Appointment
-from classes.prescription import Prescription
-from classes.record import Record
-from classes.schedule import Schedule
+# library imports 
+from pathlib import Path
+import sys 
+
+# Change python path for imports
+p = Path(__file__).parents[1]
+sys.path.insert(1, str(p))
 
 # Importing utility methods from the 'system' package
-from system import register_login
-from system import utilities
-from system import usrhelper
+from system import globals
+from system import utils
 
 # Importing menu paths for each user from the 'user_menu_flow' package
-from user_menu_flow import admin_flow
-from user_menu_flow import patient_flow
-from user_menu_flow import gp_flow
+from user_menu_flow.register_login_flow import main_flow
 
+############################# MAIN CODE ###############################
+
+globals.init()
+utils.display(main_flow)

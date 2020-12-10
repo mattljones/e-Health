@@ -3,8 +3,17 @@
 # import libraries
 import pandas as pd
 import sqlite3 as sql
+from pathlib import Path
+import sys 
 
-class GP():
+# Change python path for imports
+p = Path(__file__).parents[1]
+sys.path.insert(1, str(p))
+
+# Import required modules and classes
+from classes.user import User
+
+class GP(User):
     '''
     Class defining all 'GP' related methods.
     The GP class instantiates GP objects from the database.

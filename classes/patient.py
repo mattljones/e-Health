@@ -3,8 +3,17 @@
 # import libraries
 import pandas as pd
 import sqlite3 as sql
+from pathlib import Path
+import sys 
 
-class Patient():
+# Change python path for imports
+p = Path(__file__).parents[1]
+sys.path.insert(1, str(p))
+
+# Import required modules and classes
+from classes.user import User
+
+class Patient(User):
     '''
     Class defining all 'patient' related methods.
     The patient class instantiates patient objects from the database.
