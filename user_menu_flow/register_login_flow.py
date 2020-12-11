@@ -9,7 +9,7 @@ p = Path(__file__).parents[1]
 sys.path.insert(1, str(p))
 
 # Importing utility methods from the 'system' package
-from system.utils import login, register, display
+from system import utils
 
 # Importing menu paths for each user from the 'user_menu_flow' package
 from user_menu_flow import gp_flow, admin_flow, patient_flow
@@ -18,9 +18,19 @@ from user_menu_flow import gp_flow, admin_flow, patient_flow
 from system import globals
 
 
+############################ SEQUENTIAL STEPS MENUS ########################
+
+def empty_method(next_dict):
+    '''
+    Empty method to be stored in the tuple of the dictionary of the user 
+    choice doesn't require any specific steps and just redirects 
+    '''
+    return utils.display(next_dict)
+
 ################################ INPUT MENU PAGES ###########################
 
-def login_page(next_dict):
+# TODO: Error handling, input validation and call corresponding register() function instead of hardcoding
+def login_page(login_as):
     '''
     Function defining the user login page takes an empty 
     dictionary as argument for utils.display function consistency.
@@ -33,16 +43,16 @@ def login_page(next_dict):
     email = input("\n--> Email address: ")
 
     if (email == '#'):
-        return display(main_flow)
+        return utils.display(main_flow_register)
 
     password = input("\n--> Password: ")
 
     if (password == '#'):
-        return display(main_flow)
+        return utils.display(main_flow_register)
 
     # Hardcoded for now
     #########################
-    (success,usr_type,usr_id) = (True,"patient",3)
+    (success,globals.usr_type,globals.usr_id) = (True,login_as,3)
     ########################
 
     if (success == False):
@@ -53,17 +63,17 @@ def login_page(next_dict):
     else:
         print("\nSuccessful login !")
 
-        if (usr_type == 'patient'):
-            return display(patient_flow.main_flow)
+        if (globals.usr_type == 'patient'):
+            return utils.display(patient_flow.main_flow_patient)
 
-        elif (usr_type == 'gp'):
-            return display(gp_flow.main_flow)
+        elif (globals.usr_type == 'gp'):
+            return utils.display(gp_flow.main_flow_gp)
 
         else:
-            return display(admin_flow.main_flow)
+            return utils.display(admin_flow.main_flow_admin)
 
 
-
+# TODO: Error handling, input validation and call corresponding register() function instead of hardcoding
 def register_page(next_dict):
     '''
     Function defining the user register page, takes an empty 
@@ -81,36 +91,43 @@ def register_page(next_dict):
         single_input = input("\n--> " + i + ": ")
 
         if single_input == "#" :
-            return display(main_flow)
+            return utils.display(main_flow_register)
 
         else:
             usr_input.append(single_input)
     
     # Hardcoded for now
     ###########################
-    (success,usr_type,usr_id) = (True,"patient",3)
+    (success,globals.usr_type,globals.usr_id) = (True,"patient",3)
     ###########################
 
     if (success == False):
-
         print("\nInvalid entry, please try again.")
         return register_page(next_dict)
 
     else :
-        print("\nSuccessfully registered !")
-        return display(patient_flow.main_flow)
-
+        print("\nYour registration must now be approved. \nYou will have to wait for a moment before being able to login.")
+        return utils.display(main_flow_register)
 
 
 ########################## MENU NAVIGATION DICTIONARY ######################
 
-# No further menu after login and register, so store empty nested 
-# dictionary for display function return parameter
-empty_dict = {}
+# Empty nested dictionary to store in tuple for last menu
+# before going back to main page (for display function return parameter).
+empty_dict = {"title": "CHANGES SAVED",
+              "type":"sub"}
+
+
+# "Login as ?"" page dictionary
+flow_1 = {"title":"LOGIN AS ?",
+          "type":"sub",
+          "1":("Patient",login_page,"patient"),
+          "2":("GP",login_page,"gp"),
+          "3":("Admin",login_page,"admin")}
 
 
 # login home page dictionary
-main_flow = {"title":"WELCOME",
-             "type":"main",
-             "1":("Login",login_page,empty_dict),
-             "2":("Register",register_page,empty_dict)}
+main_flow_register = {"title":"WELCOME",
+                      "type":"main",
+                      "1":("Login",empty_method,flow_1),
+                      "2":("Register",register_page,empty_dict)}

@@ -13,9 +13,9 @@ from system import globals
 from system import utils
 
 # Importing menu paths for each user from the 'user_menu_flow' package
-from user_menu_flow.register_login_flow import main_flow
+from user_menu_flow.register_login_flow import main_flow_register
 
 ############################# MAIN CODE ###############################
 
 globals.init()
-utils.display(main_flow)
+utils.display(main_flow_register)
