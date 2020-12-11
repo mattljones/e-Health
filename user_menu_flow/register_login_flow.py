@@ -29,6 +29,7 @@ def empty_method(next_dict):
 
 ################################ INPUT MENU PAGES ###########################
 
+# TODO: Error handling, input validation and call corresponding register() function instead of hardcoding
 def login_page(login_as):
     '''
     Function defining the user login page takes an empty 
@@ -72,7 +73,7 @@ def login_page(login_as):
             return utils.display(admin_flow.main_flow_admin)
 
 
-
+# TODO: Error handling, input validation and call corresponding register() function instead of hardcoding
 def register_page(next_dict):
     '''
     Function defining the user register page, takes an empty 
@@ -101,29 +102,29 @@ def register_page(next_dict):
     ###########################
 
     if (success == False):
-
         print("\nInvalid entry, please try again.")
         return register_page(next_dict)
 
     else :
         print("\nYour registration must now be approved. \nYou will have to wait for a moment before being able to login.")
-
         return utils.display(main_flow_register)
-
 
 
 ########################## MENU NAVIGATION DICTIONARY ######################
 
-# Empty nested dictionary to store in tuple for last menu,
-# for display function return parameter.
-empty_dict = {"title": "CHANGES SAVED !",
+# Empty nested dictionary to store in tuple for last menu
+# before going back to main page (for display function return parameter).
+empty_dict = {"title": "CHANGES SAVED",
               "type":"sub"}
 
+
+# "Login as ?"" page dictionary
 flow_1 = {"title":"LOGIN AS ?",
           "type":"sub",
           "1":("Patient",login_page,"patient"),
           "2":("GP",login_page,"gp"),
           "3":("Admin",login_page,"admin")}
+
 
 # login home page dictionary
 main_flow_register = {"title":"WELCOME",

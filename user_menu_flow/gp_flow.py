@@ -20,10 +20,22 @@ from system import globals
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
+def empty_method(next_dict):
+    '''
+    Empty method to be stored in the tuple of the dictionary of the user 
+    choice doesn't require any specific steps and just redirects 
+    '''
+    return utils.display(next_dict)
 
 ########################## MENU NAVIGATION DICTIONARIES ######################
 
+# Empty nested dictionary to store in tuple for last menu
+# before going back to main page (for display function return parameter).
+empty_dict = {"title": "CHANGES SAVED",
+              "type":"sub"}
 
+
+# gp main page dictionary
 main_flow_gp = {"title": "GP MAIN MENU",
                 "type":"main",
                 "1":(""),
