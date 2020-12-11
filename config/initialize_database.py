@@ -159,7 +159,7 @@ c.execute("""
     -- We are not updating/deleting drug_id in the user flow so no special action on update/delete needed
     drug_dosage TEXT NOT NULL,
     drug_frequency_dosage TEXT NOT NULL,
-    booking_id REFERENCES booking (booking_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
+    booking_id INTEGER REFERENCES booking (booking_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
     -- If an appointment is deleted, that means the corresponding patient has been deleted, so corresponding prescription(s) are no longer needed
 """)
 
