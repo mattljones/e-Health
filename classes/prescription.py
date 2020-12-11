@@ -13,77 +13,96 @@ class Prescription:
 
     def __init__(self):
         self.prescription_id = ""
-        self.prescription_timestamp = ""
+        self.prescription_timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.prescription_expiry_date = ""
         self.drug_id = ""
-        self.availability_id = ""
+        self.drug_dosage = ""
+        self.drug_frequency_dosage = ""
+        self.booking_id = ""
 
     def insert(self):  # INSERT - INSTANCE
+        '''
+        Insertion of a prescription into the prescription table
+        :return: none --> prescription is inserted in prescription table
+        '''
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
-        c.execute("INSERT INTO prescription VALUES (NULL, ?, ?, ?, ?);",
+        c.execute("INSERT INTO prescription VALUES (NULL, ?, ?, ?, ?, ?, ?);",
                   (self.prescription_timestamp,
                    self.prescription_expiry_date,
                    self.drug_id,
-                   self.availability_id)
+                   self.drug_dosage,
+                   self.drug_frequency_dosage,
+                   self.booking_id)
                   )
 
         conn.commit()
         conn.close()
 
     @staticmethod  # SELECT_list - STATIC
-    ## TODO: make it specific (1 drug based on name) and unspecific (all drugs)
-    def select_drug(drug_for_prescription):
+    def select_drug_list():
         '''
-        Static Method that gets values from drug table based on a specific drug that was indicated
-        :param drug_for_prescription: drug_name from database
-        :return:
+        Static Method that returns a list of the drug table
+        :return: df_drug_list in tabulate format
         '''
         conn = sql.connect("database/db_comp0066.db")
-        drugs = pd.read_sql_query(
-            "SELECT drug_id, drug_name, drug_dosage, drug_frequency_dosage FROM drug WHERE drug_name = ?;", conn,
-            params=(drug_for_prescription,))
+
+        query = '''
+                    SELECT drug_id AS "ID", drug_name AS "Drug Name"
+                    FROM drug'''
+
+        df_drug_list = pd.read_sql_query(query, conn)
+
         conn.close()
-        return drugs
+
+        df_formatted = df_drug_list.to_markdown(tablefmt="grid", index=True)
+
+        return df_formatted
 
     @staticmethod  # SELECT patient - STATIC
-    # TODO: make it specific (1 patient based on name) and unspecific (!all patients)
-    def select_patient(patient_for_prescription):
+    def select_prescription_patient(patient_id):
         '''
         Static Method that gets values from patient table based on a specific patient_id that was indicated
         :param patient_for_prescription: patient_id from database
         :return:
         '''
         conn = sql.connect("database/db_comp0066.db")
-        patient = pd.read_sql_query(
-            "SELECT patient_id, patient_first_name, patient_last_name FROM patient WHERE patient_id = ?;", conn,
-            params=(patient_for_prescription,))
+
+        query = '''
+                    SELECT prescription_timestamp AS "Prescription Creation Date", prescription_expiry_date AS "Prescription Expiry Date", drug_name AS "Drug Name", drug_dosage AS "Drug Dosage", drug_frequency_dosage AS "Intake Frequency"
+                    FROM prescription AS p
+                    LEFT JOIN booking AS b ON p.booking_id = b.booking_id
+                    LEFT JOIN drug AS d ON p.drug_id = d.drug_id
+                    WHERE patient_id = {}
+                    AND booking_status = "confirmed"'''.format(patient_id)
+
+
+
+        df_patient_prescription = pd.read_sql_query(query, conn)
         conn.close()
-        return patient
+
+        df_formatted = df_patient_prescription.to_markdown(tablefmt="grid", index=True)
+
+        return df_formatted
 
 
 ### TESTING ###
 ## testing prescription
 # call classes
 new_prescription = Prescription()
+#see patient records
+new_prescription.select_prescription_patient(22)
+# see drug list
+new_prescription.select_drug_list()
 
-# timestamp for now
-new_prescription.prescription_timestamp = datetime.datetime.now()
+
+## Insert new prescription
 # ask user to input the expiry date
-new_prescription.prescription_expiry_date = input("Enter the expiry date (Format: YY-MM-DD): ")
-# select the drug_id from select_drug
-## todo: implement edge cases for drug dosage, name and frequency
-# drug_name = input("Enter the drug name: ")
-# drug_info = Prescription.select_drug(drug_name)
-## based on 2 values below drug_info needs to be filtered
-# drug_dosage =
-# drug_frequency_dosage =
-# finally a drug_name can be inserted into Prescription.select_drug()
-new_prescription.drug_id = 1
-# ask user to input the availability_id
-availability_id = int(input("Enter the availability id: "))
-new_prescription.availability_id = availability_id
-
+new_prescription.prescription_expiry_date = input("Enter the expiry date (Format: YYYY-MM-DD): ")
+new_prescription.drug_id = int(input("Enter the drug id: "))
+new_prescription.booking_id = int(input("Enter the booking id: "))
+new_prescription.drug_dosage = input("Enter the drug dosage: ")
+new_prescription.drug_frequency_dosage = input("Enter the intake frequency: ")
 new_prescription.insert()
 
 ### DEVELOPMENT ###
