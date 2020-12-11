@@ -6,6 +6,7 @@ from user import User
 # import libraries
 import sqlite3 as sql
 import pandas as pd
+import datetime
 
 
 class GP(User):
@@ -18,23 +19,25 @@ class GP(User):
 
 
     def __init__(self, id_="", first_name="", last_name="", gender="", birth_date="", email="", password="",
-                 registration_date="", working_days="", department_id="", specialisation_id=""):
+                 registration_date="", working_days="", department_id="", specialisation_id="", status=""):
         User.__init__(self, id_, first_name, last_name, gender, birth_date, email, password, registration_date)
         self.working_days = working_days
         self.department_id = department_id
         self.specialisation_id = specialisation_id
+        self.status = status
 
 
     def insert(self):
         """
         Inserts a new GP into the database from an instance. 
         """
+        self.registration_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
         c.execute("""INSERT INTO gp 
-                     VALUES (NULL, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?);""",
+                     VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);""",
                   (self.first_name, self.last_name, self.gender, self.birth_date, self.email, self.password,
-                   self.working_days, self.department_id, self.specialisation_id, self.status))
+                   self.registration_date, self.working_days, self.department_id, self.specialisation_id, self.status))
         conn.commit()
         conn.close()
 
@@ -65,7 +68,8 @@ class GP(User):
         conn = sql.connect("database/db_comp0066.db")
         df = pd.read_sql_query("""SELECT gp_id AS 'ID', gp_first_name AS 'First Name', gp_last_name AS 'Last Name', gp_gender AS 'Gender',
                                   gp_birth_date AS 'Birth Date', gp_email AS 'Email', gp_registration_date AS 'Registration Date', 
-                                  gp_working_days AS 'Working Days', gp_department_id AS 'Department', gp_specialisation_id AS 'Specialisation'
+                                  gp_working_days AS 'Working Days', gp_department_id AS 'Department', gp_specialisation_id AS 'Specialisation',
+                                  gp_status AS 'Status'
                                   FROM gp
                                   WHERE gp_id = ?""", 
                                conn, params=(gp_id,))
@@ -92,10 +96,10 @@ class GP(User):
             return df_formatted
         elif type == 'not_full':
             conn = sql.connect("database/db_comp0066.db")
-            df = pd.read_sql_query("""SELECT gp_id AS 'ID', gp_first_name AS 'First Name', gp_last_name AS 'Last Name', COUNT(patient_id) AS 'No. Patients'
+            df = pd.read_sql_query("""SELECT gp.gp_id AS 'ID', gp_first_name AS 'First Name', gp_last_name AS 'Last Name', COUNT(patient_id) AS 'No. Patients'
                                       FROM gp, patient
                                       WHERE gp.gp_id = patient.gp_id
-                                      GROUP BY gp_id
+                                      GROUP BY gp.gp_id
                                       ORDER BY 'No. Patients' ASC""", 
                                    conn)
             conn.close()
@@ -142,8 +146,8 @@ class GP(User):
         c = conn.cursor()
         c.execute("""SELECT COUNT(patient_id)
                      FROM gp, patient
-                     WHERE gp.gp_id = patient.gp_id AND gp_id = ?
-                     GROUP BY gp_id""", 
+                     WHERE gp.gp_id = patient.gp_id AND gp.gp_id = ?
+                     GROUP BY gp.gp_id""", 
                   (gp_id,))
         count = c.fetchone()
         conn.close()
