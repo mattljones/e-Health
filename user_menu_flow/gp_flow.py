@@ -9,7 +9,7 @@ p = Path(__file__).parents[1]
 sys.path.insert(1, str(p))
 
 # Importing utility methods from the 'system' package
-from system.utils import display, logout
+from system import utils
 
 # import global variables from globals.py
 from system import globals
@@ -24,9 +24,8 @@ from system import globals
 ########################## MENU NAVIGATION DICTIONARIES ######################
 
 
-main_flow = {"title": "GP MAIN MENU",
-             "type":"main",
-             "1":(""),
-             "2":(""),
-             "3":(""),
-             "X":("Logout",logout)}
+main_flow_gp = {"title": "GP MAIN MENU",
+                "type":"main",
+                "1":(""),
+                "2":(""),
+                "3":("")}

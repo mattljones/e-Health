@@ -1,9 +1,14 @@
 # appointment.py
 
 # import libraries
-# import pandas as pd
-import sqlite3
+import pandas as pd
+import sqlite3 as sql
+from pathlib import Path
+import sys 
 
+# Change python path for imports
+p = Path(__file__).parents[1]
+sys.path.insert(1, str(p))
 
 # def db_exec_push(query):
 #     import sqlite3

@@ -9,7 +9,7 @@ p = Path(__file__).parents[1]
 sys.path.insert(1, str(p))
 
 # Importing utility methods from the 'system' package
-from system.utils import display, logout
+from system import utils
 
 # import global variables from globals.py
 from system import globals
@@ -17,41 +17,105 @@ from system import globals
 
 ############################### INPUT MENU PAGES ###########################
 
+def book_personal_gp(next_dict):
+    '''
+    '''
+    return utils.display(next_dict)
+
+
+def book_other_gp(next_dict):
+    '''
+    '''
+    return utils.display(next_dict)
 
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
-def manage_appointment():
+def empty_method(next_dict):
     '''
+    Empty method to be stored in the tuple of the dictionary of the user 
+    choice doesn't require any specific steps and just redirects 
     '''
-    pass
+    return utils.display(next_dict)
 
-def change_GP_pair():
+def manage_appointment(next_dict):
     '''
     '''
-    pass
+    # SQL query qhether the patient has an appointment booked
+    # Hardcoded for now
+    ##################
+    has_appointment = True
+    #################
 
-def read_messages():
-    '''
-    '''
-    pass
+    if has_appointment:
+        return utils.display(next_dict["b"])
 
+    else:
+        return utils.display(next_dict["a"])
+
+
+def change_GP_pair(next_dict):
+    '''
+    '''
+    return utils.display(next_dict)
+
+def read_messages(next_dict):
+    '''
+    '''
+    return utils.display(next_dict)
+
+def book_appointment(next_dict):
+    '''
+    '''
+    return utils.display(next_dict)
+
+def cancel_appointment(next_dict):
+    '''
+    '''
+    return utils.display(next_dict)
 
 ######################### MENU NAVIGATION DICTIONARIES ######################
 
-next_dict_1 = {}
-
-next_dict_2 = {}
-
-next_dict_3 = {}
-
 # Empty nested dictionary to store in tuple for last menu,
 # for display function return parameter.
-empty_dict = {}
+empty_dict = {"title": "CHANGES SAVED !",
+              "type":"sub"}
 
-main_flow = {"title": "PATIENT MAIN MENU",
-             "type":"main",
-             "1":("Book & Manage Appointments",manage_appointment,next_dict_1),
-             "2":("Change default GP",change_GP_pair, next_dict_2),
-             "3":("Read messages",read_messages, next_dict_3),
-             "X":("Logout",logout, empty_dict)}
+flow_111 = {}
+
+flow_112 = {}
+
+flow_11 =  {"title": "BOOK WITH REGISTERED GP?",
+            "type":"sub",
+            "1":("Yes",book_personal_gp,flow_111),
+            "2":("No",book_other_gp,flow_112)}
+
+
+flow_1  = {"a":
+                {"title": "BOOK APPOINTMENT ?",
+                "type":"sub",
+                "1":("Yes",book_appointment,flow_11)},
+          "b":
+                {"title": "MANAGE APPOINTMENT",
+                "type":"sub",
+                "1":("Cancel appointment",cancel_appointment,empty_dict)}}
+
+
+flow_2 = {"title": " ",
+            "type":"sub",
+            "1":(" ",manage_appointment),
+            "2":(" ",change_GP_pair),
+            "3":(" ",read_messages)}
+
+flow_3 = {"title": " ",
+            "type":"sub",
+            "1":(" ",manage_appointment),
+            "2":(" ",change_GP_pair),
+            "3":(" ",read_messages)}
+
+
+main_flow_patient = {"title": "PATIENT MAIN MENU",
+                     "type":"main",
+                     "1":("Book & Manage Appointments",manage_appointment,flow_1),
+                     "2":("Change default GP",change_GP_pair, flow_2),
+                     "3":("Read messages",read_messages, flow_3)}

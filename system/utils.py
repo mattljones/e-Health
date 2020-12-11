@@ -10,7 +10,10 @@ sys.path.insert(1, str(p))
 
 # import global variables from globals.py
 from system import globals
-
+from user_menu_flow.patient_flow import main_flow_patient
+from user_menu_flow.gp_flow import main_flow_gp
+from user_menu_flow.admin_flow import main_flow_admin
+from user_menu_flow.register_login_flow import main_flow_register
 
 def display(dict):
     '''
@@ -41,22 +44,22 @@ def display(dict):
     if usr_choice == '#':
         
         if globals.usr_type == "patient": 
-            return display(patient_flow.main_flow)
+            return display(main_flow_patient)
             
         elif globals.usr_type == "gp" :
-            return display(gp_flow.main_flow)
+            return display(main_flow_gp)
 
         elif globals.usr_type == "admin":
-            return display(admin_flow.main_flow)
+            return display(main_flow_admin)
 
         else:
-            return display(register_login_flow.main_flow)
+            return display(main_flow_register)
 
     # If "Logout"
     elif usr_choice in ('X','x'):
         globals.usr_type = ""
         globals.usr_id = ""
-        return display(register_login_flow.main_flow)
+        return display(main_flow_register)
 
     # If user selected one of the options
     elif usr_choice in dict:
