@@ -2,7 +2,7 @@
 
 # import libraries
 import pandas as pd
-import datetime
+import datetime as dt
 import sqlite3 as sql
 # import calendar
 from tabulate import tabulate
@@ -58,7 +58,6 @@ class Appointment:
 
     # Update an appointment with GP
     def update(self):
-        pass
         query = """UPDATE booking 
                      SET booking_start_time = '{}', booking_status = '{}', 
                      booking_status_change_time = '{}', booking_agenda = '{}', booking_type = '{}',
@@ -74,68 +73,114 @@ class Appointment:
 
     # Display GPs schedule for a specific date
     @staticmethod
-    def select_gp_upcoming_day(gp_id, input_date):
-        # Assuming that the date is provided in the form YYYY-MM-D(D)
-        query = """SELECT booking_id,booking_start_time , booking_status, booking_agenda, 
-                   booking_type, patient_id
-                   FROM booking
-                   WHERE gp_id = {} AND strftime('%Y-%m-%d', booking_start_time)  = '{}';""".format(gp_id, input_date)
+    def select_gp_upcoming(select_type, gp_id, start_date, end_date=None):
+
+        def master_gp_select(funct_gp_id, funct_start_date, funct_end_date = None):
+            funct_end_date = pd.to_datetime(funct_end_date) + pd.DateOffset(hours=17)
+
+            query = """SELECT booking_id,booking_start_time , booking_status, booking_agenda, booking_type, patient_id
+                               FROM booking
+                               WHERE gp_id = {} AND (strftime('%Y-%m-%d', booking_start_time) >= '{}' 
+                               AND booking_start_time <= '{}');""".format(funct_gp_id, funct_start_date, funct_end_date)
+            print(query)
+            query_results = db_read_query(query)
+            query_results.booking_start_time = query_results.booking_start_time.astype('datetime64[ns]')
+
+            funct_start_date = pd.to_datetime(funct_start_date) + pd.DateOffset(hours=8)
+
+            periods = 54 if (funct_end_date - funct_start_date).days == 0 else ((funct_end_date - funct_start_date).days+1) * 6 * 24
+            print(periods)
+            time = pd.date_range(start=pd.to_datetime(funct_start_date), periods=periods, freq='10Min').to_frame(
+                name='booking_start_time').between_time('08:00', '16:50')
+            df_select = pd.merge(time, query_results, left_on='booking_start_time', right_on='booking_start_time',
+                                 how='left').fillna(" ")
+            return print(tabulate(df_select, headers='keys', tablefmt='psql'))
+
+        if select_type == 'day':
+            master_gp_select(gp_id, start_date, start_date)
+
+        elif select_type == 'week':
+            end_date = pd.to_datetime(start_date) + pd.DateOffset(days = 7)
+            master_gp_select(gp_id, start_date,end_date)
+
+        elif select_type == 'custom':
+            end_date = pd.to_datetime(end_date)
+            master_gp_select(gp_id, start_date, end_date)
+
+
+        #  Display GPs schedule for a specific week
+        # @staticmethod
+        # def select_gp_upcoming_week(gp_id, start_date):
+        #     pass
+        #
+        # def select_gp_upcoming_custom(self):
+        #     pass
+
+    # TODO Ask Matt what's the purpose of this function
+    # Select patient record of appointments
+    @staticmethod
+    def select_patient_previous(patient_id):
+        query = """ SELECT booking_id,booking_start_time , booking_status, booking_agenda, booking_type, gp_id
+                               FROM booking
+                               WHERE patient_id == {} AND booking_start_time < '{}'""".format(patient_id,dt.datetime.now())
+
         query_results = db_read_query(query)
 
-        # Blank DataFrame Production
-        # DateTimeIndex of daily_slots
-        current_day_starting_time = input_date + " 08:00:00"
+        return print(tabulate(pd.DataFrame(query_results), headers='keys', tablefmt='psql'))
 
-        slot_per_day = pd.date_range(current_day_starting_time, periods=54, freq='10T')
-        empty_df = pd.DataFrame({'booking_start_time': slot_per_day})
-
-        # # transform datatype to be able to join later
-        query_results.booking_start_time = query_results.booking_start_time.astype('datetime64[ns]')
-
-        # perform join
-        df_select_day = pd.merge(empty_df, query_results, left_on='booking_start_time', right_on='booking_start_time',
-                                 how='left').fillna(" ")
-
-        return print(tabulate(df_select_day, headers='keys', tablefmt='psql'))
-
-    #  Display GPs schedule for a specific week
-    def select_gp_upcoming_week(self):
-        pass
-
-    # Display GP schedule for custom input
-    def select_gp_upcoming_custom(self):
-        pass
-
-    # TODO Ask Matt what's the purpose of this function
-    # Select
-    def select_patient_previous_day(self):
-        pass
-
-    # TODO Ask Matt what's the purpose of this function
-    # Select
-    def select_patient_previous_week(self):
-        pass
-
-    # TODO Ask Matt what's the purpose of this function
-    # Select
-    def select_patient_previous_custom(self):
-        pass
+        # # Select
+        # def select_patient_previous_week(self):
+        #     pass
+        #
+        # # Select
+        # def select_patient_previous_custom(self):
+        #     pass
 
     # Select the appoint for an upcoming patient
-    def select_patient_upcoming(self):
-        pass
+    @staticmethod
+    def select_patient_upcoming(patient_id):
+        query = """ SELECT booking_id,booking_start_time , booking_status, booking_agenda, booking_type, gp_id
+                                       FROM booking
+                                       WHERE patient_id == {} AND booking_start_time > '{}'""".format(patient_id,
+                                                                                                      dt.datetime.now())
+
+        query_results = db_read_query(query)
+
+        return print(tabulate(pd.DataFrame(query_results), headers='keys', tablefmt='psql'))
 
     # Select the booking of a specific GP for a specific date
-    def select_booking_day(self):
-        pass
+    @staticmethod
+    def select_booking(select_type, gp_id, start_date, end_date=None):
 
-    # Select the booking of a specific GP for a particular week
-    def select_booking_week(self):
-        pass
+        def master_booking_select(funct_gp_id, funct_start_date, funct_end_date=None):
+            funct_end_date = pd.to_datetime(funct_end_date) + pd.DateOffset(hours=17)
 
-    # Select custom booking of a specific GP
-    def select_booking_custom(self):
-        pass
+            query = """SELECT booking_id,booking_start_time , booking_status, booking_agenda, booking_type, patient_id
+                                           FROM booking
+                                           WHERE gp_id = {} AND (strftime('%Y-%m-%d', booking_start_time) >= '{}' 
+                                           AND booking_start_time <= '{}');""".format(funct_gp_id, funct_start_date,
+                                                                                      funct_end_date)
+            query_results = db_read_query(query)
+            return print(tabulate(query_results, headers='keys', tablefmt='psql'))
+
+        if select_type == 'day':
+            master_booking_select(gp_id, start_date, start_date)
+
+        elif select_type == 'week':
+            end_date = pd.to_datetime(start_date) + pd.DateOffset(days = 7)
+            master_booking_select(gp_id, start_date,end_date)
+        elif select_type == 'custom':
+            end_date = pd.to_datetime(end_date)
+            master_booking_select(gp_id, start_date, end_date)
+
+
+        # # Select the booking of a specific GP for a particular week
+        # def select_booking_week(self):
+        #     pass
+        #
+        # # Select custom booking of a specific GP
+        # def select_booking_custom(self):
+        #     pass
 
     # Gets availabilities of a all GPs for specific date except for specified GP
     def select_other_booking_day(self):
@@ -150,29 +195,98 @@ class Appointment:
         pass
 
     # TODO what is the point of these again, sorry can't wrap my head around it
-    #
-    def check_booking_day(self):
-        pass
+    @staticmethod
+    def check_booking(select_type, gp_id, start_date, end_date=None):
 
-    #
-    def check_booking_week(self):
-        pass
+        def master_gp_select(funct_gp_id, funct_start_date, funct_end_date=None):
+            funct_end_date = pd.to_datetime(funct_end_date) + pd.DateOffset(hours=17)
 
-    #
-    def check_booking_custom(self):
-        pass
+            query = """SELECT booking_id,booking_start_time , booking_status, booking_agenda, booking_type, patient_id
+                               FROM booking
+                               WHERE gp_id = {} AND (strftime('%Y-%m-%d', booking_start_time) >= '{}' 
+                               AND booking_start_time <= '{}');""".format(funct_gp_id, funct_start_date, funct_end_date)
+            query_results = db_read_query(query)
+            query_results.booking_start_time = query_results.booking_start_time.astype('datetime64[ns]')
 
-    #
-    def check_other_booking_day(self):
-        pass
+            funct_start_date = pd.to_datetime(funct_start_date) + pd.DateOffset(hours=8)
 
-    #
-    def check_other_booking_week(self):
-        pass
+            periods = 54 if (funct_end_date - funct_start_date).days == 0 else ((funct_end_date - funct_start_date).days + 1) * 6 * 24
+            print(periods)
+            time = pd.date_range(start=pd.to_datetime(funct_start_date), periods=periods, freq='10Min').to_frame(
+                name='booking_start_time').between_time('08:00', '17:50')
+            df_select = pd.merge(time, query_results, left_on='booking_start_time', right_on='booking_start_time',
+                                 how='left').fillna(" ")
+            final = df_select[df_select.booking_id == " "]
+            return print(tabulate(final, headers='keys', tablefmt='psql'))
 
-    #
-    def check_other_booking_custom(self):
-        pass
+        if select_type == 'day':
+            master_gp_select(gp_id, start_date, start_date)
+
+        elif select_type == 'week':
+            end_date = pd.to_datetime(start_date) + pd.DateOffset(days = 7)
+            master_gp_select(gp_id, start_date,end_date)
+        elif select_type == 'custom':
+            end_date = pd.to_datetime(end_date)
+            master_gp_select(gp_id, start_date, end_date)
+        #
+        # def check_booking_week(self):
+        #     pass
+        #
+        # #
+        # def check_booking_custom(self):
+        #     pass
+
+    # returns a bool value if there are availabilities for a specific GP
+    @staticmethod
+    def check_other_booking(select_type, gp_id, start_date, end_date=None):
+        def master_gp_select(funct_gp_id, funct_start_date, funct_end_date=None):
+            funct_end_date = pd.to_datetime(funct_end_date) + pd.DateOffset(hours=17)
+
+            query = """SELECT booking_id,booking_start_time , booking_status, booking_agenda, booking_type, patient_id
+                               FROM booking
+                               WHERE gp_id = {} AND (strftime('%Y-%m-%d', booking_start_time) >= '{}' 
+                               AND booking_start_time <= '{}');""".format(funct_gp_id, funct_start_date, funct_end_date)
+            query_results = db_read_query(query)
+            query_results.booking_start_time = query_results.booking_start_time.astype('datetime64[ns]')
+
+            funct_start_date = pd.to_datetime(funct_start_date) + pd.DateOffset(hours=8)
+
+            periods = 54 if (funct_end_date - funct_start_date).days == 0 else ((funct_end_date - funct_start_date).days + 1) * 6 * 24
+
+            time = pd.date_range(start=pd.to_datetime(funct_start_date), periods=periods, freq='10Min').to_frame(
+                name='booking_start_time').between_time('08:00', '17:50')
+            df_select = pd.merge(time, query_results, left_on='booking_start_time', right_on='booking_start_time',
+                                 how='left').fillna(" ")
+            final = df_select[df_select.booking_id == " "]
+            return final
+
+        if select_type == 'day':
+
+            if master_gp_select(gp_id, start_date, start_date).empty:
+                print("No Bookings are available for GP on {}".format(start_date))
+            else:
+                print("GP has some availability on {}!".format(start_date))
+
+        elif select_type == 'week':
+            if master_gp_select(gp_id, start_date, start_date).empty:
+                print("No Bookings are available for GP on {}".format(start_date))
+            else:
+                print("GP has some availability on {}!".format(start_date))
+        elif select_type == 'custom':
+            end_date = pd.to_datetime(end_date)
+            master_gp_select(gp_id, start_date, end_date)
+            if master_gp_select(gp_id, start_date, start_date).empty:
+                print("No Bookings are available for GP on {}".format(start_date))
+            else:
+                print("GP has some availability on {}!".format(start_date))
+
+        # #
+        # def check_other_booking_week(self):
+        #     pass
+        #
+        # #
+        # def check_other_booking_custom(self):
+        #     pass
 
     # Cancel a specific appointment
     @staticmethod
@@ -181,25 +295,36 @@ class Appointment:
         db_execute(query)
 
 
-
-
 # DEVELOPMENT
 
-# booking_id=None, booking_start_time=None, booking_status=None,
-# booking_status_change_time=None, booking_agenda=None, booking_type=None,
-# booking_notes=None, gp_id=None, patient_id=None
-
 if __name__ == "__main__":
+
     # Testing book appointment method
-    Appointment('Null','2020-12-08 10:00:00', 'confirmed', '2020-12-10 11:38:47.00',
-                'booking agenda edit test', 'offline', '', 1, 1).book()
+    # Appointment('Null', '2020-12-13 10:00:00', 'confirmed', '2020-12-14 11:38:47.00',
+    #             'booking agenda edit test', 'offline', '', 1, 1).book()
 
     # Testing Update Method
     # Appointment(1, '2020-12-08 10:00:00', 'confirmed', '2020-12-10 11:38:47.00',
-    # 'booking agenda edit test', 'offline', '', 10, 10).update()
+    #             'booking agenda edit test', 'offline', '', 10, 10).update()
 
-    # # Testing select GP upcoming day
-    # Appointment.select_gp_upcoming_day(10, '2020-12-08')
+    # Testing select GP upcoming day
+    # Appointment.select_gp_upcoming_day(1, '2020-12-08')
+
+    # Appointments for upcoming week
+    # Appointment.select_gp_upcoming_week(1, '2020-12-08')
 
     # Test deleting a specific booking
-    Appointment.cancel_appointment(2)
+    # Appointment.cancel_appointment(3)
+    Appointment.select_gp_upcoming('day', 1, '2020-12-09')
+
+    # '2020-12-08', '2020-12-09'
+    # print((pd.to_datetime('2020-12-09')-pd.to_datetime('2020-12-07')).days)
+
+    # Appointment.select_patient_previous(1)
+    #
+    # Appointment.select_patient_upcoming(1)
+
+    # Appointment.check_booking('custom', 1, '2020-12-08','2020-12-09')
+
+    # Appointment.check_other_booking('custom', 1, '2020-12-08', '2020-12-09')
+    # Appointment.select_booking('custom', 1, '2020-12-08','2020-12-09')
