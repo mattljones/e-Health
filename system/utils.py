@@ -123,8 +123,10 @@ def login(user_id, password):
     if pw_hash == password:
         print("Login successful.")
         globals.usr_id = user_id
+        return True
     else:
         print("Login failed.")
+        return False
 
 def logout():
     """Logout user and return to main page."""
