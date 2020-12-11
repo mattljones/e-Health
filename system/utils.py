@@ -1,20 +1,36 @@
-# Notes for util funcs
+# Utility functions
 
-# imports
 from pathlib import Path
 import sys 
+import sqlite3
+import datetime
 
 # Change python path for imports
 p = Path(__file__).parents[1]
 sys.path.insert(1, str(p))
 
-# import global variables from globals.py
-from system import globals
+# import register, patient, gp & admin main dictionaries
 from user_menu_flow.patient_flow import main_flow_patient
 from user_menu_flow.gp_flow import main_flow_gp
 from user_menu_flow.admin_flow import main_flow_admin
 from user_menu_flow.register_login_flow import main_flow_register
 
+# Import global variables from globals.py
+from system import globals
+
+# Custom errors
+class Error(Exception):
+    pass
+
+class EmptyError(Error):
+    """Raised when input is empty."""
+    pass
+
+class LenghtError(Error):
+    """Raised when input is too long."""
+    pass
+
+# Display function for menu
 def display(dict):
     '''
     Display function called to display menu and run the 
@@ -71,38 +87,127 @@ def display(dict):
         return display(dict)
 
 
+# User is logged in if it has both type and id
 def logged():
     """Check whether user is logged in or not.""" 
-    # Z: decorator
-    pass
+    return True if globals.usr_type in ("patient","gp","admin") else False 
 
-def validate():
-    # decorator
-    """Validate user input."""
-    pass
+def validate(user_input):
+    """
+    Validate user input.  
+    
+    Custom errors:
+        - Empty field
+        - Input too long (> 15 chars)
+    """
+    # NOTE: This func could be used as decorator
+    try:
+        if user_input == '':
+            raise EmptyError
+        elif len(user_input) > 15:
+            raise LenghtError
+    except EmptyError:
+        print("You need to input a value.")
+    except LenghtError:
+        print("Input is too long.")
 
-def login(username, password):
+def login(user_id, password):
+    # TODO: generalize to all user types
     """Check login credentials."""
-    # exception for empty > prompt
-    # if not empty, query db for pw 
-    # if match, login | else, message > prompt
-    # assign username to global var 
-    pass
 
-def logout(username):
-    """Logout user."""
-    # empty global username var
-    # reset user_status
-    pass
+    u = (user_id, )
 
-def register():
-    """Register a new user."""
-    # pass
-    pass
+    conn = sqlite3.connect("config/db_comp0066.db")
+    c = conn.cursor()
+    c.execute('SELECT pw_hash FROM users WHERE user_id=?;', u)
 
-def check():
-    """Check user type."""
-    pass
+    pw_hash = c.fetchone()
+
+    conn.close()
+
+    # TODO: apply hashing - assign usr_type - go to next page in menu flow
+    if pw_hash == password:
+        print("Login successful.")
+        globals.usr_id = user_id
+        return True
+    else:
+        print("Login failed.")
+        return False
+
+def logout():
+    """Logout user and return to main page."""
+    globals.usr_type = ""
+    globals.usr_id = ""
+    return display(register_login_flow.main_flow)
+
+def register(first_name, last_name, gender, birth_date, email, pw, type):
+    # TODO: update using real args - patient_id / gp_id - next page
+    """
+    Register a new user by inserting user inputs in database.
+    
+    Assumes inputs already validated and sanitized.  
+
+    Arguments included 
+        - First name                
+        - Last name                 
+        - Gender                    
+        - Birth date                
+        - Email address
+        - Password (TODO: hash)
+        - Registration date         [default: now]
+        - User type 
+    
+    """
+    # Create connection to db
+    conn = sqlite3.connect('config/db_comp0066.db')
+
+    # Create cursor
+    c = conn.cursor()
+
+    # Insert into user
+    c.execute("""
+        INSERT INTO
+            users (
+            user_first_name,
+            user_last_name,
+            user_gender,
+            user_birth_date,
+            user_email,
+            user_password,
+            user_registration_date,
+            user_type)
+        VALUES
+            (first_name,
+            last_name,
+            gender,
+            birth_date,
+            email,
+            pw,
+            datetime('now'),
+            type);
+    """)
+
+    # Commit to db
+    conn.commit()
+
+    # Output message
+    print("""Successfully registered. 
+        You can now login using your email %s and password.""" % email )
+
+    # Close db
+    conn.close()
+
+def user_type(user_id):
+    """Print user type of a specified user."""
+    u = (user_id, )
+
+    conn = sqlite3.connect("config/db_comp0066.db")
+    c = conn.cursor()
+    c.execute('SELECT type FROM users WHERE user_id=?;', u)
+
+    print(c.fetchone())
+
+    conn.close()
 
 def select():
     """ Select options from menu."""
@@ -114,13 +219,15 @@ def help():
     pass
 
 def update():
+    """ Update specified values. """
     # pass
     pass
 
 def export():
-    # pass
+    """ Export content of the page in .csv """
+    # NOTE: advanced feature
     pass
 
 def sqlhelper():
-    # pass
+    # NOTE: in separate file?
     pass
