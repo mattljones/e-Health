@@ -4,7 +4,6 @@
 import pandas as pd
 import sqlite3 as sql
 import datetime
-from tabulate import tabulate
 
 
 class Schedule:
@@ -13,6 +12,7 @@ class Schedule:
     '''
 
     @staticmethod  # SELECT day - STATIC
+    # TODO: make nice and insert working days
     def select_day(gp_id, date):
         '''
         Selection of all database entries for a specific day
@@ -28,33 +28,32 @@ class Schedule:
         # database queries
         conn = sql.connect("database/db_comp0066.db")
         schedule_day = pd.read_sql_query(
-            "SELECT strftime('%Y-%m-%d', availability_start_time) av_dates, strftime('%H:%M', availability_start_time) av_hours, availability_status, availability_agenda, availability_type, patient_id FROM availability WHERE gp_id = ? AND av_dates = ?;",
+            "SELECT strftime('%Y-%m-%d', booking_start_time) booking_dates, strftime('%Y-%m-%d %H:%M', booking_start_time) booking_hours, booking_status AS 'Booking Status', booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID' FROM booking WHERE gp_id = ? AND booking_dates = ?;",
             conn, params=(gp_id, day_selection))
         conn.close()
 
-        # DataFrame Production
-        # Producing the DF for a day
-        today = datetime.date.today()
-        today_10min_split = today.strftime("%Y-%m-%d 8:00")
-
+        # Producing the empty DataFrame for a day
+        date_for_splits = datetime.datetime.combine(date_values.date(), datetime.time(8, 0))
         # produce a DateTimeIndex of daily_slots
-        daily_slots = pd.date_range(today_10min_split, periods=54, freq='10T')
-        df_raw = pd.DataFrame({'availability_start_time': daily_slots})
+        daily_slots = pd.date_range(date_for_splits, periods=54, freq='10T')
+        # Putting it together
+        df_raw = pd.DataFrame({'Booking Start Time': daily_slots})
 
         # transform datatype to be able to join later
-        schedule_day.av_hours = schedule_day.av_hours.astype('datetime64[ns]')
+        schedule_day.booking_hours = schedule_day.booking_hours.astype('datetime64[ns]')
 
         # perform join
-        df_select_day = pd.merge(df_raw, schedule_day, left_on='availability_start_time', right_on='av_hours',
-                                 how='left')
+        df_select_day = pd.merge(df_raw, schedule_day, left_on='Booking Start Time', right_on='booking_hours', how='left')
 
-        # drop av_dates and av_hours as they are not needed anymore
-        df_select_day = df_select_day.drop(columns=['av_dates', 'av_hours'])
+        # drop booking_dates and booking_hours as they are not needed anymore
+        df_select_day = df_select_day.drop(columns=['booking_dates', 'booking_hours'])
 
         # primitive fillna for the moment
         df_select_day = df_select_day.fillna("")
 
-        return print(tabulate(df_select_day, headers='keys', tablefmt='psql'))
+        df_formatted = df_select_day.to_markdown(tablefmt="grid", index=True)
+
+        return df_formatted
 
     @staticmethod  # SELECT week - STATIC
     def select_week(gp_id, year, month, day):
@@ -68,7 +67,7 @@ class Schedule:
         # day_selection = datetime.date(year, month, day)
         # week_selection = pd.date_range(start=date_day1, periods=7, freq='d')
         # conn = sql.connect("database/db_comp0066.db")
-        # schedule_day = pd.read_sql_query("SELECT strftime('%Y-%m-%d', availability_start_time) av_t, availability_status, availability_agenda, availability_type, patient_id FROM availability WHERE gp_id = ? AND av_t = ?;", conn, params=(1, week_selection))
+        # schedule_day = pd.read_sql_query("SELECT strftime('%Y-%m-%d', booking_start_time) av_t, booking_status, booking_agenda, booking_type, patient_id FROM booking WHERE gp_id = ? AND av_t = ?;", conn, params=(1, week_selection))
         # conn.close()
         # return schedule_week
         pass
@@ -84,6 +83,7 @@ class Schedule:
         pass
 
     @staticmethod  # SELECT select_upcoming_timeoff - STATIC
+    # TODO: MAKE NICE (table names etc.)
     def select_upcoming_timeoff(gp_id):
         '''
         Select all upcoming time offs (sick leave and time off) for a gp
@@ -93,12 +93,15 @@ class Schedule:
         current_time = datetime.datetime.now()
         conn = sql.connect("database/db_comp0066.db")
         upcoming_timeoff = pd.read_sql_query(
-            "SELECT availability_start_time AS av_t, availability_status, availability_agenda, availability_type, patient_id FROM availability WHERE gp_id = ? AND av_t >= ? AND availability_status IN ('time off', 'sick leave');",
+            "SELECT booking_start_time AS booking_dates, booking_status, booking_agenda, booking_type, patient_id FROM booking WHERE gp_id = ? AND booking_dates >= ? AND booking_status IN ('time off', 'sick leave');",
             conn, params=(gp_id, current_time))
         conn.close()
-        return print(tabulate(upcoming_timeoff, headers='keys', tablefmt='psql'))
 
-    @staticmethod  # SELECT select_upcoming_timeoff - STATIC
+        df_formatted = upcoming_timeoff.to_markdown(tablefmt="grid", index=True)
+
+        return df_formatted
+
+    @staticmethod  # SELECT check_timeoff_conflict - STATIC
     # TODO: whole method
     def check_timeoff_conflict(gp_id, start_date, end_date):
         '''
@@ -113,6 +116,7 @@ class Schedule:
 
     @staticmethod  # INSERT insert_timeoff_day  - STATIC
     ## TODO: prevent insertion for non-working hours slots
+    # at the moment not really relevant as it is super nice if doctors can insert custom time offs
     def insert_timeoff_day(gp_id, timeoff_type, date):
         '''
         Insert a time off (sick leave or time off) for a whole day for a gp
@@ -136,14 +140,14 @@ class Schedule:
         for i in range(0, len(timeoff_range)):
             c.execute("""
                             INSERT INTO
-                                availability (
-                                availability_id,
-                                availability_start_time,
-                                availability_status,
-                                availability_status_change_time,
-                                availability_agenda,
-                                availability_type,
-                                availability_notes,
+                                booking (
+                                booking_id,
+                                booking_start_time,
+                                booking_status,
+                                booking_status_change_time,
+                                booking_agenda,
+                                booking_type,
+                                booking_notes,
                                 gp_id,
                                 patient_id)
                             VALUES
@@ -162,7 +166,7 @@ class Schedule:
 
         return 'daily insertion done'
 
-    @staticmethod  # INSERT insert_timeoff_day  - STATIC
+    @staticmethod  # INSERT insert_timeoff_week  - STATIC
     ## TODO: whole method
     def insert_timeoff_week(gp_id, timeoff_type, day1):
         pass
@@ -171,7 +175,7 @@ class Schedule:
     ## TODO: prevent insertion for non-working hours slots
     def insert_timeoff_custom(gp_id, timeoff_type, start_date, end_date):
         '''
-        Insert time off or sick leave into availability table.
+        Insert time off or sick leave into booking table.
         :param gp_id: gp_id that is stored in database/db_comp0066.db
         :param timeoff_type: 'sick leave' or 'time off'
         :param start_date: e.g. 2020-12-8 8:00
@@ -188,14 +192,14 @@ class Schedule:
         for i in range(0, len(timeoff_range)):
             c.execute("""
                     INSERT INTO
-                        availability (
-                        availability_id,
-                        availability_start_time,
-                        availability_status,
-                        availability_status_change_time,
-                        availability_agenda,
-                        availability_type,
-                        availability_notes,
+                        booking (
+                        booking_id,
+                        booking_start_time,
+                        booking_status,
+                        booking_status_change_time,
+                        booking_agenda,
+                        booking_type,
+                        booking_notes,
                         gp_id,
                         patient_id)
                     VALUES
@@ -215,10 +219,10 @@ class Schedule:
         return 'custom insertion done'
 
     @staticmethod  # DELETE all - STATIC
-    ## TODO: maybe limit it to only future timeoffs and make timeoff_type optional
+    ## TODO: limit it to only future timeoffs and make timeoff_type optional
     def delete_timeoff_all(gp_id, timeoff_type):
         '''
-        Deletes all timeoff of availability_status = 'timeoff_type' entries in availability table
+        Deletes all timeoff of booking_status = 'timeoff_type' entries in booking table
         :param gp_id: gp_id that is stored in database/db_comp0066.db
         :param timeoff_type: 'sick leave' or 'time off'
         :return: 'all entries were deleted'
@@ -229,9 +233,9 @@ class Schedule:
         c = conn.cursor()
         c.execute('''
             DELETE FROM
-                availability
+                booking
             WHERE
-                availability_status = ?
+                booking_status = ?
             AND
                 gp_id = ?;''', (timeoff_type, gp_id))
         conn.commit()
@@ -242,7 +246,7 @@ class Schedule:
     ## TODO: maybe limit it to only future timeoffs, make timeoffs specific and make timeoff_type optional
     def delete_timeoff_day(gp_id, timeoff_type, date):
         '''
-        Deletes all time off of availability_status = 'timeoff_type' entries in availability table for the given date
+        Deletes all time off of booking_status = 'timeoff_type' entries in booking table for the given date
         :param gp_id: gp_id that is stored in database/db_comp0066.db
         :param timeoff_type: 'sick leave' or 'time off'
         :param date: date as string in Format (YYYY-MM-D(D))
@@ -259,11 +263,11 @@ class Schedule:
         c = conn.cursor()
         c.execute('''
                 DELETE FROM
-                    availability
+                    booking
                 WHERE
-                    strftime('%Y-%m-%d', availability_start_time) = ?
+                    strftime('%Y-%m-%d', booking_start_time) = ?
                 AND    
-                    availability_status = ?
+                    booking_status = ?
                 AND
                     gp_id = ?;''', (day_selection, timeoff_type, gp_id))
         conn.commit()
@@ -276,7 +280,7 @@ class Schedule:
         pass
 
     @staticmethod  # DELETE custom - STATIC
-    ## TODO: whole method
+    ## TODO: priority over day and week!
     def delete_timeoff_custom():
         pass
 
@@ -291,7 +295,7 @@ if __name__ == "__main__":
 schedule = Schedule()
 
 ## testing select_day
-schedule.select_day(1, '2020-12-9')
+schedule.select_day(1, '2020-12-1')
 
 ## testing select_upcoming_timeoff
 schedule.select_upcoming_timeoff(1)
@@ -307,3 +311,50 @@ schedule.delete_timeoff_all(1, 'sick leave')
 
 ## testing delete_timeoff_day
 schedule.delete_timeoff_day(1, 'time off', '2020-12-13')
+
+
+
+
+
+
+
+
+
+
+
+
+gp_id = 7
+date = '2020-12-23'
+
+# this is in format '%Y-%m-%d %H:%M:%S' and cannot be changed
+date_values = datetime.datetime.strptime(date, '%Y-%m-%d')
+# this is the same date as below but in format '%Y-%m-%d'
+day_selection = date_values.date()
+
+# database queries
+conn = sql.connect("database/db_comp0066.db")
+schedule_day = pd.read_sql_query(
+    "SELECT strftime('%Y-%m-%d', booking_start_time) booking_dates, strftime('%Y-%m-%d %H:%M', booking_start_time) booking_hours, booking_status, booking_agenda, booking_type, patient_id FROM booking WHERE gp_id = ? AND booking_dates = ?;",
+    conn, params=(gp_id, day_selection))
+conn.close()
+
+# Producing the empty DataFrame for a day
+date_for_splits = datetime.datetime.combine(date_values.date(), datetime.time(8, 0))
+# produce a DateTimeIndex of daily_slots
+daily_slots = pd.date_range(date_for_splits, periods=54, freq='10T')
+# Putting it together
+df_raw = pd.DataFrame({'booking_start_time': daily_slots})
+
+# transform datatype to be able to join later
+schedule_day.booking_hours = schedule_day.booking_hours.astype('datetime64[ns]')
+
+# perform join
+df_select_day = pd.merge(df_raw, schedule_day, left_on='booking_start_time', right_on='booking_hours', how='left')
+
+# drop booking_dates and booking_hours as they are not needed anymore
+df_select_day = df_select_day.drop(columns=['booking_dates', 'booking_hours'])
+
+# primitive fillna for the moment
+df_select_day = df_select_day.fillna("")
+
+df_formatted = df_select_day.to_markdown(tablefmt="grid", index=True)
