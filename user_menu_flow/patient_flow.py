@@ -44,15 +44,18 @@ def manage_appointment(next_dict):
     # SQL query qhether the patient has an appointment booked
     # Hardcoded for now
     ##################
-    has_appointment = True
+    has_appointment = False
+    had_appointment = True
     #################
 
     if has_appointment:
         return utils.display(next_dict["has"])
 
+    elif had_appointment:
+        return utils.display(next_dict["had"])
+
     else:
         return utils.display(next_dict["has_not"])
-
 
 def change_GP_pair(next_dict):
     '''
@@ -64,15 +67,16 @@ def read_messages(next_dict):
     '''
     return utils.display(next_dict)
 
-def book_appointment(next_dict):
-    '''
-    '''
-    return utils.display(next_dict)
-
 def cancel_appointment(next_dict):
     '''
     '''
     return utils.display(next_dict)
+
+def download_prescription(next_dict):
+    '''
+    '''
+    return utils.display(next_dict)
+
 
 ######################### MENU NAVIGATION DICTIONARIES ######################
 
@@ -82,51 +86,37 @@ empty_dict = {"title": "CHANGES SAVED",
               "type":"sub"}
 
 
-# "Book with registered GP" page dictionary
-flow_111 = {}
-
-
-# "Book with other GP" page dictionary
-flow_112 = {}
-
-
 # "Book with registered GP ???" page dictionary
-flow_11 =  {"title": "BOOK WITH REGISTERED GP?",
+flow_11 =  {"title": "BOOK WITH REGISTERED GP ?",
             "type":"sub",
-            "1":("Yes",book_personal_gp,flow_111),
-            "2":("No",book_other_gp,flow_112)}
+            "1":("Yes",book_personal_gp,empty_dict),
+            "2":("No, book with another GP",book_other_gp,empty_dict)}
 
 
 # "Manage/Book appointment" page dictionary
 flow_1  = {"has_not":
                 {"title": "BOOK APPOINTMENT ?",
                 "type":"sub",
-                "1":("Yes",book_appointment,flow_11)},
+                "1":("Yes",empty_method,flow_11)},
           "has":
                 {"title": "MANAGE APPOINTMENT",
                 "type":"sub",
-                "1":("Cancel appointment",cancel_appointment,empty_dict)}}
+                "1":("Cancel appointment",cancel_appointment,empty_dict)},
+          "had":
+                {"title": "PAST APPOINTMENT",
+                "type":"sub",
+                "1":("Download prescription",download_prescription,empty_dict),
+                "2":("Book new appointment",empty_method,flow_11)}}
 
 
 # "Change GP pair" page dictionary
-flow_2 = {"title": " ",
+flow_2 = {"title": "CHANGE REGISTERED GP ?",
             "type":"sub",
-            "1":(" ",manage_appointment),
-            "2":(" ",change_GP_pair),
-            "3":(" ",read_messages)}
-
-
-# "read messages" page dictionary
-flow_3 = {"title": " ",
-            "type":"sub",
-            "1":(" ",manage_appointment),
-            "2":(" ",change_GP_pair),
-            "3":(" ",read_messages)}
+            "1":("Yes - You will be assigned to another GP but you cannot choose it.",change_GP_pair, empty_dict)}
 
 
 # patient main page dictionary
 main_flow_patient = {"title": "PATIENT MAIN MENU",
                      "type":"main",
                      "1":("Book & Manage Appointments",manage_appointment,flow_1),
-                     "2":("Change default GP",change_GP_pair, flow_2),
-                     "3":("Read messages",read_messages, flow_3)}
+                     "2":("Change default GP",empty_method, flow_2)}

@@ -38,7 +38,8 @@ def login_page(login_as):
     print("\n---------------------------------------------------- \n"
           "                    LOGIN\n"
           "\nPlease, enter your credentials:"
-          "\n(enter '#' to go back to main page)")
+          "\n  - enter '#' to go back to main page")
+          #"\n  - enter 'F' for forgotten password")
 
     email = input("\n--> Email address: ")
 
@@ -52,16 +53,21 @@ def login_page(login_as):
 
     # Hardcoded for now
     #########################
-    (success,globals.usr_type,globals.usr_id) = (True,login_as,3)
+    success = True
     ########################
 
     if (success == False):
 
         print("\nInvalid credentials, please try again.")
-        return login_page(next_dict)
+        return login_page(login_as)
     
     else:
         print("\nSuccessful login !")
+        
+        # Hardcoded for now
+        #########################
+        globals.usr_type,globals.usr_id = login_as, 3
+        #########################
 
         if (globals.usr_type == 'patient'):
             return utils.display(patient_flow.main_flow_patient)
@@ -98,10 +104,10 @@ def register_page(next_dict):
     
     # Hardcoded for now
     ###########################
-    (success,globals.usr_type,globals.usr_id) = (True,"patient",3)
+    success = False
     ###########################
 
-    if (success == False):
+    if (success == True):
         print("\nInvalid entry, please try again.")
         return register_page(next_dict)
 
