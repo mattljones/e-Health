@@ -50,10 +50,11 @@ c.execute("""
         gp_working_days = '1' or
         gp_working_days = '2' or
         gp_working_days = '3'),
+    -- Number corresponds to first day of 5 consecutive days in working week e.g. 2 = Tuesday to Saturday
     gp_department_id INTEGER REFERENCES gp_department (gp_department_id) NOT NULL,
-    -- We are not updating/deleting gp_department_id in the user flow so no special action on update/delete needed
+    -- We are not updating/deleting gp_department (gp_department_id) in the user flow so no special action on update/delete needed
     gp_specialisation_id INTEGER REFERENCES gp_specialisation (gp_specialisation_id) NOT NULL,
-    -- We are not updating/deleting gp_specialisation_id in the user flow so no special action on update/delete needed
+    -- We are not updating/deleting gp_specialisation (gp_specialisation_id) in the user flow so no special action on update/delete needed
     gp_status TEXT NOT NULL CHECK(
         gp_status = 'inactive' or
         gp_status = 'active'));
@@ -99,10 +100,10 @@ c.execute("""
 c.execute("""
     CREATE TABLE IF NOT EXISTS patient_medical_condition (
     patient_id INTEGER REFERENCES patient (patient_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
-    -- If a patient is deleted, their medical record is no longer needed in the DB (assume archived/transferred to their new healthcare provider)
+    -- If a patient is deleted, their medical records are no longer needed in the DB (assume archived/transferred to their new healthcare provider)
     patient_medical_condition_type_id TEXT REFERENCES patient_medical_condition_type (patient_medical_condition_type_id)
     ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
-    -- We are not updating/deleting patient_medical_condition_type_id in the user flow so no special action on update/delete needed
+    -- We are not updating/deleting patient_medical_condition_type (patient_medical_condition_type_id) in the user flow so no special action on update/delete needed
     PRIMARY KEY (patient_id, patient_medical_condition_type_id));
 """)
 
@@ -146,7 +147,7 @@ c.execute("""
     -- For past appointments, the old GP id will remain in the booking table after the GP gets deleted;
     -- here, assuming that the hospital keeps a separate archive of old GPs/their IDs for legal reasons
     patient_id INTEGER REFERENCES patient (gp_id) ON DELETE CASCADE ON UPDATE CASCADE);
-    -- If a patient is deleted, their medical record is no longer needed in the DB (assume archived/transferred to their new healthcare provider)
+    -- If a patient is deleted, their medical records are no longer needed in the DB (assume archived/transferred to their new healthcare provider)
 """)
 
 # Creating the prescription table.
@@ -156,7 +157,7 @@ c.execute("""
     prescription_timestamp DATETIME NOT NULL,
     prescription_expiry_date DATETIME NOT NULL,
     drug_id INTEGER REFERENCES drug (drug_id),
-    -- We are not updating/deleting drug_id in the user flow so no special action on update/delete needed
+    -- We are not updating/deleting drug (drug_id) in the user flow so no special action on update/delete needed
     drug_dosage TEXT NOT NULL,
     drug_frequency_dosage TEXT NOT NULL,
     booking_id INTEGER REFERENCES booking (booking_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL);
