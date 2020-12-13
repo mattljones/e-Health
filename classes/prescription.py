@@ -60,7 +60,7 @@ class Prescription:
         return df_formatted
 
     @staticmethod  # SELECT patient - STATIC
-    def select_prescription_patient(patient_id):
+    def select_patient(patient_id):
         '''
         Static Method that gets values from patient table based on a specific patient_id that was indicated
         :param patient_for_prescription: patient_id from database
