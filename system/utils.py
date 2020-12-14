@@ -4,17 +4,17 @@ from pathlib import Path
 import sys
 import sqlite3
 import pandas as pd
-import datetime
+import datetime as dt
 
 # Change python path for imports
 p = Path(__file__).parents[1]
 sys.path.insert(1, str(p))
 
 # import register, patient, gp & admin main dictionaries
-from user_menu_flow.patient_flow import main_flow_patient
-from user_menu_flow.gp_flow import main_flow_gp
-from user_menu_flow.admin_flow import main_flow_admin
-from user_menu_flow.register_login_flow import main_flow_register
+# from user_menu_flow.patient_flow import main_flow_patient
+# from user_menu_flow.gp_flow import main_flow_gp
+# from user_menu_flow.admin_flow import main_flow_admin
+# from user_menu_flow.register_login_flow import main_flow_register
 
 # Import global variables from globals.py
 from system import globals
