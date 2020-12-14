@@ -46,16 +46,6 @@ def logout():
     globals.usr_type = ""
     globals.usr_id = ""
 
-'''
-Since empty_method is used in all flows and stronly relevant to display(), it should be put in utils.
-'''
-# def empty_method(next_dict):
-#     '''
-#     Empty method to be stored in the tuple of the dictionary of the user 
-#     choice doesn't require any specific steps and just redirects 
-#     '''
-#     return utils.display(next_dict)
-
 
 # Display function for menu
 def display(dict):

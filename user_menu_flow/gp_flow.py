@@ -13,51 +13,51 @@ from system import utils
 
 # import global variables from globals.py
 from system import globals
-
+globals.init()
 
 ############################### INPUT MENU PAGES ###########################
 
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
-empty_method = lambda next_dict:utils.display(next_dict)
+display_next_menu = lambda next_dict:utils.display(next_dict)
 
 ########################## MENU NAVIGATION DICTIONARIES ######################
 
 # Empty nested dictionary to store in tuple for last menu
 # before going back to main page (for display function return parameter).
-empty_dict = {"title": "CHANGES SAVED",
+flow_end = {"title": "CHANGES SAVED",
               "type":"sub"}
 
 
 # schedule flow
 flow_schedule = {"title": "Schedule",
                  "type": "sub",
-                 "1":("pass")
+                 "1":("pass", display_next_menu, flow_end)
                 }
 
 # availability flow
 flow_availability = {"title": "Availability",
                  "type": "sub",
-                 "1":("pass")
+                 "1":("pass", display_next_menu, flow_end)
                 }
 
 # appointment flow
 flow_appointments = {"title": "Appointments",
                  "type": "sub",
-                 "1":("pass")
+                 "1":("pass", display_next_menu, flow_end)
                 }
 
 # records flow
 flow_records = {"title": "Records",
                  "type": "sub",
-                 "1":("pass")
+                 "1":("pass", display_next_menu, flow_end)
                 }
 
 # gp main page dictionary
 main_flow_gp = {"title": "GP MAIN MENU",
                 "type":"main",
-                "1":("View Schedule", empty_method, flow_schedule),
-                "2":("Add availability", empty_method, flow_schedule),
-                "3":("Manage Appointments", empty_method, flow_schedule),
-                "4":("Records", empty_method, flow_schedule)}
+                "1":("View Schedule", display_next_menu, flow_schedule),
+                "2":("Add availability", display_next_menu, flow_availability),
+                "3":("Manage Appointments", display_next_menu, flow_appointments),
+                "4":("Records", display_next_menu, flow_records)}
