@@ -1,8 +1,9 @@
 # Utility functions
 
 from pathlib import Path
-import sys 
+import sys
 import sqlite3
+import pandas as pd
 import datetime
 
 # Change python path for imports
@@ -18,27 +19,33 @@ from user_menu_flow.register_login_flow import main_flow_register
 # Import global variables from globals.py
 from system import globals
 
+
 # Custom errors
 class Error(Exception):
     pass
+
 
 class EmptyError(Error):
     """Raised when input is empty."""
     pass
 
+
 class LenghtError(Error):
     """Raised when input is too long."""
     pass
 
+
 # User is logged in if it has both type and id
 def logged():
-    """Check whether user is logged in or not.""" 
-    return True if globals.usr_type in ("patient","gp","admin") else False 
+    """Check whether user is logged in or not."""
+    return True if globals.usr_type in ("patient", "gp", "admin") else False
+
 
 def logout():
     """Logout user and return to main page."""
     globals.usr_type = ""
     globals.usr_id = ""
+
 
 # Display function for menu
 def display(dict):
@@ -48,13 +55,13 @@ def display(dict):
     '''
 
     print("\n----------------------------------------------------\n"
-            "                ", dict["title"], "\n")
+          "                ", dict["title"], "\n")
 
     # Print user choices
     for key in dict:
-        if key not in ("title","type"):
-            print("[",key,"] " + dict[key][0])
-    
+        if key not in ("title", "type"):
+            print("[", key, "] " + dict[key][0])
+
     # Print "return main page" option if not on a main page
     if dict["type"] != "main":
         print("[ # ] Go back to main page")
@@ -68,11 +75,11 @@ def display(dict):
 
     # If "go back to main page"
     if usr_choice == '#':
-        
-        if globals.usr_type == "patient": 
+
+        if globals.usr_type == "patient":
             return display(main_flow_patient)
-            
-        elif globals.usr_type == "gp" :
+
+        elif globals.usr_type == "gp":
             return display(main_flow_gp)
 
         elif globals.usr_type == "admin":
@@ -82,7 +89,7 @@ def display(dict):
             return display(main_flow_register)
 
     # If "Logout"
-    elif usr_choice in ('X','x'):
+    elif usr_choice in ('X', 'x'):
         logout()
         return display(main_flow_register)
 
@@ -115,11 +122,12 @@ def validate(user_input):
     except LenghtError:
         print("Input is too long.")
 
+
 def login(user_id, password):
     # TODO: generalize to all user types
     """Check login credentials."""
 
-    u = (user_id, )
+    u = (user_id,)
 
     conn = sqlite3.connect("config/db_comp0066.db")
     c = conn.cursor()
@@ -137,6 +145,7 @@ def login(user_id, password):
     else:
         print("Login failed.")
         return False
+
 
 def register(first_name, last_name, gender, birth_date, email, pw, type):
     # TODO: update using real args - patient_id / gp_id - next page
@@ -190,14 +199,15 @@ def register(first_name, last_name, gender, birth_date, email, pw, type):
 
     # Output message
     print("""Successfully registered. 
-        You can now login using your email %s and password.""" % email )
+        You can now login using your email %s and password.""" % email)
 
     # Close db
     conn.close()
 
+
 def user_type(user_id):
     """Print user type of a specified user."""
-    u = (user_id, )
+    u = (user_id,)
 
     conn = sqlite3.connect("config/db_comp0066.db")
     c = conn.cursor()
@@ -207,24 +217,29 @@ def user_type(user_id):
 
     conn.close()
 
+
 def select():
     """ Select options from menu."""
     pass
+
 
 def help():
     """ Help user understand and navigate the program."""
     # pass
     pass
 
+
 def update():
     """ Update specified values. """
     # pass
     pass
 
+
 def export():
     """ Export content of the page in .csv """
     # NOTE: advanced feature
     pass
+
 
 def sqlhelper():
     # NOTE: in separate file?
@@ -254,7 +269,50 @@ def day_empty_df(date, gp_id):
     elif (gp_id % 2) != 0 and day_df[date.date].isnull().values.any() == True:
         day_df.loc['13:00':'13:50'] = 'Lunch Time'
 
-    # Make df pretty
-    day_df = day_df.fillna("")
+    return day_df.fillna(" ")
 
-    return day_df
+def week_empty_df(start_date, gp_id):
+    days = pd.date_range(start=start_date, periods=7, freq='D')
+    times = pd.date_range(start='08:00:00', periods=54, freq='10Min')  # .to_frame(name='Working Hours',index=False)
+    week_df = pd.DataFrame(index=times.strftime('%H:%M'), columns=days.date)
+
+    working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
+    working_day = db_read_query(working_day_query).loc[
+        0, 'gp_working_days']  # will need a query to pull the first working day for a specific GP
+
+    # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
+    weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
+
+    for i in range(7):
+        if week_df.columns[i].weekday() in weekend_day_range:
+            week_df[week_df.columns[i]] = 'Weekend'
+
+    # Handling lunch time
+    if (gp_id % 2) == 0:
+        week_df.loc[dt.datetime.strptime('12:00','%H:%M').strftime('%H:%M')
+                    :dt.datetime.strptime('12:50','%H:%M').strftime('%H:%M')] = 'Lunch Time'
+    elif (gp_id % 2) != 0:
+        week_df.loc[dt.datetime.strptime('13:00', '%H:%M').strftime('%H:%M')
+                    :dt.datetime.strptime('13:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
+
+    return week_df.fillna(" ")
+
+
+# This function accepts an SQL query as an input and then commits the changes into the DB
+def db_execute(query):
+    conn = sqlite3.connect('database/db_comp0066.db')
+    c = conn.cursor()
+    c.execute(query)
+    # Commit to db
+    conn.commit()
+    # print("Info successfully committed")
+    # Close db
+    conn.close()
+
+
+# This function accepts an SQL query as an input and then returns the DF produced by the DB
+def db_read_query(query):
+    conn = sqlite3.connect("database/db_comp0066.db")
+    result = pd.read_sql_query(query, conn)
+    conn.close()
+    return result
