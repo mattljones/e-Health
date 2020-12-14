@@ -229,3 +229,32 @@ def export():
 def sqlhelper():
     # NOTE: in separate file?
     pass
+
+
+def day_empty_df(date, gp_id):
+    times = pd.date_range(start='08:00', periods=54, freq='10Min').strftime('%H:%M')
+    date = pd.date_range(start=date, periods=1, freq='D')
+    day_df = pd.DataFrame(index=times, columns=date.date)
+
+    # Handling Working Days
+    working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
+    working_day = db_read_query(working_day_query).loc[
+        0, 'gp_working_days']  # will need a query to pull the first working day for a specific GP
+
+    # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
+    weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
+
+    if day_df.columns[0].weekday() in weekend_day_range:
+        day_df[day_df.columns[0]] = 'Weekend'
+
+    # Handling lunch time
+    # even gp_id 12:00 to 13:00, odd gp_id 13:00 to 14:00
+    if (gp_id % 2) == 0 and day_df[date.date].isnull().values.any() == True:
+        day_df.loc['12:00':'12:50'] = 'Lunch Time'
+    elif (gp_id % 2) != 0 and day_df[date.date].isnull().values.any() == True:
+        day_df.loc['13:00':'13:50'] = 'Lunch Time'
+
+    # Make df pretty
+    day_df = day_df.fillna("")
+
+    return day_df
