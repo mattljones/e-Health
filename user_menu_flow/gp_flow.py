@@ -35,9 +35,34 @@ empty_dict = {"title": "CHANGES SAVED",
               "type":"sub"}
 
 
+# schedule flow
+flow_schedule = {"title": "Schedule",
+                 "type": "sub",
+                 "1":("pass")
+                }
+
+# availability flow
+flow_schedule = {"title": "Schedule",
+                 "type": "sub",
+                 "1":("pass")
+                }
+
+# appointment flow
+flow_schedule = {"title": "Appointments",
+                 "type": "sub",
+                 "1":("pass")
+                }
+
+# records flow
+flow_schedule = {"title": "Records",
+                 "type": "sub",
+                 "1":("pass")
+                }
+
 # gp main page dictionary
 main_flow_gp = {"title": "GP MAIN MENU",
                 "type":"main",
-                "1":(""),
-                "2":(""),
-                "3":("")}
+                "1":("View Schedule", empty_method, flow_schedule),
+                "2":("Add availability", empty_method, flow_schedule),
+                "3":("Manage Appointments", empty_method, flow_schedule),
+                "4":("Records", empty_method, flow_schedule)}
