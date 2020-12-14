@@ -11,10 +11,10 @@ p = Path(__file__).parents[1]
 sys.path.insert(1, str(p))
 
 # import register, patient, gp & admin main dictionaries
-# from user_menu_flow.patient_flow import main_flow_patient
-# from user_menu_flow.gp_flow import main_flow_gp
-# from user_menu_flow.admin_flow import main_flow_admin
-# from user_menu_flow.register_login_flow import main_flow_register
+from user_menu_flow.patient_flow import main_flow_patient
+from user_menu_flow.gp_flow import main_flow_gp
+from user_menu_flow.admin_flow import main_flow_admin
+from user_menu_flow.register_login_flow import main_flow_register
 
 # Import global variables from globals.py
 from system import globals
@@ -305,17 +305,18 @@ def week_empty_df(start_date, gp_id):
     # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
     weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
 
+    # Handling lunch time
+    if (gp_id % 2) == 0:
+        week_df.loc[dt.datetime.strptime('12:00', '%H:%M').strftime('%H:%M')
+                    :dt.datetime.strptime('12:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
+    elif (gp_id % 2) != 0:
+        week_df.loc[dt.datetime.strptime('13:00', '%H:%M').strftime('%H:%M')
+                    :dt.datetime.strptime('13:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
+
     for i in range(7):
         if week_df.columns[i].weekday() in weekend_day_range:
             week_df[week_df.columns[i]] = 'Weekend'
 
-    # Handling lunch time
-    if (gp_id % 2) == 0:
-        week_df.loc[dt.datetime.strptime('12:00','%H:%M').strftime('%H:%M')
-                    :dt.datetime.strptime('12:50','%H:%M').strftime('%H:%M')] = 'Lunch Time'
-    elif (gp_id % 2) != 0:
-        week_df.loc[dt.datetime.strptime('13:00', '%H:%M').strftime('%H:%M')
-                    :dt.datetime.strptime('13:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
 
     return week_df.fillna(" ")
 
