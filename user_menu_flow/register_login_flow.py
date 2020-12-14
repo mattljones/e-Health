@@ -134,7 +134,7 @@ flow_1 = {"title":"LOGIN AS ?",
 
 
 # login home page dictionary
-main_flow_register = {"title":"WELCOME",
+main_flow_register = {"title":"\N{hospital} WELCOME to e-health!",
                       "type":"main",
                       "1":("Login",empty_method,flow_1),
                       "2":("Register",register_page,empty_dict)}
