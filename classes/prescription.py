@@ -57,7 +57,7 @@ class Prescription:
 
         df_formatted = df_drug_list.to_markdown(tablefmt="grid", index=True)
 
-        return df_formatted
+        return df_drug_list, df_formatted
 
     @staticmethod  # SELECT patient - STATIC
     def select_patient(patient_id):
@@ -83,7 +83,7 @@ class Prescription:
 
         df_formatted = df_patient_prescription.to_markdown(tablefmt="grid", index=True)
 
-        return df_formatted
+        return df_patient_prescription, df_formatted
 
 
 ### TESTING ###
@@ -91,7 +91,7 @@ class Prescription:
 # call classes
 new_prescription = Prescription()
 #see patient records
-new_prescription.select_prescription_patient(22)
+new_prescription.select_patient(22)
 # see drug list
 new_prescription.select_drug_list()
 
