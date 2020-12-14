@@ -302,17 +302,18 @@ def week_empty_df(start_date, gp_id):
     # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
     weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
 
+    # Handling lunch time
+    if (gp_id % 2) == 0:
+        week_df.loc[dt.datetime.strptime('12:00', '%H:%M').strftime('%H:%M')
+                    :dt.datetime.strptime('12:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
+    elif (gp_id % 2) != 0:
+        week_df.loc[dt.datetime.strptime('13:00', '%H:%M').strftime('%H:%M')
+                    :dt.datetime.strptime('13:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
+
     for i in range(7):
         if week_df.columns[i].weekday() in weekend_day_range:
             week_df[week_df.columns[i]] = 'Weekend'
 
-    # Handling lunch time
-    if (gp_id % 2) == 0:
-        week_df.loc[dt.datetime.strptime('12:00','%H:%M').strftime('%H:%M')
-                    :dt.datetime.strptime('12:50','%H:%M').strftime('%H:%M')] = 'Lunch Time'
-    elif (gp_id % 2) != 0:
-        week_df.loc[dt.datetime.strptime('13:00', '%H:%M').strftime('%H:%M')
-                    :dt.datetime.strptime('13:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
 
     return week_df.fillna(" ")
 
