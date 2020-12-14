@@ -87,10 +87,10 @@ class Patient(User):
         conn = sql.connect("database/db_comp0066.db")
         df = pd.read_sql_query(query, conn)
         conn.close()
-        patient_instance = cls(*df.values[0][:2], *df.values[0][3:])  # ignoring GP name
+        patient_instance = cls(*df.values[0][:2], *df.values[0][3:])  # ignoring GP name in patient instance (id stored instead)
         df['[ ] Default GP'] = 'Dr. ' + df['[ ] Default GP'].astype(str) + ' (ID: ' + df['gp_id'].astype(str) + ')'  # collecting GP information
         df_display = df.drop(columns = ['gp_id'])  # removing GP ID as this has been combined with the GP's name (above)
-        df_object = df_display.transpose().rename(columns={0:"Value"})
+        df_object = df_display.transpose().rename(columns={0:"Value"})  # transposing for better readability
         df_print = df_object.to_markdown(tablefmt="grid", index=True)
         return patient_instance, df_object, df_print
 
