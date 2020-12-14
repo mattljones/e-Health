@@ -12,7 +12,7 @@ sys.path.insert(1, str(p))
 from system import utils
 
 # Importing menu paths for each user from the 'user_menu_flow' package
-from user_menu_flow import gp_flow, patient_flow
+from user_menu_flow import gp_flow, patient_flow, admin_flow
 
 # import global variables from globals.py
 from system import globals
@@ -45,7 +45,7 @@ def login_page(login_as):
     usr_input = ["",""]
 
     for i in (0,1):
-        usr_input[i] = input("\n--> ", login_credentials[i]  ,": ")
+        usr_input[i] = input("\n--> " + login_credentials[i] + ": ")
         
         if (usr_input[i] == '#'):
             return utils.display(main_flow_register)
