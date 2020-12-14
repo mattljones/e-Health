@@ -307,7 +307,7 @@ def week_empty_df(start_date, gp_id):
             week_df[week_df.columns[i]] = 'Weekend'
 
     # Handling lunch time
-    if (gp_id % 2) == 0 and :
+    if (gp_id % 2) == 0:
         week_df.loc[dt.datetime.strptime('12:00','%H:%M').strftime('%H:%M')
                     :dt.datetime.strptime('12:50','%H:%M').strftime('%H:%M')] = 'Lunch Time'
     elif (gp_id % 2) != 0:
