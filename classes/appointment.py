@@ -9,8 +9,10 @@ from tabulate import tabulate
 
 """Possible Utilities functions"""
 
+
 def tabulate_df(df):
     return print(tabulate(df, headers='keys', tablefmt='psql'))
+
 
 def db_execute(query):
     conn = sql.connect('database/db_comp0066.db')
@@ -56,6 +58,7 @@ class Appointment:
     def __init__(self, booking_id=None, booking_start_time=None, booking_status=None,
                  booking_status_change_time=None, booking_agenda=None, booking_type=None,
                  booking_notes=None, gp_id=None, patient_id=None):
+
         self.booking_id = booking_id
         self.booking_start_time = booking_start_time
         self.booking_status = booking_status
@@ -100,7 +103,7 @@ class Appointment:
         db_execute(query)
 
     # Display GPs bookings for upcoming time span
-    # TODO : Display GPs bookings for upcoming day
+    # TODO : DONE Display GPs bookings for upcoming day
     # TODO : DONE Display GPs bookings for upcoming wee
     @staticmethod
     def select(select_type, gp_id, start_date):
@@ -113,28 +116,62 @@ class Appointment:
         """
 
         if select_type == 'day':
-            pass
+
+            # this is in format '%Y-%m-%d'
+            day_selection = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
+
+            # database queries
+            day_query = """Select strftime('%Y-%m-%d', booking_start_time) booking_dates, 
+                       strftime('%Y-%m-%d %H:%M', booking_start_time) booking_hours, 
+                       booking_status AS 'Booking Status', 
+                       booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID', 
+                       gp_working_days AS 'Working Days' 
+                       FROM booking b left join gp g on b.gp_id = g.gp_id 
+                       WHERE b.gp_id = {} AND booking_dates = '{}';""".format(gp_id, day_selection)
+
+            schedule_day = db_read_query(day_query)
+
+            # Producing the empty DataFrame for a day
+            date_for_splits = dt.datetime.combine(day_selection, dt.time(8, 0))
+            # produce a DateTimeIndex of daily_slots
+            daily_slots = pd.date_range(date_for_splits, periods=54, freq='10T')
+            # Putting it together
+            df_raw = pd.DataFrame({'Booking Start Time': daily_slots})
+
+            # transform datatype to be able to join later
+            schedule_day.booking_hours = schedule_day.booking_hours.astype('datetime64[ns]')
+
+            # perform join
+            df_select_day = pd.merge(df_raw, schedule_day, left_on='Booking Start Time', right_on='booking_hours',
+                                     how='left')
+
+            # drop booking_dates and booking_hours as they are not needed anymore
+            df_select_day = df_select_day.drop(columns=['booking_dates', 'booking_hours']).fillna("")
+
+            return df_select_day
+
         elif select_type == 'week':
             # forms an empty DF for a week from the date specified for a specific GP
-            week_empt_df = week_empty_df(start_date, gp_id)
+            df_select_week = week_empty_df(start_date, gp_id)
 
             # Works out the end date for a week that was specified
-            end_date = dt.datetime.strptime(start_date, "%Y-%m-%d").date() + dt.timedelta(days=7)
+            end_date = dt.datetime.strptime(start_date, "%Y-%m-%d").date() + dt.timedelta(days=6)
+
             # SQLite query and forms a DF sql_result_df with booking for a specific GP
-            query = """SELECT date(booking_start_time) start_date,strftime('%H:%M:%S',booking_start_time) time,
+            week_query = """SELECT date(booking_start_time) start_date,strftime('%H:%M:%S',booking_start_time) time,
                        booking_status
                        FROM booking
                        WHERE gp_id = {} 
                        AND start_date BETWEEN '{}' and '{}';""".format(gp_id, start_date, end_date)
-            sql_result_df = db_read_query(query)
+            sql_result_df = db_read_query(week_query)
 
             # inserts all the data from the sql_result_df into the empty week DF
             for i in range(sql_result_df.shape[0]):
                 date_column = dt.datetime.strptime(sql_result_df.loc[i, 'start_date'], '%Y-%m-%d').date()
                 time_row = dt.datetime.strptime(sql_result_df.loc[i, 'time'], '%H:%M:%S').time()
-                week_empt_df.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
+                df_select_week.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
 
-            return week_empt_df
+            return df_select_week
 
     # Select patient record of appointments that they have already attended
     # TODO: DONE as in the classed.md
@@ -163,7 +200,7 @@ class Appointment:
         return print(tabulate(pd.DataFrame(query_results), headers='keys', tablefmt='psql'))
 
     # Select the booking of a specific GP for a specific start_date with specification of day or week
-    # TODO: Patient View : Display bookings for a specific upcoming time span
+    # TODO: DONE Patient View : Display bookings for a specific upcoming time span
     @staticmethod
     def select_availability(select_type, patient_id, start_date):
 
@@ -178,11 +215,17 @@ class Appointment:
         gp_id = db_read_query(get_gp_query).loc[0, 'gp_id']
 
         if select_type == 'day':
-            pass
+            availability_df_day = Appointment.select(select_type, gp_id, start_date)
+            availability_df_day = availability_df_day.replace(
+                ('Weekend', 'booked', 'rejected', 'confirmed', 'cancelled', 'time off', 'sick leave'),
+                'Unavailable').drop(['Agenda', 'Type', 'Patient ID', 'Working Days'], axis=1)
+            return availability_df_day
+
         elif select_type == 'week':
-            availablity_df = Appointment.select(select_type, gp_id, start_date)
-            availablity_df = availablity_df.replace(('Weekend','booked', 'rejected', 'confirmed', 'cancelled','time off','sick leave'),'Unavailable')
-            return(availablity_df)
+            availability_df_week = Appointment.select(select_type, gp_id, start_date)
+            availability_df_week = availability_df_week.replace(
+                ('Weekend', 'booked', 'rejected', 'confirmed', 'cancelled', 'time off', 'sick leave'), 'Unavailable')
+            return availability_df_week
 
     # Gets availabilities of a all GPs for specific start_date except for specified GP
     # TODO: Patient View : Display bookings for a specific upcoming time span of a GP that is not assigned to them by default
@@ -243,19 +286,23 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
-    # Testing book appointment method
+    # THIS WORKS! : Testing book appointment method
     # Appointment('Null', '2020-12-13 10:00:00', 'confirmed', '2020-12-14 11:38:47.00',
     #              'booking agenda edit test', 'offline', '', 1, 1).book()
 
-    # Testing Update Method
+    # THIS WORKS! : Testing Update Method
     # Appointment(1, '2020-12-08 10:00:00', 'confirmed', '2020-12-10 11:38:47.00',
     #             'booking agenda edit test', 'offline', '', 10, 10).update()
 
-    # Testing select GP upcoming time period
-    # tabulate_df(Appointment.select('week', 10, '2020-12-08'))
+    # THIS WORKS! : Showing DF schedule for GP and Admin view
+    # tabulate_df(Appointment.select('week', 2, '2020-12-13'))
+    # tabulate_df(Appointment.select('day', 2, '2020-12-13'))
 
-    # Showing availability for the user
-    tabulate_df(Appointment.select_availability('week', 2, '2020-12-08'))
+    # THIS WORKS! : Showing DF schedule for Patient view
+    # For this test I've used patient 9 since their GP by default is 2 so
+    # we can easily compare the DF to make sure they look the same
+    # tabulate_df(Appointment.select_availability('week', 9, '2020-12-13'))
+    # tabulate_df(Appointment.select_availability('day', 9, '2020-12-13'))
 
     # Appointments for upcoming week
     # Appointment.select_gp_upcoming_week(1, '2020-12-08')
