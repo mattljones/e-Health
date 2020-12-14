@@ -119,8 +119,8 @@ class GP(User):
         df = pd.read_sql_query(query, conn)
         conn.close()
         gp_instance = cls(*df.values[0][:6], None, *df.values[0][6:10], df.values[0][12])  # ignoring password, dept. name and spec. name
-        df_display = df.drop(columns = ['gp_department_id', 'gp_specialisation_id'])  # removing IDs as not displayed initially to the user
-        df_object = df_display.transpose().rename(columns={0:"Value"})
+        df_display = df.drop(columns = ['gp_department_id', 'gp_specialisation_id'])       # removing IDs as not displayed initially to the user
+        df_object = df_display.transpose().rename(columns={0:"Value"})                     # transposing for better readability
         df_print = df_object.to_markdown(tablefmt="grid", index=True)
         return gp_instance, df_object, df_print
 
@@ -156,7 +156,7 @@ class GP(User):
         conn = sql.connect("database/db_comp0066.db")
         df_object = pd.read_sql_query(query, conn)
         conn.close()
-        df_object['Name'] = 'Dr. ' + df_object['Name'].astype(str)
+        df_object['Name'] = 'Dr. ' + df_object['Name'].astype(str)  # Adding 'Dr.' prefix to GP last name
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
         return df_object, df_print
 
@@ -228,7 +228,7 @@ class GP(User):
         c.execute(query)
         count = c.fetchone()
         conn.close()
-        if count[0] < GP.max_capacity:
+        if count[0] < GP.max_capacity:  # Using class variable defining GP max (patient) capacity 
             return True
         else:
             return False
