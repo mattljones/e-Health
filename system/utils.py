@@ -79,9 +79,10 @@ def display(dict):
     # Print "logout" option if logged in
     if logged():
         print("[ X ] Logout")
-
-    # print "exit" option
-    print("[ E ] Exit the system")
+    
+    else:
+        # print "exit" option
+        print("[ E ] Exit the system")
 
     # User input 
     usr_choice = input("\n--> ")
@@ -114,7 +115,9 @@ def display(dict):
         print("\U0001F51A Thanks for using e-health. Goodbye! ")
         sys.exit()
     
-    # TODO: guidance option
+    # TODO: guidance option?
+    elif usr_choice in ('H', 'h'):
+        pass
 
     # If invalid entry
     else:
