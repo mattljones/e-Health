@@ -85,7 +85,7 @@ class Record:
         df_patient_print = df_patient_object.to_markdown(tablefmt="grid", index=False)
         # Generating the 'appointments' dataframes
         df_apps = Appointment.select_patient_previous(patient_id)
-        df_prescs = Prescription.select_patient(patient_id)[1]
+        df_prescs = Prescription.select_patient(patient_id)[0]
         # Generating the record instance
         record_instance = cls(patient_id, df_conditions['Condition ID'].tolist(), None)
         return record_instance, df_patient_object, df_patient_print, df_apps, df_prescs      # df_appointments_object, df_appointments_print
@@ -111,6 +111,10 @@ class Record:
 ## CODE TESTING/DEMONSTRATION
 
 ## update()
+# record_instance = Record.select(43)[0]
+# record_instance.conditions.remove('2')
+# record_instance.appointment_notes['7'] = 'update_test'
+# record_instance.update()
 
 # Record.select()
 record_instance, df_obj1, df_print1, df_obj2, df_print2 = Record.select(43)
