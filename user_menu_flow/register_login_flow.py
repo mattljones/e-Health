@@ -12,7 +12,7 @@ sys.path.insert(1, str(p))
 from system import utils
 
 # Importing menu paths for each user from the 'user_menu_flow' package
-from user_menu_flow import gp_flow, admin_flow, patient_flow
+from user_menu_flow import gp_flow, patient_flow
 
 # import global variables from globals.py
 from system import globals
@@ -39,17 +39,18 @@ def login_page(login_as):
           "                    LOGIN\n"
           "\nPlease, enter your credentials:"
           "\n  - enter '#' to go back to main page")
-          #"\n  - enter 'F' for forgotten password")
 
-    email = input("\n--> Email address: ")
 
-    if (email == '#'):
-        return utils.display(main_flow_register)
+    login_credentials = ["Email address", "Password"]
+    usr_input = ["",""]
 
-    password = input("\n--> Password: ")
+    for i in (0,1):
+        usr_input[i] = input("\n--> ", login_credentials[i]  ,": ")
+        
+        if (usr_input[i] == '#'):
+            return utils.display(main_flow_register)
 
-    if (password == '#'):
-        return utils.display(main_flow_register)
+        utils.validate(usr_input[i])
 
     # Hardcoded for now
     #########################

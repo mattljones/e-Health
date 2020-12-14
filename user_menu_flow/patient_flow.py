@@ -62,11 +62,6 @@ def change_GP_pair(next_dict):
     '''
     return utils.display(next_dict)
 
-def read_messages(next_dict):
-    '''
-    '''
-    return utils.display(next_dict)
-
 def cancel_appointment(next_dict):
     '''
     '''

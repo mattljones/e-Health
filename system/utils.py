@@ -30,6 +30,16 @@ class LenghtError(Error):
     """Raised when input is too long."""
     pass
 
+# User is logged in if it has both type and id
+def logged():
+    """Check whether user is logged in or not.""" 
+    return True if globals.usr_type in ("patient","gp","admin") else False 
+
+def logout():
+    """Logout user and return to main page."""
+    globals.usr_type = ""
+    globals.usr_id = ""
+
 # Display function for menu
 def display(dict):
     '''
@@ -50,7 +60,7 @@ def display(dict):
         print("[ # ] Go back to main page")
 
     # Print "logout" option if logged in
-    if globals.usr_type in ("patient","gp","admin"):
+    if logged():
         print("[ X ] Logout")
 
     # User input 
@@ -73,8 +83,7 @@ def display(dict):
 
     # If "Logout"
     elif usr_choice in ('X','x'):
-        globals.usr_type = ""
-        globals.usr_id = ""
+        logout()
         return display(main_flow_register)
 
     # If user selected one of the options
@@ -86,11 +95,6 @@ def display(dict):
         print("\nInvalid entry, please try again.")
         return display(dict)
 
-
-# User is logged in if it has both type and id
-def logged():
-    """Check whether user is logged in or not.""" 
-    return True if globals.usr_type in ("patient","gp","admin") else False 
 
 def validate(user_input):
     """
@@ -133,12 +137,6 @@ def login(user_id, password):
     else:
         print("Login failed.")
         return False
-
-def logout():
-    """Logout user and return to main page."""
-    globals.usr_type = ""
-    globals.usr_id = ""
-    return display(register_login_flow.main_flow)
 
 def register(first_name, last_name, gender, birth_date, email, pw, type):
     # TODO: update using real args - patient_id / gp_id - next page
