@@ -20,12 +20,7 @@ from system import globals
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
-def empty_method(next_dict):
-    '''
-    Empty method to be stored in the tuple of the dictionary of the user 
-    choice doesn't require any specific steps and just redirects 
-    '''
-    return utils.display(next_dict)
+empty_method = lambda next_dict:utils.display(next_dict)
 
 ########################## MENU NAVIGATION DICTIONARIES ######################
 
@@ -42,19 +37,19 @@ flow_schedule = {"title": "Schedule",
                 }
 
 # availability flow
-flow_schedule = {"title": "Schedule",
+flow_availability = {"title": "Availability",
                  "type": "sub",
                  "1":("pass")
                 }
 
 # appointment flow
-flow_schedule = {"title": "Appointments",
+flow_appointments = {"title": "Appointments",
                  "type": "sub",
                  "1":("pass")
                 }
 
 # records flow
-flow_schedule = {"title": "Records",
+flow_records = {"title": "Records",
                  "type": "sub",
                  "1":("pass")
                 }
