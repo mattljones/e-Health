@@ -12,7 +12,6 @@ def db_execute(query):
     c.execute(query)
     # Commit to db
     conn.commit()
-    print("Info successfully committed")
     # Close db
     conn.close()
 
@@ -29,8 +28,6 @@ class Prescription:
     '''
 
     def __init__(self):
-        self.prescription_id = ""
-        self.prescription_timestamp = ""
         self.prescription_expiry_date = ""
         self.drug_id = ""
         self.drug_dosage = ""
@@ -54,8 +51,6 @@ class Prescription:
 
         db_execute(insert_query)
 
-        return 'Prescription is inserted in prescription table'
-
     @staticmethod  # SELECT_list - STATIC
     def select_drug_list():
         '''
@@ -67,11 +62,11 @@ class Prescription:
                             SELECT drug_id AS "Drug ID", drug_name AS "Drug Name"
                             FROM drug'''
 
-        df_drug_list = db_read_query(select_drug_query)
+        df_object = db_read_query(select_drug_query)
 
-        df_formatted = df_drug_list.to_markdown(tablefmt="grid", index=False)
+        df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        return df_drug_list, df_formatted
+        return df_object, df_print
 
     @staticmethod  # SELECT patient - STATIC
     def select_patient(patient_id):
@@ -84,32 +79,42 @@ class Prescription:
 
         select_patient_query = '''
                                     SELECT
-                                    drug_name AS "Drug Name",
-                                    drug_dosage AS "Drug Dosage",
-                                    drug_frequency_dosage AS "Intake Frequency",
-                                    prescription_expiry_date AS "Expiry Date",
-                                    p.booking_id AS "Apt. ID"
-                                    FROM prescription AS p
-                                    LEFT JOIN booking AS b ON p.booking_id = b.booking_id
-                                    LEFT JOIN drug AS d ON p.drug_id = d.drug_id
-                                    WHERE patient_id = {}
-                                    AND booking_status = "confirmed"'''.format(patient_id)
+                                        drug_name AS "Drug Name",
+                                        drug_dosage AS "Drug Dosage",
+                                        drug_frequency_dosage AS "Intake Frequency",
+                                        prescription_expiry_date AS "Expiry Date",
+                                        p.booking_id AS "Apt. ID"
+                                    FROM
+                                        prescription AS p
+                                    LEFT JOIN
+                                        booking AS b ON p.booking_id = b.booking_id
+                                    LEFT JOIN
+                                        drug AS d ON p.drug_id = d.drug_id
+                                    WHERE
+                                        patient_id = {}
+                                    AND
+                                        booking_status = 'confirmed';'''.format(patient_id)
 
-        df_patient_prescription = db_read_query(select_patient_query)
+        df_object = db_read_query(select_patient_query)
 
-        df_formatted = df_patient_prescription.to_markdown(tablefmt="grid", index=True)
+        df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        return df_patient_prescription, df_formatted
+        return df_object, df_print
 
+
+### DEVELOPMENT ###
+
+if __name__ == "__main__":
+    pass
 
 ### TESTING ###
 ## testing prescription
 # # call classes
-new_prescription = Prescription()
+# new_prescription = Prescription()
 # # see patient records
-df=new_prescription.select_patient(22)[0]
+# df = new_prescription.select_patient(22)[1]
 # # see drug list
-# df = new_prescription.select_drug_list()[0]
+# df = new_prescription.select_drug_list()[1]
 
 
 ## Insert new prescription
@@ -127,8 +132,3 @@ df=new_prescription.select_patient(22)[0]
 # new_prescription.drug_dosage = '12 mg'
 # new_prescription.drug_frequency_dosage = 'hallo'
 # new_prescription.insert()
-
-### DEVELOPMENT ###
-
-if __name__ == "__main__":
-    pass
