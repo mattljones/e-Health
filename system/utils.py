@@ -128,7 +128,7 @@ def validate(user_input):
         if user_input == '':
             raise EmptyError
         # TODO: 15 is too short for email address
-        elif len(user_input) > 50:
+        elif len(user_input) > 100:
             raise LenghtError
     except EmptyError:
         print("You need to input a value.")
@@ -146,20 +146,21 @@ def login(user_email, password, usr_type):
     sql_pwd = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
     # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
     c.execute(sql_pwd)
-    pw_hash = c.fetchone()[0]
-    sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
-    c.execute(sql_id)
-    usr_id = c.fetchone()[0]
-    conn.close()
-
-    # TODO: apply hashing
-    if pw_hash == password:
-        print("Login successful.")
-        globals.usr_type = usr_type
-        globals.usr_id = usr_id
-        return True
+    if c.fetchone():
+        pw_hash = c.fetchone()[0]
+        # TODO: apply hashing
+        if pw_hash == password:
+            sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
+            c.execute(sql_id)
+            usr_id = c.fetchone()[0]
+            globals.usr_type = usr_type
+            globals.usr_id = usr_id
+            conn.close()
+            print("Login successful.")
+            return True
     else:
-        print("Login failed.")
+        conn.close()
+        print("Invalid email or password!.")
         return False
 
 
