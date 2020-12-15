@@ -259,6 +259,13 @@ def sqlhelper():
 
 
 def day_empty_df(date, gp_id):
+    ## TODO: first insert lunchtime, then insert weekends
+    '''
+    Create empty DataFrame for a day (incl. weekends and lunchtime)
+    :param date: date in string format 'YYYY-MM-DD'
+    :param gp_id: gp_id from database
+    :return: DataFrame that handles weekends and lunch times
+    '''
     times = pd.date_range(start='08:00', periods=54, freq='10Min').strftime('%H:%M')
     date = pd.date_range(start=date, periods=1, freq='D')
     day_df = pd.DataFrame(index=times, columns=date.date)
