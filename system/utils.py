@@ -35,6 +35,21 @@ class LenghtError(Error):
     pass
 
 
+class InvalidCharacterError(Error):
+    """Raised when user inputs "'" or '"' to avoid SQL injections."""
+    pass
+
+
+class EmailFormatError(Error):
+    """Raised when incorrectly formatted email address."""
+    pass
+
+
+class DateFormatError(Error):
+    """Raised when date (YYYY-MM-DD) is not correctly formatted."""
+    pass
+
+
 # User is logged in if it has both type and id
 def logged():
     """Check whether user is logged in or not."""
@@ -45,6 +60,7 @@ def logout():
     """Logout user and return to main page."""
     globals.usr_type = ""
     globals.usr_id = ""
+    print("\n\U00002705 Succesfully logged out.")
 
 
 # Display function for menu
@@ -102,7 +118,7 @@ def display(dict):
         return dict[usr_choice][1](dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
-        print("\U0001F51A Thanks for using e-health. Goodbye! ")
+        print("\n\U0001F51A Thanks for using e-health. Goodbye! \n")
         sys.exit()
     
     # TODO: guidance option?
@@ -111,7 +127,7 @@ def display(dict):
 
     # If invalid entry
     else:
-        print("\n \U00002757 Invalid entry, please try again")
+        print("\n\U00002757 Invalid entry, please try again")
         return display(dict)
 
 
@@ -122,6 +138,7 @@ def validate(user_input):
     Custom errors:
         - Empty field
         - Input too long (> 15 chars)
+        - Does not contain "'" or '"' to avoid SQL injections
     """
     # NOTE: This func could be used as decorator
     try:
@@ -130,10 +147,120 @@ def validate(user_input):
         # TODO: 15 is too short for email address
         elif len(user_input) > 100:
             raise LenghtError
+        elif ('"' in user_input) or ("'" in user_input):
+            raise InvalidCharacterError
+    except InvalidCharacterError:
+        print("\U00002757 Invalid character: ' and \" are not accepted.")
+        return False
     except EmptyError:
-        print("You need to input a value.")
+        print("\U00002757 You need to input a value.")
+        return False
     except LenghtError:
-        print("Input is too long.")
+        print("\U00002757 Input is too long.")
+        return False
+    return True
+
+
+def validate_email(user_input):
+    """
+    Validate user input for email address.  
+    
+    Custom errors:
+        - Empty field
+        - Must contain '@' symbol
+        - Does not contain "'" or '"' to avoid SQL injections
+    """
+    # NOTE: This func could be used as decorator
+    try:
+        if user_input == '':
+            raise EmptyError
+        elif '@' not in user_input:
+            raise EmailFormatError
+        elif ('"' in user_input) or ("'" in user_input):
+            raise InvalidCharacterError
+    except InvalidCharacterError:
+        print("\U00002757 Invalid character: ' and \" are not accepted.")
+        return False
+    except EmptyError:
+        print("\U00002757 You need to input a value.")
+        return False
+    except EmailFormatError:
+        print("\U00002757 Incorrectly formatted email address.")
+        return False
+    return True
+
+
+def validate_password(user_input):
+    """
+    Validate user input for password.  
+
+    Custom errors:
+        - Empty field
+        - Input too short (< 8 chars)
+        - Does not contain "'" or '"' to avoid SQL injections
+    """
+    # NOTE: This func could be used as decorator
+    try:
+        if user_input == '':
+            raise EmptyError
+        elif len(user_input) < 8:
+            raise LenghtError
+        elif ('"' in user_input) or ("'" in user_input):
+            raise InvalidCharacterError
+    except InvalidCharacterError:
+        print("\U00002757 Invalid character: ' and \" are not accepted.")
+        return False
+    except EmptyError:
+        print("\U00002757 You need to input a value.")
+        return False
+    except LenghtError:
+        print("\U00002757 Input is too short, password must be 8 characters long minimum.")
+        return False
+    return True
+
+
+def validate_date(user_input):
+    """
+    Validate user input for date such as DOB.  
+    
+    Custom errors:
+        - Empty field
+        - Does not contain "'" or '"' to avoid SQL injections
+        - Date must be in format YYYY-MM-DD
+    """
+    # NOTE: This func could be used as decorator
+    try:
+        if user_input == '':
+            raise EmptyError
+        elif ('"' in user_input) or ("'" in user_input):
+            raise InvalidCharacterError
+        elif ((len(user_input) != 10) or
+              (user_input[4] != '-') or
+              (user_input[7] != '-')):
+            raise DateFormatError
+
+        int(user_input[:4])
+        int(user_input[5:7])
+        int(user_input[8:])
+
+        if int(user_input[5:7]) > 12 or int(user_input[8:]) > 31:
+            raise DateFormatError
+
+    except InvalidCharacterError:
+        print("\U00002757 Invalid character: ' and \" are not accepted.")
+        return False
+    except EmptyError:
+        print("\U00002757 You need to input a value.")
+        return False
+    except DateFormatError:
+        print("\U00002757 Incorrectly formatted date, must be in format YYYY-MM-DD.")
+        return False
+    except ValueError:
+        print("\U00002757 Incorrectly formatted date, must be in format YYYY-MM-DD.")
+        return False
+    
+    return True
+    
 
 
 def login(user_email, password, usr_type):
