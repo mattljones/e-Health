@@ -13,11 +13,12 @@ import pandas as pd
 
 class Patient(User):
     """
-    Child class of 'User', inheriting attributes shared between GPs and patients.
-    Defines attributes and methods for patient-related activities in different user flows. 
+    Child class of 'User', inheriting shared attributes.
+    Defines patient-related attributes & methods for different user flows. 
     """
-
-    def __init__(self,  # password not required as not inserting data (patients register themselves)
+    
+    # password not required as no insert(): patients register themselves
+    def __init__(self,
                  id_,
                  gp_id, 
                  first_name, 
@@ -29,7 +30,8 @@ class Patient(User):
                  NHS_blood_donor,
                  NHS_organ_donor,
                  status):
-        User.__init__(self, id_, first_name, last_name, gender, birth_date, email, None, registration_date, status) 
+        User.__init__(self, id_, first_name, last_name, gender, birth_date, 
+                      email, None, registration_date, status) 
         self.gp_id = gp_id
         self.NHS_blood_donor = NHS_blood_donor
         self.NHS_organ_donor = NHS_organ_donor
@@ -37,26 +39,28 @@ class Patient(User):
 
     def update(self):
         """
-        Updating a patient's details (technically overriding every DB attribute w/ instance values)
+        Updating a patient's details (overriding DB attributes w/ instance)
         """
-        query = """UPDATE patient 
-                   SET patient_first_name = '{}', 
-                       patient_last_name = '{}', 
-                       patient_gender = '{}', 
-                       patient_birth_date = '{}', 
-                       patient_email = '{}',  
-                       patient_NHS_blood_donor = '{}', 
-                       patient_NHS_organ_donor = '{}', 
-                       patient_status = '{}'
-                   WHERE patient_id = '{}'""".format(self.first_name, 
-                                                     self.last_name, 
-                                                     self.gender, 
-                                                     self.birth_date, 
-                                                     self.email, 
-                                                     self.NHS_blood_donor, 
-                                                     self.NHS_organ_donor, 
-                                                     self.status,
-                                                     self.id)
+        query = """
+                UPDATE patient 
+                SET patient_first_name = '{}', 
+                    patient_last_name = '{}', 
+                    patient_gender = '{}', 
+                    patient_birth_date = '{}', 
+                    patient_email = '{}',  
+                    patient_NHS_blood_donor = '{}', 
+                    patient_NHS_organ_donor = '{}', 
+                    patient_status = '{}'
+                WHERE patient_id = '{}'
+                """.format(self.first_name, 
+                           self.last_name, 
+                           self.gender, 
+                           self.birth_date, 
+                           self.email, 
+                           self.NHS_blood_donor, 
+                           self.NHS_organ_donor, 
+                           self.status,
+                           self.id)
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
         c.execute(query)
@@ -67,30 +71,38 @@ class Patient(User):
     @classmethod
     def select(cls, patient_id):
         """
-        Generating an instance of a patient to later update attributes based on user input (& also returning a DF to display in user flow)
+        Generating a patient instance & a dataframe to display in user flow.
+        Instance used for storing user-inputted values.
         """
-        query = """SELECT patient_id AS '[ ] Patient ID', 
-                          patient.gp_id,
-                          gp.gp_last_name AS '[ ] Default GP',
-                          patient_first_name AS '[1] First Name', 
-                          patient_last_name AS '[2] Last Name', 
-                          patient_gender AS '[3] Gender',
-                          patient_birth_date AS '[4] Birth Date', 
-                          patient_email AS '[5] Email', 
-                          patient_registration_date AS '[ ] Registration Date', 
-                          patient_NHS_blood_donor AS '[6] Blood donor',
-                          patient_NHS_blood_donor AS '[7] Organ donor',
-                          patient_status AS '[8] Status'
-                   FROM patient, gp
-                   WHERE patient_id = '{}'
-                   AND patient.gp_id = gp.gp_id""".format(patient_id)
+        query = """
+                SELECT patient_id AS '[ ] Patient ID', 
+                       patient.gp_id,
+                       gp.gp_last_name AS '[ ] Default GP',
+                       patient_first_name AS '[1] First Name', 
+                       patient_last_name AS '[2] Last Name', 
+                       patient_gender AS '[3] Gender',
+                       patient_birth_date AS '[4] Birth Date', 
+                       patient_email AS '[5] Email', 
+                       patient_registration_date AS '[ ] Registration Date', 
+                       patient_NHS_blood_donor AS '[6] Blood donor',
+                       patient_NHS_blood_donor AS '[7] Organ donor',
+                       patient_status AS '[8] Status'
+                FROM patient, gp
+                WHERE patient_id = '{}'
+                AND patient.gp_id = gp.gp_id
+                """.format(patient_id)
         conn = sql.connect("database/db_comp0066.db")
         df = pd.read_sql_query(query, conn)
         conn.close()
-        patient_instance = cls(*df.values[0][:2], *df.values[0][3:])  # ignoring GP name in patient instance (id stored instead)
-        df['[ ] Default GP'] = 'Dr. ' + df['[ ] Default GP'].astype(str) + ' (ID: ' + df['gp_id'].astype(str) + ')'  # collecting GP information
-        df_display = df.drop(columns = ['gp_id'])  # removing GP ID as this has been combined with the GP's name (above)
-        df_object = df_display.transpose().rename(columns={0:"Value"})  # transposing for better readability
+        # ignoring GP name in patient instance (id stored instead)
+        patient_instance = cls(*df.values[0][:2], *df.values[0][3:]) 
+        # collecting GP information 
+        df['[ ] Default GP'] = 'Dr. ' + df['[ ] Default GP'].astype(str) \
+                               + ' (ID: ' + df['gp_id'].astype(str) + ')' 
+        # removing GP ID as this has been combined with the GP's name (above)
+        df_display = df.drop(columns = ['gp_id'])  
+        # transposing for better readability
+        df_object = df_display.transpose().rename(columns={0:"Value"}) 
         df_print = df_object.to_markdown(tablefmt="grid", index=True)
         return patient_instance, df_object, df_print
 
@@ -98,37 +110,45 @@ class Patient(User):
     @staticmethod
     def select_list(type, patient_last_name=None):
         """
-        Returns lists of patients: 1) pending confirmation by an admin 2) with a matching last_name
+        Returns lists of patients: 1) pending confirmation by an admin 
+                                   2) with a matching last_name
         """
         if type == 'pending':
-            query = """SELECT patient_id AS 'Patient ID',
-                              patient_first_name AS 'First Name',
-                              patient_last_name AS 'Last Name',  
-                              patient_birth_date AS 'Birth Date',
-                              patient_registration_date AS 'Registration Date'
-                       FROM patient
-                       WHERE patient_status = 'pending'
-                       ORDER BY "Registration Date" ASC"""
+            query = """
+                    SELECT patient_id AS 'Patient ID',
+                           patient_first_name AS 'First Name',
+                           patient_last_name AS 'Last Name',  
+                           patient_birth_date AS 'Birth Date',
+                           patient_registration_date AS 'Registration Date'
+                    FROM patient
+                    WHERE patient_status = 'pending'
+                    ORDER BY "Registration Date" ASC
+                    """
             conn = sql.connect("database/db_comp0066.db")
             df_object = pd.read_sql_query(query, conn)
             conn.close()
         elif type == 'matching':
-            query = """SELECT patient_id AS 'Patient ID',
-                              patient.gp_id,
-                              gp.gp_last_name AS 'Default GP',
-                              patient_first_name AS 'First Name',
-                              patient_last_name AS 'Last Name',  
-                              patient_birth_date AS 'Birth Date'
-                       FROM patient, gp
-                       WHERE patient_last_name = '{}'
-                       AND patient.gp_id = gp.gp_id
-                       AND patient_status = 'confirmed'
-                       ORDER BY "First Name" ASC""".format(patient_last_name)
+            query = """
+                    SELECT patient_id AS 'Patient ID',
+                           patient.gp_id,
+                           gp.gp_last_name AS 'Default GP',
+                           patient_first_name AS 'First Name',
+                           patient_last_name AS 'Last Name',  
+                           patient_birth_date AS 'Birth Date'
+                    FROM patient, gp
+                    WHERE patient_last_name = '{}'
+                    AND patient.gp_id = gp.gp_id
+                    AND patient_status = 'confirmed'
+                    ORDER BY "First Name" ASC
+                    """.format(patient_last_name)
             conn = sql.connect("database/db_comp0066.db")
             df = pd.read_sql_query(query, conn)
             conn.close()
-            df['Default GP'] = 'Dr. ' + df['Default GP'].astype(str) + ' (ID: ' + df['gp_id'].astype(str) + ')'  # collecting GP information
-            df_object = df.drop(columns = ['gp_id'])  # removing GP ID as this has been combined with the GP's name (above)
+            # collecting GP information
+            df['Default GP'] = 'Dr. ' + df['Default GP'].astype(str) \
+                               + ' (ID: ' + df['gp_id'].astype(str) + ')'
+            # removing GP ID as it has been combined with GP name (above)
+            df_object = df.drop(columns = ['gp_id']) 
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
         return df_object, df_print
 
@@ -136,16 +156,21 @@ class Patient(User):
     @staticmethod
     def confirm(type, patient_id=None): 
         """
-        Confirming patients: either 1) all or 2) a single patient
+        Confirming patients: either 1) all or 
+                                    2) a single patient
         """
         if type == 'all':
-            query = """UPDATE patient
-                       SET patient_status = 'confirmed'
-                       WHERE patient_status = 'pending'"""
+            query = """
+                    UPDATE patient
+                    SET patient_status = 'confirmed'
+                    WHERE patient_status = 'pending'
+                    """
         elif type == 'single':
-            query = """UPDATE patient
-                       SET patient_status = 'confirmed'
-                       WHERE patient_id = '{}'""".format(patient_id)
+            query = """
+                    UPDATE patient
+                    SET patient_status = 'confirmed'
+                    WHERE patient_id = '{}'
+                    """.format(patient_id)
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
         c.execute(query)
@@ -157,10 +182,12 @@ class Patient(User):
     def delete(patient_id): 
         """
         Deletes a patient from the patient table. 
-        Note: the database automatically deletes corresponding patient appointments and medical records (ON CASCADE)
+        Note: database auto-deletes appointments and records (ON CASCADE)
         """
-        query = """DELETE FROM patient
-                   WHERE patient_id = '{}'""".format(patient_id)
+        query = """
+                DELETE FROM patient
+                WHERE patient_id = '{}'
+                """.format(patient_id)
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
         c.execute(query)
@@ -176,9 +203,11 @@ class Patient(User):
         if GP.check_not_full(new_gp_id) == False:
             return False
         else: 
-            query = """UPDATE patient
-                       SET gp_id = '{}'
-                       WHERE patient_id = '{}'""".format(new_gp_id, patient_id)
+            query = """
+                    UPDATE patient
+                    SET gp_id = '{}'
+                    WHERE patient_id = '{}'
+                    """.format(new_gp_id, patient_id)
             conn = sql.connect("database/db_comp0066.db")
             c = conn.cursor()
             c.execute(query)

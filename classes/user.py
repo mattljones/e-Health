@@ -7,7 +7,8 @@ class User:
     Contains attributes common to both.
     """
 
-    def __init__(self, id_, first_name, last_name, gender, birth_date, email, password, registration_date, status):
+    def __init__(self, id_, first_name, last_name, gender, birth_date, 
+                 email, password, registration_date, status):
         self.id = id_
         self.first_name = first_name
         self.last_name = last_name
@@ -18,8 +19,3 @@ class User:
         self.registration_date = registration_date
         self.status = status
 
-
-# DEVELOPMENT #
-
-if __name__ == "__main__":
-    pass
