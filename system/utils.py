@@ -144,7 +144,8 @@ def validate(user_input):
     try:
         if user_input == '':
             raise EmptyError
-        elif len(user_input) > 15:
+        # TODO: 15 is too short for email address
+        elif len(user_input) > 100:
             raise LenghtError
         elif ('"' in user_input) or ("'" in user_input):
             raise InvalidCharacterError
@@ -262,27 +263,31 @@ def validate_date(user_input):
     
 
 
-def login(user_id, password):
+def login(user_email, password, usr_type):
     # TODO: generalize to all user types
     """Check login credentials."""
 
-    u = (user_id,)
-
-    conn = sqlite3.connect("config/db_comp0066.db")
+    # u = (user_email,)
+    conn = sqlite3.connect("database/db_comp0066.db")
     c = conn.cursor()
-    c.execute('SELECT pw_hash FROM users WHERE user_id=?;', u)
-
-    pw_hash = c.fetchone()
-
-    conn.close()
-
-    # TODO: apply hashing - assign usr_type - go to next page in menu flow
-    if pw_hash == password:
-        print("Login successful.")
-        globals.usr_id = user_id
-        return True
+    sql_pwd = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
+    # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
+    c.execute(sql_pwd)
+    if c.fetchone():
+        pw_hash = c.fetchone()[0]
+        # TODO: apply hashing
+        if pw_hash == password:
+            sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
+            c.execute(sql_id)
+            usr_id = c.fetchone()[0]
+            globals.usr_type = usr_type
+            globals.usr_id = usr_id
+            conn.close()
+            print("Login successful.")
+            return True
     else:
-        print("Login failed.")
+        conn.close()
+        print("Invalid email or password!.")
         return False
 
 
@@ -459,7 +464,7 @@ def db_execute(query):
 
 # This function accepts an SQL query as an input and then returns the DF produced by the DB
 def db_read_query(query):
-    conn = sqlite3.connect("database/db_comp0066.db")
+    conn = sqlite3.connect("../database/db_comp0066.db")
     result = pd.read_sql_query(query, conn)
     conn.close()
     return result

@@ -69,7 +69,7 @@ class Prescription:
 
         df_drug_list = db_read_query(select_drug_query)
 
-        df_formatted = df_drug_list.to_markdown(tablefmt="grid", index=True)
+        df_formatted = df_drug_list.to_markdown(tablefmt="grid", index=False)
 
         return df_drug_list, df_formatted
 
@@ -84,7 +84,7 @@ class Prescription:
 
         select_patient_query = '''
                                     SELECT prescription_expiry_date AS "Expiry Date", drug_name AS "Drug Name", drug_dosage AS "Drug Dosage",
-                                    drug_frequency_dosage AS "Intake Frequency", p.booking_id AS "Booking ID"
+                                    drug_frequency_dosage AS "Intake Frequency", p.booking_id AS "Appointment ID"
                                     FROM prescription AS p
                                     LEFT JOIN booking AS b ON p.booking_id = b.booking_id
                                     LEFT JOIN drug AS d ON p.drug_id = d.drug_id
