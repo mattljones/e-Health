@@ -5,14 +5,14 @@
 5,2020-12-03 11:00,confirmed,2020-12-08 16:47:31,Orci sagittis eu volutpat odio facilisis mauris.,online,Massa massa ultricies mi quis hendrerit dolor. ,6,49
 6,2020-12-03 11:10,cancelled,2020-12-08 16:47:31,,online,,7,4
 7,2020-12-04 12:00,confirmed,2020-12-08 16:47:31,Tincidunt eget nullam non nisi est sit amet.,online,Massa tincidunt dui ut ornare lectus sit amet est placerat.,9,43
-8,2020-12-04 12:10,confirmed,2020-12-08 16:47:31,Enim praesent elementum facilisis leo vel. ,offline,Dui nunc mattis enim ut tellus elementum sagittis.,10,40
-9,2020-12-05 13:00,confirmed,2020-12-08 16:47:31,Tempus imperdiet nulla malesuada pellentesque elit eget. ,online,Ultricies mi eget mauris pharetra et ultrices neque ornare aenean. ,1,30
+8,2020-12-04 12:10,confirmed,2020-12-08 16:47:31,Enim praesent elementum facilisis leo vel. ,offline,Dui nunc mattis enim ut tellus elementum sagittis.,1,40
+9,2020-12-05 13:00,confirmed,2020-12-08 16:47:31,Tempus imperdiet nulla malesuada pellentesque elit eget. ,online,Ultricies mi eget mauris pharetra et ultrices neque ornare aenean.,2,30
 10,2020-12-05 13:10,confirmed,2020-12-08 16:47:31,Malesuada nunc vel risus commodo viverra maecenas. Vitae auctor eu augue ut lectus.,online,Enim blandit volutpat maecenas volutpat blandit aliquam.,2,4
 11,2020-12-06 14:00,confirmed,2020-12-08 16:47:31,Enim blandit volutpat maecenas volutpat blandit aliquam. ,online,Malesuada nunc vel risus commodo viverra maecenas. Vitae auctor eu augue ut lectus.,3,44
-12,2020-12-06 14:10,confirmed,2020-12-08 16:47:31,Ultricies mi eget mauris pharetra et ultrices neque ornare aenean. ,offline,Tempus imperdiet nulla malesuada pellentesque elit eget. ,4,7
-13,2020-12-07 15:00,confirmed,2020-12-08 16:47:31,Dui nunc mattis enim ut tellus elementum sagittis.,online,Enim praesent elementum facilisis leo vel. ,6,9
+12,2020-12-06 14:10,confirmed,2020-12-08 16:47:31,Ultricies mi eget mauris pharetra et ultrices neque ornare aenean. ,offline,Tempus imperdiet nulla malesuada pellentesque elit eget.,3,7
+13,2020-12-07 15:00,confirmed,2020-12-08 16:47:31,Dui nunc mattis enim ut tellus elementum sagittis.,online,Enim praesent elementum facilisis leo vel.,1,9
 14,2020-12-07 15:10,cancelled,2020-12-08 16:47:31,,online,,7,39
-15,2020-12-08 15:00,confirmed,2020-12-08 16:47:31,Amet justo donec enim diam vulputate ut pharetra sit. ,online,Nascetur ridiculus mus mauris vitae.,9,18
+15,2020-12-08 15:00,confirmed,2020-12-08 16:47:31,Amet justo donec enim diam vulputate ut pharetra sit. ,online,Nascetur ridiculus mus mauris vitae.,1,18
 16,2020-12-08 15:10,confirmed,2020-12-08 16:47:31,Massa massa ultricies mi quis hendrerit dolor. ,online,Orci sagittis eu volutpat odio facilisis mauris.,10,22
 17,2020-12-09 16:00,confirmed,2020-12-08 16:47:31,Mi sit amet mauris commodo quis. Sollicitudin ac orci phasellus egestas.,online,Platea dictumst vestibulum rhoncus est pellentesque elit. ,1,41
 18,2020-12-09 16:10,confirmed,2020-12-08 16:47:31,Est lorem ipsum dolor sit amet consectetur adipiscing elit pellentesque. ,online,At ultrices mi tempus imperdiet nulla malesuada pellentesque elit.,2,41
@@ -21,12 +21,12 @@
 21,2020-12-11 10:00,confirmed,2020-12-08 16:47:31,,online,,6,2
 22,2020-12-11 10:10,confirmed,2020-12-08 16:47:31,,online,,7,15
 23,2020-12-12 11:00,rejected,2020-12-08 16:47:31,,online,,9,37
-24,2020-12-12 11:10,confirmed,2020-12-08 16:47:31,,offline,,10,2
-25,2020-12-13 12:00,confirmed,2020-12-08 16:47:31,,online,,1,46
-26,2020-12-13 12:10,confirmed,2020-12-08 16:47:31,,online,,2,48
-27,2020-12-14 13:00,confirmed,2020-12-08 16:47:31,,online,,3,26
+24,2020-12-12 11:10,confirmed,2020-12-08 16:47:31,,offline,,2,2
+25,2020-12-13 12:00,confirmed,2020-12-08 16:47:31,,online,,3,46
+26,2020-12-13 12:10,confirmed,2020-12-08 16:47:31,,online,,3,48
+27,2020-12-14 13:00,confirmed,2020-12-08 16:47:31,,online,,4,26
 28,2020-12-14 13:10,confirmed,2020-12-08 16:47:31,,online,,4,45
-29,2020-12-15 14:00,confirmed,2020-12-08 16:47:31,,offline,,6,15
+29,2020-12-15 14:00,confirmed,2020-12-08 16:47:31,,offline,,1,15
 30,2020-12-15 14:10,confirmed,2020-12-08 16:47:31,,online,,7,10
 31,2020-12-16 15:00,confirmed,2020-12-08 16:47:31,,online,,9,48
 32,2020-12-16 15:10,confirmed,2020-12-08 16:47:31,,online,,10,5
@@ -35,12 +35,12 @@
 35,2020-12-18 09:00,confirmed,2020-12-08 16:47:31,,online,,3,31
 36,2020-12-18 09:10,confirmed,2020-12-08 16:47:31,,online,,4,4
 37,2020-12-19 10:00,confirmed,2020-12-08 16:47:31,,online,,6,2
-38,2020-12-19 10:10,confirmed,2020-12-08 16:47:31,,online,,7,3
+38,2020-12-19 10:10,confirmed,2020-12-08 16:47:31,,online,,2,3
 39,2020-12-20 11:00,confirmed,2020-12-08 16:47:31,,online,,9,39
-40,2020-12-20 11:10,booked,2020-12-08 16:47:31,,online,,10,30
+40,2020-12-20 11:10,booked,2020-12-08 16:47:31,,online,,3,30
 41,2020-12-21 12:00,booked,2020-12-08 16:47:31,,online,,1,2
-42,2020-12-21 12:10,booked,2020-12-08 16:47:31,,offline,,2,15
-43,2020-12-22 13:00,booked,2020-12-08 16:47:31,,online,,3,33
+42,2020-12-21 12:10,booked,2020-12-08 16:47:31,,offline,,1,15
+43,2020-12-22 13:00,booked,2020-12-08 16:47:31,,online,,2,33
 44,2020-12-22 13:10,booked,2020-12-08 16:47:31,,online,,4,6
 45,2020-12-23 14:00,booked,2020-12-08 16:47:31,,online,,6,40
 46,2020-12-23 14:10,booked,2020-12-08 16:47:31,,online,,7,22

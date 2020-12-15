@@ -11,6 +11,8 @@ h1 {color: #486BD3;
 
 # Background
 
+## Outline
+
 - This document describes the different class methods in detail, including:
   - Name
   - Type
@@ -23,12 +25,18 @@ h1 {color: #486BD3;
 - Add, modify or remove methods as appropriate
 
 ## Return Variables
-(optional):
-Boolean for check functions such as check_timeoff_conflict() returned before 1. and 2.  
+Optional:
+- Instance for factory methods
+- Boolean for check functions such as check_timeoff_conflict() returned before 1. and 2.  
 
 Always:
-1. df_object (raw dataframe)  
-2. df_print (to_markdown formatted dataframe)
+1. df_object (raw dataframe, for manipulation (e.g. deducing meaning of user input))  
+2. df_print (to_markdown formatted dataframe, for printing)
+
+Consult the code itself to see the objects returned. 
+
+## Mapping to user flow
+- The corresponding user flows/purposes are outlined, but the exact 'place' for each method to be used is not defined (hopefully it's clear)
 
 
 # `Appointment`
@@ -54,9 +62,9 @@ Always:
 | ---- | ---- | ------------------- | ---------- | ------- |
 | insert | instance | <li><b>Admin</b> <li> Inserting a new GP from an instance populated by user input (GPs cannot register themselves; instance created in user flow) | - | - |
 | update | instance | <li><b>Admin</b> <li> Updating a GP's details (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin</b> <li> Generating an instance of a GP to later update attributes based on user input | <li>gp_id | <li> GP instance <li> DF incl. indexing of all of a GP's attributes (except password) |
-| select_list | static | <li><b>Admin</b> <li>List of GPs to choose from (used in multiple branches) | <li>type = all/active/not_full | <li>DF of all relevant GPs {gp_id, name (Dr. + gp_last_name), gp_birth_date, no. patients (if type = 'not_full'; sort column)} |
-| select_table | static | <li><b>Admin</b> <li> List of GP departments/specialisations for reference when updating | <li>type = department/specialisation | <li> DF of relevant DB table |
+| select | factory | <li><b>Admin</b> <li> Generating an instance of a GP to later update attributes based on user input | <li>gp_id | <li> GP instance <br><br> Generally: DF incl. indexing of all of a GP's attributes (except password) <li> df_object <li> df_print |
+| select_list | static | <li><b>Admin</b> <li>List of GPs to choose from (used in multiple branches) | <li>type = all/active/not_full | Generally: DF of all relevant GPs {gp_id, name (Dr. + gp_last_name), gp_birth_date, no. patients (if type = 'not_full'; sort column)} <li> df_object <li> df_print |
+| select_table | static | <li><b>Admin</b> <li> List of GP departments/specialisations for reference when updating | <li>type = department/specialisation | Generally: DF of relevant DB table <li> df_object <li> df_print |
 | change_status | static | <li><b>Admin</b> <li> Changing a GP's status (to inactive/active) | <li>gp_id <li>new_status | <i>NB: if deactivating, this auto-reallocates the GP's patients and future appointments to other GPs. </i> |
 | delete | static | <li><b>Admin</b> <li> Deleting a GP | <li>gp_id | <i>NB: this auto-reallocates the GP's patients and future appointments to other GPs. </i> |
 | check_not_full | static | <i>Used in Patient.change_gp() method</i> | <li>gp_id | <li>BOOL True (not full) or False (full) |
@@ -67,8 +75,8 @@ Always:
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
 | update | instance | <li><b>Admin</b> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin</b> <li> Generating an instance of a patient to later update attributes based on user input | <li>patient_id | <li>Patient instance <li>DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) |
-| select_list | static | <li><b>Admin</b> <li> List of patients to choose from (used in multiple branches) | <li>type = pending/matching <li>if matching, patient_last_name | <li>DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} |
+| select | factory | <li><b>Admin</b> <li> Generating an instance of a patient to later update attributes based on user input | <li>patient_id | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
+| select_list | static | <li><b>Admin</b> <li> List of patients to choose from (used in multiple branches) | <li>type = pending/matching <li>if matching, patient_last_name | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
 | confirm | static | <li><b>Admin</b> <li> Confirming patients (currently no direct method to change status to 'inactive', but allowed in DB) | <li>type = all/single  <li>if single, patient_id | <i>NB: patients were automatically given a GP during registration to avoid allowing nulls in the DB </i> |
 | delete | static | <li><b>Admin</b> <li> Deleting a patient | <li>patient_id | - |
 | change_GP | static | <li><b>Admin</b> <li> Changing a patient's default GP (checks GP not full first) | <li>patient_id <li>new_gp_id | <li>BOOL True (successful) or False (unsuccessful) |
@@ -88,8 +96,8 @@ Always:
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
 | update | instance | <li><b>GP</b> <li>Updating a patient's medical record (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin, GP</b> <li> Generating an instance of a patient record to later update attributes based on user input (Admin can view only) | <li>patient_id | <i> Calls Appointment.select_patient_previous(), Patient.select() and Prescription.select_patient() </i> <li>Record instance <li>DF incl. indexing of all of a patient's 'medical' attributes <li> DF incl. indexing of patient's past appointments integrated with corresponding prescriptions |
-| select_conditions | static | <li><b>GP</b> <li>List of possible medical conditions for reference when updating patient record | - | <li> DF of all possible medical conditions |
+| select | factory | <li><b>Admin, GP</b> <li> Generating an instance of a patient record to later update attributes based on user input. <li> Whilst lots of patient information is displayed, only 'conditions' and 'appointment notes' are editable (assume prescriptions are non-editable/revokable) | <li>patient_id | <li>Record instance <br><br> Generally: <b>2 DFs</b> incl. indexing of all of a patient's 'medical'-related details: 1) attributes & medical conditions 2) previous appointments & corresponding prescriptions <li> df_patient_object <li> df_patient_print <li> df_apps_object <li> df_apps_print |
+| select_conditions | static | <li><b>GP</b> <li>List of possible medical conditions for reference when updating patient record | - | Generally: DF of all possible medical conditions <li> df_object <li> df_print |
 <br>
 
 # `Schedule`
