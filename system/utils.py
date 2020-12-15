@@ -5,6 +5,7 @@ import sys
 import sqlite3
 import pandas as pd
 import datetime as dt
+from system import asciiart
 
 # Change python path for imports
 p = Path(__file__).parents[1]
@@ -119,6 +120,7 @@ def display(dict):
 
     elif usr_choice in ('E', 'e'):
         print("\n\U0001F51A Thanks for using e-health. Goodbye! \n")
+        print(asciiart.exit_art)
         sys.exit()
     
     # TODO: guidance option?
