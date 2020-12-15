@@ -21,7 +21,7 @@ def week_empty_df(start_date, gp_id):
     # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
     weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
 
-    # Handling lunch time
+    # Inserting 'Lunch Time'
     if (gp_id % 2) == 0:
         week_df.loc[datetime.datetime.strptime('12:00', '%H:%M').strftime('%H:%M')
                     :datetime.datetime.strptime('12:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
@@ -29,11 +29,13 @@ def week_empty_df(start_date, gp_id):
         week_df.loc[datetime.datetime.strptime('13:00', '%H:%M').strftime('%H:%M')
                     :datetime.datetime.strptime('13:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
 
+    # Inserting 'Weekend'
     for i in range(7):
         if week_df.columns[i].weekday() in weekend_day_range:
             week_df[week_df.columns[i]] = 'Weekend'
 
     return week_df.fillna(" ")
+
 
 
 def db_execute(query):
@@ -61,6 +63,12 @@ def day_empty_df(date, gp_id):
     # day_df = pd.DataFrame({'Booking Hours': times, 'Booking Status': ""})
     # day_df = day_df.set_index('Booking Hours')
 
+    # Handling lunch time
+    if (gp_id % 2) == 0:
+        day_df.loc['12:00':'12:50'] = 'Lunch Time'
+    else:
+        day_df.loc['13:00':'13:50'] = 'Lunch Time'
+
     # Handling Working Days
     working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
     working_day = db_read_query(working_day_query).loc[
@@ -72,11 +80,6 @@ def day_empty_df(date, gp_id):
     if day_df.columns[0].weekday() in weekend_day_range:
         day_df[day_df.columns[0]] = 'Weekend'
 
-    # Handling lunch time
-    if (gp_id % 2) == 0 and day_df[date.date].isnull().values.any() == True:
-        day_df.loc['12:00':'12:50'] = 'Lunch Time'
-    elif (gp_id % 2) != 0 and day_df[date.date].isnull().values.any() == True:
-        day_df.loc['13:00':'13:50'] = 'Lunch Time'
 
     # Make df pretty
     day_df.columns.values[0] = "Booking Status"
@@ -84,6 +87,7 @@ def day_empty_df(date, gp_id):
 
     return day_df
 
+# day_empty_df('2020-12-12',2)
 
 class Schedule:
     '''
@@ -100,69 +104,32 @@ class Schedule:
         :param start_date: e.g. 2020-12-8
         :return: DataFrame for a day or week (non-formatted & formatted)
         '''
-        # # this is in format '%Y-%m-%d %H:%M:%S' and cannot be changed
-        # date_values = datetime.datetime.strptime(date, '%Y-%m-%d')
-        # # this is the same date as below but in format '%Y-%m-%d'
-        # day_selection = date_values.date()
-        # # "SELECT strftime('%Y-%m-%d', booking_start_time) booking_dates, strftime('%Y-%m-%d %H:%M', booking_start_time) booking_hours, booking_status AS 'Booking Status', booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID' FROM booking WHERE gp_id = ? AND booking_dates = ?;"
-        # # database queries
-        # conn = sql.connect("database/db_comp0066.db")
-        # schedule_day = pd.read_sql_query(
-        #     "SELECT strftime('%Y-%m-%d', booking_start_time) booking_dates, strftime('%Y-%m-%d %H:%M', booking_start_time) booking_hours, booking_status AS 'Booking Status', booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID', gp_working_days AS 'Working Days' FROM booking b left join gp g on b.gp_id = g.gp_id WHERE b.gp_id = ? AND booking_dates = ?;",
-        #     conn, params=(gp_id, day_selection))
-        # conn.close()
-        #
-        # # Producing the empty DataFrame for a day
-        # df_raw = day_empty_df(date, gp_id)
-        #
-        # # transform datatype to be able to join later
-        # schedule_day.booking_hours = schedule_day.booking_hours.astype('datetime64[ns]')
-        #
-        # # perform join
-        # df_select_day = pd.merge(df_raw, schedule_day, left_on='Booking Start Time', right_on='booking_hours', how='left')
-        #
-        # # drop booking_dates and booking_hours as they are not needed anymore
-        # df_select_day = df_select_day.drop(columns=['booking_dates', 'booking_hours'])
-        #
-        # # primitive fillna for the moment
-        # df_select_day = df_select_day.fillna("")
-        #
-        # df_formatted = df_select_day.to_markdown(tablefmt="grid", index=True)
-        #
-        # return df_select_day, df_formatted
-
         if type == 'day':
             # this is in format '%Y-%m-%d'
             day_selection = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
 
             # database queries
-            day_query = """Select strftime('%Y-%m-%d', booking_start_time) booking_dates, 
-                               strftime('%Y-%m-%d %H:%M', booking_start_time) booking_hours, 
-                               booking_status AS 'Booking Status', 
-                               booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID', 
-                               gp_working_days AS 'Working Days' 
-                               FROM booking b left join gp g on b.gp_id = g.gp_id 
-                               WHERE b.gp_id = {} AND booking_dates = '{}';""".format(gp_id, day_selection)
+            day_query = """Select booking_status AS 'Booking Status Old',
+                            strftime('%H:%M', booking_start_time) booking_hours,
+                            booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID' 
+                            FROM booking
+                            WHERE gp_id = {} AND strftime('%Y-%m-%d', booking_start_time) = '{}';""".format(gp_id, day_selection)
 
-            schedule_day = db_read_query(day_query)
+            sql_result_df = db_read_query(day_query)
 
             # Producing the empty DataFrame for a day
-            date_for_splits = datetime.datetime.combine(day_selection, datetime.time(8, 0))
-            # produce a DateTimeIndex of daily_slots
-            daily_slots = pd.date_range(date_for_splits, periods=54, freq='10T')
-            # Putting it together
-            df_raw = pd.DataFrame({'Booking Start Time': daily_slots})
+            df_select_day_empty = day_empty_df(start_date, 2)
+            # df_select_day = df_select_day.update(sql_result_df)
 
-            # transform datatype to be able to join later
-            schedule_day.booking_hours = schedule_day.booking_hours.astype('datetime64[ns]')
+            df_select_day = pd.merge(df_select_day_empty,sql_result_df, left_on=df_select_day_empty.index, right_on='booking_hours', how='left')
 
-            # perform join
-            df_select_day = pd.merge(df_raw, schedule_day, left_on='Booking Start Time', right_on='booking_hours',
-                                     how='left')
+            for i in range(len(sql_result_df)):
+                df_select_day['Booking Status'].iloc[i] = sql_result_df['Booking Status Old'].iloc[i]
+
+            df_select_day = df_select_day.drop(columns=['Booking Status Old', 'booking_hours']).fillna('')
+            df_select_day = df_select_day.set_index(df_select_day_empty.index)
 
             # drop booking_dates and booking_hours as they are not needed anymore
-            df_select_day = df_select_day.drop(columns=['booking_dates', 'booking_hours']).fillna("")
-
             df_formatted = df_select_day.to_markdown(tablefmt="grid", index=True)
 
             return df_select_day, df_formatted
@@ -176,7 +143,7 @@ class Schedule:
             end_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() + datetime.timedelta(days=6)
 
             # SQLite query and forms a DF sql_result_df with booking for a specific GP
-            week_query = """SELECT date(booking_start_time) start_date,strftime('%H:%M:%S',booking_start_time) time,
+            week_query = """SELECT date(booking_start_time) start_date,strftime('%H:%M',booking_start_time) time,
                                    booking_status
                                    FROM booking
                                    WHERE gp_id = {} 
@@ -184,9 +151,9 @@ class Schedule:
             sql_result_df = db_read_query(week_query)
 
             # inserts all the data from the sql_result_df into the empty week DF
-            for i in range(sql_result_df.shape[0]):
+            for i in range(len(sql_result_df)):
                 date_column = datetime.datetime.strptime(sql_result_df.loc[i, 'start_date'], '%Y-%m-%d').date()
-                time_row = datetime.datetime.strptime(sql_result_df.loc[i, 'time'], '%H:%M:%S').strftime('%H:%M')
+                time_row = datetime.datetime.strptime(sql_result_df.loc[i, 'time'], '%H:%M').strftime('%H:%M')
                 df_select_week.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
 
             df_formatted = df_select_week.to_markdown(tablefmt="grid", index=True)
@@ -308,7 +275,7 @@ class Schedule:
         # Deletion of 10 min slots that are outside of GP working hours
         new_timeoff_range = []
         for i in range(0, len(timeoff_range)):
-            if '08:00' <= timeoff_range[i][11:] <= '16:50':
+            if '08:00:00' <= timeoff_range[i][11:] <= '16:50:00':
                 new_timeoff_range.append(timeoff_range[i])
 
         # insert into database
@@ -399,16 +366,16 @@ if __name__ == "__main__":
 schedule = Schedule()
 
 ## testing select day
-schedule.select(2, 'day', '2020-12-07')
+schedule.select(2, 'day', '2021-02-27')
 
 ## testing select week
-schedule.select(2, 'week', '2020-12-1')
+schedule.select(2, 'week', '2021-02-20')
 
 ## testing check_timeoff_conflict
 schedule.check_timeoff_conflict(2, '2021-1-11', '2021-1-13')
 
 ## testing select_upcoming_timeoff
-df = schedule.select_upcoming_timeoff(2)
+schedule.select_upcoming_timeoff(2)
 
 ## testing insert_timeoff_custom
 schedule.insert_timeoff(2, 'sick leave', '2021-2-26', '2021-2-27')
@@ -462,29 +429,54 @@ schedule.delete_timeoff(gp_id=2, type='all', timeoff_type='sick leave')
 # df_formatted = df_select_day.to_markdown(tablefmt="grid", index=True)
 
 
-#
-# gp_id = 2
+
+gp_id = 2
 # timeoff_type = 'time off'
-# start_date = '2021-1-15'
-# end_date = '2021-1-20'
-#
-#
-# # forms an empty DF for a week from the date specified for a specific GP
-# df_select_week = week_empty_df(start_date, gp_id)
-#
-# # Works out the end date for a week that was specified
-# end_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() + dt.timedelta(days=6)
-#
-# # SQLite query and forms a DF sql_result_df with booking for a specific GP
-# week_query = """SELECT date(booking_start_time) start_date,strftime('%H:%M:%S',booking_start_time) time,
-#                        booking_status
-#                        FROM booking
-#                        WHERE gp_id = {}
-#                        AND start_date BETWEEN '{}' and '{}';""".format(gp_id, start_date, end_date)
-# sql_result_df = db_read_query(week_query)
-#
-# # inserts all the data from the sql_result_df into the empty week DF
-# for i in range(sql_result_df.shape[0]):
-#     date_column = datetime.datetime.strptime(sql_result_df.loc[i, 'start_date'], '%Y-%m-%d').date()
-#     time_row = datetime.datetime.strptime(sql_result_df.loc[i, 'time'], '%H:%M:%S').strftime('%H:%M')
-#     df_select_week.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
+start_date = '2021-02-13'
+end_date = '2021-02-20'
+
+# start_date
+start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+# this is the same date as below but in format '%Y-%m-%d'
+start_date = datetime.datetime.combine(start_date.date(), datetime.time(8, 0))
+
+# end_date
+end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+# this is the same date as below but in format '%Y-%m-%d'
+end_date = datetime.datetime.combine(end_date.date(), datetime.time(16, 50))
+
+# Range of 10 min slots from start_date to end_date
+timeoff_range = pd.date_range(start_date, end_date, freq='10min').strftime('%Y-%m-%d %H:%M').tolist()
+days = pd.date_range(start_date, end_date, freq='D')
+
+# check for weekend
+working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
+working_day = db_read_query(working_day_query).loc[0, 'gp_working_days']  # will need a query to pull the first working day for a specific GP
+
+# This part of the code works out when the GP has weekends and populates those days with status "Weekend"
+weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
+
+days = days.date
+
+# Deletion of 10 min slots that are outside of GP working hours
+new_timeoff_range = []
+for i in range(0, len(timeoff_range)):
+    if '08:00:00' <= timeoff_range[i][11:] <= '16:50:00':
+        new_timeoff_range.append(timeoff_range[i])
+
+
+
+
+
+
+
+
+
+    # insert into database
+    for i in range(0, len(new_timeoff_range)):
+        insert_timeoff_query = '''INSERT INTO
+                                                booking (booking_id, booking_start_time, booking_status, booking_status_change_time, booking_agenda, booking_type, booking_notes, gp_id, patient_id)
+                                            VALUES
+                                                (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, NULL);'''.format(
+            new_timeoff_range[i], timeoff_type, datetime. datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
+        db_execute(insert_timeoff_query)
