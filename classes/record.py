@@ -70,7 +70,7 @@ class Record:
         Generating a record instance & a dataframe to display in user flow.
         Instance used for storing user-inputted values.
         """
-        # Generating the 'patient' dataframes
+        # 1 - Generating the 'patient' dataframes
         query_attributes = """
                            SELECT patient_id AS 'Patient ID', 
                                   patient_first_name AS 'First Name', 
@@ -84,35 +84,41 @@ class Record:
                            """.format(patient_id)
         query_conditions = """
                            SELECT pmc.patient_medical_condition_type_id AS 'Condition ID',
-                                  patient_medical_condition_type_name AS 'Condition' 
+                                  patient_medical_condition_type_name AS 'Condition',
+                                  pmc.patient_id AS 'Patient ID' 
                            FROM patient_medical_condition pmc, patient_medical_condition_type pmct
                            WHERE pmc.patient_id = '{}'
                            AND pmc.patient_medical_condition_type_id = pmct.patient_medical_condition_type_id
                            """.format(patient_id)
         conn = sql.connect("database/db_comp0066.db")
-        df_attributes = pd.read_sql_query(query_attributes, conn)
-        df_conditions = pd.read_sql_query(query_conditions, conn)
+        df_atts = pd.read_sql_query(query_attributes, conn)
+        df_conds = pd.read_sql_query(query_conditions, conn)
         conn.close()
         # joining regular patient attributes with medical conditions
-        df_patient_concat = pd.concat([df_attributes, df_conditions], axis=1, join='outer')
-        # setting NaN to None (for printing)  
-        df_patient_object = df_patient_concat.where(pd.notnull(df_patient_concat), None)     
-        df_patient_print = df_patient_object.to_markdown(tablefmt="grid", index=False)
-        # generating the 'appointments' dataframes
+        df_patient_merge = pd.merge(df_atts, df_conds, how='left', on='Patient ID')
+        # replacing nulls with blank strings
+        df_patient_object = df_patient_merge.where(pd.notnull(df_patient_merge), '')
+        # adding line breaks between condition rows so printed in one row 
+        columns1 = ['Patient ID', 'First Name', 'Last Name', 'Gender',\
+                    'Birth Date', 'NHS Blood Donor', 'NHS Organ Donor']
+        columns2 = ['Condition ID', 'Condition']
+        df_patient_breaks = df_patient_object.groupby(columns1)[columns2].agg('\n'.join).reset_index() 
+        df_patient_print = df_patient_breaks.to_markdown(tablefmt="grid", index=False)
+        # 2 - Generating the 'appointments' dataframes
         df_apps = Appointment.select_patient('previous', patient_id, 'confirmed')[0]
         df_prescs = Prescription.select_patient(patient_id)[0]
         # joining appointments with corresponding prescriptions
-        df_apps_merge = pd.merge(df_apps, df_prescs, how='left', on='Apt. ID')\
-            .drop(columns = ['Appointment ID'])
-        # removing unnecessary column data created by the merge operation
-        columns = ['Apt. ID', 'GP', 'Date', 'Type', 'Notes']
-        df_apps_merge[columns] = df_apps_merge[columns] \
-            .mask(df_apps_merge.duplicated(columns))
-        # setting NaN to None (for printing)
-        df_apps_object = df_apps_object.where(pd.notnull(df_apps_object), None)
-        df_apps_print = df_apps_object.to_markdown(tablefmt="grid", index=False)
+        df_apps_merge = pd.merge(df_apps, df_prescs, how='left', on='Apt. ID')
+        # replacing nulls with blank strings & adding text wrapping for notes
+        df_apps_object = df_apps_merge.where(pd.notnull(df_apps_merge), '')
+        df_apps_object['Notes'] = df_apps_object['Notes'].str.wrap(30)
+        # adding line breaks between prescriptions so printed in one row
+        columns1 = ['Apt. ID', 'GP', 'Date', 'Type', 'Notes']
+        columns2 = ['Drug Name', 'Drug Dosage', 'Intake Frequency', 'Expiry Date']
+        df_apps_breaks = df_apps_object.groupby(columns1)[columns2].agg('\n'.join).reset_index()
+        df_apps_print = df_apps_breaks.to_markdown(tablefmt="grid", index=False)
         # Generating the record instance
-        record_instance = cls(patient_id, df_conditions['Condition ID'].tolist(), None)
+        record_instance = cls(patient_id, df_conds['Condition ID'].tolist(), dict(zip(df_apps['Apt. ID'], df_apps['Notes'])))
         return record_instance, df_patient_object, df_patient_print, df_apps_object, df_apps_print
 
 
@@ -143,12 +149,13 @@ class Record:
 # record_instance.appointment_notes['7'] = 'update_test'
 # record_instance.update()
 
-# Record.select()
-record_instance, df_obj1, df_print1, df_obj2 = Record.select(43)
+## Record.select()
+record_instance, df_obj1, df_print1, df_obj2, df_print2 = Record.select(43)
 print(vars(record_instance))
-print(df_obj1)
-print(df_print1)
-print(df_obj2)
+# print(df_obj1)
+# print(df_print1)
+# print(df_obj2)
+print(df_print2)
 
 ## Record.select_conditions()
 # df_obj, df_print = Record.select_conditions()
