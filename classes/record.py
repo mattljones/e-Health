@@ -10,9 +10,9 @@ import pandas as pd
 
 
 class Record:
-    '''
+    """
     Defines methods for patient medical record-related activities.
-    '''
+    """
     
     def __init__(self,
                  patient_id,
@@ -135,8 +135,8 @@ class Record:
 
 # Record.select()
 record_instance, df_obj1, df_print1, df_obj2, df_print2 = Record.select(43)
-print(vars(record_instance))
-print(df_obj1)
+# print(vars(record_instance))
+# print(df_obj1)
 print(df_print1)
 print(df_obj2)
 print(df_print2)
