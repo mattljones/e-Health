@@ -103,7 +103,7 @@ class Schedule:
         '''
         if type == 'day':
             # this is in format '%Y-%m-%d'
-            day_selection = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
 
             # database queries
             day_query = """Select booking_status AS 'Booking Status Old',
@@ -111,7 +111,7 @@ class Schedule:
                                         booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID' 
                                         FROM booking
                                         WHERE gp_id = {} AND strftime('%Y-%m-%d', booking_start_time) = '{}';""".format(gp_id,
-                                                                                                                        day_selection)
+                                                                                                                        start_date)
 
             sql_result_df = db_read_query(day_query)
 
@@ -121,9 +121,9 @@ class Schedule:
 
             df_object = pd.merge(df_select_day_empty,sql_result_df, left_on=df_select_day_empty.index, right_on='booking_hours', how='left')
 
-            for x in range(0, len(df_object)):
-                if pd.isnull(df_object.at[x, 'Booking Status Old']) == False:
-                    df_object.at[x, 'Booking Status'] = df_object.at[x, 'Booking Status Old']
+            for i in range(len(df_object)):
+                if pd.isnull(df_object.at[i, 'Booking Status Old']) == False:
+                    df_object.at[i, 'Booking Status'] = df_object.at[i, 'Booking Status Old']
 
 
             df_object = df_object.drop(columns=['Booking Status Old', 'booking_hours']).fillna('')
@@ -213,7 +213,7 @@ class Schedule:
 
         # Deletion of 10 min slots that are outside of GP working hours
         new_timeoff_range = []
-        for i in range(0, len(timeoff_range)):
+        for i in range(len(timeoff_range)):
             if '08:00' <= timeoff_range[i][11:] <= '16:50':
                 new_timeoff_range.append(timeoff_range[i])
         # connection to database
@@ -223,7 +223,7 @@ class Schedule:
         # Creating empty DataFrame
         df_object = pd.DataFrame()
         # insert into database
-        for i in range(0, len(new_timeoff_range)):
+        for i in range(len(new_timeoff_range)):
             c.execute("""
                         SELECT booking_id, booking_start_time, booking_status
                         FROM booking
@@ -249,7 +249,6 @@ class Schedule:
 
     @staticmethod  # INSERT insert_timeoff- STATIC
     ## TODO: Exception handling for already existing entries such as weekend, timeoff, bookings, rejected etc.
-    ## TODO: prevent entry at weekends!!!
     ## TODO: currently if there is a big big timeoff inserted and during that the time changes from e.g. 20:08 to 20:09 then the distinct query of select_upcoming_timeoff does not work anymore
     def insert_timeoff(gp_id, timeoff_type, start_date, end_date):
         '''
@@ -293,12 +292,12 @@ class Schedule:
 
             # Deletion of 10 min slots from timeoff_range_weekdays_only
             new_timeoff_range = []
-            for i in range(0, len(timeoff_range_weekdays_only)):
+            for i in range(len(timeoff_range_weekdays_only)):
                 if '08:00' <= timeoff_range_weekdays_only[i][11:] <= '16:50':
                     new_timeoff_range.append(timeoff_range_weekdays_only[i])
 
             # insert into database
-            for i in range(0, len(new_timeoff_range)):
+            for i in range(len(new_timeoff_range)):
                 insert_timeoff_query = '''INSERT INTO
                                                                 booking (booking_id, booking_start_time, booking_status, booking_status_change_time, booking_agenda, booking_type, booking_notes, gp_id, patient_id)
                                                             VALUES
