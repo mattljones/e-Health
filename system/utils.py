@@ -86,7 +86,7 @@ def display(dict):
     # Print "logout" option if logged in
     if logged():
         print("[ X ] Logout")
-    
+
     else:
         # print "exit" option
         print("[ E ] Exit the system")
@@ -119,10 +119,11 @@ def display(dict):
         return dict[usr_choice][1](dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
-        print("\n----------------------------------------------------\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
+        print(
+            "\n----------------------------------------------------\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
         print(asciiart.exit_art)
         sys.exit()
-    
+
     # TODO: guidance option?
     elif usr_choice in ('H', 'h'):
         pass
@@ -259,9 +260,8 @@ def validate_date(user_input):
     except ValueError:
         print("\U00002757 Incorrectly formatted date, must be in format YYYY-MM-DD.")
         return False
-    
+
     return True
-    
 
 
 def login(user_email, password, usr_type):
@@ -271,13 +271,13 @@ def login(user_email, password, usr_type):
     # u = (user_email,)
     conn = sqlite3.connect("database/db_comp0066.db")
     c = conn.cursor()
-    sql_pwd = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
+    sql_pwd = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
     # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
     c.execute(sql_pwd)
     pw_result = c.fetchone()
     if pw_result and pw_result[0] == password:
         # TODO: apply hashing
-        sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
+        sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
         c.execute(sql_id)
         usr_id = c.fetchone()[0]
         globals.usr_type = usr_type
@@ -421,6 +421,7 @@ def day_empty_df(date, gp_id):
 
     return day_df
 
+
 def week_empty_df(start_date, gp_id):
     days = pd.date_range(start=start_date, periods=7, freq='D')
     times = pd.date_range(start='08:00:00', periods=54, freq='10Min')  # .to_frame(name='Working Hours',index=False)
@@ -445,8 +446,7 @@ def week_empty_df(start_date, gp_id):
         if week_df.columns[i].weekday() in weekend_day_range:
             week_df[week_df.columns[i]] = 'Weekend'
 
-
-    return week_df.fillna(" ")
+    return week_df.fillna("")
 
 
 # This function accepts an SQL query as an input and then commits the changes into the DB
