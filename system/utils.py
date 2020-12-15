@@ -127,7 +127,7 @@ def validate(user_input):
     try:
         if user_input == '':
             raise EmptyError
-        elif len(user_input) > 15:
+        elif len(user_input) > 50:
             raise LenghtError
     except EmptyError:
         print("You need to input a value.")
@@ -135,24 +135,24 @@ def validate(user_input):
         print("Input is too long.")
 
 
-def login(user_id, password):
+def login(user_email, password, usr_type):
     # TODO: generalize to all user types
     """Check login credentials."""
 
-    u = (user_id,)
-
-    conn = sqlite3.connect("config/db_comp0066.db")
+    # u = (user_email,)
+    conn = sqlite3.connect("database/db_comp0066.db")
     c = conn.cursor()
-    c.execute('SELECT pw_hash FROM users WHERE user_id=?;', u)
-
+    sql = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
+    print(sql)
+    # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
+    c.execute(sql)
     pw_hash = c.fetchone()
-
     conn.close()
 
     # TODO: apply hashing - assign usr_type - go to next page in menu flow
     if pw_hash == password:
         print("Login successful.")
-        globals.usr_id = user_id
+        # globals.usr_id = user_id
         return True
     else:
         print("Login failed.")
@@ -332,7 +332,7 @@ def db_execute(query):
 
 # This function accepts an SQL query as an input and then returns the DF produced by the DB
 def db_read_query(query):
-    conn = sqlite3.connect("database/db_comp0066.db")
+    conn = sqlite3.connect("../database/db_comp0066.db")
     result = pd.read_sql_query(query, conn)
     conn.close()
     return result
