@@ -98,16 +98,22 @@ class Record:
         # setting NaN to None (for printing)  
         df_patient_object = df_patient_concat.where(pd.notnull(df_patient_concat), None)     
         df_patient_print = df_patient_object.to_markdown(tablefmt="grid", index=False)
-        # Generating the 'appointments' dataframes
+        # generating the 'appointments' dataframes
         df_apps = Appointment.select_patient('previous', patient_id, 'confirmed')[0]
-        print(df_apps)
         df_prescs = Prescription.select_patient(patient_id)[0]
-        print(df_prescs)
-        df_apps_merge = pd.merge(df_apps, df_prescs, how='left', left_on='Apt. ID', right_on='Apt. ID').drop(columns = ['Appointment ID'])
-        df_apps_merge[['Apt. ID', 'GP', 'Date', 'Type', 'Notes']] = df_apps_merge[['Apt. ID', 'GP', 'Date', 'Type', 'Notes']].mask(df_apps_merge.duplicated(['Apt. ID', 'GP', 'Date', 'Type', 'Notes']))
+        # joining appointments with corresponding prescriptions
+        df_apps_merge = pd.merge(df_apps, df_prescs, how='left', on='Apt. ID')\
+            .drop(columns = ['Appointment ID'])
+        # removing unnecessary column data created by the merge operation
+        columns = ['Apt. ID', 'GP', 'Date', 'Type', 'Notes']
+        df_apps_merge[columns] = df_apps_merge[columns] \
+            .mask(df_apps_merge.duplicated(columns))
+        # setting NaN to None (for printing)
+        df_apps_object = df_apps_object.where(pd.notnull(df_apps_object), None)
+        df_apps_print = df_apps_object.to_markdown(tablefmt="grid", index=False)
         # Generating the record instance
         record_instance = cls(patient_id, df_conditions['Condition ID'].tolist(), None)
-        return record_instance, df_patient_object, df_patient_print, df_apps_merge
+        return record_instance, df_patient_object, df_patient_print, df_apps_object, df_apps_print
 
 
     @staticmethod
