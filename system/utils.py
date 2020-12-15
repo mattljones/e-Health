@@ -137,15 +137,14 @@ def validate(user_input):
     
     Custom errors:
         - Empty field
-        - Input too long (> 15 chars)
+        - Input too long (> 25 chars) francois.xavier.reignier@gmail.com
         - Does not contain "'" or '"' to avoid SQL injections
     """
     # NOTE: This func could be used as decorator
     try:
         if user_input == '':
             raise EmptyError
-        # TODO: 15 is too short for email address
-        elif len(user_input) > 100:
+        elif len(user_input) > 25:
             raise LenghtError
         elif ('"' in user_input) or ("'" in user_input):
             raise InvalidCharacterError
@@ -283,11 +282,9 @@ def login(user_email, password, usr_type):
             globals.usr_type = usr_type
             globals.usr_id = usr_id
             conn.close()
-            print("Login successful.")
             return True
     else:
         conn.close()
-        print("Invalid email or password!.")
         return False
 
 

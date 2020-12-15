@@ -75,7 +75,7 @@ def login_page(login_as):
 
     # Invalid login credentials
     if (success == False):
-        print("\n\U00002757 Invalid credentials, please try again.")
+        print("\n\U00002757 Invalid email or password, please try again.")
         return login_page(login_as)
     
     # Valid login credentials
