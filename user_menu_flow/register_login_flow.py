@@ -58,7 +58,6 @@ def login_page(login_as):
         # Input validation for email
         elif (login_credentials[i] == "Email address") and (utils.validate_email(single_input)):
             usr_input.append(single_input)
-
         # Input validation for password
         elif (login_credentials[i] == "Password") and (utils.validate_password(single_input)):
             usr_input.append(single_input)

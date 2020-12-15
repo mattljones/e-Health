@@ -282,9 +282,11 @@ def login(user_email, password, usr_type):
             globals.usr_type = usr_type
             globals.usr_id = usr_id
             conn.close()
+            print("\nLogin successful.\n")
             return True
     else:
         conn.close()
+        print("\nInvalid email or password! Please try again! \n")
         return False
 
 

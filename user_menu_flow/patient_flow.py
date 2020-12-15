@@ -2,11 +2,11 @@
 
 # library imports 
 from pathlib import Path
-import sys 
+import sys
 
 # Change python path for imports
-p = Path(__file__).parents[1]
-sys.path.insert(1, str(p))
+package_dir = Path(__file__).parents[1]
+sys.path.insert(0, str(package_dir))
 
 # Importing utility methods from the 'system' package
 from system import utils
