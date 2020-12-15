@@ -119,7 +119,7 @@ def display(dict):
         return dict[usr_choice][1](dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
-        print("\n\U0001F51A Thanks for using e-health. Goodbye! \n")
+        print("\n----------------------------------------------------\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
         print(asciiart.exit_art)
         sys.exit()
     
