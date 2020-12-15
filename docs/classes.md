@@ -22,6 +22,15 @@ h1 {color: #486BD3;
   - Best implementation method
 - Add, modify or remove methods as appropriate
 
+## Return Variables
+(optional):
+Boolean for check functions such as check_timeoff_conflict() returned before 1. and 2.  
+
+Always:
+1. df_object (raw dataframe)  
+2. df_print (to_markdown formatted dataframe)
+
+
 # `Appointment`
 
 | Name | Type | User flow & purpose | Parameters | Returns |
@@ -70,8 +79,8 @@ h1 {color: #486BD3;
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
 | insert | instance | <li><b>GP</b> <li> Inserting a new prescription from an instance populated by user input (instance created in user flow) | - | - |
-| select_patient | static | <i>Used in Record.select() method</i> | <li>patient_id | Generally: DF with details of a patient's prescriptions {prescription_expiry_date (YYYY-MM-DD), drug_name, drug_dosage, drug_frequency_dosage, booking_id} <li> non-formatted DF <li> formatted DF |
-| select_drug_list | static | <li><b>GP</b> <li> Getting a list of drugs to choose from (for a prescription) | - | Generally: DF with all drugs {drug_id, drug_name} <li> non-formatted DF <li> formatted DF|
+| select_patient | static | <i>Used in Record.select() method</i> | <li>patient_id | Generally: DF with details of a patient's prescriptions {drug_name, drug_dosage, drug_frequency_dosage, prescription_expiry_date (YYYY-MM-DD), booking_id} <li> df_object <li> df_print  |
+| select_drug_list | static | <li><b>GP</b> <li> Getting a list of drugs to choose from (for a prescription) | - | Generally: DF with all drugs {drug_id, drug_name} <li> df_object <li> df_print |
 <br>
 
 # `Record`
@@ -87,9 +96,9 @@ h1 {color: #486BD3;
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| select | static | <li><b>Admin, GP</b> <li> Viewing a GP's schedule | <li>gp_id <li>type = day/week <li>start_date (YYYY-MM-DD) | Generally: DF of a specific GP's schedule for a given day (detailed) or week (less detailed per day) <li> non-formatted DF <li> formatted DF |
-| select_upcoming_timeoff | static | <li><b>Admin</b> <li> Viewing a GP's upcoming timeoff | <li>gp_id | Generally: DF of a GP's upcoming time off {booking_start_time (YYYY-MM-DD), booking_stats, booking_status_change_time} <li> non-formatted DF <li> formatted DF|
-| check_timeoff_conflict | static | <li><b>Admin, GP</b> <li> Checking proposed GP timeoff doesn't conflict with any appointments | <li>gp_id <li>date_start (YYYY-MM-DD) <li>date_end (YYYY-MM-DD) | <li> BOOLean: 'True' if there was a conflict, 'False' is there was no conflict  DF of conflicting appointments {booking_id, booking_start_time, booking_status, booking_status_change_time, ????? patient name (patient_first_name + patient_last_name)} <li> non-formatted DF <li> formatted DF |
+| select | static | <li><b>Admin, GP</b> <li> Viewing a GP's schedule | <li>gp_id <li>type = day/week <li>start_date (YYYY-MM-DD) | Generally: DF of a specific GP's schedule for a given day (detailed) or week (less detailed per day) <li> df_object <li> df_print  |
+| select_upcoming_timeoff | static | <li><b>Admin</b> <li> Viewing a GP's upcoming timeoff | <li>gp_id | Generally: DF of a GP's upcoming time off {booking_start_time (YYYY-MM-DD), booking_stats, booking_status_change_time} <li> df_object <li> df_print |
+| check_timeoff_conflict | static | <li><b>Admin, GP</b> <li> Checking proposed GP timeoff doesn't conflict with any appointments | <li>gp_id <li>date_start (YYYY-MM-DD) <li>date_end (YYYY-MM-DD) | <li> BOOLean: 'True' if there was a conflict, 'False' is there was no conflict  DF of conflicting appointments {booking_id, booking_start_time, booking_status, booking_status_change_time} <li> df_object <li> df_print |
 | insert_timeoff | static | <li><b>Admin, GP</b> <li> Inserting GP time off (only whole days possible) | <li>gp_id <li> timeoff_type = time off/sick leave <li>start_date (YYYY-MM-DD) <li>end_date (YYYY-MM-DD) | <li> 'time off was inserted' | 
 | delete_upcoming_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = all/custom <li>timeoff_type = time off/sick leave <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>all: 'all upcoming timeoffs were deleted' <li> custom: 'timeoffs were deleted for your indicated time period' |
 <br>
