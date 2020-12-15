@@ -272,21 +272,21 @@ def login(user_email, password, usr_type):
     sql_pwd = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
     # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
     c.execute(sql_pwd)
-    if c.fetchone():
-        pw_hash = c.fetchone()[0]
+    pw_result = c.fetchone()
+    if pw_result and pw_result[0] == password:
         # TODO: apply hashing
-        if pw_hash == password:
-            sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
-            c.execute(sql_id)
-            usr_id = c.fetchone()[0]
-            globals.usr_type = usr_type
-            globals.usr_id = usr_id
-            conn.close()
-            print("\nLogin successful.\n")
-            return True
+        sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
+        c.execute(sql_id)
+        usr_id = c.fetchone()[0]
+        globals.usr_type = usr_type
+        globals.usr_id = usr_id
+        conn.close()
+        return True
+        # else:
+        #     conn.close()
+        #     return False
     else:
         conn.close()
-        print("\nInvalid email or password! Please try again! \n")
         return False
 
 
