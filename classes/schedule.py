@@ -37,14 +37,12 @@ def week_empty_df(start_date, gp_id):
     return week_df.fillna(" ")
 
 
-
 def db_execute(query):
     conn = sql.connect('database/db_comp0066.db')
     c = conn.cursor()
     c.execute(query)
     # Commit to db
     conn.commit()
-    print("Info successfully committed")
     # Close db
     conn.close()
 
@@ -80,12 +78,12 @@ def day_empty_df(date, gp_id):
     if day_df.columns[0].weekday() in weekend_day_range:
         day_df[day_df.columns[0]] = 'Weekend'
 
-
     # Make df pretty
     day_df.columns.values[0] = "Booking Status"
     day_df = day_df.fillna("")
 
     return day_df
+
 
 # day_empty_df('2020-12-12',2)
 
@@ -95,7 +93,6 @@ class Schedule:
     '''
 
     @staticmethod  # SELECT day - STATIC
-    # TODO: do day, week
     def select(gp_id, type, start_date):
         '''
         Selection of all database entries for a specific day
@@ -106,14 +103,15 @@ class Schedule:
         '''
         if type == 'day':
             # this is in format '%Y-%m-%d'
-            day_selection = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
 
             # database queries
             day_query = """Select booking_status AS 'Booking Status Old',
-                            strftime('%H:%M', booking_start_time) booking_hours,
-                            booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID' 
-                            FROM booking
-                            WHERE gp_id = {} AND strftime('%Y-%m-%d', booking_start_time) = '{}';""".format(gp_id, day_selection)
+                                        strftime('%H:%M', booking_start_time) booking_hours,
+                                        booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID' 
+                                        FROM booking
+                                        WHERE gp_id = {} AND strftime('%Y-%m-%d', booking_start_time) = '{}';""".format(gp_id,
+                                                                                                                        start_date)
 
             sql_result_df = db_read_query(day_query)
 
@@ -121,44 +119,47 @@ class Schedule:
             df_select_day_empty = day_empty_df(start_date, 2)
             # df_select_day = df_select_day.update(sql_result_df)
 
-            df_select_day = pd.merge(df_select_day_empty,sql_result_df, left_on=df_select_day_empty.index, right_on='booking_hours', how='left')
+            df_object = pd.merge(df_select_day_empty,sql_result_df, left_on=df_select_day_empty.index, right_on='booking_hours', how='left')
 
-            for i in range(len(sql_result_df)):
-                df_select_day['Booking Status'].iloc[i] = sql_result_df['Booking Status Old'].iloc[i]
+            for i in range(len(df_object)):
+                if pd.isnull(df_object.at[i, 'Booking Status Old']) == False:
+                    df_object.at[i, 'Booking Status'] = df_object.at[i, 'Booking Status Old']
 
-            df_select_day = df_select_day.drop(columns=['Booking Status Old', 'booking_hours']).fillna('')
-            df_select_day = df_select_day.set_index(df_select_day_empty.index)
+
+            df_object = df_object.drop(columns=['Booking Status Old', 'booking_hours']).fillna('')
+            df_object = df_object.set_index(df_select_day_empty.index)
 
             # drop booking_dates and booking_hours as they are not needed anymore
-            df_formatted = df_select_day.to_markdown(tablefmt="grid", index=True)
+            df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-            return df_select_day, df_formatted
+            return df_object, df_print
 
         if type == 'week':
 
-            # forms an empty DF for a week from the date specified for a specific GP
-            df_select_week = week_empty_df(start_date, gp_id)
-
             # Works out the end date for a week that was specified
-            end_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() + datetime.timedelta(days=6)
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = start_date + datetime.timedelta(days=6)
 
-            # SQLite query and forms a DF sql_result_df with booking for a specific GP
-            week_query = """SELECT date(booking_start_time) start_date,strftime('%H:%M',booking_start_time) time,
-                                   booking_status
-                                   FROM booking
-                                   WHERE gp_id = {} 
-                                   AND start_date BETWEEN '{}' and '{}';""".format(gp_id, start_date, end_date)
+            # SQLite query and forms a DF df_object with booking for a specific GP
+            week_query = """SELECT date(booking_start_time) start_date, strftime('%H:%M',booking_start_time) time,
+                                               booking_status
+                                               FROM booking
+                                               WHERE gp_id = {} 
+                                               AND start_date BETWEEN '{}' and '{}';""".format(gp_id, start_date, end_date)
             sql_result_df = db_read_query(week_query)
 
-            # inserts all the data from the sql_result_df into the empty week DF
+            # forms an empty DF for a week from the date specified for a specific GP
+            df_object = week_empty_df(start_date, gp_id)
+
+            # inserts all the data from the df_object into the empty week DF
             for i in range(len(sql_result_df)):
                 date_column = datetime.datetime.strptime(sql_result_df.loc[i, 'start_date'], '%Y-%m-%d').date()
                 time_row = datetime.datetime.strptime(sql_result_df.loc[i, 'time'], '%H:%M').strftime('%H:%M')
-                df_select_week.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
+                df_object.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
 
-            df_formatted = df_select_week.to_markdown(tablefmt="grid", index=True)
+            df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-            return df_select_week, df_formatted
+            return df_object, df_print
 
     @staticmethod  # SELECT select_upcoming_timeoff - STATIC
     def select_upcoming_timeoff(gp_id):
@@ -183,9 +184,9 @@ class Schedule:
 
         upcoming_timeoff = db_read_query(upcoming_timeoff_query)
 
-        df_formatted = upcoming_timeoff.to_markdown(tablefmt="grid", index=True)
+        df_print = upcoming_timeoff.to_markdown(tablefmt="grid", index=True)
 
-        return upcoming_timeoff, df_formatted
+        return upcoming_timeoff, df_print
 
     @staticmethod  # SELECT check_timeoff_conflict - STATIC
     def check_timeoff_conflict(gp_id, start_date, end_date):
@@ -212,7 +213,7 @@ class Schedule:
 
         # Deletion of 10 min slots that are outside of GP working hours
         new_timeoff_range = []
-        for i in range(0, len(timeoff_range)):
+        for i in range(len(timeoff_range)):
             if '08:00' <= timeoff_range[i][11:] <= '16:50':
                 new_timeoff_range.append(timeoff_range[i])
         # connection to database
@@ -220,31 +221,31 @@ class Schedule:
         # Create cursor
         c = conn.cursor()
         # Creating empty DataFrame
-        df_check_timeoff_conflict = pd.DataFrame()
+        df_object = pd.DataFrame()
         # insert into database
-        for i in range(0, len(new_timeoff_range)):
+        for i in range(len(new_timeoff_range)):
             c.execute("""
                         SELECT booking_id, booking_start_time, booking_status
                         FROM booking
                         WHERE strftime('%Y-%m-%d %H:%M', booking_start_time) = ?
                         AND gp_id = ?
-                        AND booking_status IN ('time off', 'sick leave');""", (new_timeoff_range[i], gp_id))
+                        AND booking_status IN ('confirmed', 'booked');""", (new_timeoff_range[i], gp_id))
             # Appending to DataFrame
-            df_check_timeoff_conflict = df_check_timeoff_conflict.append(c.fetchall(), ignore_index=True)
+            df_object = df_object.append(c.fetchall(), ignore_index=True)
 
-        df_check_timeoff_conflict.rename(columns={0: 'Booking ID', 1: 'Timeoff Start Time', 2: 'Timeoff Type'},
+        df_object.rename(columns={0: 'Booking ID', 1: 'Timeoff Start Time', 2: 'Timeoff Type'},
                                          inplace=True)
 
-        if len(df_check_timeoff_conflict.index) >= 1:
-            check_timeoff_conflict_boolean = True
-        elif len(df_check_timeoff_conflict.index) == 0:
-            check_timeoff_conflict_boolean = False
+        if len(df_object.index) >= 1:
+            boolean = True
+        elif len(df_object.index) == 0:
+            boolean = False
 
         conn.close()
 
-        df_formatted = df_check_timeoff_conflict.to_markdown(tablefmt="grid", index=True)
+        df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-        return check_timeoff_conflict_boolean, df_check_timeoff_conflict, df_formatted
+        return boolean, df_object, df_print
 
     @staticmethod  # INSERT insert_timeoff- STATIC
     ## TODO: Exception handling for already existing entries such as weekend, timeoff, bookings, rejected etc.
@@ -259,35 +260,58 @@ class Schedule:
         :param end_date: e.g. 2020-12-10
         :return: 'time off was inserted'
         '''
-        # start_date
-        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-        # this is the same date as below but in format '%Y-%m-%d'
-        start_date = datetime.datetime.combine(start_date.date(), datetime.time(8, 0))
+        if schedule.check_timeoff_conflict(gp_id, start_date, end_date)[0] == False:
 
-        # end_date
-        end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-        # this is the same date as below but in format '%Y-%m-%d'
-        end_date = datetime.datetime.combine(end_date.date(), datetime.time(16, 50))
+            # start_date
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            # this is the same date as below but in format '%Y-%m-%d'
+            start_date = datetime.datetime.combine(start_date.date(), datetime.time(8, 0))
 
-        # Range of 10 min slots from start_date to end_date
-        timeoff_range = pd.date_range(start_date, end_date, freq='10min').strftime('%Y-%m-%d %H:%M').tolist()
+            # end_date
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+            # this is the same date as below but in format '%Y-%m-%d'
+            end_date = datetime.datetime.combine(end_date.date(), datetime.time(16, 50))
 
-        # Deletion of 10 min slots that are outside of GP working hours
-        new_timeoff_range = []
-        for i in range(0, len(timeoff_range)):
-            if '08:00:00' <= timeoff_range[i][11:] <= '16:50:00':
-                new_timeoff_range.append(timeoff_range[i])
+            # Handling Working Days
+            working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
+            working_day = db_read_query(working_day_query).loc[0, 'gp_working_days']
 
-        # insert into database
-        for i in range(0, len(new_timeoff_range)):
-            insert_timeoff_query = '''INSERT INTO
-                                                booking (booking_id, booking_start_time, booking_status, booking_status_change_time, booking_agenda, booking_type, booking_notes, gp_id, patient_id)
-                                            VALUES
-                                                (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, NULL);'''.format(
-                new_timeoff_range[i], timeoff_type, datetime. datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
-            db_execute(insert_timeoff_query)
+            # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
+            weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
 
-        return 'time off was inserted'
+            # Range of 10 min slots from start_date to end_date
+            timeoff_range = pd.date_range(start_date, end_date, freq='10min').strftime('%Y-%m-%d %H:%M').tolist()
+
+            # Selection of weekdays (non weekend) slots only
+            weekdays_only_helper = []
+            for i in range(len(timeoff_range)):
+                if datetime.datetime.strptime(timeoff_range[i][:10], '%Y-%m-%d').weekday() not in weekend_day_range:
+                    weekdays_only_helper.append(i)
+
+            timeoff_range_weekdays_only = [timeoff_range[i] for i in weekdays_only_helper]
+
+            # Deletion of 10 min slots from timeoff_range_weekdays_only
+            new_timeoff_range = []
+            for i in range(len(timeoff_range_weekdays_only)):
+                if '08:00' <= timeoff_range_weekdays_only[i][11:] <= '16:50':
+                    new_timeoff_range.append(timeoff_range_weekdays_only[i])
+
+            # insert into database
+            for i in range(len(new_timeoff_range)):
+                insert_timeoff_query = '''INSERT INTO
+                                                                booking (booking_id, booking_start_time, booking_status, booking_status_change_time, booking_agenda, booking_type, booking_notes, gp_id, patient_id)
+                                                            VALUES
+                                                                (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, NULL);'''.format(
+                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
+                db_execute(insert_timeoff_query)
+
+            return 'time off was inserted'
+
+        else:
+
+            print('The timeoffs conflict with existing database entries!')
+
+            return schedule.check_timeoff_conflict()
 
     @staticmethod  # DELETE all - STATIC
     ## TODO: only if requested by user flow team: make timeoff_type=None
@@ -366,19 +390,19 @@ if __name__ == "__main__":
 schedule = Schedule()
 
 ## testing select day
-schedule.select(2, 'day', '2021-02-27')
+schedule.select(2, 'day', '2020-12-1')
 
 ## testing select week
-schedule.select(2, 'week', '2021-02-20')
+schedule.select(2, 'week', '2020-12-01')
 
 ## testing check_timeoff_conflict
-schedule.check_timeoff_conflict(2, '2021-1-11', '2021-1-13')
+schedule.check_timeoff_conflict(2, '2020-12-01', '2021-1-13')
 
 ## testing select_upcoming_timeoff
 schedule.select_upcoming_timeoff(2)
 
 ## testing insert_timeoff_custom
-schedule.insert_timeoff(2, 'sick leave', '2021-2-26', '2021-2-27')
+schedule.insert_timeoff(2, 'sick leave', '2020-12-1', '2020-12-22')
 
 ## testing delete_timeoff custom
 schedule.delete_timeoff(gp_id=2, type='custom', timeoff_type='sick leave', start_date='2021-1-20', end_date='2021-1-25')
@@ -386,97 +410,97 @@ schedule.delete_timeoff(gp_id=2, type='custom', timeoff_type='sick leave', start
 ## testing delete_timeoff all
 schedule.delete_timeoff(gp_id=2, type='all', timeoff_type='sick leave')
 
-# ## select schedule
-# gp_id = 2
-# date = '2020-12-05'
-# # type = 'all'
-# # timeoff_type = 'time off'
-# # start_date = '2021-01-11 08:00'
-# # end_date = '2021-01-13 15:00'
-#
-#
-#
-# # this is in format '%Y-%m-%d %H:%M:%S' and cannot be changed
-# date_values = datetime.datetime.strptime(date, '%Y-%m-%d')
-# # this is the same date as below but in format '%Y-%m-%d'
-# day_selection = date_values.date()
-#
-# day_query = """
-#                 SELECT strftime('%Y-%m-%d', booking_start_time) booking_dates, strftime('%H:%M', booking_start_time) booking_hours, booking_status AS 'Booking Status', booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID'
-#                 FROM booking
-#                 WHERE gp_id = {}
-#                 AND booking_dates = '{}';""".format(gp_id, day_selection)
-#
-# schedule_day = db_read_query(day_query)
-#
-# df_raw = day_empty_df(date, gp_id)
-#
-#
-# # perform join
-# # df_select_day = pd.merge(df_raw, schedule_day, left_on=[df_raw.index,'Booking Status'], right_on=['booking_hours','Booking Status_y'], how='left')
-# df_select_day = pd.merge(df_raw, schedule_day, left_on=df_raw.index, right_on='booking_hours', how='left')
-# df_select_day["Booking Status"] = df_select_day["Booking Status_y"] + df_select_day["Booking Status_x"].astype(str)
-# # # set new index
-# # times = pd.date_range(start='08:00', periods=54, freq='10Min').strftime('%H:%M')
-# # df_select_day = df_select_day.set_index(times)
-# # drop booking_dates and booking_hours as they are not needed anymore
-# df_select_day = df_select_day.drop(columns=['booking_dates', 'booking_hours'])
-# df_select_day = pd.merge(df_select_day, df_select_day, left_on='Booking Status_x', right_on='Booking Status_y', how='inner')
-#
-# # primitive fillna for the moment
-# df_select_day = df_select_day.fillna("")
-#
-# df_formatted = df_select_day.to_markdown(tablefmt="grid", index=True)
 
-
-
+start_date = '2021-1-1'
+end_date = '2021-1-20'
 gp_id = 2
-# timeoff_type = 'time off'
-start_date = '2021-02-13'
-end_date = '2021-02-20'
-
-# start_date
-start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-# this is the same date as below but in format '%Y-%m-%d'
-start_date = datetime.datetime.combine(start_date.date(), datetime.time(8, 0))
-
-# end_date
-end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-# this is the same date as below but in format '%Y-%m-%d'
-end_date = datetime.datetime.combine(end_date.date(), datetime.time(16, 50))
-
-# Range of 10 min slots from start_date to end_date
-timeoff_range = pd.date_range(start_date, end_date, freq='10min').strftime('%Y-%m-%d %H:%M').tolist()
-days = pd.date_range(start_date, end_date, freq='D')
-
-# check for weekend
-working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
-working_day = db_read_query(working_day_query).loc[0, 'gp_working_days']  # will need a query to pull the first working day for a specific GP
-
-# This part of the code works out when the GP has weekends and populates those days with status "Weekend"
-weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
-
-days = days.date
-
-# Deletion of 10 min slots that are outside of GP working hours
-new_timeoff_range = []
-for i in range(0, len(timeoff_range)):
-    if '08:00:00' <= timeoff_range[i][11:] <= '16:50:00':
-        new_timeoff_range.append(timeoff_range[i])
+timeoff_type = 'sick leave'
 
 
+    if schedule.check_timeoff_conflict(gp_id,start_date,end_date)[0] == False:
+
+        # start_date
+        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        # this is the same date as below but in format '%Y-%m-%d'
+        start_date = datetime.datetime.combine(start_date.date(), datetime.time(8, 0))
+
+        # end_date
+        end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+        # this is the same date as below but in format '%Y-%m-%d'
+        end_date = datetime.datetime.combine(end_date.date(), datetime.time(16, 50))
+
+        # Handling Working Days
+        working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
+        working_day = db_read_query(working_day_query).loc[0, 'gp_working_days']
+
+        # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
+        weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
+
+        # Range of 10 min slots from start_date to end_date
+        timeoff_range = pd.date_range(start_date, end_date, freq='10min').strftime('%Y-%m-%d %H:%M').tolist()
+
+        # Selection of weekdays (non weekend) slots only
+        weekdays_only_helper = []
+        for i in range(len(timeoff_range)):
+            if datetime.datetime.strptime(timeoff_range[i][:10], '%Y-%m-%d').weekday() not in weekend_day_range:
+                weekdays_only_helper.append(i)
+
+        timeoff_range_weekdays_only = [timeoff_range[i] for i in weekdays_only_helper]
+
+        # Deletion of 10 min slots from timeoff_range_weekdays_only
+        new_timeoff_range = []
+        for i in range(0, len(timeoff_range_weekdays_only)):
+            if '08:00' <= timeoff_range_weekdays_only[i][11:] <= '16:50':
+                new_timeoff_range.append(timeoff_range_weekdays_only[i])
+
+        # # Range of 10 min slots from start_date to end_date
+        # timeoff_range = pd.date_range(start_date, end_date, freq='10min').strftime('%Y-%m-%d %H:%M').tolist()
+        #
+        # # Deletion of 10 min slots that are outside of GP working hours
+        # new_timeoff_range = []
+        # for i in range(0, len(timeoff_range)):
+        #     if '08:00' <= timeoff_range[i][11:] <= '16:50':
+        #         new_timeoff_range.append(timeoff_range[i])
+
+        # insert into database
+        for i in range(0, len(new_timeoff_range)):
+            insert_timeoff_query = '''INSERT INTO
+                                                        booking (booking_id, booking_start_time, booking_status, booking_status_change_time, booking_agenda, booking_type, booking_notes, gp_id, patient_id)
+                                                    VALUES
+                                                        (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, NULL);'''.format(
+                new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
+            db_execute(insert_timeoff_query)
+
+        return 'time off was inserted'
+
+    else:
+
+        print('The timeoffs conflict with existing database entries!')
+
+        return schedule.check_timeoff_conflict()
 
 
 
-
-
-
-
-    # insert into database
-    for i in range(0, len(new_timeoff_range)):
-        insert_timeoff_query = '''INSERT INTO
-                                                booking (booking_id, booking_start_time, booking_status, booking_status_change_time, booking_agenda, booking_type, booking_notes, gp_id, patient_id)
-                                            VALUES
-                                                (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, NULL);'''.format(
-            new_timeoff_range[i], timeoff_type, datetime. datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
-        db_execute(insert_timeoff_query)
+# # Handling Working Days
+# working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
+# working_day = db_read_query(working_day_query).loc[0, 'gp_working_days']
+#
+# # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
+# weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
+#
+# # Range of 10 min slots from start_date to end_date
+# timeoff_range = pd.date_range(start_date, end_date, freq='10min').strftime('%Y-%m-%d %H:%M').tolist()
+#
+# # Selection of weekdays (non weekend) slots only
+# weekdays_only_helper = []
+# for i in range(len(timeoff_range_list)):
+#     if datetime.datetime.strptime(timeoff_range_list[i][:10], '%Y-%m-%d').weekday() not in weekend_day_range:
+#         weekdays_only_helper.append(i)
+#
+# timeoff_range_weekdays_only = [timeoff_range_list[i] for i in weekdays_only_helper]
+#
+# # Deletion of 10 min slots from timeoff_range_weekdays_only
+# new_timeoff_range = []
+# for i in range(0, len(timeoff_range_weekdays_only)):
+#     if '08:00' <= timeoff_range_weekdays_only[i][11:] <= '16:50':
+#         new_timeoff_range.append(timeoff_range_weekdays_only[i])

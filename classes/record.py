@@ -99,11 +99,15 @@ class Record:
         df_patient_object = df_patient_concat.where(pd.notnull(df_patient_concat), None)     
         df_patient_print = df_patient_object.to_markdown(tablefmt="grid", index=False)
         # Generating the 'appointments' dataframes
-        df_apps = Appointment.select_patient_previous(patient_id)[2]
+        df_apps = Appointment.select_patient('previous', patient_id, 'confirmed')[0]
+        print(df_apps)
         df_prescs = Prescription.select_patient(patient_id)[0]
+        print(df_prescs)
+        df_apps_merge = pd.merge(df_apps, df_prescs, how='left', left_on='Apt. ID', right_on='Apt. ID').drop(columns = ['Appointment ID'])
+        df_apps_merge[['Apt. ID', 'GP', 'Date', 'Type', 'Notes']] = df_apps_merge[['Apt. ID', 'GP', 'Date', 'Type', 'Notes']].mask(df_apps_merge.duplicated(['Apt. ID', 'GP', 'Date', 'Type', 'Notes']))
         # Generating the record instance
         record_instance = cls(patient_id, df_conditions['Condition ID'].tolist(), None)
-        return record_instance, df_patient_object, df_patient_print, df_apps, df_prescs
+        return record_instance, df_patient_object, df_patient_print, df_apps_merge
 
 
     @staticmethod
@@ -134,12 +138,11 @@ class Record:
 # record_instance.update()
 
 # Record.select()
-record_instance, df_obj1, df_print1, df_obj2, df_print2 = Record.select(43)
-# print(vars(record_instance))
-# print(df_obj1)
+record_instance, df_obj1, df_print1, df_obj2 = Record.select(43)
+print(vars(record_instance))
+print(df_obj1)
 print(df_print1)
 print(df_obj2)
-print(df_print2)
 
 ## Record.select_conditions()
 # df_obj, df_print = Record.select_conditions()
