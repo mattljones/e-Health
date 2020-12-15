@@ -5,6 +5,7 @@ import sys
 import sqlite3
 import pandas as pd
 import datetime as dt
+from system import asciiart
 
 # Change python path for imports
 p = Path(__file__).parents[1]
@@ -85,7 +86,7 @@ def display(dict):
     # Print "logout" option if logged in
     if logged():
         print("[ X ] Logout")
-    
+
     else:
         # print "exit" option
         print("[ E ] Exit the system")
@@ -118,9 +119,11 @@ def display(dict):
         return dict[usr_choice][1](dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
-        print("\n\U0001F51A Thanks for using e-health. Goodbye! \n")
+        print(
+            "\n----------------------------------------------------\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
+        print(asciiart.exit_art)
         sys.exit()
-    
+
     # TODO: guidance option?
     elif usr_choice in ('H', 'h'):
         pass
@@ -257,9 +260,8 @@ def validate_date(user_input):
     except ValueError:
         print("\U00002757 Incorrectly formatted date, must be in format YYYY-MM-DD.")
         return False
-    
+
     return True
-    
 
 
 def login(user_email, password, usr_type):
@@ -269,24 +271,24 @@ def login(user_email, password, usr_type):
     # u = (user_email,)
     conn = sqlite3.connect("database/db_comp0066.db")
     c = conn.cursor()
-    sql_pwd = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
+    sql_pwd = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
     # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
     c.execute(sql_pwd)
-    if c.fetchone():
-        pw_hash = c.fetchone()[0]
+    pw_result = c.fetchone()
+    if pw_result and pw_result[0] == password:
         # TODO: apply hashing
-        if pw_hash == password:
-            sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email='+ "'" + user_email + "'"
-            c.execute(sql_id)
-            usr_id = c.fetchone()[0]
-            globals.usr_type = usr_type
-            globals.usr_id = usr_id
-            conn.close()
-            print("\nLogin successful.\n")
-            return True
+        sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
+        c.execute(sql_id)
+        usr_id = c.fetchone()[0]
+        globals.usr_type = usr_type
+        globals.usr_id = usr_id
+        conn.close()
+        return True
+        # else:
+        #     conn.close()
+        #     return False
     else:
         conn.close()
-        print("\nInvalid email or password! Please try again! \n")
         return False
 
 
@@ -390,16 +392,17 @@ def sqlhelper():
 
 
 def day_empty_df(date, gp_id):
-    ## TODO: first insert lunchtime, then insert weekends
-    '''
-    Create empty DataFrame for a day (incl. weekends and lunchtime)
-    :param date: date in string format 'YYYY-MM-DD'
-    :param gp_id: gp_id from database
-    :return: DataFrame that handles weekends and lunch times
-    '''
     times = pd.date_range(start='08:00', periods=54, freq='10Min').strftime('%H:%M')
     date = pd.date_range(start=date, periods=1, freq='D')
     day_df = pd.DataFrame(index=times, columns=date.date)
+    # day_df = pd.DataFrame({'Booking Hours': times, 'Booking Status': ""})
+    # day_df = day_df.set_index('Booking Hours')
+
+    # Handling lunch time
+    if (gp_id % 2) == 0:
+        day_df.loc['12:00':'12:50'] = 'Lunch Time'
+    else:
+        day_df.loc['13:00':'13:50'] = 'Lunch Time'
 
     # Handling Working Days
     working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
@@ -412,14 +415,12 @@ def day_empty_df(date, gp_id):
     if day_df.columns[0].weekday() in weekend_day_range:
         day_df[day_df.columns[0]] = 'Weekend'
 
-    # Handling lunch time
-    # even gp_id 12:00 to 13:00, odd gp_id 13:00 to 14:00
-    if (gp_id % 2) == 0 and day_df[date.date].isnull().values.any() == True:
-        day_df.loc['12:00':'12:50'] = 'Lunch Time'
-    elif (gp_id % 2) != 0 and day_df[date.date].isnull().values.any() == True:
-        day_df.loc['13:00':'13:50'] = 'Lunch Time'
+    # Make df pretty
+    day_df.columns.values[0] = "Booking Status"
+    day_df = day_df.fillna("")
 
-    return day_df.fillna(" ")
+    return day_df
+
 
 def week_empty_df(start_date, gp_id):
     days = pd.date_range(start=start_date, periods=7, freq='D')
@@ -445,8 +446,7 @@ def week_empty_df(start_date, gp_id):
         if week_df.columns[i].weekday() in weekend_day_range:
             week_df[week_df.columns[i]] = 'Weekend'
 
-
-    return week_df.fillna(" ")
+    return week_df.fillna("")
 
 
 # This function accepts an SQL query as an input and then commits the changes into the DB
@@ -463,7 +463,7 @@ def db_execute(query):
 
 # This function accepts an SQL query as an input and then returns the DF produced by the DB
 def db_read_query(query):
-    conn = sqlite3.connect("../database/db_comp0066.db")
+    conn = sqlite3.connect("database/db_comp0066.db")
     result = pd.read_sql_query(query, conn)
     conn.close()
     return result
