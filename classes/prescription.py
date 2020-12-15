@@ -83,8 +83,12 @@ class Prescription:
 
 
         select_patient_query = '''
-                                    SELECT prescription_expiry_date AS "Expiry Date", drug_name AS "Drug Name", drug_dosage AS "Drug Dosage",
-                                    drug_frequency_dosage AS "Intake Frequency", p.booking_id AS "Appointment ID"
+                                    SELECT
+                                    drug_name AS "Drug Name",
+                                    drug_dosage AS "Drug Dosage",
+                                    drug_frequency_dosage AS "Intake Frequency",
+                                    prescription_expiry_date AS "Expiry Date",
+                                    p.booking_id AS "Apt. ID"
                                     FROM prescription AS p
                                     LEFT JOIN booking AS b ON p.booking_id = b.booking_id
                                     LEFT JOIN drug AS d ON p.drug_id = d.drug_id
@@ -101,9 +105,9 @@ class Prescription:
 ### TESTING ###
 ## testing prescription
 # # call classes
-# new_prescription = Prescription()
+new_prescription = Prescription()
 # # see patient records
-# new_prescription.select_patient(22)
+df=new_prescription.select_patient(22)[0]
 # # see drug list
 # df = new_prescription.select_drug_list()[0]
 
