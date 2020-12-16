@@ -4,23 +4,7 @@
 import pandas as pd
 import sqlite3 as sql
 import datetime
-
-
-def db_execute(query):
-    conn = sql.connect('database/db_comp0066.db')
-    c = conn.cursor()
-    c.execute(query)
-    # Commit to db
-    conn.commit()
-    # Close db
-    conn.close()
-
-
-def db_read_query(query):
-    conn = sql.connect("database/db_comp0066.db")
-    result = pd.read_sql_query(query, conn)
-    conn.close()
-    return result
+from system import utils as u
 
 class Prescription:
     '''
@@ -49,7 +33,7 @@ class Prescription:
                                                                         self.drug_frequency_dosage,
                                                                         self.booking_id)
 
-        db_execute(insert_query)
+        u.db_execute(insert_query)
 
     @staticmethod  # SELECT_list - STATIC
     def select_drug_list():
@@ -62,7 +46,7 @@ class Prescription:
                             SELECT drug_id AS "Drug ID", drug_name AS "Drug Name"
                             FROM drug'''
 
-        df_object = db_read_query(select_drug_query)
+        df_object = u.db_read_query(select_drug_query)
 
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
@@ -95,7 +79,7 @@ class Prescription:
                                     AND
                                         booking_status = 'confirmed';'''.format(patient_id)
 
-        df_object = db_read_query(select_patient_query)
+        df_object = u.db_read_query(select_patient_query)
 
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
