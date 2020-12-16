@@ -6,6 +6,7 @@ import sqlite3 as sql
 import datetime
 from system import utils as u
 
+
 class Prescription:
     '''
     Class defining all 'prescription' related methods.
@@ -21,33 +22,35 @@ class Prescription:
     def insert(self):  # INSERT - INSTANCE
         '''
         Insertion of a prescription into the prescription table
-        :return: 'Prescription is inserted in prescription table'
+        :return: no return, as prescription is inserted in prescription table
         '''
         insert_query = """
                         INSERT INTO prescription
                         VALUES (NULL, '{}', '{}', {}, '{}', '{}', {});""".format(
-                                                                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                                                                        self.prescription_expiry_date,
-                                                                        self.drug_id,
-                                                                        self.drug_dosage,
-                                                                        self.drug_frequency_dosage,
-                                                                        self.booking_id)
+            datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            self.prescription_expiry_date,
+            self.drug_id,
+            self.drug_dosage,
+            self.drug_frequency_dosage,
+            self.booking_id)
 
         u.db_execute(insert_query)
 
     @staticmethod  # SELECT_list - STATIC
     def select_drug_list():
         '''
-        Static Method that returns a list of the drug table
-        :return: df_drug_list in tabulate format
+        Select all drugs from the drug table
+        :return: DataFrame with drugs list
         '''
 
+        # Initialize query
         select_drug_query = '''
                             SELECT drug_id AS "Drug ID", drug_name AS "Drug Name"
                             FROM drug'''
-
+        # Execute query
         df_object = u.db_read_query(select_drug_query)
 
+        # Produce df_print
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
         return df_object, df_print
@@ -60,7 +63,7 @@ class Prescription:
         :return:
         '''
 
-
+        # Initialize query
         select_patient_query = '''
                                     SELECT
                                         drug_name AS "Drug Name",
@@ -78,9 +81,10 @@ class Prescription:
                                         patient_id = {}
                                     AND
                                         booking_status = 'confirmed';'''.format(patient_id)
-
+        # Execute query
         df_object = u.db_read_query(select_patient_query)
 
+        # Produce df_print
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
         return df_object, df_print
