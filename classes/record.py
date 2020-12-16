@@ -1,12 +1,18 @@
 # record.py
 
-# import classes for use in Record.select()
-from appointment import Appointment    
-from prescription import Prescription 
-
 # import libraries
 import sqlite3 as sql
 import pandas as pd
+
+# Switching path to master to get functions from utils folder
+import sys
+from pathlib import Path
+path_to_master_repo = Path(__file__).parents[1]
+sys.path.insert(1, str(path_to_master_repo))
+
+# import classes for use in Record.select()
+from classes.appointment import Appointment    
+from classes.prescription import Prescription
 
 
 class Record:

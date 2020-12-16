@@ -1,12 +1,19 @@
 # gp.py
 
-# import User class for inheritance
-from user import User
-
 # import libraries
 import sqlite3 as sql
 import pandas as pd
 from datetime import datetime
+
+# Switching path to master to get functions from utils folder
+import sys
+from pathlib import Path
+
+path_to_master_repo = Path(__file__).parents[1]
+sys.path.insert(1, str(path_to_master_repo))
+
+# import User class for inheritance
+from classes.user import User
 
 
 class GP(User):
