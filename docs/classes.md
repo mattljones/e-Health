@@ -35,9 +35,10 @@ Always:
 
 Consult the code itself to see the objects returned. 
 
-## Mapping to user flow
+## User flow
 - The corresponding user flows/purposes are outlined, but the exact 'place' for each method to be used is not defined (hopefully it's clear)
-
+- Where user input selection is required based on a DF, the DF includes either an ID variable (e.g. booking_id) or a '[X]' index where the number/ordering don't change (e.g user attributes)
+<br><br>
 
 # `Appointment`
 
