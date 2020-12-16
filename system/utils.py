@@ -141,7 +141,7 @@ def validate(user_input):
     
     Custom errors:
         - Empty field
-        - Input too long (> 25 chars) francois.xavier.reignier@gmail.com
+        - Input too long (> 25 chars) 
         - Does not contain "'" or '"' to avoid SQL injections
     """
     # NOTE: This func could be used as decorator
