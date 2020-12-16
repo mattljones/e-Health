@@ -7,7 +7,6 @@ import pandas as pd
 # Switching path to master to get functions from utils folder
 import sys
 from pathlib import Path
-
 path_to_master_repo = Path(__file__).parents[1]
 sys.path.insert(1, str(path_to_master_repo))
 
