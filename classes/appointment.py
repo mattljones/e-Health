@@ -3,7 +3,7 @@
 # import libraries
 import pandas as pd
 import datetime as dt
-from schedule import Schedule
+from classes.schedule import Schedule
 
 # Switching path to master to get functions from utils folder
 import sys
@@ -367,3 +367,4 @@ if __name__ == "__main__":
 
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
+    1 
