@@ -64,6 +64,9 @@ class Schedule:
             df_object = df_object.drop(
                 columns=['Booking Status Old', 'booking_hours', 'Patient First Name', 'Patient Last Name']).fillna('')
 
+            # Wrap text in 'Agenda' column
+            df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
+
             # Set index
             df_object = df_object.set_index(df_select_day_empty.index)
 
