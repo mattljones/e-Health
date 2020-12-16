@@ -76,8 +76,8 @@ class Appointment:
     def select(cls, booking_id):
         booking_query = """SELECT booking_id AS 'Apt. ID', booking.gp_id AS 'GP_id', g.gp_last_name AS "GP",
                            p.patient_first_name AS 'Patient',
-                           p.patient_last_name AS 'P. Last Name',booking_start_time AS 'Date', 
-                           booking_status AS 'Status',
+                           p.patient_last_name AS 'P. Last Name', booking.patient_id AS 'P ID',
+                           booking_start_time AS 'Date', booking_status AS 'Status',
                            booking_status_change_time AS 'Status change time',
                            booking_agenda AS 'Agenda',booking_type AS 'Type', 
                            booking_notes AS 'Notes'
@@ -87,20 +87,28 @@ class Appointment:
                            WHERE booking_id = {}""".format(booking_id)
 
         df_object = u.db_read_query(booking_query)
+
+        appointment_instance = cls(df_object.loc[0, 'Apt. ID'], df_object.loc[0, 'Date'],
+                                   df_object.loc[0, 'Status'], df_object.loc[0, 'Agenda'],
+                                   df_object.loc[0, 'Type'], df_object.loc[0, 'Notes'],
+                                   df_object.loc[0, 'GP_id'], df_object.loc[0, 'P ID'])
+
         # Editing format of the table
         df_object['GP'] = 'Dr.' + df_object['GP'].astype(str) + ' (ID: ' + df_object['GP_id'].astype(str) + ')'
-        df_object['Patient'] = df_object['Patient'].astype(str) + ' ' + df_object['P. Last Name'].astype(str)
+        df_object['Patient'] = df_object['Patient'].astype(str) + ' ' + df_object['P. Last Name'].astype(str) + \
+                                " (ID: " + df_object['P ID'].astype(str) + ")"
 
         # Dropping no longer needed columns
-        df_object = df_object.drop(columns=['GP_id', 'P. Last Name'])
+        df_object = df_object.drop(columns=['GP_id', 'P. Last Name', 'P ID'])
 
         # Wrapping text for the lager sections of the DF
         df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
         df_object['Notes'] = df_object['Notes'].str.wrap(30)
-
+        df_object.columns = ['Apt. ID []', 'GP []', 'Patient []', 'Date []', 'Status [1]', 'Status change time []',
+                             'Agenda [2]','Type [3]', 'Notes [4]']
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        return df_object, df_print
+        return appointment_instance, df_object, df_print
 
     # Display GPs bookings for upcoming time span
     @staticmethod
@@ -120,15 +128,21 @@ class Appointment:
             # database queries
             day_query = """Select booking_id AS 'Booking ID',
                            strftime('%H:%M', booking_start_time) booking_hours,
-                           booking_agenda AS 'Agenda', booking_type AS 'Type', patient_id AS 'Patient ID' 
-                           FROM booking
-                           WHERE gp_id = {} 
+                           booking_agenda AS 'Agenda', booking_type AS 'Type', b.patient_id AS 'Patient', 
+                           p.patient_first_name, p.patient_last_name
+                           FROM booking b
+                           JOIN patient p ON b.patient_id = p.patient_id 
+                           WHERE b.gp_id = {} 
                            AND strftime('%Y-%m-%d', booking_start_time) = '{}' 
                            AND booking_status == 'confirmed';""".format(gp_id, start_date)
 
             sql_result_df = u.db_read_query(day_query)
             sql_result_df['Booking ID'] = '[' + sql_result_df['Booking ID'].astype(str) + ']'
+            sql_result_df['Patient'] = sql_result_df['patient_first_name'].astype(str) + " " +\
+                                          sql_result_df['patient_last_name'].astype(str) +\
+                                          '[' + sql_result_df['Patient'].astype(str) + ']'
 
+            sql_result_df = sql_result_df.drop(columns=['patient_first_name', 'patient_last_name'])
             # Producing the empty DataFrame for a day
             df_select_day_empty = u.day_empty_df(start_date, 2)
             # df_select_day = df_select_day.update(sql_result_df)
@@ -138,11 +152,11 @@ class Appointment:
 
             for i in range(len(df_object)):
                 if pd.isnull(df_object.at[i, 'Booking ID']) == False:
-                    df_object.at[i, 'Booking Status'] = df_object.at[i, 'Booking ID']
+                    df_object.at[i, 'Status'] = df_object.at[i, 'Booking ID']
 
             df_object = df_object.drop(columns=['Booking ID', 'booking_hours']).fillna('')
             df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
-            df_object = df_object.rename(columns={"Booking Status": "Bookings"})
+            df_object = df_object.rename(columns={"Status": "Bookings"})
             df_object = df_object.set_index(df_select_day_empty.index)
 
             # drop booking_dates and booking_hours as they are not needed anymore
@@ -180,9 +194,10 @@ class Appointment:
     # Displays the DF of all pending appointment for a specific GP after the current time
     @staticmethod
     def select_GP_pending(gp_id):
-        pending_query = """SELECT booking_id AS 'Apt. ID', p.patient_first_name AS 'Patient',
-                   p.patient_last_name AS 'P. Last Name',booking_start_time AS 'Date', booking_status AS 'Status',
-                   booking_status_change_time AS 'Status change time',booking_agenda AS 'Agenda',booking_type AS 'Type'
+        pending_query = """SELECT booking_id AS 'Apt. ID', p.patient_first_name AS 'Patient + ID',
+                   p.patient_last_name AS 'P. Last Name', b.patient_id, booking_start_time AS 'Date', booking_status 
+                   AS 'Status', booking_status_change_time AS 'Status change time',
+                   booking_agenda AS 'Agenda',booking_type AS 'Type'
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE booking_status == 'booked' 
@@ -190,10 +205,13 @@ class Appointment:
                    AND b.gp_id =={}""".format(dt.datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
 
         df_object = u.db_read_query(pending_query)
-        df_object['Patient'] = df_object['Patient'].astype(str) + ' ' + df_object['P. Last Name'].astype(str)
+        df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' +\
+                                       df_object['P. Last Name'].astype(str) + ' [' +\
+                                       df_object['patient_id'].astype(str) + ']'
 
+        df_object['Apt. ID'] = "["+df_object['Apt. ID'].astype(str)+"]"
         # Dropping no longer needed columns
-        df_object = df_object.drop(columns='P. Last Name')
+        df_object = df_object.drop(columns=['P. Last Name', "patient_id"])
         df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
@@ -215,7 +233,7 @@ class Appointment:
 
         query = """SELECT booking_id AS 'Apt. ID',b.gp_id AS 'GP ID', printf('Dr. %s',g.gp_last_name) as GP,
                    strftime('%Y-%M-%d %H:%M',booking_start_time) 'Date', 
-                   booking_status AS 'Booking Status',booking_type AS 'Type', 
+                   booking_status AS 'Status',booking_type AS 'Type', 
                    booking_agenda AS 'Booking Agenda', booking_notes AS 'Notes'
                    FROM booking b
                    JOIN gp g ON b.gp_id = g.gp_id
@@ -233,8 +251,8 @@ class Appointment:
         if timeframe == 'previous' and status == 'confirmed':
             # Matt this ↓ is a DF for you to use, only with confirmed bookings
             # your input would look like select_patient('previous',patient_id,'confirmed')
-            df_object = query_results[query_results['Booking Status'] == 'confirmed'].drop(columns=['Booking Status',
-                                                                                                    'Booking Agenda'])
+            df_object = query_results[query_results['Status'] == 'confirmed'].drop(columns=['Status',
+                                                                                            'Booking Agenda'])
             df_print = df_object.to_markdown(tablefmt="grid", index=False)
             return df_object, df_print
 
@@ -263,7 +281,7 @@ class Appointment:
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
 
         df_object = df_object.replace(('rejected', 'cancelled'), ' ').replace(
-            ('Weekend', 'booked', 'rejected', 'confirmed', 'cancelled', 'time off', 'sick leave', 'Lunch Time'),
+            ('WEEKEND', 'booked', 'rejected', 'confirmed', 'cancelled', 'time off', 'sick leave', 'LUNCH'),
             'Unavailable')
 
         column_number_list = list(range(0, df_object.shape[1]))
@@ -302,8 +320,7 @@ class Appointment:
 
         df_object, df_print = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return df_object, df_print
-
+        return df_object, df_print, other_gp_id
 
     # Change status of a specific appointment
     @staticmethod
@@ -335,14 +352,14 @@ if __name__ == "__main__":
     #              'booking agenda edit test 1', 'offline', ' ', 10, 10).update()
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    # print(Appointment.select(10)[1])
+    # print(Appointment.select(10)[2])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 2, '2020-12-13')[1])
-    # print(Appointment.select_GP('day', 2, '2020-12-17')[1])
+    # print(Appointment.select_GP('day', 2, '2020-12-19')[1])
 
     # THIS WORKS! : Displays all of the appointments with a status 'booked' for a particular GP where date > now
-    # print(Appointment.select_GP_pending(1)[1])
+    print(Appointment.select_GP_pending(1)[1])
 
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
