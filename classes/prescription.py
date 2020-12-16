@@ -4,24 +4,8 @@
 import pandas as pd
 import sqlite3 as sql
 import datetime
+from system import utils as u
 
-
-def db_execute(query):
-    conn = sql.connect('database/db_comp0066.db')
-    c = conn.cursor()
-    c.execute(query)
-    # Commit to db
-    conn.commit()
-    print("Info successfully committed")
-    # Close db
-    conn.close()
-
-
-def db_read_query(query):
-    conn = sql.connect("database/db_comp0066.db")
-    result = pd.read_sql_query(query, conn)
-    conn.close()
-    return result
 
 class Prescription:
     '''
@@ -29,8 +13,6 @@ class Prescription:
     '''
 
     def __init__(self):
-        self.prescription_id = ""
-        self.prescription_timestamp = ""
         self.prescription_expiry_date = ""
         self.drug_id = ""
         self.drug_dosage = ""
@@ -40,38 +22,38 @@ class Prescription:
     def insert(self):  # INSERT - INSTANCE
         '''
         Insertion of a prescription into the prescription table
-        :return: 'Prescription is inserted in prescription table'
+        :return: no return, as prescription is inserted in prescription table
         '''
         insert_query = """
                         INSERT INTO prescription
                         VALUES (NULL, '{}', '{}', {}, '{}', '{}', {});""".format(
-                                                                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                                                                        self.prescription_expiry_date,
-                                                                        self.drug_id,
-                                                                        self.drug_dosage,
-                                                                        self.drug_frequency_dosage,
-                                                                        self.booking_id)
+            datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            self.prescription_expiry_date,
+            self.drug_id,
+            self.drug_dosage,
+            self.drug_frequency_dosage,
+            self.booking_id)
 
-        db_execute(insert_query)
-
-        return 'Prescription is inserted in prescription table'
+        u.db_execute(insert_query)
 
     @staticmethod  # SELECT_list - STATIC
     def select_drug_list():
         '''
-        Static Method that returns a list of the drug table
-        :return: df_drug_list in tabulate format
+        Select all drugs from the drug table
+        :return: DataFrame with drugs list
         '''
 
+        # Initialize query
         select_drug_query = '''
                             SELECT drug_id AS "Drug ID", drug_name AS "Drug Name"
                             FROM drug'''
+        # Execute query
+        df_object = u.db_read_query(select_drug_query)
 
-        df_drug_list = db_read_query(select_drug_query)
+        # Produce df_print
+        df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        df_formatted = df_drug_list.to_markdown(tablefmt="grid", index=False)
-
-        return df_drug_list, df_formatted
+        return df_object, df_print
 
     @staticmethod  # SELECT patient - STATIC
     def select_patient(patient_id):
@@ -81,35 +63,46 @@ class Prescription:
         :return:
         '''
 
-
+        # Initialize query
         select_patient_query = '''
                                     SELECT
-                                    drug_name AS "Drug Name",
-                                    drug_dosage AS "Drug Dosage",
-                                    drug_frequency_dosage AS "Intake Frequency",
-                                    prescription_expiry_date AS "Expiry Date",
-                                    p.booking_id AS "Apt. ID"
-                                    FROM prescription AS p
-                                    LEFT JOIN booking AS b ON p.booking_id = b.booking_id
-                                    LEFT JOIN drug AS d ON p.drug_id = d.drug_id
-                                    WHERE patient_id = {}
-                                    AND booking_status = "confirmed"'''.format(patient_id)
+                                        drug_name AS "Drug Name",
+                                        drug_dosage AS "Drug Dosage",
+                                        drug_frequency_dosage AS "Intake Frequency",
+                                        prescription_expiry_date AS "Expiry Date",
+                                        p.booking_id AS "Apt. ID"
+                                    FROM
+                                        prescription AS p
+                                    LEFT JOIN
+                                        booking AS b ON p.booking_id = b.booking_id
+                                    LEFT JOIN
+                                        drug AS d ON p.drug_id = d.drug_id
+                                    WHERE
+                                        patient_id = {}
+                                    AND
+                                        booking_status = 'confirmed';'''.format(patient_id)
+        # Execute query
+        df_object = u.db_read_query(select_patient_query)
 
-        df_patient_prescription = db_read_query(select_patient_query)
+        # Produce df_print
+        df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        df_formatted = df_patient_prescription.to_markdown(tablefmt="grid", index=True)
+        return df_object, df_print
 
-        return df_patient_prescription, df_formatted
 
+### DEVELOPMENT ###
+
+if __name__ == "__main__":
+    pass
 
 ### TESTING ###
 ## testing prescription
 # # call classes
-new_prescription = Prescription()
+# new_prescription = Prescription()
 # # see patient records
-df=new_prescription.select_patient(22)[0]
+# df = new_prescription.select_patient(22)[1]
 # # see drug list
-# df = new_prescription.select_drug_list()[0]
+# df = new_prescription.select_drug_list()[1]
 
 
 ## Insert new prescription
@@ -127,8 +120,3 @@ df=new_prescription.select_patient(22)[0]
 # new_prescription.drug_dosage = '12 mg'
 # new_prescription.drug_frequency_dosage = 'hallo'
 # new_prescription.insert()
-
-### DEVELOPMENT ###
-
-if __name__ == "__main__":
-    pass

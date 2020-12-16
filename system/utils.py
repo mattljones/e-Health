@@ -394,14 +394,12 @@ def day_empty_df(date, gp_id):
     times = pd.date_range(start='08:00', periods=54, freq='10Min').strftime('%H:%M')
     date = pd.date_range(start=date, periods=1, freq='D')
     day_df = pd.DataFrame(index=times, columns=date.date)
-    # day_df = pd.DataFrame({'Booking Hours': times, 'Booking Status': ""})
-    # day_df = day_df.set_index('Booking Hours')
 
     # Handling lunch time
     if (gp_id % 2) == 0:
-        day_df.loc['12:00':'12:50'] = 'Lunch Time'
+        day_df.loc['12:00':'12:50'] = 'LUNCH'
     else:
-        day_df.loc['13:00':'13:50'] = 'Lunch Time'
+        day_df.loc['13:00':'13:50'] = 'LUNCH'
 
     # Handling Working Days
     working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
@@ -412,10 +410,10 @@ def day_empty_df(date, gp_id):
     weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
 
     if day_df.columns[0].weekday() in weekend_day_range:
-        day_df[day_df.columns[0]] = 'Weekend'
+        day_df[day_df.columns[0]] = 'WEEKEND'
 
     # Make df pretty
-    day_df.columns.values[0] = "Booking Status"
+    day_df.columns.values[0] = "Status"
     day_df = day_df.fillna("")
 
     return day_df
@@ -433,20 +431,20 @@ def week_empty_df(start_date, gp_id):
     # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
     weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
 
-    # Handling lunch time
+    # Inserting 'Lunch Time'
     if (gp_id % 2) == 0:
-        week_df.loc[dt.datetime.strptime('12:00', '%H:%M').strftime('%H:%M')
-                    :dt.datetime.strptime('12:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
-    elif (gp_id % 2) != 0:
-        week_df.loc[dt.datetime.strptime('13:00', '%H:%M').strftime('%H:%M')
-                    :dt.datetime.strptime('13:50', '%H:%M').strftime('%H:%M')] = 'Lunch Time'
+        week_df.loc['12:00':'12:50'] = 'LUNCH'
+    else:
+        week_df.loc['13:00':'13:50'] = 'LUNCH'
 
+    # Inserting 'Weekend'
     for i in range(7):
         if week_df.columns[i].weekday() in weekend_day_range:
-            week_df[week_df.columns[i]] = 'Weekend'
+            week_df[week_df.columns[i]] = 'WEEKEND'
 
-    return week_df.fillna("")
+    week_df = week_df.fillna(" ")
 
+    return week_df
 
 # This function accepts an SQL query as an input and then commits the changes into the DB
 def db_execute(query):
@@ -455,7 +453,6 @@ def db_execute(query):
     c.execute(query)
     # Commit to db
     conn.commit()
-    # print("Info successfully committed")
     # Close db
     conn.close()
 
