@@ -70,7 +70,7 @@ def display(dict):
     Display function called to display menu and run the 
     functions corresponding to the user's choice.
     '''
-
+    # TODO: use - * n 
     print("\n----------------------------------------------------\n"
           "                ", dict["title"], "\n")
 
@@ -120,6 +120,7 @@ def display(dict):
 
     elif usr_choice in ('E', 'e'):
         print(
+            # TODO: use - * n 
             "\n----------------------------------------------------\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
         print(asciiart.exit_art)
         sys.exit()
@@ -245,6 +246,7 @@ def validate_date(user_input):
         int(user_input[5:7])
         int(user_input[8:])
 
+        # NOTE: is there a built-in func for data validation?
         if int(user_input[5:7]) > 12 or int(user_input[8:]) > 31:
             raise DateFormatError
 
@@ -364,6 +366,7 @@ def user_type(user_id):
 
 
 def select():
+    # NOTE: still needed?
     """ Select options from menu."""
     pass
 
@@ -375,6 +378,7 @@ def help():
 
 
 def update():
+    # NOTE: still needed?
     """ Update specified values. """
     # pass
     pass
@@ -383,11 +387,6 @@ def update():
 def export():
     """ Export content of the page in .csv """
     # NOTE: advanced feature
-    pass
-
-
-def sqlhelper():
-    # NOTE: in separate file?
     pass
 
 
