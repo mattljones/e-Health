@@ -340,6 +340,9 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
+    pass
+
+    # Method test
     # Sequence for input for the class: booking_id, booking_start_time, booking_status,
     #                     booking_agenda, booking_type,gp_id,patient_id
 
@@ -359,7 +362,7 @@ if __name__ == "__main__":
     # print(Appointment.select_GP('day', 2, '2020-12-19')[1])
 
     # THIS WORKS! : Displays all of the appointments with a status 'booked' for a particular GP where date > now
-    print(Appointment.select_GP_pending(1)[1])
+    # print(Appointment.select_GP_pending(1)[1])
 
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
