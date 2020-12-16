@@ -49,14 +49,12 @@ class Appointment:
         u.db_execute(query)
 
     # NOTE: should we be checking if the slot that the patient wants to book has not been previously booked and
-    # doesn't fall on the weekend? Or should this be done in the front end, I think it would be easier to do it on the
-    # front end
+    # doesn't fall on the weekend. Should be done in the User Flow
 
     # Update an appointment with GP
     # Need to add Error handling, check if the appointment actually exists
     def update(self):
-        # booking_id, booking_start_time, booking_status,
-        # booking_agenda, booking_type, gp_id, patient_id, booking_status_change_time
+
         query = """UPDATE booking 
                      SET booking_start_time = '{}', booking_status = '{}', 
                      booking_status_change_time = '{}', booking_agenda = '{}', booking_type = '{}',
@@ -72,8 +70,17 @@ class Appointment:
 
     # Need to add  Error handling, check if the appointment actually exists
     # Generating an instance of an appointment to later update attributes based on user input
+
     @classmethod
     def select(cls, booking_id):
+
+        """
+        :param booking_id: provide a booking ID to view all of the information about that particular appointment
+        :return: appointment_instance that has all the information about the booking
+        :return: df_object is a raw dataframe that can be used to pull data from it
+        :return: df_print is a user friendly DF that can be used to display information to the user
+        """
+
         booking_query = """SELECT booking_id AS 'Apt. ID', booking.gp_id AS 'GP_id', g.gp_last_name AS "GP",
                            p.patient_first_name AS 'Patient',
                            p.patient_last_name AS 'P. Last Name', booking.patient_id AS 'P ID',
@@ -118,7 +125,8 @@ class Appointment:
         :param select_type: GP can select either the day view or the week view of their schedule
         :param gp_id: GP specific id that we can fetch from the  global variables
         :param start_date: GP can specify the first day of the week they wish to see
-        :return: DataFrame containing all of the booking slots and their status
+        :return: df_object is a raw dataframe that can be used to pull data from it
+        :return: df_print is a user friendly DF that can be used to display information to the user
         """
         # this is in format '%Y-%m-%d'
         start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -194,6 +202,12 @@ class Appointment:
     # Displays the DF of all pending appointment for a specific GP after the current time
     @staticmethod
     def select_GP_pending(gp_id):
+        """
+        :param gp_id: GP specific id that we can fetch from the  global variables
+        :return: df_object is a raw dataframe that can be used to pull data from it
+        :return: df_print is a user friendly DF that can be used to display information to the user
+        """
+
         pending_query = """SELECT booking_id AS 'Apt. ID', p.patient_first_name AS 'Patient + ID',
                    p.patient_last_name AS 'P. Last Name', b.patient_id, booking_start_time AS 'Date', booking_status 
                    AS 'Status', booking_status_change_time AS 'Status change time',
@@ -270,7 +284,8 @@ class Appointment:
         :param select_type: Patient can select either the day view or the week view of their schedule
         :param gp_id: GP specific ID that we can fetch from the  global variables
         :param start_date: GP can specify the first day of the week they wish to see
-        :return: DataFrame containing all of the booking slots and their status
+        :return: df_object raw DataFrame containing all of the booking slots and their status
+        :return: df_print user friendly DataFrame containing all of the booking slots and their status
         """
 
         if select_type == 'day':
@@ -301,6 +316,17 @@ class Appointment:
     @staticmethod
     def select_other_availability(select_type, gp_id, start_date):
 
+        """
+        :param select_type: Patient can select either the day view or the week view of their schedule
+        :param gp_id: GP specific ID that we can fetch from the  global variables, current GP ID
+                      so we can exclude them from the search
+        :param start_date: GP can specify the first day of the week they wish to see or a day, depending on the input
+        :return: df_object raw DataFrame containing all of the booking slots and their status
+        :return: df_print user friendly DataFrame containing all of the booking slots and their status
+        :return: other_gp_id return the ID of the other ID that was found having the fewest appointments on date range
+        :return:other_gp_last_name return the last name of that GP in the form "Dr.LastName"
+        """
+
         start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
 
         if select_type == 'day':
@@ -328,12 +354,19 @@ class Appointment:
     # Change status of a specific appointment
     @staticmethod
     def change_status(booking_id, new_status):
+        """"
+        :param booking_id: booking specific ID to change status for
+        :param new_status: prove a new status to update to
+        """
         query = """UPDATE booking SET booking_status = '{}' WHERE booking_id = {};""".format(new_status, booking_id)
         u.db_execute(query)
 
     # Confirm all of the appointments for a specific GP
     @staticmethod
     def confirm_all_GP_pending(gp_id):
+        """"
+        :param gp_id: GP ID to confirm all of the appointments
+        """
         query = """UPDATE booking SET booking_status = 'confirmed' 
                    WHERE gp_id = {} AND booking_status = 'booked';""".format(gp_id)
         u.db_execute(query)
@@ -383,7 +416,7 @@ if __name__ == "__main__":
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
     # Displays the DF of the availability for that GP
     # print(Appointment.select_other_availability('day', 1, '2020-12-24')[1])
-    print(Appointment.select_other_availability('week', 1, '2020-12-24')[3])
+    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[3])
 
     # THIS WORKS! : Changes status for a specific booking
     #  Appointment.change_status(1, 'rejected')
