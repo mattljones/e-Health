@@ -4,8 +4,17 @@
 import pandas as pd
 import sqlite3 as sql
 import datetime
-from system import utils as u
 
+# Switching path to master to get functions from utils folder
+# TODO get rid of pathlib once 'from system import utils as u' works
+import sys
+from pathlib import Path
+
+path_to_master_repo = Path(__file__).parents[1]
+sys.path.insert(1, str(path_to_master_repo))
+
+# Importing utility methods from the 'system' package
+from system import utils as u
 
 class Schedule:
     '''
@@ -290,12 +299,12 @@ class Schedule:
                 # Execute query
                 u.db_execute(insert_timeoff_query)
 
-            return 'time off was inserted'
+            # return 'time off was inserted'
 
         # If there are already booked or confirmed appointments during start_date to end_date
         else:
 
-            print('The timeoffs conflict with existing database entries!')
+            # print('The timeoffs conflict with existing database entries!')
 
             return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date, end_date=end_date)
 
@@ -349,7 +358,7 @@ class Schedule:
                 # Execute query
                 u.db_execute(delete_timeoff_days_query)
 
-            return 'timeoffs were deleted for your indicated time period'
+            # return 'timeoffs were deleted for your indicated time period'
 
         # Delete all upcoming timeoffs
         elif type == 'all':
@@ -367,7 +376,7 @@ class Schedule:
             # Execute query
             u.db_execute(delete_timeoff_all_query)
 
-            return 'all upcoming timeoffs were deleted'
+            # return 'all upcoming timeoffs were deleted'
 
 
 ### DEVELOPMENT ###
@@ -375,30 +384,30 @@ class Schedule:
 if __name__ == "__main__":
     pass
 
-# ### TESTING ###
-# # call classes
+### TESTING ###
+# call classes
 # schedule = Schedule()
-#
-# ## testing select day
+
+## testing select day
 # df = schedule.select(2, 'day', '2020-12-1')[1]
-#
-# ## testing select week
-# schedule.select(2, 'week', '2021-1-18')
-#
-# ## testing check_timeoff_conflict
+
+## testing select week
+# df = schedule.select(2, 'week', '2021-1-18')[1]
+
+## testing check_timeoff_conflict
 # df = schedule.check_timeoff_conflict(2, '2020-12-01', '2021-1-13')[2]
-#
-# ## testing select_upcoming_timeoff
-# schedule.select_upcoming_timeoff(2)
-#
-# ## testing insert_timeoff_custom --> check_timeoff_conflict False
+
+## testing select_upcoming_timeoff
+# df = schedule.select_upcoming_timeoff(2)[1]
+
+## testing insert_timeoff_custom --> check_timeoff_conflict False
 # schedule.insert_timeoff(2, 'sick leave', '2020-12-23', '2021-01-23')
-#
-# ## testing insert_timeoff_custom --> check_timeoff_conflict True
+
+## testing insert_timeoff_custom --> check_timeoff_conflict True
 # schedule.insert_timeoff(2, 'sick leave', '2020-12-1', '2021-12-23')
-#
-# ## testing delete_timeoff custom
+
+## testing delete_timeoff custom
 # schedule.delete_timeoff(gp_id=2, type='custom', timeoff_type='sick leave', start_date='2021-1-20', end_date='2021-1-25')
-#
-# ## testing delete_timeoff all
+
+## testing delete_timeoff all
 # schedule.delete_timeoff(gp_id=2, type='all', timeoff_type='sick leave')

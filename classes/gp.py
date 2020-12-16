@@ -1,12 +1,18 @@
 # gp.py
 
-# import User class for inheritance
-from user import User
-
 # import libraries
 import sqlite3 as sql
 import pandas as pd
 from datetime import datetime
+
+# Switching path to master to get functions from utils folder
+import sys
+from pathlib import Path
+path_to_master_repo = Path(__file__).parents[1]
+sys.path.insert(1, str(path_to_master_repo))
+
+# import User class for inheritance
+from classes.user import User
 
 
 class GP(User):
@@ -25,7 +31,7 @@ class GP(User):
                  gender=None, 
                  birth_date=None, 
                  email=None, 
-                 password=None,  # password required for insert()
+                 password=None,             # password required for insert()
                  registration_date=None, 
                  working_days=None, 
                  department_id=None, 
@@ -40,9 +46,10 @@ class GP(User):
 
     def insert(self):  # TO DO: Add password hashing using utilities 
         """
-        Inserting a new GP from an instance populated by user input.
+        Inserts a new GP from an instance populated by user input.
         GPs cannot register themselves: instance created in user flow.
         """ 
+
         self.registration_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         query = """
                 INSERT INTO gp 
@@ -68,8 +75,9 @@ class GP(User):
 
     def update(self):
         """
-        Updating a GP's details (overriding DB attributes w/ instance values)
+        Updates a GP's details (overrides DB attributes w/ instance values)
         """
+
         query = """
                 UPDATE gp 
                 SET gp_first_name = '{}', 
@@ -102,9 +110,19 @@ class GP(User):
     @classmethod
     def select(cls, gp_id):
         """
-        Generating an instance of a GP & a dataframe to display in user flow.
-        Instance used for storing user-inputted values.
-        """
+        Generates an instance of the GP & a dataframe summarising their 
+        attributes to display in user flow.
+        Instance passed to user flow for storing user-inputted values.
+
+        Args:
+            gp_id (int): ID of the GP to be viewed 
+
+        Returns:
+            gp_instance (instance): Used for storing future user inputs
+            df_object (pandas DF): Raw DF (can be searched etc.)
+            df_print (string): Pretty DF for printing
+        """    
+
         query = """
                 SELECT gp_id AS '[ ] GP ID', 
                        gp_first_name AS '[1] First Name', 
@@ -143,7 +161,16 @@ class GP(User):
         Returns lists of GPs: 1) all GPs; 
                               2) active GPs 
                               3) GPs who aren't full
-        """
+
+        Args:
+            type ('all', 'active', 'not_full'): type of list desired
+                                                not_full wrt. patients, not apps.
+
+        Returns:
+            df_object (pandas DF): Raw DF (can be searched etc.)
+            df_print (string): Pretty DF for printing
+        """        
+
         if type == 'all':
             query = """
                     SELECT gp_id AS 'GP ID',  
@@ -186,7 +213,15 @@ class GP(User):
     def select_table(type):
         """
         Returns a list of GP departments/specialisations for reference.
-        """
+
+        Args:
+            type ('department', 'specialisation'): type of table desired
+
+        Returns:
+            df_object (pandas DF): Raw DF (can be searched etc.)
+            df_print (string): Pretty DF for printing
+        """        
+
         if type == 'department':
             query = """
                     SELECT gp_department_id AS "Dept. ID",
@@ -207,11 +242,16 @@ class GP(User):
 
 
     @staticmethod  # TO DO: Add patient/appointment reallocation 
-    def change_status(gp_id, new_status):   
+    def change_status(gp_id, new_status):  
         """
         Changes a given GP's status (to inactive/active).
         Note: if deactivating, this auto-reallocates patients & appointments.
-        """
+
+        Args:
+            gp_id (int): ID of the GP whose status is to be changed
+            new_status ('inactive', 'active'): GP's new status
+        """        
+
         query = """
                 UPDATE gp
                 SET gp_status = '{}'
@@ -229,7 +269,11 @@ class GP(User):
         """
         Deletes a GP from the GP table. 
         Note: this auto-reallocates patients & appointments.
-        """
+
+        Args:
+            gp_id (int): ID of the GP to be deleted
+        """        
+
         query = """
                 DELETE FROM gp
                 WHERE gp_id = '{}'
@@ -246,7 +290,15 @@ class GP(User):
         """
         Used in Patient.change_GP() to check a GP is still not full.
         DB might have changed since GP.select_list(not_full) was called.
-        """
+
+        Args:
+            gp_id (int): ID of the GP to be checked 
+                         (whether they can have another patient)
+
+        Returns:
+            boolean: True (not full) or False (full)
+        """        
+
         query = """
                 SELECT COUNT(patient_id)
                 FROM gp, patient

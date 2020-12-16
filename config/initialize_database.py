@@ -47,9 +47,13 @@ c.execute("""
     gp_password TEXT NOT NULL,
     gp_registration_date DATETIME NOT NULL,
     gp_working_days INTEGER NOT NULL CHECK(
-        gp_working_days = '1' or
-        gp_working_days = '2' or
-        gp_working_days = '3'),
+        gp_working_days = '0' or  -- Monday to Friday
+        gp_working_days = '1' or  -- Tuesday to Saturday
+        gp_working_days = '2' or  -- Wednesday to Sunday
+        gp_working_days = '3' or  -- Thursday to Monday
+        gp_working_days = '4' or  -- Friday to Tuesday
+        gp_working_days = '5' or  -- Saturday to Wednesday
+        gp_working_days = '6'),   -- Sunday to Thursday
     -- Number corresponds to first day of 5 consecutive days in working week e.g. 2 = Tuesday to Saturday
     gp_department_id INTEGER REFERENCES gp_department (gp_department_id) NOT NULL,
     -- We are not updating/deleting gp_department (gp_department_id) in the user flow so no special action on update/delete needed

@@ -14,7 +14,7 @@ sys.path.insert(1, str(p))
 # import register, patient, gp & admin main dictionaries
 from user_menu_flow.patient_flow import main_flow_patient
 from user_menu_flow.gp_flow import main_flow_gp
-from user_menu_flow.admin_flow import main_flow # NOTE: change name in admin_flow for consistency?
+from user_menu_flow.admin_flow import main_flow # NOTE: change name in admin_flow for consistency? - I agree, otherwise we'll have clashes between 'main_flow' of each user types
 from user_menu_flow.register_login_flow import main_flow_register
 
 # Import global variables from globals.py
