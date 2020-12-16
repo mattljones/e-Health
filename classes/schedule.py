@@ -4,92 +4,8 @@
 import pandas as pd
 import sqlite3 as sql
 import datetime
+from system import utils as u
 
-# from system import utils as u
-
-# TODO delete lines 10 to 86 once import of utils works fine
-# TODO for now LUNCH and WEEKEND is not capitalized in appointment.py
-
-def week_empty_df(start_date, gp_id):
-    days = pd.date_range(start=start_date, periods=7, freq='D')
-    times = pd.date_range(start='08:00:00', periods=54, freq='10Min')  # .to_frame(name='Working Hours',index=False)
-    week_df = pd.DataFrame(index=times.strftime('%H:%M'), columns=days.date)
-
-    working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
-    working_day = db_read_query(working_day_query).loc[
-        0, 'gp_working_days']  # will need a query to pull the first working day for a specific GP
-
-    # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
-    weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
-
-    # Inserting 'Lunch Time'
-    if (gp_id % 2) == 0:
-        week_df.loc[datetime.datetime.strptime('12:00', '%H:%M').strftime('%H:%M')
-                    :datetime.datetime.strptime('12:50', '%H:%M').strftime('%H:%M')] = 'LUNCH'
-    elif (gp_id % 2) != 0:
-        week_df.loc[datetime.datetime.strptime('13:00', '%H:%M').strftime('%H:%M')
-                    :datetime.datetime.strptime('13:50', '%H:%M').strftime('%H:%M')] = 'LUNCH'
-
-    # Inserting 'Weekend'
-    for i in range(7):
-        if week_df.columns[i].weekday() in weekend_day_range:
-            week_df[week_df.columns[i]] = 'WEEKEND'
-
-    week_df = week_df.fillna(" ")
-
-    return week_df
-
-
-def db_execute(query):
-    conn = sql.connect('database/db_comp0066.db')
-    c = conn.cursor()
-    c.execute(query)
-    # Commit to db
-    conn.commit()
-    # Close db
-    conn.close()
-
-
-
-
-def db_read_query(query):
-    conn = sql.connect("database/db_comp0066.db")
-    result = pd.read_sql_query(query, conn)
-    conn.close()
-    return result
-
-
-def day_empty_df(date, gp_id):
-    times = pd.date_range(start='08:00', periods=54, freq='10Min').strftime('%H:%M')
-    date = pd.date_range(start=date, periods=1, freq='D')
-    day_df = pd.DataFrame(index=times, columns=date.date)
-
-    # Handling lunch time
-    if (gp_id % 2) == 0:
-        day_df.loc['12:00':'12:50'] = 'LUNCH'
-    else:
-        day_df.loc['13:00':'13:50'] = 'LUNCH'
-
-    # Handling Working Days
-    working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
-    working_day = db_read_query(working_day_query).loc[
-        0, 'gp_working_days']  # will need a query to pull the first working day for a specific GP
-
-    # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
-    weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
-
-    if day_df.columns[0].weekday() in weekend_day_range:
-        day_df[day_df.columns[0]] = 'WEKKEND'
-
-    # Make df pretty
-    day_df.columns.values[0] = "Status"
-    day_df = day_df.fillna("")
-
-    return day_df
-
-
-# day_empty_df('2020-12-12',2)
-# week_empty_df('2020-12-12',2)
 
 class Schedule:
     '''
@@ -128,12 +44,12 @@ class Schedule:
                             AND
                                 strftime('%Y-%m-%d', b.booking_start_time) = '{}';""".format(gp_id, start_date)
 
-            sql_result_df = db_read_query(day_query)
+            sql_result_df = u.db_read_query(day_query)
 
             sql_result_df['Patient (ID)'] = sql_result_df['Patient First Name'].astype(str) + ' ' + sql_result_df['Patient Last Name'].astype(str) + ' (' + sql_result_df['Patient (ID)'].astype(str) + ')'
 
             # Producing the empty DataFrame for a day
-            df_select_day_empty = day_empty_df(start_date, 2)
+            df_select_day_empty = u.day_empty_df(start_date, 2)
 
             df_object = pd.merge(df_select_day_empty,sql_result_df, left_on=df_select_day_empty.index, right_on='booking_hours', how='left')
 
@@ -168,10 +84,10 @@ class Schedule:
                                 gp_id = {} 
                             AND
                                 start_date BETWEEN '{}' and '{}';""".format(gp_id, start_date, end_date)
-            sql_result_df = db_read_query(week_query)
+            sql_result_df = u.db_read_query(week_query)
 
             # forms an empty DF for a week from the date specified for a specific GP
-            df_object = week_empty_df(start_date, gp_id)
+            df_object = u.week_empty_df(start_date, gp_id)
 
             # inserts all the data from the df_object into the empty week DF
             for i in range(len(sql_result_df)):
@@ -202,7 +118,7 @@ class Schedule:
                                   AND booking_status IN ('time off', 'sick leave');'''.format(gp_id,
                                                                                               datetime.datetime.now().strftime("%Y-%m-%d"))
 
-        df_object = db_read_query(upcoming_timeoff_query)
+        df_object = u.db_read_query(upcoming_timeoff_query)
 
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
@@ -302,7 +218,7 @@ class Schedule:
 
             # Handling Working Days
             working_day_query = """SELECT gp_working_days FROM gp where gp_id == {};""".format(gp_id)
-            working_day = db_read_query(working_day_query).loc[0, 'gp_working_days']
+            working_day = u.db_read_query(working_day_query).loc[0, 'gp_working_days']
 
             # This part of the code works out when the GP has weekends and populates those days with status "Weekend"
             weekend_day_range = [(working_day + 5) % 7, (working_day + 6) % 7]
@@ -331,7 +247,7 @@ class Schedule:
                                                             VALUES
                                                                 (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, NULL);'''.format(
                     new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id)
-                db_execute(insert_timeoff_query)
+                u.db_execute(insert_timeoff_query)
 
             return 'time off was inserted'
 
@@ -387,7 +303,7 @@ class Schedule:
                                                 booking_status = '{}'
                                             AND
                                                 gp_id = {};'''.format(new_timeoff_range[i], timeoff_type, gp_id)
-                db_execute(delete_timeoff_days_query)
+                u.db_execute(delete_timeoff_days_query)
 
             return 'timeoffs were deleted for your indicated time period'
 
@@ -403,7 +319,7 @@ class Schedule:
                                             booking_status = '{}'
                                         AND
                                             gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), timeoff_type, gp_id)
-            db_execute(delete_timeoff_all_query)
+            u.db_execute(delete_timeoff_all_query)
 
             return 'all upcoming timeoffs were deleted'
 
@@ -421,7 +337,7 @@ if __name__ == "__main__":
 # df = schedule.select(2, 'day', '2020-12-1')[1]
 #
 # ## testing select week
-# schedule.select(2, 'week', '2021-1-20')
+# schedule.select(2, 'week', '2021-1-18')
 #
 # ## testing check_timeoff_conflict
 # df = schedule.check_timeoff_conflict(2, '2020-12-01', '2021-1-13')[2]
@@ -429,8 +345,11 @@ if __name__ == "__main__":
 # ## testing select_upcoming_timeoff
 # schedule.select_upcoming_timeoff(2)
 #
-# ## testing insert_timeoff_custom
-# schedule.insert_timeoff(2, 'sick leave', '2020-12-23', '2021-02-23')
+# ## testing insert_timeoff_custom --> check_timeoff_conflict False
+# schedule.insert_timeoff(2, 'sick leave', '2020-12-23', '2021-01-23')
+#
+# ## testing insert_timeoff_custom --> check_timeoff_conflict True
+# schedule.insert_timeoff(2, 'sick leave', '2020-12-1', '2021-12-23')
 #
 # ## testing delete_timeoff custom
 # schedule.delete_timeoff(gp_id=2, type='custom', timeoff_type='sick leave', start_date='2021-1-20', end_date='2021-1-25')
