@@ -12,6 +12,11 @@ import pandas as pd
 class Record:
     """
     Defines methods for patient medical record-related activities.
+    An instance contains: 1) Patient ID 
+                          2) Patient conditions (editable)
+                          3) Previous appointment notes (editable)
+    When a medical record is viewed, these are shown in context (across 2 DFs) 
+    alongside other non-editable attributes, e.g. prescriptions.
     """
     
     def __init__(self,
@@ -27,8 +32,9 @@ class Record:
     
     def update(self):
         """
-        Updating medical record details (overriding DB w/ instance)
+        Updates medical record details (overrides DB w/ instance)
         """
+
         # Medical conditions - deleting original conditions from DB
         query_conditions_delete = """
                                   DELETE FROM patient_medical_condition
@@ -67,9 +73,21 @@ class Record:
     @classmethod
     def select(cls, patient_id):
         """
-        Generating a record instance & a dataframe to display in user flow.
-        Instance used for storing user-inputted values.
-        """
+        Generates an instance of the record & a **2** dataframes summarising 
+        relevant attributes (some editable, some not) to display in user flow.
+        Instance passed to user flow for storing user-inputted values.
+
+        Args:
+            patient_id (int): ID of the patient whose records are to be viewed
+
+        Returns: (patient = patient-centric, apps = appointment-centric)
+            record_instance (instance): Used for storing future user inputs
+            df_patient_object (pandas DF): Raw DF (can be searched etc.)
+            df_patient_print (string): Pretty DF for printing
+            df_apps_object (pandas DF): Raw DF (can be searched etc.)
+            df_apps_print (string): Pretty DF for printing
+        """        
+
         # 1 - GENERATING 'PATIENT' DATAFRAMES
         query_attributes = """
                            SELECT patient_id AS 'Patient ID', 
@@ -126,8 +144,13 @@ class Record:
     @staticmethod
     def select_conditions():
         """
-        Returns list of medical conditions for reference.
-        """
+        Returns list of (all) medical conditions for reference.
+
+        Returns:
+            df_object (pandas DF): Raw DF (can be searched etc.)
+            df_print (string): Pretty DF for printing
+        """        
+
         query = """
                 SELECT patient_medical_condition_type_id AS 'Condition ID',  
                        patient_medical_condition_type_name AS 'Condition'

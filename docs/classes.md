@@ -37,7 +37,7 @@ Consult the code itself to see the objects returned.
 
 ## User flow
 - The corresponding user flows/purposes are outlined, but the exact 'place' for each method to be used is not defined (hopefully it's clear)
-- Where user input selection is required based on a DF, the DF includes either an ID variable (e.g. booking_id) or a '[X]' index where the number/ordering don't change (e.g user attributes)
+- Where user input selection is required based on a DF, the DF includes either an ID variable (e.g. booking_id) or an '[X]' index (if no ID available e.g. referring to an attribute, or to a free slot in a GP's schedule (non-availability is stored in DB, not availability))
 <br><br>
 
 # `Appointment`

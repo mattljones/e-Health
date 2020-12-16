@@ -39,8 +39,9 @@ class Patient(User):
 
     def update(self):
         """
-        Updating a patient's details (overriding DB attributes w/ instance)
+        Updates a patient's details (overrides DB attributes w/ instance)
         """
+
         query = """
                 UPDATE patient 
                 SET patient_first_name = '{}', 
@@ -71,9 +72,19 @@ class Patient(User):
     @classmethod
     def select(cls, patient_id):
         """
-        Generating a patient instance & a dataframe to display in user flow.
-        Instance used for storing user-inputted values.
+        Generates an instance of the patient & a dataframe summarising their 
+        attributes to display in user flow.
+        Instance passed to user flow for storing user-inputted values.
+
+        Args:
+            patient_id (int): ID of the patient to be viewed
+
+        Returns:
+            patient_instance (instance): Used for storing future user inputs
+            df_object (pandas DF): Raw DF (can be searched etc.)
+            df_print (string): Pretty DF for printing
         """
+
         query = """
                 SELECT patient_id AS '[ ] Patient ID', 
                        patient.gp_id,
@@ -112,7 +123,19 @@ class Patient(User):
         """
         Returns lists of patients: 1) pending confirmation by an admin 
                                    2) with a matching last_name
-        """
+
+        Args:
+            type ('pending', 'matching'): type of list desired
+                                          pending => not confirmed yet
+                                          matching => based on last name 
+            patient_last_name (str, optional): Search string for 'matching' type. 
+                                               Defaults to None.
+
+        Returns:
+            df_object (pandas DF): Raw DF (can be searched etc.)
+            df_print (string): Pretty DF for printing
+        """        
+
         if type == 'pending':
             query = """
                     SELECT patient_id AS 'Patient ID',
@@ -156,9 +179,15 @@ class Patient(User):
     @staticmethod
     def confirm(type, patient_id=None): 
         """
-        Confirming patients: either 1) all or 
-                                    2) a single patient
-        """
+        Confirms patients: either 1) all or 
+                                  2) a single patient
+
+        Args:
+            type ('all', 'single'): if want to confirm all pending or only 1
+            patient_id (int, optional): ID of 'single' patient to confirm.  
+                                        Defaults to None.
+        """        
+
         if type == 'all':
             query = """
                     UPDATE patient
@@ -183,7 +212,11 @@ class Patient(User):
         """
         Deletes a patient from the patient table. 
         Note: database auto-deletes appointments and records (ON CASCADE)
-        """
+
+        Args:
+            patient_id (int): ID of patient to be deleted
+        """        
+
         query = """
                 DELETE FROM patient
                 WHERE patient_id = '{}'
@@ -198,8 +231,16 @@ class Patient(User):
     @staticmethod
     def change_gp(patient_id, new_gp_id):
         """
-        Changing a patient's default GP.
-        """
+        Changes a patient's default GP.
+
+        Args:
+            patient_id (int): ID of patient whose default GP is to be changed
+            new_gp_id (int): ID of the patient's new default GP
+
+        Returns:
+            boolean: True (GP wasn't full) or False (GP was full)
+        """        
+
         if GP.check_not_full(new_gp_id) == False:
             return False
         else: 
