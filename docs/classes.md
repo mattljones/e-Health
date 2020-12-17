@@ -37,7 +37,7 @@ Consult the code itself to see the objects returned.
 
 ## User flow
 - The corresponding user flows/purposes are outlined, but the exact 'place' for each method to be used is not defined (hopefully it's clear)
-- Where user input selection is required based on a DF, the DF includes either an ID variable (e.g. booking_id) or a '[X]' index where the number/ordering don't change (e.g user attributes)
+- Where user input selection is required based on a DF, the DF includes either an ID variable (e.g. booking_id) or an '[X]' index (if no ID available e.g. referring to an attribute, or to a free slot in a GP's schedule (non-availability is stored in DB, not availability))
 <br><br>
 
 # `Appointment`
@@ -49,9 +49,8 @@ Consult the code itself to see the objects returned.
 | select | factory | <li><b>Admin, GP</b> <li> Generating an instance of an appointment to later update attributes based on user input | <li>booking_id | <li>Appointment instance <li>DF incl. indexing of all appointment attributes (not incl. prescription) |
 | select_GP | static | <li><b>Admin, GP</b> <li> Getting a list of a GP's appointments in a given time period | <li>type = day/week <li>gp_id <li>[time parameters] | <li>DF of a specific GP's appointments for an upcoming day (detailed) or week (less detailed per day) |
 | select_GP_pending | static | <li><b>GP</b> <li> Getting a list of a GP's pending (awaiting confirmation) appointments | <li>gp_id | <li>DF of a specific GP's pending appointments incl. all relevant attributes (sorted by booking_start_time ASC) |
-| select_patient_previous | static | <i>Used in Record.select() method</i> | <li>patient_id | <li>DF of a specific patient's previous appointments (incl. ID and other relevant attributes) |
-| select_patient_upcoming | static | <li><b>Admin, Patient</b> <li>Getting a list of a patient's upcoming appointments | <li>patient_id | <li>DF of a specific patient's upcoming appointments (incl. ID and other relevant attributes) |
-| select_availability | static | <li><b>Admin, Patient</b> <li> Getting a specific GP's availability before booking an appointment | <li>type = day/week <li>gp_id <li>[time parameters] | <li>DF incl. indexing of a specific GP's availability for an upcoming day (detailed) or week (less detailed per day) <br><i>NB: in user flow, to 'check' for availability count rows in DF</i> |
+| select_patient | static | <i>Used in Record.select() method</i> | <li>patient_id <li>timeframe ('previous'/'upcoming') <li>status = None (can be 'confirmed' for a specific DF for Record) | <li>DF of a specific patient's previous and upcoming appointments depending which one we need. DF is displayed with Appointment relevant information for a specific Patient (incl. ID and other relevant attributes) |
+| select_availability | static | <li><b>Admin, Patient</b> <li> Getting a specific GP's availability before booking an appointment | <li>type = day/week <li>gp_id <li>[time parameters] start date specifically | <li>DF incl. indexing of a specific GP's availability for an upcoming day (detailed) or week (less detailed per day). DF shows times when the GP is unavailable and proved indexes to select from and book an appointment <br><i>NB: in user flow, to 'check' for availability count rows in DF</i> |
 | select_other_availability | static | <li><b>Admin, Patient</b> <li> Getting alternative GP availabilities when a patient's own GP has none before booking an appointment | <li>type = day/week <li>gp_id <li>[time parameters] | <li>DF incl. indexing w/ <b>all other GPs'</b> (i.e. with gp_id not equal to the gp_id parameter passed) availability for an upcoming day (detailed) or week (less detailed per day) <br><i>NB: in user flow, to 'check' for availability count rows in DF |
 | change_status | static | <li><b>Admin, Patient, GP</b> <li> Changing status for different reasons e.g. cancelling, confirming, rejecting | <li>booking_id <li>new_status | - |
 | confirm_all_GP_pending | static | <li><b>GP</b> <li> Confirming all pending appointments | <li>gp_id | - |
@@ -105,11 +104,11 @@ Consult the code itself to see the objects returned.
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| select | static | <li><b>Admin, GP</b> <li> Viewing a GP's schedule | <li>gp_id <li>type = day/week <li>start_date (YYYY-MM-DD) | Generally: DF of a specific GP's schedule for a given day (detailed) or week (less detailed per day) <li> df_object <li> df_print  |
-| select_upcoming_timeoff | static | <li><b>Admin</b> <li> Viewing a GP's upcoming timeoff | <li>gp_id | Generally: DF of a GP's upcoming time off {booking_start_time (YYYY-MM-DD), booking_stats, booking_status_change_time} <li> df_object <li> df_print |
-| check_timeoff_conflict | static | <li><b>Admin, GP</b> <li> Checking proposed GP timeoff doesn't conflict with any appointments | <li>gp_id <li>date_start (YYYY-MM-DD) <li>date_end (YYYY-MM-DD) | <li> BOOLean: 'True' if there was a conflict, 'False' is there was no conflict  DF of conflicting appointments {booking_id, booking_start_time, booking_status, booking_status_change_time} <li> df_object <li> df_print |
-| insert_timeoff | static | <li><b>Admin, GP</b> <li> Inserting GP time off (only whole days possible) | <li>gp_id <li> timeoff_type = time off/sick leave <li>start_date (YYYY-MM-DD) <li>end_date (YYYY-MM-DD) | <li> 'time off was inserted' | 
-| delete_upcoming_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = all/custom <li>timeoff_type = time off/sick leave <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>all: 'all upcoming timeoffs were deleted' <li> custom: 'timeoffs were deleted for your indicated time period' |
+| select | static | <li><b>Admin, GP</b> <li> Viewing a GP's schedule | <li>gp_id <li>type = day/week <li>start_date (YYYY-MM-DD) | Generally: DF of a specific GP's schedule for a given day (detailed: booking_id, booking_agenda, booking_type, (patient_first_name, patient_last_name, patient_id)) or week (less detailed: x-axis: days, y-axis: timeslots) <li> df_object <li> df_print  |
+| select_upcoming_timeoff | static | <li><b>Admin</b> <li> Viewing a GP's upcoming timeoff | <li>gp_id | Generally: DF of a GP's upcoming time off {booking_start_time (YYYY-MM-DD), booking_status} <li> df_object <li> df_print |
+| check_timeoff_conflict | static | <li><b>Admin, GP</b> <li> Checking proposed GP timeoff doesn't conflict with any appointments | <li>gp_id <li>date_start (YYYY-MM-DD) <li>date_end (YYYY-MM-DD) | BOOLean: 'True' if there was a conflict, 'False' is there was no conflict <br /> DF of conflicting appointments {booking_id, booking_start_time, booking_status}    <li> df_object <li> df_print |
+| insert_timeoff | static | <li><b>Admin, GP</b> <li> Inserting GP time off (only whole days possible) | <li>gp_id <li> timeoff_type = time off/sick leave <li>start_date (YYYY-MM-DD) <li>end_date (YYYY-MM-DD) | <li> no return, just insertion | 
+| delete_upcoming_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = all/custom <li>timeoff_type = time off/sick leave <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>no return, just deletion |
 <br>
 
 # `User`
