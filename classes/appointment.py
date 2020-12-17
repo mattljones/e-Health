@@ -246,7 +246,7 @@ class Appointment:
         sign = {'previous': '<', 'upcoming': '>'}
 
         query = """SELECT booking_id AS 'Apt. ID',b.gp_id AS 'GP ID', printf('Dr. %s',g.gp_last_name) as GP,
-                   strftime('%Y-%M-%d %H:%M',booking_start_time) 'Date', 
+                   strftime('%Y-%m-%d %H:%M',booking_start_time) 'Date', 
                    booking_status AS 'Status',booking_type AS 'Type', 
                    booking_agenda AS 'Booking Agenda', booking_notes AS 'Notes'
                    FROM booking b
@@ -403,7 +403,7 @@ if __name__ == "__main__":
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
     # I've combined select_patient_previous and select_patient_upcoming
-    # print(Appointment.select_patient('previous', 4)[1])
+    print(Appointment.select_patient('previous', 2)[1])
     # print(Appointment.select_patient('upcoming', 4)[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
