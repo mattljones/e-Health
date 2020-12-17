@@ -65,22 +65,22 @@ def logout():
 
 
 # Display function for menu
-def display(dict):
+def display(my_dict):
     '''
     Display function called to display menu and run the 
     functions corresponding to the user's choice.
     '''
     # TODO: use - * n 
     print("\n----------------------------------------------------\n"
-          "                ", dict["title"], "\n")
+          "                ", my_dict["title"], "\n")
 
     # Print user choices
-    for key in dict:
+    for key in my_dict:
         if key not in ("title", "type"):
-            print("[", key, "] " + dict[key][0])
+            print("[", key, "] " + my_dict[key][0])
 
     # Print "return main page" option if not on a main page
-    if dict["type"] != "main":
+    if my_dict["type"] != "main":
         print("[ # ] Go back to main page")
 
     # Print "logout" option if logged in
@@ -115,8 +115,8 @@ def display(dict):
         return display(main_flow_register)
 
     # If user selected one of the options
-    elif usr_choice in dict:
-        return dict[usr_choice][1](dict[usr_choice][2])
+    elif usr_choice in my_dict:
+        return my_dict[usr_choice][1](my_dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
         print(
@@ -132,7 +132,7 @@ def display(dict):
     # If invalid entry
     else:
         print("\n\U00002757 Invalid entry, please try again")
-        return display(dict)
+        return display(my_dict)
 
 
 def validate(user_input):
