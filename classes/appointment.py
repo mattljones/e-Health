@@ -403,7 +403,7 @@ if __name__ == "__main__":
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
     # I've combined select_patient_previous and select_patient_upcoming
-    print(Appointment.select_patient('previous', 2)[1])
+    #print(Appointment.select_patient('previous', 2)[1])
     # print(Appointment.select_patient('upcoming', 4)[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view

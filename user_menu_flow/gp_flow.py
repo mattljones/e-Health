@@ -26,7 +26,7 @@ display_next_menu = lambda next_dict:utils.display(next_dict)
 
 # Empty nested dictionary to store in tuple for last menu
 # before going back to main page (for display function return parameter).
-flow_end = {"title": "CHANGES SAVED",
+flow_end = {"title": "CONTINUE E-HEALTH OR LOGOUT ?",
               "type":"sub"}
 
 

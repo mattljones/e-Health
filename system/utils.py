@@ -286,9 +286,6 @@ def login(user_email, password, usr_type):
         globals.usr_id = usr_id
         conn.close()
         return True
-        # else:
-        #     conn.close()
-        #     return False
     else:
         conn.close()
         return False
@@ -344,12 +341,10 @@ def register(first_name, last_name, gender, birth_date, email, pw, type):
     # Commit to db
     conn.commit()
 
-    # Output message
-    print("""Successfully registered. 
-        You can now login using your email %s and password.""" % email)
-
     # Close db
     conn.close()
+
+    return True
 
 
 def user_type(user_id):
