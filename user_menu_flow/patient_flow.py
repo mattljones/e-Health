@@ -21,53 +21,6 @@ from system import globals
 
 ############################### INPUT MENU PAGES ###########################
 
-def manage_appointment(next_dict):
-    '''
-    This method works out whether the logged in patient has an upcoming appointment, 
-    had an appointment or neither of those.
-    '''
-
-    # To start with, we assume the user has no appointments booked
-    has_appointment = False
-    had_appointment = False
-
-    # Fetching data frames containing future and past appointments of patient 
-    previous = Appointment.select_patient('previous', globals.usr_id)
-    upcoming = Appointment.select_patient('upcoming', globals.usr_id)
-
-    # Display summary of appointents if patient has book at least one appointment (future or past)
-    if len(previous[0].index) > 0 or len(upcoming[0].index) > 0:
-
-        print ('\n----------------------------------------------------\n'
-              '              APPOINTMENT SUMMARY')
-
-        # If at least one appointment has been booked in the past
-        if len(previous[0].index) > 0:
-            had_appointment = True
-            print("\n-- Previous Appointments -- \n" + previous[1])
-        
-        # If at least one appointment has been booked in the future
-        if len(upcoming[0].index) > 0:
-            has_appointment = True
-            print("\n-- Upcoming Appointments -- \n" + upcoming[1])
-
-    # If patient has past appointments and upcoming appointemnts 
-    if had_appointment and has_appointment:
-        return utils.display(next_dict["both"])
-
-    # If patient has upcoming appointemnts only
-    elif has_appointment :
-        return utils.display(next_dict["has"])
-
-    # If patient has past appointemnts only
-    elif had_appointment:
-        return utils.display(next_dict["had"])
-
-    # If patient has not booked appointments yet
-    else:
-        return utils.display(next_dict["neither"])
-
-
 def cancel_appointment(next_dict):
     '''
     Method corresponding to user choice of cancelling upcoming appointment.
@@ -163,18 +116,25 @@ def book_personal_gp(next_dict):
             if date.fromisoformat(i) > date.today():
                 valid = True
             
+            else:
+                print("\n\U00002757 Appointment date must be in the future.")
+        
+        else:
+            print("\n\U00002757 Invalid entry, please try again")
+
+            
         if valid == False:
             i = input("\n--> ")
 
     # Calling the Appointment class static method select_availability to display availibility
     if day_view == True and i in ("T","t"):
-        availibility = Appointment.select_availability('day', Patient.select_GP_details(globals.usr_id)[0], date.today().isoformat())
+        availibility = Appointment.select_availability('day', Patient.select_gp_details(globals.usr_id)[0], date.today().isoformat())
     elif day_view == True and i not in ("T","t"):
-        availibility = Appointment.select_availability('day', Patient.select_GP_details(globals.usr_id)[0], i)
+        availibility = Appointment.select_availability('day', Patient.select_gp_details(globals.usr_id)[0], i)
     elif day_view == False and i in ("T","t"):
-        availibility = Appointment.select_availability('week', Patient.select_GP_details(globals.usr_id)[0], date.today().isoformat())
+        availibility = Appointment.select_availability('week', Patient.select_gp_details(globals.usr_id)[0], date.today().isoformat())
     else:
-        availibility = Appointment.select_availability('week', Patient.select_GP_details(globals.usr_id)[0], i)
+        availibility = Appointment.select_availability('week', Patient.select_gp_details(globals.usr_id)[0], i)
 
     print("\n" + availibility[1])
 
@@ -217,9 +177,9 @@ def book_other_gp(next_dict):
             "              AVAILABILITY VIEW\n"
             "                 START DATE\n")
 
-    print("Please enter the date (YYYY-MM-DD) from which\n" 
-          "you want to diplay availibility\n\n"
-          "Enter 'T' to see availibility from today")
+    print("Please enter the date (YYYY-MM-DD) from\n" 
+          "which you want to diplay availibility:\n\n"
+          "Enter 'T' to see availibility from today.")
 
     # Boolean for input validation
     valid = False
@@ -236,18 +196,25 @@ def book_other_gp(next_dict):
             if date.fromisoformat(i) > date.today():
                 valid = True
             
+            else:
+                print("\n\U00002757 Appointment date must be in the future.")
+        
+        else:
+            print("\n\U00002757 Invalid entry, please try again")
+
+            
         if valid == False:
             i = input("\n--> ")
 
     # Calling the Appointment class static method select_other_availability to display availibility
     if day_view == True and i in ("T","t"):
-        availibility = Appointment.select_other_availability('day', Patient.select_GP_details(globals.usr_id)[0], date.today().isoformat())
+        availibility = Appointment.select_other_availability('day', Patient.select_gp_details(globals.usr_id)[0], date.today().isoformat())
     elif day_view == True and i not in ("T","t"):
-        availibility = Appointment.select_other_availability('day', Patient.select_GP_details(globals.usr_id)[0], i)
+        availibility = Appointment.select_other_availability('day', Patient.select_gp_details(globals.usr_id)[0], i)
     elif day_view == False and i in ("T","t"):
-        availibility = Appointment.select_other_availability('week', Patient.select_GP_details(globals.usr_id)[0], date.today().isoformat())
+        availibility = Appointment.select_other_availability('week', Patient.select_gp_details(globals.usr_id)[0], date.today().isoformat())
     else:
-        availibility = Appointment.select_other_availability('week', Patient.select_GP_details(globals.usr_id)[0], i)
+        availibility = Appointment.select_other_availability('week', Patient.select_gp_details(globals.usr_id)[0], i)
 
     print("\n" + availibility[1])
 
@@ -266,13 +233,60 @@ def empty_method(next_dict):
     return utils.display(next_dict)
 
 
+def manage_appointment(next_dict):
+    '''
+    This method works out whether the logged in patient has an upcoming appointment, 
+    had an appointment or neither of those.
+    '''
+
+    # To start with, we assume the user has no appointments booked
+    has_appointment = False
+    had_appointment = False
+
+    # Fetching data frames containing future and past appointments of patient 
+    previous = Appointment.select_patient('previous', globals.usr_id)
+    upcoming = Appointment.select_patient('upcoming', globals.usr_id)
+
+    # Display summary of appointents if patient has book at least one appointment (future or past)
+    if len(previous[0].index) > 0 or len(upcoming[0].index) > 0:
+
+        print ('\n----------------------------------------------------\n'
+              '              APPOINTMENT SUMMARY')
+
+        # If at least one appointment has been booked in the past
+        if len(previous[0].index) > 0:
+            had_appointment = True
+            print("\n-- Previous Appointments -- \n" + previous[1])
+        
+        # If at least one appointment has been booked in the future
+        if len(upcoming[0].index) > 0:
+            has_appointment = True
+            print("\n-- Upcoming Appointments -- \n" + upcoming[1])
+
+    # If patient has past appointments and upcoming appointemnts 
+    if had_appointment and has_appointment:
+        return utils.display(next_dict["both"])
+
+    # If patient has upcoming appointemnts only
+    elif has_appointment :
+        return utils.display(next_dict["has"])
+
+    # If patient has past appointemnts only
+    elif had_appointment:
+        return utils.display(next_dict["had"])
+
+    # If patient has not booked appointments yet
+    else:
+        return utils.display(next_dict["neither"])
+
+
 def access_prescription(next_dict):
     '''
     Method corresponding to user choice of accessing his prescription.
     from previous appointment.
     '''
     print("\n----------------------------------------------------\n"
-            "       PAST APPOINTMENTS AND PRESCIPTIONS \n")
+            "       PAST APPOINTMENTS & PRESCIPTIONS \n")
 
     # Print table of past appointments and their prescription
     records = Record.select(globals.usr_id)
@@ -289,7 +303,7 @@ def display_default_GP(next_dict):
     print("\n----------------------------------------------------\n"
             "                REGISTERED GP \n")
 
-    print("Your are registered with GP " + Patient.select_GP_details(globals.usr_id)[1] + "\n")
+    print("Your are registered with " + Patient.select_gp_details(globals.usr_id)[1] + ".\n")
     return utils.display(next_dict)
 
 
@@ -299,12 +313,12 @@ def change_GP_pair(next_dict):
     '''
 
     # Change default GP and get new GP name
-    success, new_GP_name = Patient.change_GP('auto',globals.usr_id)
+    success, new_GP_name = Patient.change_gp('auto',globals.usr_id)
 
     # if successful change
     if success:
         print("\n\U00002705 Default GP successfully changed !"
-              "\nYou are now registered with" + new_GP_name + "\n")
+              "\nYou are now registered with " + new_GP_name + ".\n")
 
     # if unsuccessful change
     else:
