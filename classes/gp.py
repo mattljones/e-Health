@@ -179,6 +179,7 @@ class GP(User):
                     FROM gp
                     ORDER BY gp_last_name ASC
                     """
+
         elif type =='active':
             query = """
                     SELECT gp_id AS 'GP ID',  
@@ -188,6 +189,7 @@ class GP(User):
                     WHERE gp_status = 'active'
                     ORDER BY gp_last_name ASC
                     """
+
         elif type == 'not_full':
             query = """
                     SELECT gp.gp_id AS 'GP ID', 
@@ -200,6 +202,7 @@ class GP(User):
                     HAVING COUNT(patient_id) <= '{}'
                     ORDER BY "No. Patients" ASC
                     """.format(GP.max_capacity)
+
         conn = sql.connect("database/db_comp0066.db")
         df_object = pd.read_sql_query(query, conn)
         conn.close()
@@ -228,12 +231,14 @@ class GP(User):
                            gp_department AS 'Department'
                     FROM gp_department
                     """
+                    
         elif type == 'specialisation':
             query = """
                     SELECT gp_specialisation_id AS "Spec. ID",
                            gp_specialisation_name AS 'Specialisation'
                     FROM gp_specialisation
                     """
+                    
         conn = sql.connect("database/db_comp0066.db")
         df_object = pd.read_sql_query(query, conn)
         conn.close()
@@ -285,39 +290,6 @@ class GP(User):
         conn.close()
 
 
-    @staticmethod
-    def check_not_full(gp_id):
-        """
-        Used in Patient.change_GP() to check a GP is still not full.
-        DB might have changed since GP.select_list(not_full) was called.
-
-        Args:
-            gp_id (int): ID of the GP to be checked 
-                         (whether they can have another patient)
-
-        Returns:
-            boolean: True (not full) or False (full)
-        """        
-
-        query = """
-                SELECT COUNT(patient_id)
-                FROM gp, patient
-                WHERE gp.gp_id = patient.gp_id 
-                AND gp.gp_id = '{}'
-                GROUP BY gp.gp_id
-                """.format(gp_id)
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query)
-        count = c.fetchone()
-        conn.close()
-        # Using class variable defining GP max (patient) capacity
-        if count[0] < GP.max_capacity:  
-            return True
-        else:
-            return False
-
-
 
 
 ## CODE TESTING/DEMONSTRATION
@@ -361,6 +333,3 @@ class GP(User):
 
 ## GP.delete()
 # GP.delete(2)
-
-## GP.check_not_full()
-# print(GP.check_not_full(3))

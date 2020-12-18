@@ -67,7 +67,6 @@ Consult the code itself to see the objects returned.
 | select_table | static | <li><b>Admin</b> <li> List of GP departments/specialisations for reference when updating | <li>type = department/specialisation | Generally: DF of relevant DB table <li> df_object <li> df_print |
 | change_status | static | <li><b>Admin</b> <li> Changing a GP's status (to inactive/active) | <li>gp_id <li>new_status | <i>NB: if deactivating, this auto-reallocates the GP's patients and future appointments to other GPs. </i> |
 | delete | static | <li><b>Admin</b> <li> Deleting a GP | <li>gp_id | <i>NB: this auto-reallocates the GP's patients and future appointments to other GPs. </i> |
-| check_not_full | static | <i>Used in Patient.change_gp() method</i> | <li>gp_id | <li>BOOL True (not full) or False (full) |
 <br>
 
 # `Patient`
@@ -77,9 +76,10 @@ Consult the code itself to see the objects returned.
 | update | instance | <li><b>Admin</b> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
 | select | factory | <li><b>Admin</b> <li> Generating an instance of a patient to later update attributes based on user input | <li>patient_id | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
 | select_list | static | <li><b>Admin</b> <li> List of patients to choose from (used in multiple branches) | <li>type = pending/matching <li>if matching, patient_last_name | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
+| select_GP_details | static | <li><b>Patient</b> <li> Retrieving a patient's default GP ID and name (for booking & sharing with patient) | <li>patient_id | <li>gp_id <li>gp_name |
+| change_GP | static | <li><b>Admin, Patient</b> <li> Changing a patient's default GP (checks GP not full first) | <li>type = auto (least full)/specific <li>patient_id <li>if specific, new_gp_id | <li>BOOL True (successful) or False (unsuccessful) <li>new_gp_name (=None if BOOL == False for simpler user flow coding) |
 | confirm | static | <li><b>Admin</b> <li> Confirming patients (currently no direct method to change status to 'inactive', but allowed in DB) | <li>type = all/single  <li>if single, patient_id | <i>NB: patients were automatically given a GP during registration to avoid allowing nulls in the DB </i> |
 | delete | static | <li><b>Admin</b> <li> Deleting a patient | <li>patient_id | - |
-| change_GP | static | <li><b>Admin</b> <li> Changing a patient's default GP (checks GP not full first) | <li>patient_id <li>new_gp_id | <li>BOOL True (successful) or False (unsuccessful) |
 <br>
 
 # `Prescription`

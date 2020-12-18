@@ -201,7 +201,7 @@ def register_page(next_dict):
 
 # Empty nested dictionary to store in tuple for last menu
 # before going back to main page (for display function return parameter).
-empty_dict = {"title": "CHANGES SAVED",
+empty_dict = {"title": "CONTINUE E-HEALTH OR LOGOUT ?",
               "type":"sub"}
 
 
