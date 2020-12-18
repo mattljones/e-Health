@@ -393,7 +393,7 @@ if __name__ == "__main__":
     #              'booking agenda edit test 1', 'offline', ' ', 10, 10).update()
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    print(Appointment.select(33)[2])
+    # print(Appointment.select(33)[2])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 2, '2020-12-13')[1])
