@@ -18,6 +18,16 @@ globals.init()
 display_next_menu = lambda next_dict:utils.display(next_dict)
 
 ############################### INPUT MENU PAGES ###########################
+def edit_notes(next_dict):
+    # TODO: edit the note
+    # TODO: display the result
+    return display_prescription(next_dict)
+
+def edit_cc(next_dict):
+    # TODO: edit the chronic condition
+    # TODO: display the result
+    return display_prescription(next_dict)
+
 def enter_drug(next_dict):
     pass
     return display_next_menu(next_dict)
@@ -45,7 +55,7 @@ def prescibe(next_dict):
                  "type": "auto",
                  "next":(enter_dosage, flow_freq)
                 }
-    return utils.display(flow_dosage)
+    return display_next_menu(flow_dosage)
 
 def enter_freq(next_dict):
     pass
@@ -66,6 +76,14 @@ def enter_appoint_id(next_dict):
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
+def correct_note_change(next_dict):
+    flow_record_edit = {"title": "Edit what part of the records?",
+                 "type": "sub",
+                 "1":("Notes", edit_notes, flow_confirm_change),
+                 "2":("Chronic Condition", edit_cc, flow_confirm_change)
+                }
+    return display_next_menu(flow_record_edit)
+
 def another_confirm(next_dict):
     flow_confirm_appoint = {"title": "Confirm Appointments",
                  "type": "sub",
@@ -78,9 +96,9 @@ def another_confirm(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return utils.display(flow_confirm_appoint)
+        return display_next_menu(flow_confirm_appoint)
     elif usr_choice == '2':
-        return utils.display(next_dict)
+        return display_next_menu(next_dict)
 
 def another_avail(next_dict):
     flow_availability = {"title": "Schedule",
@@ -94,9 +112,9 @@ def another_avail(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return utils.display(flow_availability)
+        return display_next_menu(flow_availability)
     elif usr_choice == '2':
-        return utils.display(next_dict)
+        return display_next_menu(next_dict)
 
 def view_another_day(next_dict):
     flow_schedule = {"title": "Schedule",
@@ -112,9 +130,9 @@ def view_another_day(next_dict):
     print("[ 2 ] Manage the availability")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return utils.display(flow_schedule)
+        return display_next_menu(flow_schedule)
     elif usr_choice == '2':
-        return utils.display(next_dict)
+        return display_next_menu(next_dict)
 
 def view_another_week(next_dict):
     flow_schedule = {"title": "Schedule",
@@ -130,9 +148,9 @@ def view_another_week(next_dict):
     print("[ 2 ] Manage the availability")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return utils.display(flow_schedule)
+        return display_next_menu(flow_schedule)
     elif usr_choice == '2':
-        return utils.display(next_dict)
+        return display_next_menu(next_dict)
 
 def view_another_custom(next_dict):
     flow_schedule = {"title": "Schedule",
@@ -148,9 +166,13 @@ def view_another_custom(next_dict):
     print("[ 2 ] Manage the availability")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return utils.display(flow_schedule)
+        return display_next_menu(flow_schedule)
     elif usr_choice == '2':
-        return utils.display(next_dict)
+        return display_next_menu(next_dict)
+
+def view_records(next_dict):
+    # TODO: display 10 latest clients
+    return display_next_menu(next_dict)
 
 ########################## MENU NAVIGATION DICTIONARIES ######################
 
@@ -248,10 +270,29 @@ flow_appointments = {"title": "Appointments",
                  "2":("Notes", display_next_menu, flow_notes)
                 }
 
+flow_confirm_change = {"title": "Confirm edit",
+                 "type": "sub",
+                 "1":("Yes", display_next_menu, flow_end),
+                 "2":("Change More / No", correct_note_change, flow_end)
+                }
+
+flow_record_edit = {"title": "Edit what part of the records?",
+                 "type": "sub",
+                 "1":("Notes", edit_notes, flow_confirm_change),
+                 "2":("Chronic Condition", edit_cc, flow_confirm_change)
+                }
+
+# flow of decision on editing records of a patient
+flow_record_choose = {"title": "Edit Records of this patient?",
+                 "type": "sub",
+                 "1":("Yes", display_next_menu, flow_record_edit),
+                 "2":("No", display_next_menu, flow_end)
+                }
+
 # records flow
 flow_records = {"title": "Records",
                  "type": "sub",
-                 "1":("pass", display_next_menu, flow_end)
+                 "1":("Search patient", display_next_menu, flow_record_choose)
                 }
 
 # gp main page dictionary
@@ -260,4 +301,4 @@ main_flow_gp = {"title": "GP MAIN MENU",
                 "1":("View Schedule", display_next_menu, flow_schedule),
                 "2":("Add availability", display_next_menu, flow_availability),
                 "3":("Manage Appointments", display_next_menu, flow_appointments),
-                "4":("Records", display_next_menu, flow_records)}
+                "4":("Records", view_records, flow_records)}
