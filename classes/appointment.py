@@ -109,8 +109,10 @@ class Appointment:
         df_object = df_object.drop(columns=['GP_id', 'P. Last Name', 'P ID'])
 
         # Wrapping text for the lager sections of the DF
-        df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
-        df_object['Notes'] = df_object['Notes'].str.wrap(30)
+        df_object['Agenda'] = df_object['Agenda'].str.wrap(20)
+        df_object['Notes'] = df_object['Notes'].str.wrap(20)
+        df_object['Patient'] = df_object['Patient'].str.wrap(10)
+        df_object['GP'] = df_object['GP'].str.wrap(15)
         df_object.columns = ['Apt. ID []', 'GP []', 'Patient []', 'Date []', 'Status [1]', 'Status change time []',
                              'Agenda [2]', 'Type [3]', 'Notes [4]']
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
@@ -391,7 +393,7 @@ if __name__ == "__main__":
     #              'booking agenda edit test 1', 'offline', ' ', 10, 10).update()
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    # print(Appointment.select(10)[2])
+    print(Appointment.select(33)[2])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 2, '2020-12-13')[1])
