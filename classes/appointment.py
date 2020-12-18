@@ -290,7 +290,7 @@ class Appointment:
 
         if select_type == 'day':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
-            df_object = df_object.drop(['Agenda', 'Type', 'Patient ID'], axis=1)
+            df_object = df_object.drop(['Agenda', 'Type', 'Patient (ID)'], axis=1)
 
         elif select_type == 'week':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
@@ -403,14 +403,14 @@ if __name__ == "__main__":
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
     # I've combined select_patient_previous and select_patient_upcoming
-    print(Appointment.select_patient('previous', 2)[1])
+    # print(Appointment.select_patient('previous', 2)[1])
     # print(Appointment.select_patient('upcoming', 4)[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
     # For this test I've used patient 9 since their GP by default is 2 so
     # we can easily compare the DF to make sure they look the same
     # print(Appointment.select_availability('week', 1, '2020-12-11')[1])
-    # print(Appointment.select_availability('day', 1, '2020-12-13')[1])
+    # print(Appointment.select_availability('day', 9, '2020-12-24')[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
