@@ -15,12 +15,56 @@ from system import utils
 from system import globals
 globals.init()
 
-############################### INPUT MENU PAGES ###########################
+display_next_menu = lambda next_dict:utils.display(next_dict)
 
+############################### INPUT MENU PAGES ###########################
+def enter_drug(next_dict):
+    pass
+    return display_next_menu(next_dict)
+
+def display_prescription(next_dict):
+    # TODO: display notes & prescription
+    pass
+    return display_next_menu(next_dict)
+
+def empty_prescription(next_dict):
+    # TODO: take a blank prescription
+    return display_prescription(next_dict)
+
+def empty_note(next_dict):
+    # TODO: take a blank note
+    return display_prescription(next_dict)
+
+def enter_note(next_dict):
+    pass
+    return display_prescription(next_dict)
+
+def prescibe(next_dict):
+    # TODO: take the input of field of drug
+    flow_dosage = {"title": "Dosage",
+                 "type": "auto",
+                 "next":(enter_dosage, flow_freq)
+                }
+    return utils.display(flow_dosage)
+
+def enter_freq(next_dict):
+    pass
+    # TODO: display the prescription so far
+    return display_prescription(next_dict)
+
+def enter_dosage(next_dict):
+    pass
+    return display_next_menu(next_dict)
+
+def enter_field(next_dict):
+    pass
+    return display_next_menu(next_dict)
+
+def enter_appoint_id(next_dict):
+    pass
+    return display_next_menu(next_dict)
 
 ############################ SEQUENTIAL STEPS MENUS ########################
-
-display_next_menu = lambda next_dict:utils.display(next_dict)
 
 def another_confirm(next_dict):
     flow_confirm_appoint = {"title": "Confirm Appointments",
@@ -115,12 +159,66 @@ def view_another_custom(next_dict):
 flow_end = {"title": "CONTINUE E-HEALTH OR LOGOUT ?",
               "type":"sub"}
 
-# notes flow
-flow_notes = {"title": "Notes",
+# final confirm notes & prescription flow
+flow_final_confirm = {"title": "Final confrim notes & prescription",
                  "type": "sub",
                  "1":("Yes", display_next_menu, flow_end),
-                 "2":("No", display_next_menu, flow_end)
+                 "2":("No", prescibe, flow_end)
+            }
+
+# add drugs flow
+flow_drug = {"title": "Add drugs?",
+                 "type": "sub",
+                 "1":("Yes", prescibe, flow_end),
+                 "2":("No", display_next_menu, flow_final_confirm)
+            }
+
+# prescription check flow
+flow_check_prescription = {"title": "Check prescription",
+                 "type": "sub",
+                 "1":("Confirm", display_next_menu, flow_drug),
+                 "2":("Edit", prescibe, flow_end)
+            }
+
+# frequency flow
+flow_freq = {"title": "Frequency",
+                 "type": "auto",
+                 "next":(enter_freq, flow_check_prescription)
+            }
+
+# dosage flow
+flow_dosage = {"title": "Dosage",
+                 "type": "auto",
+                 "next":(enter_dosage, flow_freq)
                 }
+
+# prescription flow
+flow_prescription = {"title": "Prescription",
+                 "type": "sub",
+                 "1":("Enter field for prescibed drug", enter_field, flow_dosage),
+                 "2":("Skip", empty_prescription, flow_final_confirm)
+                 }
+
+# submit note flow
+# TODO: public notes?
+flow_submit_note = {"title": "Submit Note",
+                 "type": "sub",
+                 "1":("Submit", display_next_menu, flow_prescription),
+                 "2":("No", display_next_menu, flow_end)
+                 }
+
+# confirm attendance flow
+flow_confirm_attendance = {"title": "Confirm Attendance",
+                 "type": "sub",
+                 "1":("Yes", enter_note, flow_submit_note),
+                 "2":("No", empty_note, flow_end)
+                }
+
+# notes flow
+flow_notes = {"title": "Notes -- enter appointment id",
+              "type": "auto",
+              "next":(enter_appoint_id, flow_confirm_attendance)
+            }
 
 # confirm appointment flow
 flow_confirm_appoint = {"title": "Confirm Appointments",
@@ -147,7 +245,7 @@ flow_schedule = {"title": "Schedule",
 flow_appointments = {"title": "Appointments",
                  "type": "sub",
                  "1":("Confirm", display_next_menu, flow_confirm_appoint),
-                 "2":("Notes", display_next_menu, flow_end)
+                 "2":("Notes", display_next_menu, flow_notes)
                 }
 
 # records flow
