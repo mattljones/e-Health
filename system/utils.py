@@ -74,6 +74,10 @@ def display(my_dict):
     print("\n----------------------------------------------------\n"
           "                ", my_dict["title"], "\n")
 
+    # automatically direct to next flow
+    if my_dict["type"] == "auto":
+        return my_dict["next"][0](my_dict["next"][1])
+
     # Print user choices
     for key in my_dict:
         if key not in ("title", "type"):
