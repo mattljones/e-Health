@@ -166,6 +166,7 @@ class Appointment:
 
             df_object = df_object.drop(columns=['Booking ID', 'booking_hours']).fillna('')
             df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
+            df_object['Patient'] = df_object['Patient'].str.wrap(15)
             df_object = df_object.rename(columns={"Status": "Bookings"})
             df_object = df_object.set_index(df_select_day_empty.index)
 
@@ -397,7 +398,7 @@ if __name__ == "__main__":
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 2, '2020-12-13')[1])
-    # print(Appointment.select_GP('day', 2, '2020-12-19')[1])
+    # print(Appointment.select_GP('day', 1, '2020-12-17')[1])
 
     # THIS WORKS! : Displays all of the appointments with a status 'booked' for a particular GP where date > now
     # print(Appointment.select_GP_pending(1)[1])
