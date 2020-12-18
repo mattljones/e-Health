@@ -109,8 +109,10 @@ class Appointment:
         df_object = df_object.drop(columns=['GP_id', 'P. Last Name', 'P ID'])
 
         # Wrapping text for the lager sections of the DF
-        df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
-        df_object['Notes'] = df_object['Notes'].str.wrap(30)
+        df_object['Agenda'] = df_object['Agenda'].str.wrap(20)
+        df_object['Notes'] = df_object['Notes'].str.wrap(20)
+        df_object['Patient'] = df_object['Patient'].str.wrap(10)
+        df_object['GP'] = df_object['GP'].str.wrap(15)
         df_object.columns = ['Apt. ID []', 'GP []', 'Patient []', 'Date []', 'Status [1]', 'Status change time []',
                              'Agenda [2]', 'Type [3]', 'Notes [4]']
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
@@ -164,6 +166,7 @@ class Appointment:
 
             df_object = df_object.drop(columns=['Booking ID', 'booking_hours']).fillna('')
             df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
+            df_object['Patient'] = df_object['Patient'].str.wrap(15)
             df_object = df_object.rename(columns={"Status": "Bookings"})
             df_object = df_object.set_index(df_select_day_empty.index)
 
@@ -290,7 +293,7 @@ class Appointment:
 
         if select_type == 'day':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
-            df_object = df_object.drop(['Agenda', 'Type', 'Patient ID'], axis=1)
+            df_object = df_object.drop(['Agenda', 'Type', 'Patient (ID)'], axis=1)
 
         elif select_type == 'week':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
@@ -391,11 +394,11 @@ if __name__ == "__main__":
     #              'booking agenda edit test 1', 'offline', ' ', 10, 10).update()
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    # print(Appointment.select(10)[2])
+    # print(Appointment.select(33)[2])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 2, '2020-12-13')[1])
-    # print(Appointment.select_GP('day', 2, '2020-12-19')[1])
+    # print(Appointment.select_GP('day', 1, '2020-12-17')[1])
 
     # THIS WORKS! : Displays all of the appointments with a status 'booked' for a particular GP where date > now
     # print(Appointment.select_GP_pending(1)[1])
@@ -403,14 +406,14 @@ if __name__ == "__main__":
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
     # I've combined select_patient_previous and select_patient_upcoming
-    #print(Appointment.select_patient('previous', 2)[1])
+    # print(Appointment.select_patient('previous', 2)[1])
     # print(Appointment.select_patient('upcoming', 4)[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
     # For this test I've used patient 9 since their GP by default is 2 so
     # we can easily compare the DF to make sure they look the same
     # print(Appointment.select_availability('week', 1, '2020-12-11')[1])
-    # print(Appointment.select_availability('day', 1, '2020-12-13')[1])
+    # print(Appointment.select_availability('day', 9, '2020-12-24')[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.

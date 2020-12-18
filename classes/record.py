@@ -51,6 +51,7 @@ class Record:
         c.execute(query_conditions_delete)
         conn.commit()
         conn.close()
+
         # Medical conditions - inserting updated list of medical conditions
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
@@ -62,6 +63,7 @@ class Record:
                                  condition))
         conn.commit()
         conn.close()
+        
         # Appointment notes - update to new values from instance dictionary
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
@@ -128,6 +130,7 @@ class Record:
         columns2 = ['Condition ID', 'Condition']
         df_patient_breaks = df_patient_object.groupby(columns1)[columns2].agg('\n'.join).reset_index() 
         df_patient_print = df_patient_breaks.to_markdown(tablefmt="grid", index=False)
+
         # 2 - GENERATING 'APPOINTMENT' DATAFRAMES
         df_apps = Appointment.select_patient('previous', patient_id, 'confirmed')[0]
         df_prescs = Prescription.select_patient(patient_id)[0]
@@ -141,9 +144,11 @@ class Record:
         columns2 = ['Drug Name', 'Drug Dosage', 'Intake Frequency', 'Expiry Date']
         df_apps_breaks = df_apps_object.groupby(columns1)[columns2].agg('\n'.join).reset_index()
         df_apps_print = df_apps_breaks.to_markdown(tablefmt="grid", index=False)
+
         # 3 - GENERATING RECORD INSTANCE
         record_instance = cls(patient_id, df_conds['Condition ID'].tolist(),\
                               dict(zip(df_apps['Apt. ID'], df_apps['Notes'])))
+                              
         return record_instance, df_patient_object, df_patient_print, df_apps_object, df_apps_print
 
 
