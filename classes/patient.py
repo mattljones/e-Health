@@ -156,6 +156,7 @@ class Patient(User):
             conn = sql.connect("database/db_comp0066.db")
             df_object = pd.read_sql_query(query, conn)
             conn.close()
+
         elif type == 'matching':
             query = """
                     SELECT patient_id AS 'Patient ID',
@@ -170,6 +171,7 @@ class Patient(User):
                     AND patient_status = 'confirmed'
                     ORDER BY "First Name" ASC
                     """.format(patient_last_name)
+
             conn = sql.connect("database/db_comp0066.db")
             df = pd.read_sql_query(query, conn)
             conn.close()
@@ -200,12 +202,14 @@ class Patient(User):
                     SET patient_status = 'confirmed'
                     WHERE patient_status = 'pending'
                     """
+
         elif type == 'single':
             query = """
                     UPDATE patient
                     SET patient_status = 'confirmed'
                     WHERE patient_id = '{}'
                     """.format(patient_id)
+
         conn = sql.connect("database/db_comp0066.db")
         c = conn.cursor()
         c.execute(query)
@@ -235,21 +239,38 @@ class Patient(User):
 
 
     @staticmethod
-    def change_gp(patient_id, new_gp_id):
+    def change_gp(type, patient_id, new_gp_id=None):
         """
         Changes a patient's default GP.
 
         Args:
+            type ('auto', 'specific'): auto => least full GP (patient flow)
+                                       specific => specified GP (admin flow)
             patient_id (int): ID of patient whose default GP is to be changed
-            new_gp_id (int): ID of the patient's new default GP
+            new_gp_id (int, optional): ID of the patient's new default GP
 
         Returns:
-            boolean: True (GP wasn't full) or False (GP was full)
-        """        
+            boolean: True (success) or False (failure)
+        """
 
-        if GP.check_not_full(new_gp_id) == False:
-            return False
-        else: 
+        # getting a list of GPs who aren't full
+        df_not_full = GP.select_list('not_full')[0]
+        num_GP_not_full = len(df_not_full.index)
+
+        # GPs could (theoretically) all be at maximum capacity
+        if num_GP_not_full == 0:
+            return False 
+
+        else:
+            # patient user flow - automatic allocation based on least full GP 
+            if type == 'auto':
+                new_gp_id = df_not_full['GP ID'].iloc[0]
+            # admin user flow - specifying a specific GP for a patient
+            # GP might have become full since GP.select_list('not full')
+            # was called earler in the admin user flow
+            elif type =='specific' and new_gp_id not in df_not_full['GP ID']:
+                return False
+
             query = """
                     UPDATE patient
                     SET gp_id = '{}'
@@ -261,7 +282,6 @@ class Patient(User):
             conn.commit()
             conn.close()
             return True
-        
 
 
 
@@ -290,4 +310,4 @@ class Patient(User):
 # Patient.delete(1)
 
 ## Patient.change_gp()
-# Patient.change_gp(2, 1)
+# Patient.change_gp('auto', 2)
