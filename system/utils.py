@@ -145,14 +145,14 @@ def validate(user_input):
     
     Custom errors:
         - Empty field
-        - Input too long (> 25 chars) 
+        - Input too long (> 50 chars) 
         - Does not contain "'" or '"' to avoid SQL injections
     """
     # NOTE: This func could be used as decorator
     try:
         if user_input == '':
             raise EmptyError
-        elif len(user_input) > 25:
+        elif len(user_input) > 50:
             raise LenghtError
         elif ('"' in user_input) or ("'" in user_input):
             raise InvalidCharacterError

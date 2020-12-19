@@ -154,6 +154,12 @@ def book_appointment(next_dict):
         availability = Appointment.select_other_availability(view, Patient.select_gp_details(globals.usr_id)[0], start_date)
         gp_id = availability[2]
         gp_name = availability[3]
+        boolean_available = availability[4]
+
+        # if no availability amongst other GPs
+        if boolean_available == False:
+            print("\nNo availability among other GPs for the dates selected, \nplease book with your personal GP or change dates.")
+            return book_appointment(next_dict)
 
     print("\n" + availability[1])
 
@@ -245,15 +251,26 @@ def book_appointment(next_dict):
 
     # Require appointment agenda
     print("\nEnter short appointment agenda to inform GP of \nthe reason for the appointment.")
-    booking_agenda = input("\n-->")
+    booking_agenda = input("\n--> ")
+
+    # While input is invalid, enter again
+    while utils.validate(booking_agenda) == False:
+        booking_agenda = input("\n--> ")
+        
 
     # create appointement class instance to book appointment
     booking = Appointment(booking_start_time = booking_time, booking_agenda = booking_agenda, booking_type = booking_type, patient_id = globals.usr_id, gp_id = gp_id)
 
+    # Book appointment on Database
+    success = booking.book()
 
-    # TODO: book appointment + display summary
+    if success:
+        print("\n\U00002705 Appointment successfuly booked with " + gp_name + " at " + str(booking_time) + " on the " + str(booking_date) + ".")
+        return utils.display(next_dict)
 
-    return utils.display(next_dict)
+    else:
+        print("\n\U00002757 The appointment could not be booked because you took too long. \nPlease refresh and try again.")
+        return book_appointment(next_dict)
 
 
 ############################ SEQUENTIAL STEPS MENUS ########################
