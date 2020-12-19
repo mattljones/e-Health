@@ -1,8 +1,10 @@
 # Utility functions
 
 from pathlib import Path
+import os
 import sys
 import sqlite3
+import hashlib
 import pandas as pd
 import datetime as dt
 from system import asciiart
@@ -142,6 +144,25 @@ def display(my_dict):
         return display(my_dict)
 
 
+def hash_salt(password):
+    """
+    Hash and salt passwords.
+    """
+
+    salt = os.urandom(32) 
+
+    hash_key = hashlib.pbkdf2_hmac(
+        'sha256', 
+        password.encode('utf-8'), 
+        salt, 
+        100000
+    )
+
+    hash_salt = salt + hash_key
+
+    return hash_salt
+
+
 def validate(user_input):
     """
     Validate user input.  
@@ -229,8 +250,6 @@ def validate_password(user_input):
     return True
 
 
-# TODO: Handle duplicate email addresses
-
 def validate_date(user_input):
     """
     Validate user input for date such as DOB.  
@@ -281,12 +300,31 @@ def login(user_email, password, usr_type):
     # u = (user_email,)
     conn = sqlite3.connect("database/db_comp0066.db")
     c = conn.cursor()
-    sql_pwd = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
+
+    sql_hash_salt = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
     # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
-    c.execute(sql_pwd)
-    pw_result = c.fetchone()
-    if pw_result and pw_result[0] == password:
-        # TODO: apply hashing
+    c.execute(sql_hash_salt)
+
+    # Get the full hash + salt from db
+    hash_salt = c.fetchone()
+
+    # Split hash and salt | len(salt) = 32
+    salt = hash_salt[:32] 
+    hash_key = hash_salt[32:]
+
+    # Hash and salt password to check (using same parameters)
+    hash_salt_to_check = hashlib.pbkdf2_hmac(
+        'sha256',
+        password.encode('utf-8'), 
+        salt, 
+        100000
+    )
+    
+    # Get new key 
+    hash_key_to_check = hash_salt_to_check[32:]
+
+    # Check if new key matches our stored key
+    if hash_key_to_check == hash_key:
         sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
         c.execute(sql_id)
         usr_id = c.fetchone()[0]
@@ -301,9 +339,9 @@ def login(user_email, password, usr_type):
         conn.close()
         return False
 
-# NOTE: change_gp (gp 0 > automatically allocated)
 
-# TODO: blood donor - organ donor - status
+# TODO: Handle duplicate email addresses
+
 def register(first_name, last_name, gender, birth_date, 
             email, password, blood_donor, organ_donor):        
     """
@@ -318,7 +356,7 @@ def register(first_name, last_name, gender, birth_date,
         - Gender                    
         - Birth date                
         - Email address
-        - Password                  TODO: hashing
+        - Password                  
         - Registration date         [Default: now]
         - Blood donor status
         - Organ donor status 
@@ -326,10 +364,10 @@ def register(first_name, last_name, gender, birth_date,
     
     """
 
-    # Default values 
     gp_id_default = '0'
     reg_date = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     default_status = 'pending'
+    hash_salt_pw = hash_salt(password)
 
     # Insert into patient table
     query = """
@@ -343,7 +381,7 @@ def register(first_name, last_name, gender, birth_date,
                     gender,
                     birth_date,
                     email,
-                    password,
+                    hash_salt_pw,
                     reg_date,
                     blood_donor,
                     organ_donor,
