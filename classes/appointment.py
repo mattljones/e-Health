@@ -414,8 +414,8 @@ if __name__ == "__main__":
     #                     booking_agenda, booking_type,gp_id,patient_id
 
     # THIS WORKS! : Testing book appointment method
-    print(Appointment('Null', '2020-12-14 15:00', 'confirmed',
-                 'booking agenda edit test 3', 'offline', ' ', 1, 1).book())
+    # print(Appointment('Null', '2020-12-14 15:00', 'confirmed',
+    #              'booking agenda edit test 3', 'offline', ' ', 1, 1).book())
 
     # THIS WORKS! : Testing Update Method
     # Appointment(27, '2020-12-13 10:00', 'confirmed',
