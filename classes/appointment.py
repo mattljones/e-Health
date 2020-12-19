@@ -444,8 +444,8 @@ if __name__ == "__main__":
     # print(Appointment.select_other_availability('week', 1, '2020-12-24')[3])
 
     # THIS WORKS! : Changes status for a specific booking
-    reject_reason = 'the booking was rejected for this reason: Test'
-    Appointment.change_status(2, 'booked')
+    # reject_reason = 'the booking was rejected for this reason: Test'
+    # Appointment.change_status(2, 'booked')
 
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
