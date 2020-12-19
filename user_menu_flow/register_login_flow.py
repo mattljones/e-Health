@@ -108,7 +108,8 @@ def register_page(next_dict):
     gender = {"title": "Gender",
               "1":"male",
               "2":"female",
-              "3":"not applicable"}
+              "3":"non binary",
+              "4":"prefer not to say"}
     
     # register NHS blood donor dictionary
     blood_donor = {"title": "NHS Blood donor",
