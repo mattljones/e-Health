@@ -359,12 +359,18 @@ class Appointment:
                              LIMIT 1;""".format(start_date, end_date, gp_id)
 
         query_result = u.db_read_query(query_get_gp_id)
+        number_of_bookings = query_result.loc[0, 'Bookings_Per_Day']
+        if (select_type == 'day' and number_of_bookings < 49) or (select_type == 'week' and number_of_bookings < 245):
+            boolean_available = True
+        else:
+            boolean_available = False
+
         other_gp_id = query_result.loc[0, 'gp_id']
         other_gp_last_name = "DR." + query_result.loc[0, 'gp_last_name']
 
         df_object, df_print = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return df_object, df_print, other_gp_id, other_gp_last_name
+        return boolean_available, df_object, df_print, other_gp_id, other_gp_last_name
 
     # Change status of a specific appointment
     @staticmethod
@@ -440,8 +446,8 @@ if __name__ == "__main__":
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
     # Displays the DF of the availability for that GP
-    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[1])
-    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[3])
+    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[0])
+    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[0])
 
     # THIS WORKS! : Changes status for a specific booking
     # reject_reason = 'the booking was rejected for this reason: Test'
@@ -449,4 +455,4 @@ if __name__ == "__main__":
 
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
-    1
+
