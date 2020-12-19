@@ -33,41 +33,58 @@ def cancel_appointment(next_dict):
     upcoming = Appointment.select_patient('upcoming', globals.usr_id)
     print(upcoming[1] + "\n")
 
-    # Generate a list of the user choices 
-    choices = ["#"]
-    for j in range (1, len(upcoming[0].index) + 1):
-        choices.append(str(j))
+    print("Enter ID of appointment to cancel \nor '#' to not cancel any of them")
 
-    # Display patient choices and require input on apppointment to cancel
-    for j in range(1,len(choices)):
-        print("[ " + choices[j] + " ] Cancel row " + choices[j] + " of the table")
-        
-    print("\n[ # ] Do not cancel any appointment")
-
-    i = input("\n--> ")
-
+    # Require user choice
+    booking_id = input("\n--> ")
+    
     # If user entry is invalid, ask for input again
-    while i not in choices:
+    while booking_id not in str(upcoming[0]['Apt. ID'].tolist()) and booking_id != '#':
         print("\n\U00002757 Invalid entry, please try again")
-        i = input("\n--> ")
+        booking_id = input("\n--> ")
 
     # If do not want to cancel appointment, redirects to empty dictionary
-    if i == "#" :
+    if booking_id == "#" :
         return utils.display(next_dict)
 
     # If want to cancel appointment, work out apt ID, delete it and
     # redicrect to empty dictionary
     else:
-        booking_id = upcoming[0].iloc[int(i)-1]['Apt. ID']
         Appointment.change_status(booking_id, "cancelled")
         print("\n\U00002705 Appointment successfully cancelled !")
         return utils.display(next_dict)
 
 
-def book_personal_gp(next_dict):
+def book_appointment(next_dict):
     '''
     Mehtod for patients to book an appointment with his personal GP.
     '''
+
+    print("\n----------------------------------------------------\n"
+            "             BOOK WITH REGISTERED GP ? \n")
+
+    # Display user availibility view options
+    print("[ 1 ] Yes")
+    print("[ 2 ] No, book with another GP")
+    print("\n[ # ] Cancel appointment booking")
+
+    # Require user choice
+    i = input("\n--> ")
+
+    # If invalid entry, ask for input again
+    while i not in ("1","2","#"):
+        print("\n\U00002757 Invalid entry, please try again")
+        i = input("\n--> ")
+    
+    # If user want to stop apppointment booking process
+    if i == "#": return utils.display(next_dict)
+
+    # Availability day view
+    elif i == "1": personal_gp = True
+
+    # Availability week view
+    else: personal_gp = False
+
     print("\n----------------------------------------------------\n"
             "              AVAILABILITY \n")
 
@@ -88,10 +105,10 @@ def book_personal_gp(next_dict):
     if i == "#": return utils.display(next_dict)
 
     # Availability day view
-    elif i == "1": day_view = True
+    elif i == "1": view = 'day'
 
     # Availability week view
-    else: day_view = False
+    else: view = 'week'
 
     print("\n----------------------------------------------------\n"
             "              AVAILABILITY VIEW\n"
@@ -105,15 +122,17 @@ def book_personal_gp(next_dict):
     valid = False
 
     # Require user choice
-    i = input("\n--> ")
+    start_date = input("\n--> ")
 
     # While invalid input, require input again
     while valid == False:
         
-        if i in ("T","t"): valid = True
+        if start_date in ("T","t"): 
+            valid = True
+            start_date = date.today().isoformat()
         
-        elif utils.validate_date(i):
-            if date.fromisoformat(i) > date.today():
+        elif utils.validate_date(start_date):
+            if date.fromisoformat(start_date) > date.today():
                 valid = True
             
             else:
@@ -122,103 +141,117 @@ def book_personal_gp(next_dict):
         else:
             print("\n\U00002757 Invalid entry, please try again")
 
-            
         if valid == False:
-            i = input("\n--> ")
+            start_date = input("\n--> ")
 
-    # Calling the Appointment class static method select_availability to display availibility
-    if day_view == True and i in ("T","t"):
-        availibility = Appointment.select_availability('day', Patient.select_gp_details(globals.usr_id)[0], date.today().isoformat())
-    elif day_view == True and i not in ("T","t"):
-        availibility = Appointment.select_availability('day', Patient.select_gp_details(globals.usr_id)[0], i)
-    elif day_view == False and i in ("T","t"):
-        availibility = Appointment.select_availability('week', Patient.select_gp_details(globals.usr_id)[0], date.today().isoformat())
-    else:
-        availibility = Appointment.select_availability('week', Patient.select_gp_details(globals.usr_id)[0], i)
+    # Calling the Appointment class static method select_availability or select_other_availability to display desired availibility
+    if personal_gp == True: 
+        availability = Appointment.select_availability(view, Patient.select_gp_details(globals.usr_id)[0], start_date)
+        gp_id = Patient.select_gp_details(globals.usr_id)[0]
+        gp_name = Patient.select_gp_details(globals.usr_id)[1]
 
-    print("\n" + availibility[1])
+    else: 
+        availability = Appointment.select_other_availability(view, Patient.select_gp_details(globals.usr_id)[0], start_date)
+        gp_id = availability[2]
+        gp_name = availability[3]
 
-    # TODO: ask user input for which appointment to book & book appointment 
+    print("\n" + availability[1])
 
-    return utils.display(next_dict)
-        
+    print("\nEnter the index of the time slot to book \nor '#' to display other availabilitites (different dates or GPs)")
 
-def book_other_gp(next_dict):
-    '''
-    Mehtod for patients to book an appointment with 
-    other GPs than hiw personal GP.
-    '''
-    print("\n----------------------------------------------------\n"
-            "              AVAILABILITY \n")
+    # Require user choice of booking slot
+    booking_index = input("\n--> ")
 
-    # Display user availibility view options
-    print("[ 1 ] Day view")
-    print("[ 2 ] Week view")
+    # Build dataframe with only the cell of timeslot selected by user
+    # Will return an empty dataframe (nb rows = 0) for '#' and invalid entry
+    selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
+
+    # user confirm time slot selection
+    confirmation = False
+
+    # while user hasn't confirmed his selection
+    while confirmation == False:
+
+        # While user entry is invalid
+        while len(selected_time_slot.index) != 1 and len(selected_time_slot.index) != 1 and booking_index != '#':
+            print("\n\U00002757 Invalid entry, please try again")
+            booking_index = input("\n--> ")
+            selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
+
+        # if user wants to display new availability, recursive call of the function itself
+        if booking_index == "#":
+             return book_appointment(next_dict)
+
+        # Confirm time slot selection
+        else :
+
+            # work out booking date and time
+            booking_date = list(selected_time_slot.columns)[0]
+            booking_time = list(selected_time_slot.index)[0]
+
+            # confirmation message
+            print("\nBook a medical appointment at " + str(booking_time) + " on the " + str(booking_date) + " ?")
+            print("\n[ 1 ] Yes")
+            print("[ 2 ] No")
+
+            # user confirmation choice 
+            user_confirmation = input("\n--> ")
+
+            # while invalid user input
+            while user_confirmation not in ("1","2"):
+                print("\n\U00002757 Invalid entry, please try again")
+                user_confirmation = input("\n--> ")
+
+            # If user confirms booking, exit loop
+            if user_confirmation == '1': 
+                confirmation = True
+
+            # if user doesn't confirm --> initialised variables and loop again
+            else: 
+                confirmation = False
+
+                # initialising variables
+                print("\nEnter the index of the time slot to book \nor '#' to display other availabilitites (different dates or GPs)")
+                booking_index = input("\n--> ")
+                selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
+    
+
+    # Now that user has confirmed appointment, require appointment type (online or offline)  
+    print("\nDo you want to attend appointment in person or online ?")
+    print("\n[ 1 ] Online")
+    print("[ 2 ] In person")
     print("\n[ # ] Cancel appointment booking")
 
-    # Require user choice
+    # ask user choice
     i = input("\n--> ")
-
-    # If invalid entry, ask for input again
+    
+    # while invalid user input
     while i not in ("1","2","#"):
         print("\n\U00002757 Invalid entry, please try again")
         i = input("\n--> ")
-    
-    # If user want to stop apppointment booking process
-    if i == "#": return utils.display(next_dict)
 
-    # Availability day view
-    elif i == "1": day_view = True
+    # cancel appointment booking
+    if i == "#":
+        return utils.display(next_dict)
 
-    # Availability week view
-    else: day_view = False
+    # online appointment
+    elif i == "1":
+        booking_type = "online"
 
-    print("\n----------------------------------------------------\n"
-            "              AVAILABILITY VIEW\n"
-            "                 START DATE\n")
-
-    print("Please enter the date (YYYY-MM-DD) from\n" 
-          "which you want to diplay availibility:\n\n"
-          "Enter 'T' to see availibility from today.")
-
-    # Boolean for input validation
-    valid = False
-
-    # Require user choice
-    i = input("\n--> ")
-
-    # While invalid input, require input again
-    while valid == False:
-        
-        if i in ("T","t"): valid = True
-        
-        elif utils.validate_date(i):
-            if date.fromisoformat(i) > date.today():
-                valid = True
-            
-            else:
-                print("\n\U00002757 Appointment date must be in the future.")
-        
-        else:
-            print("\n\U00002757 Invalid entry, please try again")
-
-            
-        if valid == False:
-            i = input("\n--> ")
-
-    # Calling the Appointment class static method select_other_availability to display availibility
-    if day_view == True and i in ("T","t"):
-        availibility = Appointment.select_other_availability('day', Patient.select_gp_details(globals.usr_id)[0], date.today().isoformat())
-    elif day_view == True and i not in ("T","t"):
-        availibility = Appointment.select_other_availability('day', Patient.select_gp_details(globals.usr_id)[0], i)
-    elif day_view == False and i in ("T","t"):
-        availibility = Appointment.select_other_availability('week', Patient.select_gp_details(globals.usr_id)[0], date.today().isoformat())
+    # offline appointment
     else:
-        availibility = Appointment.select_other_availability('week', Patient.select_gp_details(globals.usr_id)[0], i)
+        booking_type = "offline"
+        
 
-    print("\n" + availibility[1])
+    # Require appointment agenda
+    print("\nEnter short appointment agenda to inform GP of \nthe reason for the appointment.")
+    booking_agenda = input("\n-->")
 
-    # TODO: ask user input for which appointment to book & book appointment 
+    # create appointement class instance to book appointment
+    booking = Appointment(booking_start_time = booking_time, booking_agenda = booking_agenda, booking_type = booking_type, patient_id = globals.usr_id, gp_id = gp_id)
+
+
+    # TODO: book appointment + display summary
 
     return utils.display(next_dict)
 
@@ -327,6 +360,7 @@ def change_GP_pair(next_dict):
 
     return utils.display(next_dict)
 
+
 ######################### MENU NAVIGATION DICTIONARIES ######################
 
 # Empty nested dictionary to store in tuple for last menu
@@ -335,34 +369,27 @@ empty_dict = {"title": "CONTINUE E-HEALTH OR LOGOUT ?",
               "type":"sub"}
 
 
-# "Book new appointement" page dictionary
-flow_1_new =  {"title": "BOOK WITH REGISTERED GP ?",
-            "type":"sub",
-            "1":("Yes",book_personal_gp,empty_dict),
-            "2":("No, book with another GP",book_other_gp,empty_dict)}
-
-
 # "Manage/Book appointment" page dictionary
 flow_1 = {"neither":
                 {"title": "BOOK NEW APPOINTMENT ?",
                 "type":"sub",
-                "1":("Yes",empty_method,flow_1_new)},
+                "1":("Yes",book_appointment,empty_dict)},
           "has":
                 {"title": "MANAGE WHICH APPOINTMENTS ?",
                 "type":"sub",
                 "1":("Cancel upcoming appointments",cancel_appointment,empty_dict),
-                "2":("Book new appointment",empty_method,flow_1_new)},
+                "2":("Book new appointment",book_appointment,empty_dict)},
           "had":
                 {"title": "MANAGE WHICH APPOINTMENTS ?",
                 "type":"sub",
                 "1":("Access previous prescriptions",access_prescription,empty_dict),
-                "2":("Book new appointment",empty_method,flow_1_new)},
+                "2":("Book new appointment",book_appointment,empty_dict)},
           "both":
                 {"title": "MANAGE WHICH APPOINTMENTS ?",
                 "type":"sub",
                 "1":("Access previous prescriptions",access_prescription,empty_dict),
                 "2":("Cancel upcoming appointments",cancel_appointment,empty_dict),
-                "3":("Book new appointment",empty_method,flow_1_new)}}
+                "3":("Book new appointment",book_appointment,empty_dict)}}
 
 
 # "Change GP pair" page dictionary
