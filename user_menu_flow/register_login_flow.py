@@ -121,7 +121,7 @@ def register_page(next_dict):
                    "2":"no"}
 
     # Registration details
-    usr_details=["First name", "Last name", "Birth date (YYYY-MM-DD)", "Email address", "Password", "Gender", "NHS blood donor", "NHS organ donor"]
+    usr_details=["First name", "Last name", "Birth date (YYYY-MM-DD)", "Email address", "Password (8 characters min)", "Gender", "NHS blood donor", "NHS organ donor"]
     MCQ_details_dict = [gender,blood_donor,organ_donor]
     usr_input=[]
     
@@ -139,7 +139,7 @@ def register_page(next_dict):
             usr_input.append(single_input)
 
         # Input validation for password 
-        elif (usr_details[i] == "Password") and (utils.validate_password(single_input)):
+        elif (usr_details[i] == "Password (8 characters min)") and (utils.validate_password(single_input)):
             usr_input.append(single_input)
 
         # Input validation for password 
@@ -147,7 +147,7 @@ def register_page(next_dict):
             usr_input.append(single_input)
 
         # Input validation for the other registration details
-        elif (usr_details[i] not in ("Email address","Password", "Birth date (YYYY-MM-DD)")) and (utils.validate(single_input)):
+        elif (usr_details[i] not in ("Email address","Password (8 characters min)", "Birth date (YYYY-MM-DD)")) and (utils.validate(single_input)):
             usr_input.append(single_input)
 
         # If invalid input
