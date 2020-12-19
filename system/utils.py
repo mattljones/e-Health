@@ -14,8 +14,11 @@ sys.path.insert(1, str(p))
 # import register, patient, gp & admin main dictionaries
 from user_menu_flow.patient_flow import main_flow_patient
 from user_menu_flow.gp_flow import main_flow_gp
-from user_menu_flow.admin_flow import main_flow_admin # NOTE: change name in admin_flow for consistency?
+from user_menu_flow.admin_flow import main_flow_admin
 from user_menu_flow.register_login_flow import main_flow_register
+
+# import method to automatically allocate patient to gp with fewest patients
+from classes.patient import Patient
 
 # Import global variables from globals.py
 from system import globals
@@ -226,6 +229,8 @@ def validate_password(user_input):
     return True
 
 
+# TODO: Handle duplicate email addresses
+
 def validate_date(user_input):
     """
     Validate user input for date such as DOB.  
@@ -271,7 +276,6 @@ def validate_date(user_input):
 
 
 def login(user_email, password, usr_type):
-    # TODO: generalize to all user types
     """Check login credentials."""
 
     # u = (user_email,)
@@ -297,63 +301,69 @@ def login(user_email, password, usr_type):
         conn.close()
         return False
 
+# NOTE: change_gp (gp 0 > automatically allocated)
 
-def register(first_name, last_name, gender, birth_date, email, pw, type):
-    # TODO: update using real args - patient_id / gp_id - next page
+# TODO: blood donor - organ donor - status
+def register(first_name, last_name, gender, birth_date, 
+            email, password, blood_donor, organ_donor):        
     """
-    Register a new user by inserting user inputs in database.
+    Register a new user by inserting user inputs / default values in database.
     
     Assumes inputs already validated and sanitized.  
 
-    Arguments included 
+    Values inserted: 
+        - GP ID                     [Default: GP with fewest patients]
         - First name                
         - Last name                 
         - Gender                    
         - Birth date                
         - Email address
-        - Password (TODO: hash)
-        - Registration date         [default: now]
-        - User type 
+        - Password                  TODO: hashing
+        - Registration date         [Default: now]
+        - Blood donor status
+        - Organ donor status 
+        - Patient status            [Default: pending]
     
     """
-    # Create connection to db
-    conn = sqlite3.connect('config/db_comp0066.db')
 
-    # Create cursor
-    c = conn.cursor()
+    # Default values 
+    gp_id_default = '0'
+    reg_date = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    default_status = 'pending'
 
     # Insert into user
-    c.execute("""
-        INSERT INTO
-            users (
-            user_first_name,
-            user_last_name,
-            user_gender,
-            user_birth_date,
-            user_email,
-            user_password,
-            user_registration_date,
-            user_type)
-        VALUES
-            (first_name,
-            last_name,
-            gender,
-            birth_date,
-            email,
-            pw,
-            datetime('now'),
-            type);
-    """)
-
-    # Commit to db
+    query = """
+            INSERT INTO patient
+            VALUES (NULL, '{}', '{}', '{}', '{}', '{}', '{}', 
+                          '{}', '{}', '{}', '{}', '{}', '{}')
+            """.format(
+                    gp_id_default,
+                    first_name,
+                    last_name,
+                    gender,
+                    birth_date,
+                    email,
+                    password,
+                    reg_date,
+                    blood_donor,
+                    organ_donor,
+                    default_status)
+    conn = sqlite3.connect('config/db_comp0066.db')
+    c = conn.cursor()
+    c.execute(query)
     conn.commit()
+    conn.close()
+
+    # TODO: Assign gp using newly created patient_id
+
+    # TODO: Retrieve name of new GP
 
     # Output message
     print("""Successfully registered. 
         You can now login using your email %s and password.""" % email)
 
-    # Close db
-    conn.close()
+    # Return boolean to use in user flow 
+    return True
 
 
 def user_type(user_id):
