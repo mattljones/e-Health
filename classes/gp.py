@@ -44,7 +44,7 @@ class GP(User):
         self.specialisation_id = specialisation_id
 
 
-    def insert(self):  # TO DO: Add password hashing using utilities 
+    def insert(self):  # TODO: Add password hashing using utilities 
         """
         Inserts a new GP from an instance populated by user input.
         GPs cannot register themselves: instance created in user flow.
@@ -198,6 +198,7 @@ class GP(User):
                            COUNT(patient_id) AS "No. Patients"
                     FROM gp, patient
                     WHERE gp.gp_id = patient.gp_id
+                    AND gp_status = 'active'
                     GROUP BY gp.gp_id
                     HAVING COUNT(patient_id) < '{}'
                     ORDER BY "No. Patients" ASC
@@ -246,7 +247,7 @@ class GP(User):
         return df_object, df_print
 
 
-    @staticmethod  # TO DO: Add patient/appointment reallocation 
+    @staticmethod  # TODO: Add patient/appointment reallocation 
     def change_status(gp_id, new_status):  
         """
         Changes a given GP's status (to inactive/active).
@@ -270,7 +271,7 @@ class GP(User):
 
 
     @staticmethod
-    def delete(gp_id):  # TO DO: Add patient/appointment reallocation 
+    def delete(gp_id):  # TODO: Add patient/appointment reallocation 
         """
         Deletes a GP from the GP table. 
         Note: this auto-reallocates patients & appointments.
