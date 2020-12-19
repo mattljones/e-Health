@@ -331,7 +331,7 @@ def register(first_name, last_name, gender, birth_date,
     reg_date = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     default_status = 'pending'
 
-    # Insert into user
+    # Insert into patient table
     query = """
             INSERT INTO patient
             VALUES (NULL, '{}', '{}', '{}', '{}', '{}', '{}', 
@@ -351,16 +351,17 @@ def register(first_name, last_name, gender, birth_date,
     conn = sqlite3.connect('config/db_comp0066.db')
     c = conn.cursor()
     c.execute(query)
+
+    # Assign GP using newly created patient_id
+    patient_id = c.lastrowid 
+    Patient.change_gp('auto', patient_id)    
+
     conn.commit()
     conn.close()
 
-    # TODO: Assign gp using newly created patient_id
-
-    # TODO: Retrieve name of new GP
-
     # Output message
-    print("""Successfully registered. 
-        You can now login using your email %s and password.""" % email)
+    print("""Successfully registered. \nYou can now login 
+    using your email {} and password.""".format(email))
 
     # Return boolean to use in user flow 
     return True
