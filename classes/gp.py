@@ -199,7 +199,7 @@ class GP(User):
                     FROM gp, patient
                     WHERE gp.gp_id = patient.gp_id
                     GROUP BY gp.gp_id
-                    HAVING COUNT(patient_id) <= '{}'
+                    HAVING COUNT(patient_id) < '{}'
                     ORDER BY "No. Patients" ASC
                     """.format(GP.max_capacity)
 
