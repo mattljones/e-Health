@@ -370,7 +370,7 @@ class Appointment:
 
         df_object, df_print = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return boolean_available, df_object, df_print, other_gp_id, other_gp_last_name
+        return df_object, df_print, other_gp_id, other_gp_last_name, boolean_available
 
     # Change status of a specific appointment
     @staticmethod
