@@ -50,6 +50,9 @@ class EmailFormatError(Error):
     """Raised when incorrectly formatted email address."""
     pass
 
+class DuplicateEmailError(Error):
+    """Raised when email has already been used in an account."""
+    pass
 
 class DateFormatError(Error):
     """Raised when date (YYYY-MM-DD) is not correctly formatted."""
@@ -134,7 +137,7 @@ def display(my_dict):
         print(asciiart.exit_art)
         sys.exit()
 
-    # TODO: guidance option?
+    # TODO: add help function
     elif usr_choice in ('H', 'h'):
         pass
 
@@ -197,16 +200,23 @@ def validate_email(user_input):
     Validate user input for email address.  
     
     Custom errors:
-        - Empty field
+        - Not empty field
         - Must contain '@' symbol
+        - Not unique email address
         - Does not contain "'" or '"' to avoid SQL injections
     """
     # NOTE: This func could be used as decorator
+    email_query = 'SELECT patient_email FROM patient'
+    emails = db_read_query(email_query)    
+
     try:
         if user_input == '':
             raise EmptyError
         elif '@' not in user_input:
             raise EmailFormatError
+        # TODO: Test whether df or series
+        elif emails.isin(user_input):
+            raise DuplicateEmailError
         elif ('"' in user_input) or ("'" in user_input):
             raise InvalidCharacterError
     except InvalidCharacterError:
@@ -214,6 +224,9 @@ def validate_email(user_input):
         return False
     except EmptyError:
         print("\U00002757 You need to input a value.")
+        return False
+    except DuplicateEmailError:
+        print("\U00002757 Email address already in use.")
         return False
     except EmailFormatError:
         print("\U00002757 Incorrectly formatted email address.")
@@ -491,9 +504,7 @@ def db_execute(query):
     conn = sqlite3.connect('database/db_comp0066.db')
     c = conn.cursor()
     c.execute(query)
-    # Commit to db
     conn.commit()
-    # Close db
     conn.close()
 
 
