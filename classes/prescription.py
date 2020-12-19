@@ -98,11 +98,11 @@ if __name__ == "__main__":
 ### TESTING ###
 ## testing prescription
 # call classes
-new_prescription = Prescription()
+#ew_prescription = Prescription()
 # see patient records
-df = new_prescription.select_patient(22)[1]
+#df = new_prescription.select_patient(22)[1]
 # see drug list
-df = new_prescription.select_drug_list()[1]
+# df = new_prescription.select_drug_list()[1]
 
 
 ## Insert new prescription

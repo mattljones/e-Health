@@ -81,7 +81,7 @@ class Record:
     @classmethod
     def select(cls, patient_id):
         """
-        Generates an instance of the record & a **2** dataframes summarising 
+        Generates an instance of the record & **2** dataframes summarising 
         relevant attributes (some editable, some not) to display in user flow.
         Instance passed to user flow for storing user-inputted values.
 

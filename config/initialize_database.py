@@ -24,7 +24,8 @@ c.execute("""
         admin_gender = 'not known' or
         admin_gender = 'male' or
         admin_gender = 'female' or
-        admin_gender = 'not applicable'),
+        admin_gender = 'non binary' or
+        admin_gender = 'prefer not to say'),
     admin_birth_date DATE NOT NULL,
     admin_email TEXT NOT NULL,
     admin_password TEXT NOT NULL,
@@ -41,7 +42,8 @@ c.execute("""
         gp_gender = 'not known' or
         gp_gender = 'male' or
         gp_gender = 'female' or
-        gp_gender = 'not applicable'),
+        gp_gender = 'non binary' or
+        gp_gender = 'prefer not to say'),
     gp_birth_date DATE NOT NULL,
     gp_email TEXT NOT NULL,
     gp_password TEXT NOT NULL,
@@ -76,7 +78,8 @@ c.execute("""
         patient_gender = 'not known' or
         patient_gender = 'male' or
         patient_gender = 'female' or
-        patient_gender = 'not applicable'),
+        patient_gender = 'non binary' or
+        patient_gender = 'prefer not to say'),
     patient_birth_date DATE NOT NULL,
     patient_email TEXT NOT NULL,
     patient_password TEXT NOT NULL,
