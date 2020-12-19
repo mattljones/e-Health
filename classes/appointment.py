@@ -36,20 +36,32 @@ class Appointment:
 
     # Book a new appointment with GP as a patient
     def book(self):
-        query = """ INSERT INTO booking
-        (booking_id, booking_start_time, booking_status,
-        booking_agenda, booking_type,gp_id,patient_id,booking_status_change_time)
-        VALUES ({},'{}','{}','{}','{}',{},{},'{}');""".format('NULL', self.booking_start_time,
-                                                              'booked',
-                                                              self.booking_agenda,
-                                                              self.booking_type, self.gp_id,
-                                                              self.patient_id,
-                                                              dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
+        """
+        :return: Boolean value if the booking was made. If false, this implies that:
+        that particular GP already has a booking on that date i.e. DF returned from the DB != EmptyDF
+        """
+        # fist we need to check to make sure that the booking is still available
 
-        u.db_execute(query)
+        booking_check_query = """SELECT *
+                                 FROM booking
+                                 WHERE gp_id == {} 
+                                 AND booking_start_time == '{}'""".format(self.gp_id,
+                                                                          self.booking_start_time)
+        booking_check_result = u.db_read_query(booking_check_query).empty
 
-    # NOTE: should we be checking if the slot that the patient wants to book has not been previously booked and
-    # doesn't fall on the weekend. Should be done in the User Flow
+        if booking_check_result == "True":
+            query = """ INSERT INTO booking
+            (booking_id, booking_start_time, booking_status,
+            booking_agenda, booking_type,gp_id,patient_id,booking_status_change_time)
+            VALUES ({},'{}','{}','{}','{}',{},{},'{}');""".format('NULL', self.booking_start_time,
+                                                                  'booked',
+                                                                  self.booking_agenda,
+                                                                  self.booking_type, self.gp_id,
+                                                                  self.patient_id,
+                                                                  dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
+
+            u.db_execute(query)
+        return booking_check_result
 
     # Update an appointment with GP
     # Need to add Error handling, check if the appointment actually exists
@@ -347,22 +359,38 @@ class Appointment:
                              LIMIT 1;""".format(start_date, end_date, gp_id)
 
         query_result = u.db_read_query(query_get_gp_id)
+        number_of_bookings = query_result.loc[0, 'Bookings_Per_Day']
+        if (select_type == 'day' and number_of_bookings < 49) or (select_type == 'week' and number_of_bookings < 245):
+            boolean_available = True
+        else:
+            boolean_available = False
+
         other_gp_id = query_result.loc[0, 'gp_id']
         other_gp_last_name = "DR." + query_result.loc[0, 'gp_last_name']
 
         df_object, df_print = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return df_object, df_print, other_gp_id, other_gp_last_name
+        return boolean_available, df_object, df_print, other_gp_id, other_gp_last_name
 
     # Change status of a specific appointment
     @staticmethod
-    def change_status(booking_id, new_status):
+    def change_status(booking_id, new_status, reject_reason=None):
         """"
         :param booking_id: booking specific ID to change status for
         :param new_status: prove a new status to update to
+        :param reject_reason: Optional input where we the GP must provide a reason for why they rejected an appointment
         """
-        query = """UPDATE booking SET booking_status = '{}' WHERE booking_id = {};""".format(new_status, booking_id)
-        u.db_execute(query)
+        if new_status == 'rejected':
+
+            query = """UPDATE booking SET booking_status = '{}', booking_agenda = '{}'
+                       WHERE booking_id = {};""".format(new_status, reject_reason, booking_id)
+            print(query)
+            u.db_execute(query)
+
+        else:
+
+            query = """UPDATE booking SET booking_status = '{}' WHERE booking_id = {};""".format(new_status, booking_id)
+            u.db_execute(query)
 
     # Confirm all of the appointments for a specific GP
     @staticmethod
@@ -386,8 +414,8 @@ if __name__ == "__main__":
     #                     booking_agenda, booking_type,gp_id,patient_id
 
     # THIS WORKS! : Testing book appointment method
-    # Appointment('Null', '2020-12-14 10:00', 'confirmed',
-    #              'booking agenda edit test', 'offline', ' ', 1, 1).book()
+    # print(Appointment('Null', '2020-12-14 10:00', 'confirmed',
+    #             'booking agenda edit test', 'offline', ' ', 1, 1).book())
 
     # THIS WORKS! : Testing Update Method
     # Appointment(27, '2020-12-13 10:00', 'confirmed',
@@ -418,12 +446,13 @@ if __name__ == "__main__":
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
     # Displays the DF of the availability for that GP
-    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[1])
-    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[3])
+    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[0])
+    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[0])
 
     # THIS WORKS! : Changes status for a specific booking
-    #  Appointment.change_status(1, 'rejected')
+    # reject_reason = 'the booking was rejected for this reason: Test'
+    # Appointment.change_status(2, 'booked')
 
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
-    1
+
