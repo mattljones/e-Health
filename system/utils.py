@@ -315,14 +315,13 @@ def login(user_email, password, usr_type):
     c = conn.cursor()
 
     sql_hash_salt = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
-    # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
-    print('sql: ', sql_hash_salt)
     c.execute(sql_hash_salt)
 
     # Get the full hash + salt from db
+    # [0] is necessary or we will have a tuple instead of a string
     hash_salt = c.fetchone()[0]
 
-    # Split hash and salt | len(salt) = 32
+    # Split hash and salt | len(salt) = 64 since hex byte is used
     salt = hash_salt[:64]
     hash_key = hash_salt[64:]
 
