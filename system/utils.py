@@ -207,7 +207,7 @@ def validate_email(user_input):
     """
     # NOTE: This func could be used as decorator
     email_query = 'SELECT patient_email FROM patient'
-    emails = db_read_query(email_query)    
+    emails = db_read_query(email_query)   
 
     try:
         if user_input == '':
@@ -215,8 +215,8 @@ def validate_email(user_input):
         elif '@' not in user_input:
             raise EmailFormatError
         # TODO: Test whether df or series
-        elif emails.isin(user_input):
-            raise DuplicateEmailError
+        # elif emails.isin(user_input):
+        #     raise DuplicateEmailError
         elif ('"' in user_input) or ("'" in user_input):
             raise InvalidCharacterError
     except InvalidCharacterError:
@@ -316,25 +316,33 @@ def login(user_email, password, usr_type):
 
     sql_hash_salt = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
     # c.execute('SELECT pw_hash FROM ' + usr_type + ' WHERE user_id=?;', u)
+    print('sql: ', sql_hash_salt)
     c.execute(sql_hash_salt)
 
     # Get the full hash + salt from db
-    hash_salt = c.fetchone()
+    hash_salt = c.fetchone()[0]
 
     # Split hash and salt | len(salt) = 32
-    salt = hash_salt[:32] 
-    hash_key = hash_salt[32:]
+    salt = hash_salt[:64]
+    hash_key = hash_salt[64:]
 
     # Hash and salt password to check (using same parameters)
-    hash_salt_to_check = hashlib.pbkdf2_hmac(
+    hash_key_to_check = hashlib.pbkdf2_hmac(
         'sha256',
         password.encode('utf-8'), 
-        salt, 
+        bytes.fromhex(salt),
         100000
-    )
-    
+    ).hex()
+
     # Get new key 
-    hash_key_to_check = hash_salt_to_check[32:]
+    # hash_key_to_check = hash_salt_to_check[32:]
+
+    print('input_password: ', password)
+    print("hash_salt: ", hash_salt)
+    print('salt: ', salt)
+    print('salt hex bytes: ', bytes.fromhex(salt))
+    print('hash_key_in_datab: ', hash_key)
+    print('hash_key_to_check: ', hash_key_to_check)
 
     # Check if new key matches our stored key
     if hash_key_to_check == hash_key:
