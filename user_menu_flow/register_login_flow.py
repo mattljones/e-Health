@@ -182,10 +182,8 @@ def register_page(next_dict):
         
         i += 1
     
-    # TODO: Hardcoded for now
-    ###########################
-    success = True
-    ###########################
+    # Updating DB with new patient account
+    success = utils.register(usr_details[0], usr_details[1], usr_details[5], usr_details[2], usr_details[3], usr_details[4], usr_details[6], usr_details[7])
 
     # If problem with registration
     if (success == False):
