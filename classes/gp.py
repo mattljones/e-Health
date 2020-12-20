@@ -31,20 +31,20 @@ class GP(User):
                  gender=None, 
                  birth_date=None, 
                  email=None, 
-                 password=None,             # password required for insert()
+                 password_raw=None,      # raw password required for insert()
                  registration_date=None, 
                  working_days=None, 
                  department_id=None, 
                  specialisation_id=None, 
                  status=None):
         User.__init__(self, id_, first_name, last_name, gender, birth_date, 
-                      email, password, registration_date, status)
+                      email, password_raw, registration_date, status)
         self.working_days = working_days
         self.department_id = department_id
         self.specialisation_id = specialisation_id
 
 
-    def insert(self):  # TODO: Add password hashing using utilities 
+    def insert(self):  # TODO: add password hashing from utilties
         """
         Inserts a new GP from an instance populated by user input.
         GPs cannot register themselves: instance created in user flow.
@@ -60,7 +60,7 @@ class GP(User):
                            self.gender, 
                            self.birth_date, 
                            self.email, 
-                           self.password,
+                           self.password_raw,
                            self.registration_date, 
                            self.working_days, 
                            self.department_id, 
@@ -295,18 +295,18 @@ class GP(User):
 
 ## CODE TESTING/DEMONSTRATION
 
-## insert()
-# test_GP = GP(first_name="test", 
-#              last_name="test", 
-#              gender="male", 
-#              birth_date="2020-12-13", 
-#              email="test@gmail.com", 
-#              password="password", 
-#              working_days=1, 
-#              department_id=1, 
-#              specialisation_id=1, 
-#              status="active")
-# test_GP.insert()
+# insert()
+test_GP = GP(first_name="test", 
+             last_name="test", 
+             gender="male", 
+             birth_date="2020-12-13", 
+             email="test@gmail.com", 
+             password_raw="password", 
+             working_days=1, 
+             department_id=1, 
+             specialisation_id=1, 
+             status="active")
+test_GP.insert()
 
 ## update()
 # test_GP_2 = GP.select(3)[0]

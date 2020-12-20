@@ -8,14 +8,14 @@ class User:
     """
 
     def __init__(self, id_, first_name, last_name, gender, birth_date, 
-                 email, password, registration_date, status):
+                 email, password_raw, registration_date, status):
         self.id = id_
         self.first_name = first_name
         self.last_name = last_name
         self.gender = gender
         self.birth_date = birth_date
         self.email = email
-        self.password = password
+        self.password_raw = password_raw
         self.registration_date = registration_date
         self.status = status
 
