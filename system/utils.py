@@ -337,12 +337,14 @@ def login(user_email, password, usr_type):
     # Get new key 
     # hash_key_to_check = hash_salt_to_check[32:]
 
-    print('input_password: ', password)
-    print("hash_salt: ", hash_salt)
-    print('salt: ', salt)
-    print('salt hex bytes: ', bytes.fromhex(salt))
-    print('hash_key_in_datab: ', hash_key)
-    print('hash_key_to_check: ', hash_key_to_check)
+    ########################## DEBUG ##########################
+    # print('input_password: ', password)                     #
+    # print("hash_salt: ", hash_salt)                         #
+    # print('salt: ', salt)                                   #
+    # print('salt hex bytes: ', bytes.fromhex(salt))          #
+    # print('hash_key_in_datab: ', hash_key)                  #
+    # print('hash_key_to_check: ',      hash_key_to_check)    # 
+    ########################## DEBUG ##########################
 
     # Check if new key matches our stored key
     if hash_key_to_check == hash_key:
