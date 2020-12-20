@@ -299,7 +299,8 @@ class Schedule:
                 # Execute query
                 u.db_execute(insert_timeoff_query)
 
-            # return 'time off was inserted'
+            return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date, end_date=end_date)
+
 
         # If there are already booked or confirmed appointments during start_date to end_date
         else:
