@@ -259,7 +259,7 @@ def book_appointment(next_dict):
         
 
     # create appointement class instance to book appointment
-    booking = Appointment(booking_start_time = booking_time, booking_agenda = booking_agenda, booking_type = booking_type, patient_id = globals.usr_id, gp_id = gp_id)
+    booking = Appointment(booking_start_time = str(booking_date) + " " + str(booking_time), booking_agenda = booking_agenda, booking_type = booking_type, patient_id = globals.usr_id, gp_id = gp_id)
 
     # Book appointment on Database
     success = booking.book()
