@@ -1,3 +1,9 @@
+**Admin**
+
+|  id  |    Name     |       Email       |  Password  |
+| :--: | :---------: | :---------------: | :--------: |
+|  1   | Admin Admin | admin@ehealth.com | root@EH_24 |
+
 **GP**
 
 |  id  |     Name      |        Email         |     Password     |
