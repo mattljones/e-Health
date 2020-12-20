@@ -32,7 +32,7 @@ def view_gp(next_dict):
     '''
     Select a list of GPs and allows choice for viewing.
     '''
-    return utils.dislay(next_dict)
+    return utils.display(next_dict)
 
 def retrieve_gp_list(type):
     df = gp.select_list('all')
@@ -52,13 +52,13 @@ def add_gp(next_dict):
     '''
     Adds a new GP.
     '''
-    return utils.dislay(next_dict)
+    return utils.display(next_dict)
 
 def deactivate_gp(next_dict):
     '''
     Deactivates a GP.
     '''
-    return utils.dislay(next_dict)
+    return utils.display(next_dict)
 
 def delete_gp(next_dict):
     '''
@@ -551,3 +551,9 @@ main_flow_admin = {
     "5":("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
     "6":("View Appointment Summaries", summaries_main, appointment_summary_date_flow)
 }
+
+
+############################# TESTING ###############################
+
+if __name__ == '__main__':
+    utils.display(main_flow_admin)
