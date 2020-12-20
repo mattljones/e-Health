@@ -151,8 +151,8 @@ c.execute("""
     booking_notes TEXT,
     gp_id INTEGER REFERENCES gp (gp_id) NOT NULL,
     -- For future appointments, Admin will update the associated GP before deletion, so no special action needed
-    -- For past appointments, the old GP id will remain in the booking table after the GP gets deleted;
-    -- here, assuming that the hospital keeps a separate archive of old GPs/their IDs for legal reasons
+    -- For past appointments, the old GP ID and name will remain in the booking table after the GP gets deleted;
+    gp_last_name TEXT NOT NULL,
     patient_id INTEGER REFERENCES patient (gp_id) ON DELETE CASCADE ON UPDATE CASCADE);
     -- If a patient is deleted, their medical records are no longer needed in the DB (assume archived/transferred to their new healthcare provider)
 """)
@@ -194,7 +194,7 @@ c.executemany("INSERT INTO admin VALUES (?, ?, ?, ?, ?, ?, ?, ?)", admin_rows)
 # 50 bookings (appointments only as time-off/sick-leave require block-booking lots of slots) before 2020-12-25
 booking_csv = open("config/dummy_data/booking_dummydata.csv")
 booking_rows = csv.reader(booking_csv)
-c.executemany("INSERT INTO booking VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", booking_rows)
+c.executemany("INSERT INTO booking VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", booking_rows)
 
 # drug table dummy data
 # 20 example drugs based on those most commonly presribed by NHS GPs.
