@@ -291,46 +291,46 @@ class GP(User):
         conn.close()
 
 
+if __name__ == "__main__":
 
+    ## CODE TESTING/DEMONSTRATION
 
-## CODE TESTING/DEMONSTRATION
+    # insert()
+    test_GP = GP(first_name="test", 
+                last_name="test", 
+                gender="male", 
+                birth_date="2020-12-13", 
+                email="test@gmail.com", 
+                password_raw="password", 
+                working_days=1, 
+                department_id=1, 
+                specialisation_id=1, 
+                status="active")
+    test_GP.insert()
 
-# insert()
-test_GP = GP(first_name="test", 
-             last_name="test", 
-             gender="male", 
-             birth_date="2020-12-13", 
-             email="test@gmail.com", 
-             password_raw="password", 
-             working_days=1, 
-             department_id=1, 
-             specialisation_id=1, 
-             status="active")
-test_GP.insert()
+    ## update()
+    # test_GP_2 = GP.select(3)[0]
+    # test_GP_2.first_name = "updated_name"
+    # test_GP_2.update()
 
-## update()
-# test_GP_2 = GP.select(3)[0]
-# test_GP_2.first_name = "updated_name"
-# test_GP_2.update()
+    ## GP.select()
+    # gp_instance, df_obj, df_print = GP.select(3)
+    # print(vars(gp_instance))
+    # print(df_obj)
+    # print(df_print)
 
-## GP.select()
-# gp_instance, df_obj, df_print = GP.select(3)
-# print(vars(gp_instance))
-# print(df_obj)
-# print(df_print)
+    ## GP.select_list()
+    # df_obj, df_print = GP.select_list('active')
+    # print(df_obj)
+    # print(df_print)
 
-## GP.select_list()
-# df_obj, df_print = GP.select_list('active')
-# print(df_obj)
-# print(df_print)
+    ## GP.select_table()
+    # df_obj, df_print = GP.select_table('department')
+    # print(df_obj)
+    # print(df_print)
 
-## GP.select_table()
-# df_obj, df_print = GP.select_table('department')
-# print(df_obj)
-# print(df_print)
+    ## GP.change_status()
+    # GP.change_status(2, 'inactive')
 
-## GP.change_status()
-# GP.change_status(2, 'inactive')
-
-## GP.delete()
-# GP.delete(2)
+    ## GP.delete()
+    # GP.delete(2)
