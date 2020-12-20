@@ -399,7 +399,7 @@ def register(first_name, last_name, gender, birth_date,
                     blood_donor,
                     organ_donor,
                     default_status)
-    conn = sqlite3.connect('config/db_comp0066.db')
+    conn = sqlite3.connect('database/db_comp0066.db')
     c = conn.cursor()
     c.execute(query)
 
@@ -422,7 +422,7 @@ def user_type(user_id):
     """Print user type of a specified user."""
     u = (user_id,)
 
-    conn = sqlite3.connect("config/db_comp0066.db")
+    conn = sqlite3.connect("database/db_comp0066.db")
     c = conn.cursor()
     c.execute('SELECT type FROM users WHERE user_id=?;', u)
 
