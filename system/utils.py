@@ -161,7 +161,7 @@ def hash_salt(password):
         100000
     )
 
-    hash_salt = salt + hash_key
+    hash_salt = (salt + hash_key).hex()
 
     return hash_salt
 

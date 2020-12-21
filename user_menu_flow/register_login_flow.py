@@ -124,6 +124,7 @@ def register_page(next_dict):
     # Registration details
     usr_details=["First name", "Last name", "Birth date (YYYY-MM-DD)", "Email address", "Password (8 characters min)", "Gender", "NHS blood donor", "NHS organ donor"]
     MCQ_details_dict = [gender,blood_donor,organ_donor]
+    # First name, last name, birth date, email, password, gender, blood don, organ don 
     usr_input=[]
     
     # Registration String entries
