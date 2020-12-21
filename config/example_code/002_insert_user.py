@@ -2,7 +2,7 @@ import sqlite3
 import datetime
 
 # Create connection to db
-conn = sqlite3.connect('config/db_comp0066.db')
+conn = sqlite3.connect('database/db_comp0066.db')
 
 # Create cursor
 c = conn.cursor()
@@ -10,24 +10,30 @@ c = conn.cursor()
 # Insert into user
 c.execute("""
     INSERT INTO
-        users (
-        user_first_name,
-        user_last_name,
-        user_gender,
-        user_birth_date,
-        user_email,
-        user_password,
-        user_registration_date,
-        user_type)
+        patient (
+        gp_id,
+        patient_first_name,
+        patient_last_name,
+        patient_gender,
+        patient_birth_date,
+        patient_email,
+        patient_password,
+        patient_registration_date,
+        patient_NHS_blood_donor,
+        patient_NHS_organ_donor,
+        patient_status)
     VALUES
-        ('Manuel',
+        ('0',
+        'Manuel',
         'Buri',
         'male',
         '2016-01-01',
         'manuel.buri@gmail.com',
         'test',
         datetime('now'),
-        'gp');
+        'yes',
+        'yes',
+        'pending');
 """)
 
 

@@ -183,7 +183,8 @@ def register_page(next_dict):
         i += 1
     
     # Updating DB with new patient account
-    success = utils.register(usr_details[0], usr_details[1], usr_details[5], usr_details[2], usr_details[3], usr_details[4], usr_details[6], usr_details[7])
+    print(usr_input[0], usr_input[1], usr_input[2], usr_input[3], usr_input[4], usr_input[5], usr_input[6], usr_input[7])
+    success = utils.register(usr_input[0], usr_input[1], usr_input[5], usr_input[2], usr_input[3], usr_input[4], usr_input[6], usr_input[7])
 
     # If problem with registration
     if (success == False):
