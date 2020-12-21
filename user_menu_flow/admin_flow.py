@@ -30,21 +30,55 @@ def gp_account_section_menu(next_dict):
 
 def view_gp(next_dict):
     '''
-    Select a list of GPs and allows choice for viewing.
+    Select from a list of GPs and allows choice for viewing.
     '''
-    return utils.display(next_dict)
+    retrieve = retrieve_gp_list('all')
+    gp1 = retrieve[0]
+    choice = retrieve[1]
+
+    doctor_df = gp1.select(choice)
+    doctor = doctor_df[0]
+    print("\n----------------------------------------------------\n"
+          "                ",'GP DETAILS', "\n")
+    print(doctor_df[2])
+    index_choice = int(input("Choose an value to edit. \n"
+    "-->"))
+    value_choice = input("\nChoose an value to edit. \n"
+    "-->") 
+
+    #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES1
+
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+
+        #TODO: SHOW THE UPDATED GP INFO.
+
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
 
 def retrieve_gp_list(type):
-    df = gp.select_list('all')
+    '''
+    Shows the list of GPs and allows choice from that list.
+    '''
+    gp1 = gp.GP()
+    df = gp1.select_list(type)
+    df_raw = df[0]
+    df_show = df[1]
     print("\n----------------------------------------------------\n"
-          "                ", "PLEASE SELECT A GP", "\n")
-    print(df[1])
-    choice = input('Select a GP: ')
-    return df[choice]
+          "                ",'GP LIST', "\n")
+    print(df_show)
+    return gp1, int(input("\nPlease select a GP_ID\n"
+                "--> "))
 
 def same_gp(next_dict):
     '''
-    Allows viewing of the same GP from the final menu.
+    Allows viewing/editing of the same GP.
     '''
     pass
 
@@ -557,3 +591,43 @@ main_flow_admin = {
 
 if __name__ == '__main__':
     utils.display(main_flow_admin)
+
+'''if __name__ == '__main__':
+    gp1 = gp.GP()
+    df = gp1.select_list('all')
+    df_raw = df[0]
+    df_show = df[1]
+    print("\n----------------------------------------------------\n"
+          "                ",'GP LIST', "\n")
+    print(df_show)
+    choice = int(input("\nPlease select a GP_ID\n"
+                "--> "))
+    doctor_df = gp1.select(choice)
+    doctor = doctor_df[0]
+    print("\n----------------------------------------------------\n"
+          "                ",'GP DETAILS', "\n")
+    print(doctor_df[2])
+    attr_choice = input("\nPlease enter the numbers of the attributes you would like to change, comma separated.\n"
+                        "--> ").split()
+    new_vals = input("\nPlease input the new values for the attributes chosen\n"
+                    "--> ").split()
+    for i in range(len(attr_choice)):
+        if attr_choice[i] == 1:
+            doctor.first_name = new_value[i]
+        elif attr_choice[i] == 2:
+            doctor.last_name = new_value[i]
+        elif attr_choice[i] == 3:
+            doctor.gender = new_value[i]
+        elif attr_choice[i] == 4:
+            doctor.birth_date = new_value[i]
+        elif attr_choice[i] == 5:
+            doctor.email = new_value[i]
+        elif attr_choice[i] == 6:
+            doctor.working_days = new_value[i]
+        elif attr_choice[i] == 7:
+            doctor.last_name = new_value[i]'''
+        
+    
+    
+    
+    
