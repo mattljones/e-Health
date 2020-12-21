@@ -19,6 +19,6 @@
 |  id  |       Name       |           Email           |     Password      |
 | :--: | :--------------: | :-----------------------: | :---------------: |
 |  51  | Hermione Granger | hermione.g@gryffindor.com |   Lumos#9Reparo   |
-|  52  |   Ron Weasley    |     ron.w@weasley.com     | wizard'schess100  |
+|  52  |   Ron Weasley    |     ron.w@weasley.com     |  wizardschess100  |
 |  53  |   Harry Potter   | harry.potter@hogwarts.com | Expecto^Patronum7 |
 

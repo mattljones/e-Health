@@ -1,7 +1,15 @@
 ## COMP0066 Coursework Group 7
 # This script downs the sqlite database
 
+# library imports
 import sqlite3
+from pathlib import Path
+from datetime import date
+import sys
+
+# Change python path for imports
+package_dir = Path(__file__).parents[1]
+sys.path.insert(0, str(package_dir))
 
 # Create a database
 conn = sqlite3.connect('database/db_comp0066.db')
