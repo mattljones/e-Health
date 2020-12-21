@@ -260,6 +260,7 @@ def validate_password(user_input):
     return True
 
 
+# TODO: Rewrite using datetime.strptime() and datetime.date()
 def validate_date(user_input):
     """
     Validate user input for date such as DOB.  
@@ -284,7 +285,6 @@ def validate_date(user_input):
         int(user_input[5:7])
         int(user_input[8:])
 
-        # NOTE: is there a built-in func for data validation?
         if int(user_input[5:7]) > 12 or int(user_input[8:]) > 31:
             raise DateFormatError
 
@@ -442,7 +442,7 @@ def user_type(user_id):
 
 
 def help():
-    # TODO: Always-accessible guide for users
+    # TODO: User guide
     """ Help user understand and navigate the program."""
     # pass
     pass
