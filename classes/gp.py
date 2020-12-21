@@ -373,7 +373,8 @@ class GP(User):
         if num_gp in df_gp_count['GP ID'].tolist():
             times_no_capacity = df_gp_count[df_gp_count['GP ID'] == num_gp].index.tolist()
             # dataframe containing appointments which are causing the reallocation to fail
-            df_object = df_this_gp_upcoming[df_this_gp_upcoming['Time'].isin(times_no_capacity)].drop(columns='GP ID')
+            df_object = df_this_gp_upcoming[df_this_gp_upcoming['Time']\
+                        .isin(times_no_capacity)].drop(columns='GP ID')
             df_print = df_object.to_markdown(tablefmt="grid", index=False)
             return False, df_object, df_print
 
@@ -381,10 +382,14 @@ class GP(User):
             # convert to string to allow concatenation in .groupby() method
             df_other_gp_upcoming['Apt. ID'] = df_other_gp_upcoming['Apt. ID'].apply(str)
             df_other_gp_upcoming['GP ID'] = df_other_gp_upcoming['GP ID'].apply(str)
-            # df with lists of *other* GPs with appointments at same time as one of *this* GP's upcoming appointments 
-            df_other_gp_grouped = df_other_gp_upcoming.groupby(columns1)[columns2].agg(', '.join).reset_index() 
-            # create dictionary with key:value pairs of {timestamp, [GPs already with appointment at this time]}
-            other_gp_clashes = dict(zip(df_other_gp_grouped['Time'], df_other_gp_grouped['GP ID'].tolist()))
+            # df with lists of *other* GPs with appointments at same time as 
+            # one of *this* GP's upcoming appointments 
+            df_other_gp_grouped = df_other_gp_upcoming.groupby(columns1)[columns2]\
+                                  .agg(', '.join).reset_index() 
+            # create dictionary with key:value pairs of 
+            # {timestamp, [GPs already with appointment at this time]}
+            other_gp_clashes = dict(zip(df_other_gp_grouped['Time'],\
+                                    df_other_gp_grouped['GP ID'].tolist()))
             # simple list of other GPs
             other_gp_list = df_active_gp['GP ID'].tolist()
             other_gp_list.remove(gp_id)
@@ -419,7 +424,7 @@ class GP(User):
             return True, None, None
 
 
-    @staticmethod  # TODO: Add patient/appointment reallocation 
+    @staticmethod
     def change_status(gp_id, new_status):  
         """
         Changes a given GP's status (to inactive/active).
@@ -428,7 +433,27 @@ class GP(User):
         Args:
             gp_id (int): ID of the GP whose status is to be changed
             new_status ('inactive', 'active'): GP's new status
-        """        
+
+        Returns:
+            boolean: True (success) or False (couldn't reallocate something)
+            failure_type ('apps', 'patients', 'both'): if False, which reallocation failed
+            shortfall: if 'patients' or 'both', how many patients in excess of capacity
+            df_object: if 'apps' or 'both', DF of appointment times unable to reallocate
+            df_print: if 'apps' or 'both', pretty DF for printing
+        """      
+
+        if new_status == 'inactive':
+            patient_success, shortfall = GP.reallocate_patients(gp_id)
+            apps_success, df_object, df_print = GP.reallocate_appointments(gp_id)
+
+            if patient_success and (not apps_success):
+                return False, 'apps', None, df_object, df_print
+
+            elif (not patient_success) and apps_success:
+                return False, 'patients', shortfall, None, None
+
+            elif (not patient_success) and (not apps_success):
+                return False, 'both', shortfall, df_object, df_print
 
         query = """
                 UPDATE gp
@@ -440,27 +465,49 @@ class GP(User):
         c.execute(query)
         conn.commit()
         conn.close()
+        return True, None, None, None, None 
 
 
     @staticmethod
-    def delete(gp_id):  # TODO: Add patient/appointment reallocation 
+    def delete(gp_id): 
         """
         Deletes a GP from the GP table. 
         Note: this auto-reallocates patients & appointments.
 
         Args:
             gp_id (int): ID of the GP to be deleted
+
+        Returns:
+            boolean: True (success) or False (couldn't reallocate something)
+            failure_type ('apps', 'patients', 'both'): if False, which reallocation failed
+            shortfall: if 'patients' or 'both', how many patients in excess of capacity
+            df_object: if 'apps' or 'both', DF of appointment times unable to reallocate
+            df_print: if 'apps' or 'both', pretty DF for printing
         """        
 
-        query = """
-                DELETE FROM gp
-                WHERE gp_id = '{}'
-                """.format(gp_id)
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
-        conn.close()
+        patient_success, shortfall = GP.reallocate_patients(gp_id)
+        apps_success, df_object, df_print = GP.reallocate_appointments(gp_id)
+
+        if patient_success and apps_success:
+            query = """
+                    DELETE FROM gp
+                    WHERE gp_id = '{}'
+                    """.format(gp_id)
+            conn = sql.connect("database/db_comp0066.db")
+            c = conn.cursor()
+            c.execute(query)
+            conn.commit()
+            conn.close()
+            return True, None, None, None, None
+
+        elif patient_success and (not apps_success):
+            return False, 'apps', None, df_object, df_print
+
+        elif (not patient_success) and apps_success:
+            return False, 'patients', shortfall, None, None
+
+        else:
+            return False, 'both', shortfall, df_object, df_print
 
 
 
@@ -508,9 +555,9 @@ if __name__ == "__main__":
     # GP.reallocate_appointments(1)
 
     ## GP.change_status()
-    # GP.change_status(2, 'inactive')
+    # GP.change_status(12, 'inactive')
 
     ## GP.delete()
-    # GP.delete(2)
+    # GP.delete(10)
 
     pass
