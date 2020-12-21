@@ -392,11 +392,9 @@ def register(first_name, last_name, gender, birth_date,
     hash_salt_pw = hash_salt(password)
 
     # Insert into patient table
-    query = """
-            INSERT INTO patient
+    query = """INSERT INTO patient
             VALUES (NULL, '{}', '{}', '{}', '{}', '{}', '{}', 
-                          '{}', '{}', '{}', '{}', '{}', '{}')
-            """.format(
+                          '{}', '{}', '{}', '{}', '{}')""".format(
                     gp_id_default,
                     first_name,
                     last_name,
@@ -418,10 +416,6 @@ def register(first_name, last_name, gender, birth_date,
 
     conn.commit()
     conn.close()
-
-    # Output message
-    print("""Successfully registered. \nYou can now login 
-    using your email {} and password.""".format(email))
 
     # Return boolean to use in user flow 
     return True
