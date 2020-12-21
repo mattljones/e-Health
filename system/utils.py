@@ -79,7 +79,6 @@ def display(my_dict):
     functions corresponding to the user's choice.
     '''
     line = '-' * 52
-    # TODO: use - * n  
     print("\n" + line + "\n"
           "                ", my_dict["title"], "\n")
 
@@ -132,13 +131,11 @@ def display(my_dict):
         return my_dict[usr_choice][1](my_dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
-        print(
-            # TODO: use - * n 
-            "\n" + line + "\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
+        print("\n" + line + "\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
         print(asciiart.exit_art)
         sys.exit()
 
-    # TODO: add help function
+    # TODO: Add help function
     elif usr_choice in ('H', 'h'):
         pass
 
@@ -176,7 +173,7 @@ def validate(user_input):
         - Input too long (> 50 chars) 
         - Does not contain "'" or '"' to avoid SQL injections
     """
-    # NOTE: This func could be used as decorator
+
     try:
         if user_input == '':
             raise EmptyError
@@ -206,7 +203,7 @@ def validate_email(user_input):
         - Not unique email address
         - Does not contain "'" or '"' to avoid SQL injections
     """
-    # NOTE: This func could be used as decorator
+
     email_query = 'SELECT patient_email FROM patient'
     emails = db_read_query(email_query)   
 
@@ -215,8 +212,8 @@ def validate_email(user_input):
             raise EmptyError
         elif '@' not in user_input:
             raise EmailFormatError
-        #elif emails['patient_email'].str.contains(user_input).any():
-        #    raise DuplicateEmailError
+        elif emails['patient_email'].str.contains(user_input).any():
+            raise DuplicateEmailError
         elif ('"' in user_input) or ("'" in user_input):
             raise InvalidCharacterError
     except InvalidCharacterError:
@@ -243,7 +240,7 @@ def validate_password(user_input):
         - Input too short (< 8 chars)
         - Does not contain "'" or '"' to avoid SQL injections
     """
-    # NOTE: This func could be used as decorator
+
     try:
         if user_input == '':
             raise EmptyError
@@ -272,7 +269,7 @@ def validate_date(user_input):
         - Does not contain "'" or '"' to avoid SQL injections
         - Date must be in format YYYY-MM-DD
     """
-    # NOTE: This func could be used as decorator
+
     try:
         if user_input == '':
             raise EmptyError
@@ -354,18 +351,6 @@ def login(user_email, password, usr_type):
         bytes.fromhex(salt),
         100000
     ).hex()
-
-    # Get new key 
-    # hash_key_to_check = hash_salt_to_check[32:]
-
-    ########################## DEBUG ##########################
-    # print('input_password: ', password)                     #
-    # print("hash_salt: ", hash_salt)                         #
-    # print('salt: ', salt)                                   #
-    # print('salt hex bytes: ', bytes.fromhex(salt))          #
-    # print('hash_key_in_datab: ', hash_key)                  #
-    # print('hash_key_to_check: ',      hash_key_to_check)    # 
-    ########################## DEBUG ##########################
 
     # Check if new key matches our stored key
     if hash_key_to_check == hash_key:
@@ -457,6 +442,7 @@ def user_type(user_id):
 
 
 def help():
+    # TODO: Always-accessible guide for users
     """ Help user understand and navigate the program."""
     # pass
     pass
@@ -464,7 +450,7 @@ def help():
 
 def export():
     """ Export content of the page in .csv """
-    # NOTE: advanced feature
+    # NOTE: Advanced feature
     pass
 
 
