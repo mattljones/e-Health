@@ -415,9 +415,11 @@ def register(first_name, last_name, gender, birth_date,
 
     # Insert into patient table
     query = """INSERT INTO patient
-            VALUES (NULL, '{}', '{}', '{}', '{}', '{}', '{}', 
-                          '{}', '{}', '{}', '{}', '{}')""".format(
-                    gp_id_default,
+            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+    conn = sqlite3.connect('database/db_comp0066.db')
+    c = conn.cursor()
+    c.execute(query, 
+                    (gp_id_default,
                     first_name,
                     last_name,
                     gender,
@@ -427,17 +429,17 @@ def register(first_name, last_name, gender, birth_date,
                     reg_date,
                     blood_donor,
                     organ_donor,
-                    default_status)
-    conn = sqlite3.connect('database/db_comp0066.db')
-    c = conn.cursor()
-    c.execute(query)
+                    default_status))
 
     # Assign GP using newly created patient_id
     patient_id = c.lastrowid 
-    Patient.change_gp('auto', patient_id)    
-
     conn.commit()
     conn.close()
+
+    print(patient_id)
+    Patient.change_gp('auto', patient_id)    
+
+    print("OK.")
 
     # Return boolean to use in user flow 
     return True
@@ -539,3 +541,9 @@ def db_read_query(query):
     result = pd.read_sql_query(query, conn)
     conn.close()
     return result
+
+
+# # TESTING
+
+# # Register
+# register('comp0066', 'cw', 'male', '2020-12-21', 'comp@ucl.com', 'ucl202021', 'yes', 'yes')
