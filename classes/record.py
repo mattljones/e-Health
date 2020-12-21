@@ -176,25 +176,27 @@ class Record:
 
 
 
-## CODE TESTING/DEMONSTRATION
+if __name__ == "__main__":
 
-## update()
-# record_instance = Record.select(43)[0]
-# print(vars(record_instance))
-# record_instance.conditions.remove('6')
-# record_instance.conditions.append('10')
-# record_instance.appointment_notes['1'] = 'update_test_test'
-# record_instance.update()
+    ## update()
+    # record_instance = Record.select(43)[0]
+    # print(vars(record_instance))
+    # record_instance.conditions.remove('6')
+    # record_instance.conditions.append('10')
+    # record_instance.appointment_notes['1'] = 'update_test_test'
+    # record_instance.update()
 
-## Record.select()
-# record_instance, df_obj1, df_print1, df_obj2, df_print2 = Record.select(43)
-# print(vars(record_instance))
-# print(df_obj1)
-# print(df_print1)
-# print(df_obj2)
-# print(df_print2)
+    ## Record.select()
+    # record_instance, df_obj1, df_print1, df_obj2, df_print2 = Record.select(43)
+    # print(vars(record_instance))
+    # print(df_obj1)
+    # print(df_print1)
+    # print(df_obj2)
+    # print(df_print2)
 
-## Record.select_conditions()
-# df_obj, df_print = Record.select_conditions()
-# print(df_obj)
-# print(df_print)
+    ## Record.select_conditions()
+    # df_obj, df_print = Record.select_conditions()
+    # print(df_obj)
+    # print(df_print)
+
+    pass
