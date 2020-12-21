@@ -2,7 +2,8 @@
 
 # library imports 
 from pathlib import Path
-import sys 
+import sys
+from datetime import date
 
 # Change python path for imports
 p = Path(__file__).parents[1]
@@ -10,6 +11,10 @@ sys.path.insert(1, str(p))
 
 # Importing utility methods from the 'system' package
 from system import utils
+
+from classes.appointment import Appointment
+from classes.record import Record
+from classes.schedule import Schedule
 
 # import global variables from globals.py
 from system import globals
@@ -123,9 +128,15 @@ def view_another_day(next_dict):
                  "2":("Week", view_another_week, next_dict),
                  "3":("Custom", view_another_custom, next_dict),
                 }
-    # TODO: call schedule class method to display the schedule
+    #call schedule class method to display the schedule by day
     print("\n----------------------------------------------------\n"
-          "                ", "Schedule by day", "\n")
+        "              Schedule View by Day\n")
+    start_date = utils.get_start_date()
+    print(start_date)
+    print(Schedule.select(globals.usr_id, 'day', start_date)[1])
+
+    print("\n----------------------------------------------------\n"
+          "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
     print("[ 2 ] Manage the availability")
     usr_choice = input("\n--> ")
@@ -142,8 +153,15 @@ def view_another_week(next_dict):
                  "3":("Custom", view_another_custom, next_dict),
                 }
     # TODO: call schedule class method to display the schedule
+    #call schedule class method to display the schedule by week
     print("\n----------------------------------------------------\n"
-          "                ", "Schedule by Week", "\n")
+        "              Schedule View by Week\n")
+    start_date = utils.get_start_date()
+    print(start_date)
+    print(Schedule.select(globals.usr_id, 'week', start_date)[1])
+
+    print("\n----------------------------------------------------\n"
+          "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
     print("[ 2 ] Manage the availability")
     usr_choice = input("\n--> ")
@@ -159,9 +177,9 @@ def view_another_custom(next_dict):
                  "2":("Week", view_another_week, next_dict),
                  "3":("Custom", view_another_custom, next_dict),
                 }
-    # TODO: call schedule class method to display the schedule
+    # TODO: call schedule class method to display the customed schedule
     print("\n----------------------------------------------------\n"
-          "                ", "Custom Schedule", "\n")
+          "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
     print("[ 2 ] Manage the availability")
     usr_choice = input("\n--> ")
@@ -172,6 +190,8 @@ def view_another_custom(next_dict):
 
 def view_records(next_dict):
     # TODO: display 10 latest clients
+    patient_id = input("\n--> ")
+    print(Record.select(patient_id)[2])
     return display_next_menu(next_dict)
 
 ########################## MENU NAVIGATION DICTIONARIES ######################
@@ -292,13 +312,13 @@ flow_record_choose = {"title": "Edit Records of this patient?",
 # records flow
 flow_records = {"title": "Records",
                  "type": "sub",
-                 "1":("Search patient", display_next_menu, flow_record_choose)
+                 "1":("Search patient", view_records, flow_record_choose)
                 }
 
 # gp main page dictionary
 main_flow_gp = {"title": "GP MAIN MENU",
                 "type":"main",
                 "1":("View Schedule", display_next_menu, flow_schedule),
-                "2":("Add availability", display_next_menu, flow_availability),
+                "2":("Manage availability", display_next_menu, flow_availability),
                 "3":("Manage Appointments", display_next_menu, flow_appointments),
-                "4":("Records", view_records, flow_records)}
+                "4":("Records", display_next_menu, flow_records)}

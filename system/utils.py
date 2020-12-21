@@ -306,6 +306,28 @@ def validate_date(user_input):
 
     return True
 
+def get_start_date():
+    print("Please enter the date (YYYY-MM-DD) from which\n" 
+          "you want to diplay availibility\n\n"
+          "Enter 'T' to see availibility from today")
+    start_date = input("\n--> ")
+    valid = False
+    while valid == False:
+        if start_date in ("T","t"): 
+            valid = True
+            start_date = dt.date.today().isoformat()
+            return start_date
+        elif validate_date(start_date):
+            if dt.date.fromisoformat(start_date) > dt.date.today():
+                valid = True
+                return start_date
+            else:
+                print("\n\U00002757 Schedule date cannot be earlier than today.")
+        else:
+            print("\n\U00002757 Invalid entry, please try again")
+        if valid == False:
+            start_date = input("\n--> ")
+
 
 def login(user_email, password, usr_type):
     """Check login credentials."""
