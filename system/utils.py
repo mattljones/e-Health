@@ -78,8 +78,9 @@ def display(my_dict):
     Display function called to display menu and run the 
     functions corresponding to the user's choice.
     '''
-    # TODO: use - * n 
-    print("\n----------------------------------------------------\n"
+    line = '-' * 52
+    # TODO: use - * n  
+    print("\n" + line + "\n"
           "                ", my_dict["title"], "\n")
 
     # automatically direct to next flow
@@ -133,7 +134,7 @@ def display(my_dict):
     elif usr_choice in ('E', 'e'):
         print(
             # TODO: use - * n 
-            "\n----------------------------------------------------\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
+            "\n" + line + "\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
         print(asciiart.exit_art)
         sys.exit()
 
@@ -214,8 +215,8 @@ def validate_email(user_input):
             raise EmptyError
         elif '@' not in user_input:
             raise EmailFormatError
-        elif emails['patient_email'].str.contains(user_input).any():
-            raise DuplicateEmailError
+        #elif emails['patient_email'].str.contains(user_input).any():
+        #    raise DuplicateEmailError
         elif ('"' in user_input) or ("'" in user_input):
             raise InvalidCharacterError
     except InvalidCharacterError:
@@ -382,8 +383,6 @@ def login(user_email, password, usr_type):
         conn.close()
         return False
 
-
-# TODO: Handle duplicate email addresses
 
 def register(first_name, last_name, gender, birth_date, 
             email, password, blood_donor, organ_donor):        
