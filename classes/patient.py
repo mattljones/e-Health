@@ -225,7 +225,7 @@ class Patient(User):
 
         Returns:
             boolean: True (success) or False (failure)
-            new_gp_name (string): GP name in format 'Dr. last_name'
+            new_gp_name (string): if True, GP name in format 'Dr. last_name'
         """
 
         # getting a list of GPs who aren't full
@@ -319,36 +319,38 @@ class Patient(User):
 
 
 
-## CODE TESTING/DEMONSTRATION
+if __name__ == "__main__":
 
-## update()
-# test_patient = Patient.select(4)[0]
-# test_patient.first_name = "updated_name2"
-# test_patient.update()
+    ## update()
+    # test_patient = Patient.select(4)[0]
+    # test_patient.first_name = "updated_name2"
+    # test_patient.update()
 
-## Patient.select()
-# patient_instance, df_obj, df_print = Patient.select(4)
-# print(vars(patient_instance))
-# print(df_obj)
-# print(df_print)
+    ## Patient.select()
+    # patient_instance, df_obj, df_print = Patient.select(4)
+    # print(vars(patient_instance))
+    # print(df_obj)
+    # print(df_print)
 
-## Patient.select_list()
-# df_obj, df_print = Patient.select_list('matching', 'Moon')
-# print(df_obj)
-# print(df_print)
+    ## Patient.select_list()
+    # df_obj, df_print = Patient.select_list('matching', 'Moon')
+    # print(df_obj)
+    # print(df_print)
 
-## Patient.select_gp_details()
-# gp_id, gp_name = Patient.select_gp_details(2)
-# print(gp_id)
-# print(gp_name)
+    ## Patient.select_gp_details()
+    # gp_id, gp_name = Patient.select_gp_details(2)
+    # print(gp_id)
+    # print(gp_name)
 
-## Patient.change_gp()
-# success, new_gp_name = Patient.change_gp('auto', 2)
-# print(success)
-# print(new_gp_name)
+    ## Patient.change_gp()
+    # success, new_gp_name = Patient.change_gp('auto', 2)
+    # print(success)
+    # print(new_gp_name)
 
-## Patient.confirm()
-# Patient.confirm('all')
+    ## Patient.confirm()
+    # Patient.confirm('all')
 
-## Patient.delete()
-# Patient.delete(1)
+    ## Patient.delete()
+    # Patient.delete(1)
+
+    pass
