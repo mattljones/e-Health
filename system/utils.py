@@ -541,9 +541,3 @@ def db_read_query(query):
     result = pd.read_sql_query(query, conn)
     conn.close()
     return result
-
-
-# # TESTING
-
-# # Register
-# register('comp0066', 'cw', 'male', '2020-12-21', 'comp@ucl.com', 'ucl202021', 'yes', 'yes')
