@@ -47,8 +47,6 @@ def view_gp(next_dict):
     value_choice = input("\nChoose an value to edit. \n"
     "-->") 
 
-    #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES1
-
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
     print("[ 1 ] Yes")
@@ -56,7 +54,7 @@ def view_gp(next_dict):
     y_n = int(input("\n-->"))
     if y_n == 1:
 
-        #TODO: SHOW THE UPDATED GP INFO.
+        #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
         return utils.display(next_dict)
         
@@ -115,6 +113,7 @@ def add_gp(next_dict):
 
     # AUTO SET DEPARTMENT AND SPECIALISATION IDS TO GP. 
     # COULD LIST OUT DEPARTMENTS AND SPECIALISATIONS AND GIVE CHOICE.
+
     department_id = 1
     specialisation_id = 1
 
@@ -217,7 +216,6 @@ def choose_patient(type, patient_last_name=None):
     print("\n----------------------------------------------------\n"
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
-    return int(input('\nPlease choose a patient ID\n'))
     
 
 
@@ -229,7 +227,8 @@ def view_patient(next_dict):
           "                ",'ENTER LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
     "-->")
-    choice = choose_patient('matching', patient_last_name=last_name)
+    choose_patient('matching', patient_last_name=last_name)
+    choice = int(input('\nPlease choose a patient ID\n'))
     selected_patient = patient.Patient.select(choice)
     print("\n----------------------------------------------------\n"
           "                ",'PATIENT DETAILS', "\n")
@@ -239,8 +238,6 @@ def view_patient(next_dict):
     value_choice = input("\nChoose an value to edit. \n"
     "-->") 
 
-    #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES1
-
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
     print("[ 1 ] Yes")
@@ -248,13 +245,12 @@ def view_patient(next_dict):
     y_n = int(input("\n-->"))
     if y_n == 1:
 
-        #TODO: SHOW THE UPDATED GP INFO.
+        #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
         return utils.display(next_dict)
         
     elif y_n == 2:
         return utils.display(next_dict)
-    return utils.display(next_dict)
 
 
 
@@ -262,7 +258,54 @@ def confirm_patient(next_dict):
     '''
     Confirm pending patient registrations.
     '''
+    choose_patient('pending')
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM ALL NEW PATIENTS?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] Enter Individual ID(s)")
+    choice = input('Please enter your choice:\n'
+    '-->')
+    
+    if choice == 1:
+
+        print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = int(input("\n-->"))
+
+        if y_n == 1:
+            gp.GP.confirm('all')
+            return utils.display(next_dict)
+        
+        elif y_n == 2:
+            return utils.display(next_dict)
+        
+    elif choice == 2:
+
+        print("\n----------------------------------------------------\n"
+        "                ",'ENTER PATIENT ID(S) TO CONFIRM', "\n")
+        ids = input('Please enter ID(s) here, comma-separated.\n'
+        '-->')
+
+        print("\n----------------------------------------------------\n"
+        "                ",'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = int(input("\n-->"))
+
+        if y_n == 1:
+            for id in ids:
+                gp.GP.confirm('single', patient_id = int(id))
+
+            return utils.display(next_dict)
+        
+        elif y_n == 2:
+            return utils.display(next_dict)
+
     return utils.display(next_dict)
+
+
 
 def delete_patient(next_dict):
     '''
