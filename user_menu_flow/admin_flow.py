@@ -228,7 +228,8 @@ def view_patient(next_dict):
     last_name = input("Please enter the patient's last name:\n"
     "-->")
     choose_patient('matching', patient_last_name=last_name)
-    choice = int(input('\nPlease choose a patient ID\n'))
+    choice = int(input('\nPlease choose a patient ID\n'
+    '-->'))
     selected_patient = patient.Patient.select(choice)
     print("\n----------------------------------------------------\n"
           "                ",'PATIENT DETAILS', "\n")
@@ -276,6 +277,9 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             gp.GP.confirm('all')
+
+            #TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
+
             return utils.display(next_dict)
         
         elif y_n == 2:
@@ -286,7 +290,7 @@ def confirm_patient(next_dict):
         print("\n----------------------------------------------------\n"
         "                ",'ENTER PATIENT ID(S) TO CONFIRM', "\n")
         ids = input('Please enter ID(s) here, comma-separated.\n'
-        '-->')
+        '-->').split()
 
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
@@ -297,13 +301,13 @@ def confirm_patient(next_dict):
         if y_n == 1:
             for id in ids:
                 gp.GP.confirm('single', patient_id = int(id))
+                #NOTE: IS GP PAIRED TO PATIENT WHEN THEY REGISTER OR AFTER CONFIRMATION?
+                gp.GP.change_gp('auto', patient_id = int(id))
 
             return utils.display(next_dict)
         
         elif y_n == 2:
             return utils.display(next_dict)
-
-    return utils.display(next_dict)
 
 
 
@@ -311,7 +315,30 @@ def delete_patient(next_dict):
     '''
     Delete a patient account
     '''
-    return utils.display(next_dict)
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+    choice = int(input('\nPlease choose a patient ID(s)\n'
+    '-->')).split()
+
+    print("\n----------------------------------------------------\n"
+    "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+        for id in choice:
+            gp.GP.delete(id)
+
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
+
+    
+
 
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
 
