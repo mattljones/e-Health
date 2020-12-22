@@ -276,7 +276,7 @@ def confirm_patient(next_dict):
         y_n = int(input("\n-->"))
 
         if y_n == 1:
-            gp.GP.confirm('all')
+            patient.Patient.confirm('all')
 
             #TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
 
@@ -300,9 +300,9 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             for id in ids:
-                gp.GP.confirm('single', patient_id = int(id))
+                patient.Patient.confirm('single', patient_id = int(id))
                 #NOTE: IS GP PAIRED TO PATIENT WHEN THEY REGISTER OR AFTER CONFIRMATION?
-                gp.GP.change_gp('auto', patient_id = int(id))
+                patient.Patient.change_gp('auto', patient_id = int(id))
 
             return utils.display(next_dict)
         
@@ -330,7 +330,7 @@ def delete_patient(next_dict):
     y_n = int(input("\n-->"))
     if y_n == 1:
         for id in choice:
-            gp.GP.delete(id)
+            patient.Patient.delete(id)
 
         return utils.display(next_dict)
         
@@ -338,7 +338,6 @@ def delete_patient(next_dict):
         return utils.display(next_dict)
 
     
-
 
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
 
