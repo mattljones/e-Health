@@ -419,10 +419,7 @@ def register(first_name, last_name, gender, birth_date,
     conn.commit()
     conn.close()
 
-    print(patient_id)
     Patient.change_gp('auto', patient_id)    
-
-    print("OK.")
 
     # Return boolean to use in user flow 
     return True
