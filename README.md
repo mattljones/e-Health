@@ -9,9 +9,27 @@
       - [Admin](#admin)
       - [GP](#gp)
       - [Patient](#patient)
+
+By using this project, run `python e_health_main.py`.
+
+## Statistics
+
+```powershell
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Python                          27           1024           1904           2464
+Markdown                         7            245              0            405
+-------------------------------------------------------------------------------
+SUM:                            34           1269           1904           2869
+-------------------------------------------------------------------------------
+```
+
 ## Documentaion
+
 - [Developing Guidence](/docs/developing.md)
-- [testing accounts' data](/docs/test_data.md)
+- [Testing accounts' data](/docs/test_data.md)
+- [Class Document](/docs/classes.md)
 
 ## Database
 
@@ -29,11 +47,3 @@
 We are currently developing some dummy data.
 
 [Link to NHS Drug List](https://www.england.nhs.uk/wp-content/uploads/2017/04/NHS-England-drugs-list-v15-2020-2021.pdf)
-
-### Users
-#### Admin
-
-
-#### GP
-
-#### Patient
