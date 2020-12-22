@@ -3,6 +3,7 @@
 # library imports 
 from pathlib import Path
 import sys 
+import datetime
 
 # Change python path for imports
 p = Path(__file__).parents[1]
@@ -80,24 +81,102 @@ def same_gp(next_dict):
     '''
     Allows viewing/editing of the same GP.
     '''
+
+    #TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
+
     pass
 
 def add_gp(next_dict):
     '''
     Adds a new GP.
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER GP DETAILS', "\n")
+    gp1 = GP()
+    gp1.first_name = input('Please enter First Name: \n'
+    '--> ')
+    gp1.last_name = input('\nPlease enter Last Name: \n'
+    '--> ')
+    gp1.gender = input('\nPlease enter Gender: \n'
+    '--> ')
+    gp1.birth_date = input('\nPlease enter Birth Date: \n'
+    '--> ')
+    gp1.email = input('\nPlease enter Email: \n'
+    '--> ')
+    gp1.password_raw = input('\nPlease enter Password: \n'
+    '--> ')
+    gp1.registration_date = datetime.date.today()
+    gp1.working_days = input('\nPlease enter Working Days: \n'
+    '--> ')
+    gp1.department_id = input('\nPlease enter Department ID: \n'
+    '--> ')
+    gp1.specialisation_id= input('\nPlease enter Specialisation ID: \n'
+    '--> ')
+    gp1.status = 'active'
+
+    #TODO: WORK OUT HOW TO ENTER DEPARTMENT AND SPECIALISATION AND GET IDS FROM THAT
+    #TODO: GENERATE GP ID
+
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+
+        #TODO: UPDATE THE DATABASE WITH THE NEW INFO.
+
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
+
+
     return utils.display(next_dict)
 
 def deactivate_gp(next_dict):
     '''
     Deactivates a GP.
     '''
-    return utils.display(next_dict)
+    retrieve = retrieve_gp_list('active')
+    gp1 = retrieve[0]
+    choice = retrieve[1]
+
+    doctor_df = gp1.select(choice)
+    doctor = doctor_df[0]
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+        doctor.change_status('inactive')
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
 
 def delete_gp(next_dict):
     '''
     Deletes a GP.
     '''
+    retrieve = retrieve_gp_list('all')
+    gp1 = retrieve[0]
+    choice = retrieve[1]
+
+    doctor_df = gp1.select(choice)
+    doctor = doctor_df[0]
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+        doctor.delete()
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
     return utils.display(next_dict)
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
