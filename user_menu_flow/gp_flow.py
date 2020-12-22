@@ -24,13 +24,56 @@ display_next_menu = lambda next_dict:utils.display(next_dict)
 
 ############################### INPUT MENU PAGES ###########################
 def edit_notes(next_dict):
-    # TODO: edit the note
-    # TODO: display the result
+    record = Record.select(globals.patient_id)[0]
+    print("\nPlase input the appointment id of note you want to change")
+    # TODO: validate the input and provide return
+    apt_id = input("--> ")
+    print("\nPlase input the new note")
+    new_note = input("--> ")
+    record.appointment_notes[apt_id] = new_note
+    record.update()
+    print(Record.select(globals.patient_id)[4])
     return display_prescription(next_dict)
 
 def edit_cc(next_dict):
-    # TODO: edit the chronic condition
-    # TODO: display the result
+    record = Record.select(globals.patient_id)[0]
+    # TODO: exception control; validation
+    edit_cond_flag = True
+    while edit_cond_flag:
+        if record.conditions:
+            print("[1] Add condtion\n"
+                "[2] Remove condition\n")
+            add_or_delete = input("--> ")
+            if add_or_delete == '1':
+                print("\nPlase input the condition id you want to add (1-20)")
+                cond_id = input("--> ")
+                record.conditions.append(cond_id)
+                record.update()
+            elif add_or_delete == '2':
+                print("\nPlase input the condition id you want to remove")
+                cond_id = input("--> ")
+                record.conditions.remove(cond_id)
+                record.update()
+        else:
+            print("[1] Add condtion\n"
+                "[2] End (There's no more condition to remove)\n")
+            add_or_delete = input("--> ")
+            if add_or_delete == '1':
+                print("\nPlase input the condition id you want to add (1-20)")
+                cond_id = input("--> ")
+                record.conditions.append(cond_id)
+                record.update()
+            elif add_or_delete == '2':
+                edit_cond_flag = False
+        print("\nMore change?")
+        print("[1] Yes\n"
+            "[2] No\n")
+        tmp = input("--> ")
+        if tmp == '2':
+            edit_cond_flag = False
+    else:
+        print("\n【Patient Table】\n", Record.select(globals.patient_id)[2])
+        print("\n【Patient Table】\n", Record.select(globals.patient_id)[4])
     return display_prescription(next_dict)
 
 def enter_drug(next_dict):
@@ -84,8 +127,8 @@ def enter_appoint_id(next_dict):
 def correct_note_change(next_dict):
     flow_record_edit = {"title": "Edit what part of the records?",
                  "type": "sub",
-                 "1":("Notes", edit_notes, flow_confirm_change),
-                 "2":("Chronic Condition", edit_cc, flow_confirm_change)
+                 "1":("Chronic Condition", edit_cc, flow_confirm_change),
+                 "2":("Notes", edit_notes, flow_confirm_change)
                 }
     return display_next_menu(flow_record_edit)
 
@@ -105,14 +148,41 @@ def another_confirm(next_dict):
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
-def another_avail(next_dict):
+def add_avail(next_dict):
     flow_availability = {"title": "Schedule",
                  "type": "sub",
-                 "1":("Add", another_avail, next_dict),
-                 "2":("Remove", another_avail, next_dict)
+                 "1":("Add", add_avail, next_dict),
+                 "2":("Remove", remove_avail, next_dict)
                 }
+    # TODO: add availability
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+    Schedule.delete_timeoff(globals.usr_id, 'time off', start_date, end_date)
+
     print("\n----------------------------------------------------\n"
-          "                ", "Add or Remove a new availabilty", "\n")
+          "                ", "Add or Remove a new availabilty?", "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    usr_choice = input("\n--> ")
+    if usr_choice == '1':
+        return display_next_menu(flow_availability)
+    elif usr_choice == '2':
+        return display_next_menu(next_dict)
+
+def remove_avail(next_dict):
+    flow_availability = {"title": "Schedule",
+                 "type": "sub",
+                 "1":("Add", add_avail, next_dict),
+                 "2":("Remove", remove_avail, next_dict)
+                }
+    # TODO: add availability
+    # TODO: fix Schedule.insert_timeoff
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+    Schedule.insert_timeoff(globals.usr_id, 'time off', start_date, end_date)
+
+    print("\n----------------------------------------------------\n"
+          "                ", "Add or Remove a new availabilty?", "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
@@ -152,7 +222,6 @@ def view_another_week(next_dict):
                  "2":("Week", view_another_week, next_dict),
                  "3":("Custom", view_another_custom, next_dict),
                 }
-    # TODO: call schedule class method to display the schedule
     #call schedule class method to display the schedule by week
     print("\n----------------------------------------------------\n"
         "              Schedule View by Week\n")
@@ -190,8 +259,13 @@ def view_another_custom(next_dict):
 
 def view_records(next_dict):
     # TODO: display 10 latest clients
-    patient_id = input("\n--> ")
+    print("\nPlease enter patient id you want to search:")
+    patient_id = input("--> ")
+    globals.patient_id = patient_id
+    print("\n【Patient Table】")
     print(Record.select(patient_id)[2])
+    print("\n【Appointment Table】")
+    print(Record.select(patient_id)[4])
     return display_next_menu(next_dict)
 
 ########################## MENU NAVIGATION DICTIONARIES ######################
@@ -272,8 +346,8 @@ flow_confirm_appoint = {"title": "Confirm Appointments",
 # availability flow
 flow_availability = {"title": "Schedule",
                  "type": "sub",
-                 "1":("Add", another_avail, flow_end),
-                 "2":("Remove", another_avail, flow_end)
+                 "1":("Add", add_avail, flow_end),
+                 "2":("Remove", remove_avail, flow_end)
                 }
 # schedule flow
 flow_schedule = {"title": "Schedule",
