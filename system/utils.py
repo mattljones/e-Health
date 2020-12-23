@@ -62,7 +62,7 @@ class DateFormatError(Error):
 # User is logged in if it has both type and id
 def logged():
     """Check whether user is logged in or not."""
-    return True if globals.usr_type in ("patient", "gp", "admin") else False
+    return globals.usr_type in ("patient", "gp", "admin")
 
 
 def logout():
@@ -361,9 +361,6 @@ def login(user_email, password, usr_type):
         globals.usr_id = usr_id
         conn.close()
         return True
-        # else:
-        #     conn.close()
-        #     return False
     else:
         conn.close()
         return False
@@ -422,8 +419,6 @@ def register(first_name, last_name, gender, birth_date,
     print(patient_id)
     Patient.change_gp('auto', patient_id)    
 
-    print("OK.")
-
     # Return boolean to use in user flow 
     return True
 
@@ -442,9 +437,8 @@ def user_type(user_id):
 
 
 def help():
-    # TODO: User guide
+    # TODO: Write user guide
     """ Help user understand and navigate the program."""
-    # pass
     pass
 
 
