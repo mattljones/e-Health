@@ -412,6 +412,7 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
+    print(Appointment.select_availability('day', 1, '2020-12-23'))
     pass
 
     # Method test

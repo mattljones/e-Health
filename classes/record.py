@@ -180,6 +180,7 @@ if __name__ == "__main__":
 
     ## update()
     # record_instance = Record.select(43)[0]
+    # print(record_instance)
     # print(vars(record_instance))
     # record_instance.conditions.remove('6')
     # record_instance.conditions.append('10')
