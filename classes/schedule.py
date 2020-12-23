@@ -7,11 +7,11 @@ import datetime
 
 # Switching path to master to get functions from utils folder
 # TODO get rid of pathlib once 'from system import utils as u' works
-import sys
-from pathlib import Path
-
-path_to_master_repo = Path(__file__).parents[1]
-sys.path.insert(1, str(path_to_master_repo))
+# import sys
+# from pathlib import Path
+#
+# path_to_master_repo = Path(__file__).parents[1]
+# sys.path.insert(1, str(path_to_master_repo))
 
 # Importing utility methods from the 'system' package
 from system import utils as u
@@ -113,7 +113,7 @@ class Schedule:
                 df_object.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
 
         # Produce df_print
-        # df_print = df_object.to_markdown(tablefmt="grid", index=True)
+        df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
         # produce df_print_morning
         # df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
@@ -287,7 +287,7 @@ class Schedule:
                                     SELECT DISTINCT
                                         gp_last_name
                                     FROM
-                                        booking
+                                        gp
                                     WHERE
                                         gp_id = {};'''.format(gp_id)
             gp_last_name_from_db = u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
@@ -405,7 +405,7 @@ if __name__ == "__main__":
 # schedule = Schedule()
 
 ## testing select day
-# df = schedule.select(2, 'day', '2020-12-1')[1]
+# df = schedule.select(16, 'day', '2020-12-1')[1]
 
 ## testing select week
 # df = schedule.select(2, 'week', '2021-1-18')[1]
@@ -417,7 +417,7 @@ if __name__ == "__main__":
 # df = schedule.select_upcoming_timeoff(2)[1]
 
 ## testing insert_timeoff_custom --> check_timeoff_conflict False
-# schedule.insert_timeoff(2, 'sick leave', '2020-12-23', '2021-01-23')
+# schedule.insert_timeoff(16, 'sick leave', '2020-12-24', '2020-12-25')
 
 ## testing insert_timeoff_custom --> check_timeoff_conflict True
 # schedule.insert_timeoff(2, 'sick leave', '2020-12-1', '2021-12-23')
