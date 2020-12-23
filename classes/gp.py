@@ -15,6 +15,9 @@ sys.path.insert(1, str(path_to_master_repo))
 # import User class for inheritance
 from classes.user import User
 
+# import utils for password hashing in insert() method
+from system import utils
+
 
 class GP(User):
     """
@@ -45,13 +48,14 @@ class GP(User):
         self.specialisation_id = specialisation_id
 
 
-    def insert(self):  # TODO: add password hashing from utilties
+    def insert(self):
         """
         Inserts a new GP from an instance populated by user input.
         GPs cannot register themselves: instance created in user flow.
         """ 
 
         self.registration_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        password_hash_salt = utils.hash_salt(self.password_raw)
         query = """
                 INSERT INTO gp 
                 VALUES (NULL, '{}', '{}', '{}', '{}', '{}', 
@@ -61,7 +65,7 @@ class GP(User):
                            self.gender, 
                            self.birth_date, 
                            self.email, 
-                           self.password_raw,
+                           password_hash_salt,
                            self.registration_date, 
                            self.working_days, 
                            self.department_id, 
@@ -526,6 +530,7 @@ if __name__ == "__main__":
     #              specialisation_id=1, 
     #              status="active")
     # test_GP.insert()
+    # print(utils.login('test@gmail.com', 'password', 'gp'))
 
     ## update()
     # test_GP_2 = GP.select(3)[0]

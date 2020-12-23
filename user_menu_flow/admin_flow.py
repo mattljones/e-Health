@@ -3,6 +3,7 @@
 # library imports 
 from pathlib import Path
 import sys 
+import datetime
 
 # Change python path for imports
 p = Path(__file__).parents[1]
@@ -28,15 +29,15 @@ def gp_account_section_menu(next_dict):
     '''
     return utils.display(manage_gp_accounts_flow)
 
+
+
 def view_gp(next_dict):
     '''
     Select from a list of GPs and allows choice for viewing.
     '''
-    retrieve = retrieve_gp_list('all')
-    gp1 = retrieve[0]
-    choice = retrieve[1]
+    choice = retrieve_gp_list('all')
 
-    doctor_df = gp1.select(choice)
+    doctor_df = gp.GP.select(choice)
     doctor = doctor_df[0]
     print("\n----------------------------------------------------\n"
           "                ",'GP DETAILS', "\n")
@@ -46,7 +47,92 @@ def view_gp(next_dict):
     value_choice = input("\nChoose an value to edit. \n"
     "-->") 
 
-    #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES1
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+
+        #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
+
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
+
+
+
+def retrieve_gp_list(type):
+    '''
+    Shows the list of GPs and allows choice from that list.
+    '''
+    df = gp.GP.select_list(type)
+    df_raw = df[0]
+    df_show = df[1]
+    print("\n----------------------------------------------------\n"
+          "                ",'GP LIST', "\n")
+    print(df_show)
+    return int(input("\nPlease select a GP_ID\n"
+                "--> "))
+
+
+
+def same_gp(next_dict):
+    '''
+    Allows viewing/editing of the same GP.
+    '''
+
+    #TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
+
+    pass
+
+
+
+def add_gp(next_dict):
+    '''
+    Adds a new GP.
+    '''
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER GP DETAILS', "\n")
+    first_name = input('Please enter First Name: \n'
+    '--> ')
+    last_name = input('\nPlease enter Last Name: \n'
+    '--> ')
+    gender = input('\nPlease enter Gender: \n'
+    '--> ')
+    birth_date = input('\nPlease enter Birth Date: \n'
+    '--> ')
+    email = input('\nPlease enter Email: \n'
+    '--> ')
+    password_raw = input('\nPlease enter Password: \n'
+    '--> ')
+    registration_date = datetime.date.today()
+    working_days = input('\nPlease enter Working Days: \n'
+    '--> ')
+
+    # AUTO SET DEPARTMENT AND SPECIALISATION IDS TO GP. 
+    # COULD LIST OUT DEPARTMENTS AND SPECIALISATIONS AND GIVE CHOICE.
+
+    department_id = 1
+    specialisation_id = 1
+
+    status = 'active'
+    gp1 = gp.GP(id_ = None,
+                first_name=first_name, 
+                last_name=last_name, 
+                gender=gender, 
+                birth_date=birth_date, 
+                email=email, 
+                password_raw=password_raw,
+                registration_date=registration_date, 
+                working_days=working_days, 
+                department_id=department_id, 
+                specialisation_id=specialisation_id, 
+                status=status)
+
+    #TODO: WORK OUT HOW TO ENTER DEPARTMENT AND SPECIALISATION AND GET IDS FROM THAT
+    #TODO: GENERATE GP ID
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
@@ -55,50 +141,62 @@ def view_gp(next_dict):
     y_n = int(input("\n-->"))
     if y_n == 1:
 
-        #TODO: SHOW THE UPDATED GP INFO.
+        #TODO: UPDATE THE DATABASE WITH THE NEW INFO.
 
         return utils.display(next_dict)
         
     elif y_n == 2:
         return utils.display(next_dict)
 
-def retrieve_gp_list(type):
-    '''
-    Shows the list of GPs and allows choice from that list.
-    '''
-    gp1 = gp.GP()
-    df = gp1.select_list(type)
-    df_raw = df[0]
-    df_show = df[1]
-    print("\n----------------------------------------------------\n"
-          "                ",'GP LIST', "\n")
-    print(df_show)
-    return gp1, int(input("\nPlease select a GP_ID\n"
-                "--> "))
 
-def same_gp(next_dict):
-    '''
-    Allows viewing/editing of the same GP.
-    '''
-    pass
-
-def add_gp(next_dict):
-    '''
-    Adds a new GP.
-    '''
-    return utils.display(next_dict)
 
 def deactivate_gp(next_dict):
     '''
     Deactivates a GP.
     '''
-    return utils.display(next_dict)
+    retrieve = retrieve_gp_list('active')
+    gp1 = retrieve[0]
+    choice = retrieve[1]
+
+    doctor_df = gp1.select(choice)
+    doctor = doctor_df[0]
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+        doctor.change_status('inactive')
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
+
+
 
 def delete_gp(next_dict):
     '''
     Deletes a GP.
     '''
-    return utils.display(next_dict)
+    retrieve = retrieve_gp_list('all')
+    gp1 = retrieve[0]
+    choice = retrieve[1]
+
+    doctor_df = gp1.select(choice)
+    doctor = doctor_df[0]
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+        doctor.delete()
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
+
+
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
 
@@ -108,29 +206,138 @@ def patient_account_section_menu(next_dict):
     '''
     return utils.display(manage_patient_accounts_flow)
 
-def choose_patient(next_dict):
+
+
+def choose_patient(type, patient_last_name=None):
     '''
     Choose patient account.
     '''
-    pass
+    df = patient.Patient.select_list(type,patient_last_name)
+    print("\n----------------------------------------------------\n"
+          "                ",'SELECT PATIENT', "\n")
+    print(df[1])
+    
+
 
 def view_patient(next_dict):
     '''
     View a Patient Account.
     '''
-    return utils.display(next_dict)
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+    choice = int(input('\nPlease choose a patient ID\n'
+    '-->'))
+    selected_patient = patient.Patient.select(choice)
+    print("\n----------------------------------------------------\n"
+          "                ",'PATIENT DETAILS', "\n")
+    print(selected_patient[2])
+    index_choice = int(input("Choose an value to edit. \n"
+    "-->"))
+    value_choice = input("\nChoose an value to edit. \n"
+    "-->") 
+
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+
+        #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
+
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
+
+
 
 def confirm_patient(next_dict):
     '''
     Confirm pending patient registrations.
     '''
-    return utils.display(next_dict)
+    choose_patient('pending')
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM ALL NEW PATIENTS?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] Enter Individual ID(s)")
+    choice = input('Please enter your choice:\n'
+    '-->')
+    
+    if choice == 1:
+
+        print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = int(input("\n-->"))
+
+        if y_n == 1:
+            patient.Patient.confirm('all')
+
+            #TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
+
+            return utils.display(next_dict)
+        
+        elif y_n == 2:
+            return utils.display(next_dict)
+        
+    elif choice == 2:
+
+        print("\n----------------------------------------------------\n"
+        "                ",'ENTER PATIENT ID(S) TO CONFIRM', "\n")
+        ids = input('Please enter ID(s) here, comma-separated.\n'
+        '-->').split()
+
+        print("\n----------------------------------------------------\n"
+        "                ",'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = int(input("\n-->"))
+
+        if y_n == 1:
+            for id in ids:
+                patient.Patient.confirm('single', patient_id = int(id))
+                #NOTE: IS GP PAIRED TO PATIENT WHEN THEY REGISTER OR AFTER CONFIRMATION?
+                patient.Patient.change_gp('auto', patient_id = int(id))
+
+            return utils.display(next_dict)
+        
+        elif y_n == 2:
+            return utils.display(next_dict)
+
+
 
 def delete_patient(next_dict):
     '''
     Delete a patient account
     '''
-    return utils.display(next_dict)
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+    choice = int(input('\nPlease choose a patient ID(s)\n'
+    '-->')).split()
+
+    print("\n----------------------------------------------------\n"
+    "                ",'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = int(input("\n-->"))
+    if y_n == 1:
+        for id in choice:
+            patient.Patient.delete(id)
+
+        return utils.display(next_dict)
+        
+    elif y_n == 2:
+        return utils.display(next_dict)
+
+    
 
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
 
@@ -590,42 +797,15 @@ main_flow_admin = {
 ############################# TESTING ###############################
 
 if __name__ == '__main__':
-    utils.display(main_flow_admin)
+    #utils.display(main_flow_admin)
 
-'''if __name__ == '__main__':
-    gp1 = gp.GP()
-    df = gp1.select_list('all')
-    df_raw = df[0]
-    df_show = df[1]
-    print("\n----------------------------------------------------\n"
-          "                ",'GP LIST', "\n")
-    print(df_show)
-    choice = int(input("\nPlease select a GP_ID\n"
-                "--> "))
-    doctor_df = gp1.select(choice)
-    doctor = doctor_df[0]
-    print("\n----------------------------------------------------\n"
-          "                ",'GP DETAILS', "\n")
-    print(doctor_df[2])
-    attr_choice = input("\nPlease enter the numbers of the attributes you would like to change, comma separated.\n"
-                        "--> ").split()
-    new_vals = input("\nPlease input the new values for the attributes chosen\n"
-                    "--> ").split()
-    for i in range(len(attr_choice)):
-        if attr_choice[i] == 1:
-            doctor.first_name = new_value[i]
-        elif attr_choice[i] == 2:
-            doctor.last_name = new_value[i]
-        elif attr_choice[i] == 3:
-            doctor.gender = new_value[i]
-        elif attr_choice[i] == 4:
-            doctor.birth_date = new_value[i]
-        elif attr_choice[i] == 5:
-            doctor.email = new_value[i]
-        elif attr_choice[i] == 6:
-            doctor.working_days = new_value[i]
-        elif attr_choice[i] == 7:
-            doctor.last_name = new_value[i]'''
+    test_patient = patient.Patient.select_list('pending')
+    print(test_patient[1])
+    choice = int(input('\nPlease choose a patient ID\n'
+    '-->'))
+    selected_patient = patient.Patient.select(choice)
+    print(selected_patient[2])
+
         
     
     

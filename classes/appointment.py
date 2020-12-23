@@ -22,8 +22,7 @@ class Appointment:
     """
 
     def __init__(self, booking_id=None, booking_start_time=None, booking_status=None, booking_agenda=None,
-                 booking_type=None,
-                 booking_notes=None, gp_id=None, patient_id=None):
+                 booking_type=None, booking_notes=None, gp_id=None, patient_id=None):
 
         self.booking_id = booking_id
         self.booking_start_time = booking_start_time
@@ -44,7 +43,7 @@ class Appointment:
 
         booking_check_query = """SELECT *
                                  FROM booking
-                                 WHERE gp_id == {} 
+                                 WHERE gp_id == {}
                                  AND booking_start_time == '{}'""".format(self.gp_id,
                                                                           self.booking_start_time)
         booking_check_result = u.db_read_query(booking_check_query).empty
@@ -52,13 +51,14 @@ class Appointment:
         if booking_check_result:
             query = """ INSERT INTO booking
             (booking_id, booking_start_time, booking_status,
-            booking_agenda, booking_type,gp_id,patient_id,booking_status_change_time)
-            VALUES ({},'{}','{}','{}','{}',{},{},'{}');""".format('NULL', self.booking_start_time,
-                                                                  'booked',
-                                                                  self.booking_agenda,
-                                                                  self.booking_type, self.gp_id,
-                                                                  self.patient_id,
-                                                                  dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
+            booking_agenda, booking_type,gp_id,gp_last_name,patient_id,booking_status_change_time)
+            VALUES ({},'{}','{}','{}','{}',{},'{}',{},'{}');""".format('NULL', self.booking_start_time,
+                                                                       'booked',
+                                                                       self.booking_agenda,
+                                                                       self.booking_type, self.gp_id,
+                                                                       Appointment.get_gp_last_name(self.gp_id),
+                                                                       self.patient_id,
+                                                                       dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
             u.db_execute(query)
 
         return booking_check_result
@@ -70,13 +70,14 @@ class Appointment:
         query = """UPDATE booking 
                      SET booking_start_time = '{}', booking_status = '{}', 
                      booking_status_change_time = '{}', booking_agenda = '{}', booking_type = '{}',
-                         booking_notes = '{}', gp_id = {}, patient_id = {}
+                         booking_notes = '{}', gp_id = {}, gp_last_name = '{}', patient_id = {}
                      WHERE booking_id = {}""".format(self.booking_start_time,
                                                      self.booking_status,
                                                      dt.datetime.today().strftime("%Y-%m-%d %H:%M"),
                                                      self.booking_agenda, self.booking_type,
-                                                     self.booking_notes, self.gp_id, self.patient_id,
-                                                     self.booking_id)
+                                                     self.booking_notes, self.gp_id,
+                                                     Appointment.get_gp_last_name(self.gp_id),
+                                                     self.patient_id, self.booking_id)
 
         u.db_execute(query)
 
@@ -93,7 +94,7 @@ class Appointment:
         :return: df_print is a user friendly DF that can be used to display information to the user
         """
 
-        booking_query = """SELECT booking_id AS 'Apt. ID', booking.gp_id AS 'GP_id', g.gp_last_name AS "GP",
+        booking_query = """SELECT booking_id AS 'Apt. ID', booking.gp_id AS 'GP_id', booking.gp_last_name AS "GP",
                            p.patient_first_name AS 'Patient',
                            p.patient_last_name AS 'P. Last Name', booking.patient_id AS 'P ID',
                            booking_start_time AS 'Date', booking_status AS 'Status',
@@ -162,7 +163,7 @@ class Appointment:
             sql_result_df['Booking ID'] = '[' + sql_result_df['Booking ID'].astype(str) + ']'
             sql_result_df['Patient'] = sql_result_df['patient_first_name'].astype(str) + " " + \
                                        sql_result_df['patient_last_name'].astype(str) + \
-                                       '[' + sql_result_df['Patient'].astype(str) + ']'
+                                       '(' + sql_result_df['Patient'].astype(str) + ')'
 
             sql_result_df = sql_result_df.drop(columns=['patient_first_name', 'patient_last_name'])
             # Producing the empty DataFrame for a day
@@ -235,8 +236,8 @@ class Appointment:
 
         df_object = u.db_read_query(pending_query)
         df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
-                                    df_object['P. Last Name'].astype(str) + ' [' + \
-                                    df_object['patient_id'].astype(str) + ']'
+                                    df_object['P. Last Name'].astype(str) + ' (' + \
+                                    df_object['patient_id'].astype(str) + ')'
 
         df_object['Apt. ID'] = "[" + df_object['Apt. ID'].astype(str) + "]"
         # Dropping no longer needed columns
@@ -349,16 +350,18 @@ class Appointment:
         elif select_type == 'week':
             end_date = start_date + dt.timedelta(days=6)
 
-        query_get_gp_id = """SELECT b.gp_id, COUNT(date(booking_start_time)) Bookings_Per_Day, gp.gp_last_name
+        query_get_gp_id = """SELECT b.gp_id, COUNT(date(booking_start_time)) Bookings_Per_Day, b.gp_last_name
                              FROM booking b
                              JOIN gp ON gp.gp_id = b.gp_id
                              WHERE (date(booking_start_time) BETWEEN '{}' AND '{}')
-                             AND (booking_status <> 'canceled' AND booking_status <>'rejected') AND b.gp_id <> {}                             
+                             AND (booking_status <> 'canceled' AND booking_status <>'rejected') AND (b.gp_id <> {})
+                             AND gp.gp_status == 'active'                             
                              GROUP BY b.gp_id
                              ORDER BY Bookings_Per_Day
                              LIMIT 1;""".format(start_date, end_date, gp_id)
 
         query_result = u.db_read_query(query_get_gp_id)
+
         number_of_bookings = query_result.loc[0, 'Bookings_Per_Day']
         if (select_type == 'day' and number_of_bookings < 49) or (select_type == 'week' and number_of_bookings < 245):
             boolean_available = True
@@ -403,10 +406,16 @@ class Appointment:
         u.db_execute(query)
         print("All appointments have been confirmed!")
 
+    @staticmethod
+    def get_gp_last_name(gp_id):
+        gp_last_name_query = """SELECT gp_last_name FROM gp WHERE gp_id == {} """.format(gp_id)
+        return u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
+
 
 # DEVELOPMENT
 
 if __name__ == "__main__":
+    # print(Appointment.select_availability('day', 1, '2020-12-23'))
     pass
 
     # Method test
@@ -414,15 +423,15 @@ if __name__ == "__main__":
     #                     booking_agenda, booking_type,gp_id,patient_id
 
     # THIS WORKS! : Testing book appointment method
-    # print(Appointment('Null', '2020-12-14 15:00', 'confirmed',
-    #              'booking agenda edit test 3', 'offline', ' ', 1, 1).book())
+    # print(Appointment('Null', '2020-12-31 16:00', 'booked',
+    #                   'booking agenda edit test 3', 'offline', ' ', 1, 1).book())
 
     # THIS WORKS! : Testing Update Method
-    # Appointment(27, '2020-12-13 10:00', 'confirmed',
-    #              'booking agenda edit test 1', 'offline', ' ', 10, 10).update()
+    # Appointment(53, '2020-12-31 16:00', 'confirmed',
+    #              'booking agenda updating to Confirmned', 'online', ' ', 10, 10).update()
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    # print(Appointment.select(33)[2])
+    # print(Appointment.select(53)[2])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 2, '2020-12-13')[1])
@@ -446,8 +455,8 @@ if __name__ == "__main__":
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
     # Displays the DF of the availability for that GP
-    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[0])
-    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[0])
+    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[1])
+    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[1])
 
     # THIS WORKS! : Changes status for a specific booking
     # reject_reason = 'the booking was rejected for this reason: Test'
@@ -455,4 +464,3 @@ if __name__ == "__main__":
 
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
-

@@ -304,9 +304,8 @@ def validate_date(user_input):
     return True
 
 def get_start_date():
-    print("Please enter the date (YYYY-MM-DD) from which\n" 
-          "you want to diplay availibility\n\n"
-          "Enter 'T' to see availibility from today")
+    print("Please enter the start date (YYYY-MM-DD)\n"
+          "Enter 'T' short for today")
     start_date = input("\n--> ")
     valid = False
     while valid == False:
@@ -315,7 +314,7 @@ def get_start_date():
             start_date = dt.date.today().isoformat()
             return start_date
         elif validate_date(start_date):
-            if dt.date.fromisoformat(start_date) > dt.date.today():
+            if dt.date.fromisoformat(start_date) >= dt.date.today():
                 valid = True
                 return start_date
             else:
@@ -325,6 +324,25 @@ def get_start_date():
         if valid == False:
             start_date = input("\n--> ")
 
+def get_end_date():
+    print("Please enter the end date (YYYY-MM-DD)")
+    end_date = input("\n--> ")
+    valid = False
+    while valid == False:
+        if end_date in ("T","t"): 
+            valid = True
+            end_date = dt.date.today().isoformat()
+            return end_date
+        elif validate_date(end_date):
+            if dt.date.fromisoformat(end_date) > dt.date.today():
+                valid = True
+                return end_date
+            else:
+                print("\n\U00002757 Schedule date cannot be earlier than today.")
+        else:
+            print("\n\U00002757 Invalid entry, please try again")
+        if valid == False:
+            end_date = input("\n--> ")
 
 def login(user_email, password, usr_type):
     """Check login credentials."""
@@ -416,7 +434,6 @@ def register(first_name, last_name, gender, birth_date,
     conn.commit()
     conn.close()
 
-    print(patient_id)
     Patient.change_gp('auto', patient_id)    
 
     # Return boolean to use in user flow 
