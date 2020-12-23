@@ -155,7 +155,7 @@ class Appointment:
                            p.patient_first_name, p.patient_last_name
                            FROM booking b
                            JOIN patient p ON b.patient_id = p.patient_id 
-                           WHERE b.gp_id = {} 
+                           WHERE b.gp_id == {} 
                            AND strftime('%Y-%m-%d', booking_start_time) = '{}' 
                            AND booking_status == 'confirmed';""".format(gp_id, start_date)
 
@@ -261,7 +261,7 @@ class Appointment:
         timeframe = timeframe.lower()
         sign = {'previous': '<', 'upcoming': '>'}
 
-        query = """SELECT booking_id AS 'Apt. ID',b.gp_id AS 'GP ID', printf('Dr. %s',g.gp_last_name) as GP,
+        query = """SELECT booking_id AS 'Apt. ID',b.gp_id AS 'GP ID', printf('Dr. %s',b.gp_last_name) as GP,
                    strftime('%Y-%m-%d %H:%M',booking_start_time) 'Date', 
                    booking_status AS 'Status',booking_type AS 'Type', 
                    booking_agenda AS 'Booking Agenda', booking_notes AS 'Notes'
