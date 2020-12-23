@@ -5,10 +5,6 @@
   - [Database](#database)
     - [Current status](#current-status)
     - [Dummy data](#dummy-data)
-    - [Users](#users)
-      - [Admin](#admin)
-      - [GP](#gp)
-      - [Patient](#patient)
 
 By using this project, run `python e_health_main.py`.
 
@@ -18,10 +14,10 @@ By using this project, run `python e_health_main.py`.
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                          27           1024           1904           2464
-Markdown                         7            245              0            405
+Python                          27           1034           1918           2488
+Markdown                         7            242              0            411
 -------------------------------------------------------------------------------
-SUM:                            34           1269           1904           2869
+SUM:                            34           1276           1918           2899
 -------------------------------------------------------------------------------
 ```
 

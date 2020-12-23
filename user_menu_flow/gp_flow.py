@@ -157,7 +157,7 @@ def add_avail(next_dict):
     # TODO: add availability
     start_date = utils.get_start_date()
     end_date = utils.get_end_date()
-    Schedule.delete_timeoff(globals.usr_id, 'time off', start_date, end_date)
+    Schedule.delete_timeoff(globals.usr_id, 'custom', 'time off', start_date, end_date)
 
     print("\n----------------------------------------------------\n"
           "                ", "Add or Remove a new availabilty?", "\n")
