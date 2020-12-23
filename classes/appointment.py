@@ -50,13 +50,18 @@ class Appointment:
         booking_check_result = u.db_read_query(booking_check_query).empty
 
         if booking_check_result:
+
+            gp_last_name_query = """SELECT gp_last_name FROM gp WHERE gp_id == {} """.format(self.gp_id)
+            gp_last_name = u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
+            print(gp_last_name)
+
             query = """ INSERT INTO booking
             (booking_id, booking_start_time, booking_status,
-            booking_agenda, booking_type,gp_id,patient_id,booking_status_change_time)
-            VALUES ({},'{}','{}','{}','{}',{},{},'{}');""".format('NULL', self.booking_start_time,
+            booking_agenda, booking_type,gp_id,gp_last_name,patient_id,booking_status_change_time)
+            VALUES ({},'{}','{}','{}','{}',{},'{}',{},'{}');""".format('NULL', self.booking_start_time,
                                                                   'booked',
                                                                   self.booking_agenda,
-                                                                  self.booking_type, self.gp_id,
+                                                                  self.booking_type, self.gp_id, gp_last_name,
                                                                   self.patient_id,
                                                                   dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
             u.db_execute(query)
@@ -414,8 +419,8 @@ if __name__ == "__main__":
     #                     booking_agenda, booking_type,gp_id,patient_id
 
     # THIS WORKS! : Testing book appointment method
-    # print(Appointment('Null', '2020-12-14 15:00', 'confirmed',
-    #              'booking agenda edit test 3', 'offline', ' ', 1, 1).book())
+    print(Appointment('Null', '2020-12-14 15:00', 'confirmed',
+                 'booking agenda edit test 3', 'offline', ' ', 1, 1).book())
 
     # THIS WORKS! : Testing Update Method
     # Appointment(27, '2020-12-13 10:00', 'confirmed',
