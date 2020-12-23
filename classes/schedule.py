@@ -237,6 +237,10 @@ class Schedule:
         schedule = Schedule()
         if schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date, end_date=end_date)[0] == False:
 
+            # store start_date as a string so that check_timeoff_conflict is callable later
+            start_date_check_timeoff_conflict = start_date
+            end_date_check_timeoff_conflict = end_date
+
             # start_date transformation str to datetime
             start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
             # adding time: '%Y-%m-%d 08:00'
@@ -279,6 +283,16 @@ class Schedule:
                 if '08:00' <= timeoff_range_weekdays_only[i][11:] <= '16:50':
                     new_timeoff_range.append(timeoff_range_weekdays_only[i])
 
+            # Get gp_last_name from database
+            gp_last_name_query = '''
+                                    SELECT DISTINCT
+                                        gp_last_name
+                                    FROM
+                                        booking
+                                    WHERE
+                                        gp_id = {};'''.format(gp_id)
+            gp_last_name_for_query = u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
+
             # Insert into database
             for i in range(len(new_timeoff_range)):
                 # Initialize query
@@ -292,14 +306,15 @@ class Schedule:
                                             booking_type,
                                             booking_notes,
                                             gp_id,
+                                            gp_last_name,
                                             patient_id)
                                         VALUES
-                                            (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, NULL);'''.format(
-                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id)
+                                            (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, '{}', NULL);'''.format(
+                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id, gp_last_name_for_query)
                 # Execute query
                 u.db_execute(insert_timeoff_query)
 
-            return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date, end_date=end_date)
+            return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date_check_timeoff_conflict, end_date=end_date_check_timeoff_conflict)
 
 
         # If there are already booked or confirmed appointments during start_date to end_date
@@ -383,7 +398,7 @@ class Schedule:
 ### DEVELOPMENT ###
 
 if __name__ == "__main__":
-    Schedule.insert_timeoff(16, 'time off', '2020-12-23', '2020-12-25')
+    # Schedule.insert_timeoff(16, 'time off', '2020-12-23', '2020-12-25')
     pass
 
 ### TESTING ###
