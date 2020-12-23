@@ -517,9 +517,22 @@ def week_empty_df(start_date, gp_id):
         if week_df.columns[i].weekday() in weekend_day_range:
             week_df[week_df.columns[i]] = 'WEEKEND'
 
-    week_df = week_df.fillna(" ")
+    week_df = week_df.fillna("")
 
     return week_df
+
+def split_week_df(df_object,gp_id):
+    if gp_id % 2 == 0:
+        lunchtime_start = '11:50'
+        lunchtime_end = '13:00'
+    else:
+        lunchtime_start = '12:50'
+        lunchtime_end = '14:00'
+
+    df_print_morning = df_object.loc[:lunchtime_start].to_markdown(tablefmt="grid", index=True)
+    df_print_afternoon = df_object.loc[lunchtime_end:].to_markdown(tablefmt="grid", index=True)
+    return df_print_morning ,df_print_afternoon
+
 
 # This function accepts an SQL query as an input and then commits the changes into the DB
 def db_execute(query):
@@ -536,3 +549,4 @@ def db_read_query(query):
     result = pd.read_sql_query(query, conn)
     conn.close()
     return result
+

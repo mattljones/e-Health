@@ -184,9 +184,10 @@ class Appointment:
             df_object = df_object.set_index(df_select_day_empty.index)
 
             # drop booking_dates and booking_hours as they are not needed anymore
+            df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
             df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-            return df_object, df_print
+            return df_object, df_print, df_print_morning, df_print_afternoon
 
         elif select_type == 'week':
             # forms an empty DF for a week from the date specified for a specific GP
@@ -212,8 +213,10 @@ class Appointment:
                 df_select_week.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_id']
 
             df_object = df_select_week
+            df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
             df_print = df_object.to_markdown(tablefmt="grid", index=True)
-            return df_object, df_print
+
+            return df_object, df_print, df_print_morning, df_print_afternoon
 
     # Displays the DF of all pending appointment for a specific GP after the current time
     @staticmethod
@@ -311,7 +314,7 @@ class Appointment:
         elif select_type == 'week':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
 
-        df_object = df_object.replace(('rejected', 'cancelled'), ' ').replace(
+        df_object = df_object.replace(('rejected', 'cancelled'), "").replace(
             ('WEEKEND', 'booked', 'rejected', 'confirmed', 'cancelled', 'time off', 'sick leave', 'LUNCH'),
             'Unavailable')
 
@@ -320,13 +323,14 @@ class Appointment:
 
         for column_index in column_number_list:
             for row_index in row_number_list:
-                if df_object.iloc[row_index, column_index] == " " or df_object.iloc[row_index, column_index] == "":
+                if df_object.iloc[row_index, column_index] == "":
                     df_object.iloc[row_index, column_index] = '[' + str(column_index) + str(row_index) + ']'
 
         df_print = df_object.to_markdown(tablefmt="grid", index=True)
+        df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
         # The first number of the index that the user inputs is the column number and the rest is row position.
         # From the users input you can establish the date and time for a booking
-        return df_object, df_print
+        return df_object, df_print, df_print_morning, df_print_afternoon
 
     # Gets availabilities of a all GPs for specific start_date except for specified GP
     @staticmethod
@@ -371,9 +375,11 @@ class Appointment:
         other_gp_id = query_result.loc[0, 'gp_id']
         other_gp_last_name = "DR." + query_result.loc[0, 'gp_last_name']
 
-        df_object, df_print = Appointment.select_availability(select_type, other_gp_id, str(start_date))
+        df_object, df_print, df_print_morning, \
+        df_print_afternoon = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return df_object, df_print, other_gp_id, other_gp_last_name, boolean_available
+        return df_object, df_print, other_gp_id, other_gp_last_name, \
+               boolean_available, df_print_morning, df_print_afternoon
 
     # Change status of a specific appointment
     @staticmethod
@@ -434,8 +440,8 @@ if __name__ == "__main__":
     # print(Appointment.select(53)[2])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
-    # print(Appointment.select_GP('week', 2, '2020-12-13')[1])
-    # print(Appointment.select_GP('day', 1, '2020-12-17')[1])
+    # print(Appointment.select_GP('week', 1, '2020-12-13')[3])
+    # print(Appointment.select_GP('day', 1, '2020-12-17')[3])
 
     # THIS WORKS! : Displays all of the appointments with a status 'booked' for a particular GP where date > now
     # print(Appointment.select_GP_pending(1)[1])
@@ -449,14 +455,14 @@ if __name__ == "__main__":
     # THIS WORKS! : Showing DF schedule for Patient view
     # For this test I've used patient 9 since their GP by default is 2 so
     # we can easily compare the DF to make sure they look the same
-    # print(Appointment.select_availability('week', 1, '2020-12-11')[1])
+    # print(Appointment.select_availability('week', 2, '2020-12-11')[3])
     # print(Appointment.select_availability('day', 9, '2020-12-24')[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
     # Displays the DF of the availability for that GP
-    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[1])
-    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[1])
+    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[5])
+    # print(Appointment.select_other_availability('week', 1, '2020-12-24')[5])
 
     # THIS WORKS! : Changes status for a specific booking
     # reject_reason = 'the booking was rejected for this reason: Test'
