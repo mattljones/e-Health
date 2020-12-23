@@ -163,7 +163,7 @@ def hash_salt(password):
 
     return hash_salt
 
-
+# TODO: trim input (no spaces)
 def validate(user_input):
     """
     Validate user input.  
