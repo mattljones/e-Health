@@ -139,20 +139,28 @@ def register_page(next_dict):
             return utils.display(main_flow_register)
 
         # Input validation for email
-        elif (usr_details[i] == "Email address") and (utils.validate_email(single_input)):
+        elif (usr_details[i] == "Email address") and utils.validate_email(single_input):
             usr_input.append(single_input)
 
         # Input validation for password 
-        elif (usr_details[i] == "Password (8 characters min)") and (utils.validate_password(single_input)):
-            usr_input.append(single_input)
-
-        # Input validation for password 
-        elif (usr_details[i] == "Birth date (YYYY-MM-DD)") and (utils.validate_date(single_input)):
+        elif (usr_details[i] == "Birth date (YYYY-MM-DD)") and utils.validate_date(single_input):
             usr_input.append(single_input)
 
         # Input validation for the other registration details
-        elif (usr_details[i] not in ("Email address","Password (8 characters min)", "Birth date (YYYY-MM-DD)")) and (utils.validate(single_input)):
+        elif (usr_details[i] not in ("Email address","Password (8 characters min)", "Birth date (YYYY-MM-DD)")) and utils.validate(single_input):
             usr_input.append(single_input)
+
+        # Input validation for password 
+        elif (usr_details[i] == "Password (8 characters min)") and utils.validate_password(single_input):
+            
+            password_confirmation = input("\n--> Confirm password: ")
+            
+            if single_input == password_confirmation:
+                usr_input.append(single_input)
+
+            else:
+                print("\n\U00002757 Passwords do not match, please enter password again")
+                i -= 1
 
         # If invalid input
         else :
@@ -217,7 +225,7 @@ flow_1 = {"title":"LOGIN AS ?",
 
 
 # login home page dictionary
-main_flow_register = {"title":"\N{hospital} WELCOME to e-health!",
+main_flow_register = {"title":"\N{hospital} WELCOME TO E-HEALTH! \n\n\U00002757 Open your terminal in full screen for a better user experience \U00002757",
                       "type":"main",
                       "1":("Login",empty_method,flow_1),
                       "2":("Register",register_page,empty_dict)}
