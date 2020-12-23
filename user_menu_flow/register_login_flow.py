@@ -122,9 +122,11 @@ def register_page(next_dict):
                    "2":"no"}
 
     # Registration details
-    usr_details=["First name", "Last name", "Birth date (YYYY-MM-DD)", "Email address", "Password (8 characters min)", "Gender", "NHS blood donor", "NHS organ donor"]
+    usr_details=["First name", "Last name", "Birth date (YYYY-MM-DD)", 
+                "Email address", "Password (8 characters min)", "Gender", 
+                "NHS blood donor", "NHS organ donor"]
     MCQ_details_dict = [gender,blood_donor,organ_donor]
-    # First name, last name, birth date, email, password, gender, blood don, organ don 
+    # First name, last name, birth date, email, password, gender, blood, organs 
     usr_input=[]
     
     # Registration String entries
@@ -184,7 +186,8 @@ def register_page(next_dict):
         i += 1
     
     # Updating DB with new patient account
-    success = utils.register(usr_input[0], usr_input[1], usr_input[5], usr_input[2], usr_input[3], usr_input[4], usr_input[6], usr_input[7])
+    success = utils.register(usr_input[0], usr_input[1], usr_input[5], usr_input[2], 
+                             usr_input[3], usr_input[4], usr_input[6], usr_input[7])
 
     # If problem with registration
     if (success == False):
