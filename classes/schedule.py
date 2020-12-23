@@ -79,10 +79,6 @@ class Schedule:
             # Set index
             df_object = df_object.set_index(df_select_day_empty.index)
 
-            # Produce df_print
-            df_print = df_object.to_markdown(tablefmt="grid", index=True)
-
-            return df_object, df_print
 
         if type == 'week':
 
@@ -116,8 +112,11 @@ class Schedule:
                 time_row = datetime.datetime.strptime(sql_result_df.loc[i, 'time'], '%H:%M').strftime('%H:%M')
                 df_object.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
 
-            # Produce df_print
-            df_print = df_object.to_markdown(tablefmt="grid", index=True)
+        # Produce df_print
+        # df_print = df_object.to_markdown(tablefmt="grid", index=True)
+
+        # produce df_print_morning
+        # df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
 
         return df_object, df_print
 
@@ -291,7 +290,7 @@ class Schedule:
                                         booking
                                     WHERE
                                         gp_id = {};'''.format(gp_id)
-            gp_last_name_for_query = u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
+            gp_last_name_from_db = u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
 
             # Insert into database
             for i in range(len(new_timeoff_range)):
@@ -310,7 +309,7 @@ class Schedule:
                                             patient_id)
                                         VALUES
                                             (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, '{}', NULL);'''.format(
-                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id, gp_last_name_for_query)
+                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id, gp_last_name_from_db)
                 # Execute query
                 u.db_execute(insert_timeoff_query)
 
