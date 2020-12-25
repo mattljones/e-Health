@@ -164,12 +164,9 @@ def deactivate_gp(next_dict):
     # List and prompt admin for a gp id
     gp_id = retrieve_gp_list('active')
 
-    # gp1 = retrieve[0]
-    # choice = retrieve[1]
-
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
-    print("Do you want to deactive the GP with ID: {}?\n".format(gp_id))
+    print("Do you want to deactive GP with ID: {}?\n".format(gp_id))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
@@ -191,24 +188,66 @@ def deactivate_gp(next_dict):
 
 def delete_gp(next_dict):
     '''
+    # NOTE: Integrate docstrings with info from GP.delete()
     Deletes a GP.
     '''
-    retrieve = retrieve_gp_list('all')
-    gp1 = retrieve[0]
-    choice = retrieve[1]
+    # List and prompt admin for a gp id
+    gp_id = retrieve_gp_list('all')
 
-    doctor_df = gp1.select(choice)
-    doctor = doctor_df[0]
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
+    print("Do you want to delete GP with ID: {}?\n".format(gp_id))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
+
     y_n = int(input("\n-->"))
+
+    ## TODO: Avoid text repetition
+    ## Default output unicode + text for different scenarios 
+    # gp_deleted = 
+    # patients_yes =
+    # patients_no =
+    # appointments_yes = 
+    # appointments_no = 
+
+    # TODO: Test cases where patients and/or apps not allocated successfully
+    # TODO: Improve code indentation for better readability
     if y_n == 1:
-        doctor.delete()
+        # Patients and appointments reallocated
+        if GP.delete(gp_id)[0]: 
+            print("""\n\U00002705 GP with ID {} has been deleted.
+\U00002705 Patients reallocated successfully.
+\U00002705 Appointments reallocated successfully.""".format(gp_id))
+
+        # Patients reallocated | Appointment *not* reallocated
+        elif GP.delete(gp_id)[1] == 'apps':
+            print("""\n\U00002705 GP with ID {} has been deleted. 
+\U00002705 Patients reallocated successfully.
+\U00002757 The following appointments have *NOT* been reallocated: {}"""
+                    .format(gp_id, GP.delete(gp_id)[4]))
+
+        # Appointments reallocated | Patients *not* reallocated
+        elif GP.delete(gp_id)[1] == 'patients':
+            print("""\n\U00002705 GP with ID {} has been deleted. 
+\U00002705 Appointments reallocated successfully.
+\U00002757 {} patients have *NOT* been reallocated due to all GPs having reached capacity."""
+                    .format(gp_id, GP.delete(gp_id)[2]))
+
+        # Patients and appointment *not* reallocated
+        elif GP.delete(gp_id)[1] == 'both':
+            print("""\n\U00002705 GP with ID {} has been deleted. 
+\U00002757 {} patients have *NOT* been reallocated due to all GPs having reached capacity.
+\U00002757 The following appointments have *NOT* been reallocated: {}"""
+                    .format(gp_id, GP.delete(gp_id)[2], GP.delete(gp_id)[4]))
+
         return utils.display(next_dict)
-        
+
     elif y_n == 2:
+        print("\n\U00002757 Action cancelled.")
+        return utils.display(next_dict)
+
+    else:
+        print(("\n\U00002757 Input not valid."))
         return utils.display(next_dict)
 
 
