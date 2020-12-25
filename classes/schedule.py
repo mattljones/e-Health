@@ -59,9 +59,9 @@ class Schedule:
             sql_result_df['Patient (ID)'] = sql_result_df['Patient First Name'].astype(str) + ' ' + sql_result_df[
                 'Patient Last Name'].astype(str) + ' (' + sql_result_df['Patient (ID)'].astype(str) + ')'
 
-            # check if 'Patient (ID)' column in sql_result_df is nan, which can happen if there is time off inserted
-            # for a gp so that no patient_id exists and no information about the patient can be shown
-            # sql_result_df['Patient (ID)'].astype(str).str.contains('nan nan (nan)')]
+            # Replace 'nan nan (nan) in 'Patient (ID)' column of sql_result_df, this can happen if there is time off
+            # inserted for a gp so that no patient_id exists, and therefore no information about the patient can be shown
+            sql_result_df['Patient (ID)'].replace({"nan nan (nan)": ''}, inplace=True)
 
             # Producing the empty DataFrame for a day
             df_select_day_empty = u.day_empty_df(start_date, 2)
@@ -205,7 +205,7 @@ class Schedule:
                         AND
                             gp_id = ?
                         AND
-                            booking_status IN ('confirmed', 'booked');""", (new_timeoff_range[i], gp_id))
+                            booking_status IN ('confirmed', 'booked', 'sick leave', 'time off');""", (new_timeoff_range[i], gp_id))
             # Appending to empty DataFrame
             df_object = df_object.append(c.fetchall(), ignore_index=True)
 
@@ -409,10 +409,10 @@ if __name__ == "__main__":
 # schedule = Schedule()
 
 ## testing select day
-# df = schedule.select(16, 'day', '2020-12-24')[2]
+# df = schedule.select(16, 'day', '2020-12-24')[1]
 
 ## testing select week
-# df = schedule.select(2, 'week', '2021-1-18')[1]
+# df = schedule.select(2, 'week', '2020-12-08')[2]
 
 ## testing check_timeoff_conflict
 # df = schedule.check_timeoff_conflict(2, '2020-12-01', '2021-1-13')[2]
@@ -430,62 +430,4 @@ if __name__ == "__main__":
 # schedule.delete_timeoff(gp_id=2, type='custom', timeoff_type='sick leave', start_date='2021-1-20', end_date='2021-1-25')
 
 ## testing delete_timeoff all
-# schedule.delete_timeoff(gp_id=2, type='all', timeoff_type='sick leave')
-
-
-# start_date = '2020-12-24'
-# gp_id = 2
-# # start_date transformation str to datetime
-# start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
-#
-# # Initialize query
-# day_query = """
-#                             Select
-#                                 b.booking_status AS 'Booking Status Old',
-#                                 strftime('%H:%M', b.booking_start_time) AS 'booking_hours',
-#                                 b.booking_agenda AS 'Agenda',
-#                                 b.booking_type AS 'Type',
-#                                 b.patient_id AS 'Patient (ID)',
-#                                 p.patient_first_name AS 'Patient First Name',
-#                                 p.patient_last_name AS 'Patient Last Name'
-#                             FROM
-#                                 booking as b
-#                             LEFT JOIN
-#                                 patient p on b.patient_id = p.patient_id
-#                             WHERE
-#                                 b.gp_id = {}
-#                             AND
-#                                 strftime('%Y-%m-%d', b.booking_start_time) = '{}';""".format(gp_id, start_date)
-# # Execute query
-# sql_result_df = u.db_read_query(day_query)
-#
-# # Include 'Patient First Name' and 'Patient Last Name' in 'Patient (ID)' column
-# sql_result_df['Patient (ID)'] = sql_result_df['Patient First Name'].astype(str) + ' ' + sql_result_df[
-#     'Patient Last Name'].astype(str) + ' (' + sql_result_df['Patient (ID)'].astype(str) + ')'
-#
-# if sql_result_df['Patient (ID)'].iloc[0] == 'nan nan (nan)':
-#     sql_result_df['Patient (ID)'] = ''
-# #
-# # check if 'Patient (ID)' column in sql_result_df is nan, which can happen if there is time off inserted
-# # for a gp so that no patient_id exists and no information about the patient can be shown
-# # sql_result_df['Patient (ID)'].astype(str).str.contains('nan nan (nan)')]
-#
-# # Producing the empty DataFrame for a day
-# df_select_day_empty = u.day_empty_df(start_date, 2)
-#
-# df_object = pd.merge(df_select_day_empty, sql_result_df, left_on=df_select_day_empty.index,
-# right_on='booking_hours', how='left')
-#
-# for i in range(len(df_object)):
-#     if pd.isnull(df_object.at[i, 'Booking Status Old']) == False:
-#         df_object.at[i, 'Status'] = df_object.at[i, 'Booking Status Old']
-#
-# # drop columns that are not used anymore
-# df_object = df_object.drop(
-# columns=['Booking Status Old', 'booking_hours', 'Patient First Name', 'Patient Last Name']).fillna('')
-#
-# # Wrap text in 'Agenda' column
-# df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
-#
-# # Set index
-# df_object = df_object.set_index(df_select_day_empty.index)
+# schedule.delete_timeoff(gp_id=16, type='all', timeoff_type='sick leave')
