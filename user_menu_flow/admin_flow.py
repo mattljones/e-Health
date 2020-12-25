@@ -15,8 +15,8 @@ from system import utils
 # import global variables from globals.py
 from system import globals
 
-from classes import gp
-from classes import patient
+from classes.gp import GP
+from classes.patient import Patient
 
 
 ############################### INPUT MENU PAGES ###########################
@@ -34,11 +34,9 @@ def view_gp(next_dict):
     '''
     Select from a list of GPs and allows choice for viewing.
     '''
-    # NOTE: this could create issues when GPs are many
-    # Might be useful to order by GP id and give option to 'scroll down'
     choice = retrieve_gp_list('all')
 
-    doctor_df = gp.GP.select(choice)
+    doctor_df = GP.select(choice)
     # NOTE: I don't understand the fuction of the line below (commented for now)
     # doctor = doctor_df[0]
 
@@ -64,23 +62,23 @@ def view_gp(next_dict):
     elif y_n == 2:
         return utils.display(next_dict)
     else:
-        pass
-        # TODO: input not valid > prompt user again
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
 
 
 def retrieve_gp_list(type):
+    # NOTE: display OR prompt user (not both in a single function)
     '''
     Shows the list of GPs and allows choice from that list.
     '''
-    df = gp.GP.select_list(type)
+    df = GP.select_list(type)
     # NOTE: I don't understand the fuction of the line below (commented for now)
     # df_raw = df[0]
     df_show = df[1]
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
     print(df_show)
-    return int(input("\nPlease select a GP_ID\n"
-                "--> "))
+    return int(input("\nPlease select a GP ID. \n--> "))
 
 
 def same_gp(next_dict):
@@ -125,7 +123,7 @@ def add_gp(next_dict):
     # Default status: active 
     status = 'active'
 
-    new_gp = gp.GP(id_ = None,
+    new_gp = GP(id_ = None,
                 first_name=first_name, 
                 last_name=last_name, 
                 gender=gender, 
@@ -146,12 +144,16 @@ def add_gp(next_dict):
     
     if y_n == 1:
         # Insert new GP in db
-        gp.GP.insert(new_gp)
-        print("\n\U00002705 Dr. {} has been registered.").format(last_name)
+        GP.insert(new_gp)
+        print("\n\U00002705 Dr. {} has been registered.".format(last_name))
         return utils.display(next_dict)
         
     elif y_n == 2:
         print("\n\U00002757 GP not added.")
+        return utils.display(next_dict)
+
+    else:
+        print("\n\U00002757 Input not valid.")
         return utils.display(next_dict)
 
 
@@ -159,22 +161,31 @@ def deactivate_gp(next_dict):
     '''
     Deactivates a GP.
     '''
-    retrieve = retrieve_gp_list('active')
-    gp1 = retrieve[0]
-    choice = retrieve[1]
+    # List and prompt admin for a gp id
+    gp_id = retrieve_gp_list('active')
 
-    doctor_df = gp1.select(choice)
-    doctor = doctor_df[0]
+    # gp1 = retrieve[0]
+    # choice = retrieve[1]
+
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
+    print("Do you want to deactive the GP with ID: {}?\n".format(gp_id))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
+
     y_n = int(input("\n-->"))
+
     if y_n == 1:
-        doctor.change_status('inactive')
+        GP.change_status(gp_id, 'inactive')
+        print("\n\U00002705 GP with ID [{}] has been deactivated.".format(gp_id))
         return utils.display(next_dict)
-        
+
     elif y_n == 2:
+        print("\n\U00002757 Deactivation cancelled.")
+        return utils.display(next_dict)
+
+    else:
+        print(("\n\U00002757 Input not valid."))
         return utils.display(next_dict)
 
 
