@@ -211,7 +211,7 @@ def delete_gp(next_dict):
     # appointments_no = 
 
     # TODO: Test cases where patients and/or apps not allocated successfully
-    # TODO: Improve code indentation for better readability
+    # TODO: Improve code indentation for better readabality
     if y_n == 1:
         # Patients and appointments reallocated
         if GP.delete(gp_id)[0]: 
@@ -265,7 +265,7 @@ def choose_patient(type, patient_last_name=None):
     '''
     Choose patient account.
     '''
-    df = patient.Patient.select_list(type,patient_last_name)
+    df = Patient.select_list(type,patient_last_name)
     print("\n----------------------------------------------------\n"
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
@@ -283,7 +283,7 @@ def view_patient(next_dict):
     choose_patient('matching', patient_last_name=last_name)
     choice = int(input('\nPlease choose a patient ID\n'
     '-->'))
-    selected_patient = patient.Patient.select(choice)
+    selected_patient = Patient.select(choice)
     print("\n----------------------------------------------------\n"
           "                ",'PATIENT DETAILS', "\n")
     print(selected_patient[2])
@@ -329,7 +329,7 @@ def confirm_patient(next_dict):
         y_n = int(input("\n-->"))
 
         if y_n == 1:
-            patient.Patient.confirm('all')
+            Patient.confirm('all')
 
             # TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
 
@@ -353,9 +353,9 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             for id in ids:
-                patient.Patient.confirm('single', patient_id = int(id))
+                Patient.confirm('single', patient_id = int(id))
                 #NOTE: IS GP PAIRED TO PATIENT WHEN THEY REGISTER OR AFTER CONFIRMATION?
-                patient.Patient.change_gp('auto', patient_id = int(id))
+                Patient.change_gp('auto', patient_id = int(id))
 
             return utils.display(next_dict)
         
@@ -383,7 +383,7 @@ def delete_patient(next_dict):
     y_n = int(input("\n-->"))
     if y_n == 1:
         for id in choice:
-            patient.Patient.delete(id)
+            Patient.delete(id)
 
         return utils.display(next_dict)
         
@@ -852,11 +852,11 @@ main_flow_admin = {
 if __name__ == '__main__':
     #utils.display(main_flow_admin)
 
-    test_patient = patient.Patient.select_list('pending')
+    test_patient = Patient.select_list('pending')
     print(test_patient[1])
     choice = int(input('\nPlease choose a patient ID\n'
     '-->'))
-    selected_patient = patient.Patient.select(choice)
+    selected_patient = Patient.select(choice)
     print(selected_patient[2])
 
         
