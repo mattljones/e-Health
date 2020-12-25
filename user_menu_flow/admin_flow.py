@@ -30,21 +30,25 @@ def gp_account_section_menu(next_dict):
     return utils.display(manage_gp_accounts_flow)
 
 
-
 def view_gp(next_dict):
     '''
     Select from a list of GPs and allows choice for viewing.
     '''
+    # NOTE: this could create issues when GPs are many
+    # Might be useful to order by GP id and give option to 'scroll down'
     choice = retrieve_gp_list('all')
 
     doctor_df = gp.GP.select(choice)
-    doctor = doctor_df[0]
+    # NOTE: I don't understand the fuction of the line below (commented for now)
+    # doctor = doctor_df[0]
+
+    # TODO: proper input validation
     print("\n----------------------------------------------------\n"
           "                ",'GP DETAILS', "\n")
     print(doctor_df[2])
-    index_choice = int(input("Choose an value to edit. \n"
+    index_choice = int(input("Choose a value to edit. \n"
     "-->"))
-    value_choice = input("\nChoose an value to edit. \n"
+    value_choice = input("\nChoose a value to edit. \n"
     "-->") 
 
     print("\n----------------------------------------------------\n"
@@ -53,14 +57,15 @@ def view_gp(next_dict):
     print("[ 2 ] No")
     y_n = int(input("\n-->"))
     if y_n == 1:
-
-        #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
+        # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
         return utils.display(next_dict)
         
     elif y_n == 2:
         return utils.display(next_dict)
-
+    else:
+        pass
+        # TODO: input not valid > prompt user again
 
 
 def retrieve_gp_list(type):
@@ -68,7 +73,8 @@ def retrieve_gp_list(type):
     Shows the list of GPs and allows choice from that list.
     '''
     df = gp.GP.select_list(type)
-    df_raw = df[0]
+    # NOTE: I don't understand the fuction of the line below (commented for now)
+    # df_raw = df[0]
     df_show = df[1]
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
@@ -77,16 +83,14 @@ def retrieve_gp_list(type):
                 "--> "))
 
 
-
 def same_gp(next_dict):
     '''
     Allows viewing/editing of the same GP.
     '''
 
-    #TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
+    # TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
 
     pass
-
 
 
 def add_gp(next_dict):
@@ -95,6 +99,8 @@ def add_gp(next_dict):
     '''
     print("\n----------------------------------------------------\n"
           "                ",'ENTER GP DETAILS', "\n")
+
+    # TODO: Input validation (see patient registration in register_login_flow)
     first_name = input('Please enter First Name: \n'
     '--> ')
     last_name = input('\nPlease enter Last Name: \n'
@@ -107,47 +113,46 @@ def add_gp(next_dict):
     '--> ')
     password_raw = input('\nPlease enter Password: \n'
     '--> ')
-    registration_date = datetime.date.today()
     working_days = input('\nPlease enter Working Days: \n'
     '--> ')
 
-    # AUTO SET DEPARTMENT AND SPECIALISATION IDS TO GP. 
-    # COULD LIST OUT DEPARTMENTS AND SPECIALISATIONS AND GIVE CHOICE.
+    # TODO: LIST OUT DEPARTMENTS AND SPECIALISATIONS AND GIVE CHOICE.
 
+    # Default department and specialiations: 1
     department_id = 1
     specialisation_id = 1
 
+    # Default status: active 
     status = 'active'
-    gp1 = gp.GP(id_ = None,
+
+    new_gp = gp.GP(id_ = None,
                 first_name=first_name, 
                 last_name=last_name, 
                 gender=gender, 
                 birth_date=birth_date, 
                 email=email, 
-                password_raw=password_raw,
-                registration_date=registration_date, 
+                password_raw=password_raw, 
                 working_days=working_days, 
                 department_id=department_id, 
                 specialisation_id=specialisation_id, 
                 status=status)
 
-    #TODO: WORK OUT HOW TO ENTER DEPARTMENT AND SPECIALISATION AND GET IDS FROM THAT
-    #TODO: GENERATE GP ID
-
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
+
     y_n = int(input("\n-->"))
+    
     if y_n == 1:
-
-        #TODO: UPDATE THE DATABASE WITH THE NEW INFO.
-
+        # Insert new GP in db
+        gp.GP.insert(new_gp)
+        print("\n\U00002705 Dr. {} has been registered.").format(last_name)
         return utils.display(next_dict)
         
     elif y_n == 2:
+        print("\n\U00002757 GP not added.")
         return utils.display(next_dict)
-
 
 
 def deactivate_gp(next_dict):
@@ -173,7 +178,6 @@ def deactivate_gp(next_dict):
         return utils.display(next_dict)
 
 
-
 def delete_gp(next_dict):
     '''
     Deletes a GP.
@@ -195,7 +199,6 @@ def delete_gp(next_dict):
         
     elif y_n == 2:
         return utils.display(next_dict)
-
 
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
@@ -246,7 +249,7 @@ def view_patient(next_dict):
     y_n = int(input("\n-->"))
     if y_n == 1:
 
-        #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
+        # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
         return utils.display(next_dict)
         
@@ -278,7 +281,7 @@ def confirm_patient(next_dict):
         if y_n == 1:
             patient.Patient.confirm('all')
 
-            #TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
+            # TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
 
             return utils.display(next_dict)
         
