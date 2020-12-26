@@ -450,7 +450,7 @@ def pairing_gp(next_dict):
 
             if y_n == 1:
                 print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
-                return utils.display(next_dict))
+                return utils.display(next_dict)
 
             elif y_n == 2:
                 print("\n\U00002757 Action cancelled.")
@@ -483,7 +483,7 @@ def pairing_gp(next_dict):
 
             if y_n == 1:
                 print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
-                return utils.display(next_dict))
+                return utils.display(next_dict)
 
             elif y_n == 2:
                 print("\n\U00002757 Action cancelled.")

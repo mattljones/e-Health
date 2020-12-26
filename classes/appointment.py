@@ -220,6 +220,37 @@ class Appointment:
 
     # Displays the DF of all pending appointment for a specific GP after the current time
     @staticmethod
+    def select_GP_appt(gp_id):
+        """
+        :param gp_id: GP specific id that we can fetch from the  global variables
+        :return: df_object is a raw dataframe that can be used to pull data from it
+        :return: df_print is a user friendly DF that can be used to display information to the user
+        """
+
+        pending_query = """SELECT booking_id AS 'Apt. ID', p.patient_first_name AS 'Patient + ID',
+                   p.patient_last_name AS 'P. Last Name', b.patient_id, booking_start_time AS 'Date', booking_status 
+                   AS 'Status', booking_status_change_time AS 'Status change time',
+                   booking_agenda AS 'Agenda',booking_type AS 'Type'
+                   FROM booking b
+                   JOIN patient p on b.patient_id = p.patient_id
+                   WHERE b.booking_start_time > '{}' 
+                   AND b.gp_id =={}""".format(dt.datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
+
+        df_object = u.db_read_query(pending_query)
+        df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
+                                    df_object['P. Last Name'].astype(str) + ' (' + \
+                                    df_object['patient_id'].astype(str) + ')'
+
+        df_object['Apt. ID'] = "[" + df_object['Apt. ID'].astype(str) + "]"
+        # Dropping no longer needed columns
+        df_object = df_object.drop(columns=['P. Last Name', "patient_id"])
+        df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
+        df_print = df_object.to_markdown(tablefmt="grid", index=False)
+
+        return df_object, df_print
+
+    # Displays the DF of all pending appointment for a specific GP after the current time
+    @staticmethod
     def select_GP_pending(gp_id):
         """
         :param gp_id: GP specific id that we can fetch from the  global variables
@@ -393,7 +424,7 @@ class Appointment:
 
             query = """UPDATE booking SET booking_status = '{}', booking_agenda = '{}'
                        WHERE booking_id = {};""".format(new_status, reject_reason, booking_id)
-            print(query)
+            # print(query)
             u.db_execute(query)
 
         else:
@@ -410,7 +441,7 @@ class Appointment:
         query = """UPDATE booking SET booking_status = 'confirmed' 
                    WHERE gp_id = {} AND booking_status = 'booked';""".format(gp_id)
         u.db_execute(query)
-        print("All appointments have been confirmed!")
+        print("\nAll appointments have been confirmed!\n")
 
     @staticmethod
     def get_gp_last_name(gp_id):
@@ -421,6 +452,10 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
+    Appointment.change_status(267, 'booked')
+    Appointment.change_status(268, 'booked')
+    print(Appointment.select_GP_appt(16)[1])
+    # print(Appointment.select_availability('week', 16, '2020-12-27')[2])
     # print(Appointment.select_availability('day', 1, '2020-12-23'))
     pass
 
