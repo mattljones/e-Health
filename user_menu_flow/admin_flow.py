@@ -363,18 +363,23 @@ def confirm_patient(next_dict):
             return utils.display(next_dict)
 
 
-
 def delete_patient(next_dict):
     '''
     Delete a patient account
     '''
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
+
     last_name = input("Please enter the patient's last name:\n"
     "-->")
+
     choose_patient('matching', patient_last_name=last_name)
-    choice = int(input('\nPlease choose a patient ID(s)\n'
-    '-->')).split()
+    choice = input('''
+Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
+    '-->')
+    # Eliminating whitespace from string and splitting it into single IDs
+    patient_ids = choice.replace(' ', '').split(',')
+
 
     print("\n----------------------------------------------------\n"
     "                ",'CONFIRM?', "\n")
@@ -382,15 +387,19 @@ def delete_patient(next_dict):
     print("[ 2 ] No")
     y_n = int(input("\n-->"))
     if y_n == 1:
-        for id in choice:
+        for id in patient_ids:
             Patient.delete(id)
-
+            print("\n\U00002705 Patient with ID {} has been deleted.".format(id))
         return utils.display(next_dict)
         
     elif y_n == 2:
+        print("\n\U00002757 Action cancelled.")
         return utils.display(next_dict)
 
-    
+    else:
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
+
 
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
 
