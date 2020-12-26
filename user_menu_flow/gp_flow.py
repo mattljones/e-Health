@@ -207,32 +207,31 @@ def another_confirm_all(next_dict):
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
-def add_avail(next_dict):
-    flow_availability = {"title": "Schedule",
+def remove_timeoff(next_dict):
+    flow_timeoff = {"title": "Schedule",
                  "type": "sub",
-                 "1":("Add", add_avail, next_dict),
-                 "2":("Remove", remove_avail, next_dict)
+                 "1":("Add", add_timeoff, next_dict),
+                 "2":("Remove", remove_timeoff, next_dict)
                 }
-    # TODO: add availability
     start_date = utils.get_start_date()
     end_date = utils.get_end_date()
     Schedule.delete_timeoff(globals.usr_id, 'custom', 'time off', start_date, end_date)
 
     print("\n----------------------------------------------------\n"
-          "                ", "Add or Remove a new availabilty?", "\n")
+          "                ", "Add or Remove a new timeoff?", "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return display_next_menu(flow_availability)
+        return display_next_menu(flow_timeoff)
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
-def remove_avail(next_dict):
-    flow_availability = {"title": "Schedule",
+def add_timeoff(next_dict):
+    flow_timeoff = {"title": "Schedule",
                  "type": "sub",
-                 "1":("Add", add_avail, next_dict),
-                 "2":("Remove", remove_avail, next_dict)
+                 "1":("Add", add_timeoff, next_dict),
+                 "2":("Remove", remove_timeoff, next_dict)
                 }
     # TODO: add availability
     # TODO: fix Schedule.insert_timeoff
@@ -246,7 +245,7 @@ def remove_avail(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return display_next_menu(flow_availability)
+        return display_next_menu(flow_timeoff)
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
@@ -266,7 +265,7 @@ def view_another_day(next_dict):
     print("\n----------------------------------------------------\n"
           "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
-    print("[ 2 ] Manage the availability")
+    print("[ 2 ] Manage timeoff")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
         return display_next_menu(flow_schedule)
@@ -289,7 +288,7 @@ def view_another_week(next_dict):
     print("\n----------------------------------------------------\n"
           "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
-    print("[ 2 ] Manage the availability")
+    print("[ 2 ] Manage timeoff")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
         return display_next_menu(flow_schedule)
@@ -383,17 +382,17 @@ flow_confirm_appoint = {"title": "Confirm Appointments",
                 "3":("Reject One", another_confirm_rej, flow_end)
                 }
 
-# availability flow
-flow_availability = {"title": "Schedule",
+# timeoff flow
+flow_timeoff = {"title": "Schedule",
                  "type": "sub",
-                 "1":("Add", add_avail, flow_end),
-                 "2":("Remove", remove_avail, flow_end)
+                 "1":("Add", add_timeoff, flow_end),
+                 "2":("Remove", remove_timeoff, flow_end)
                 }
 # schedule flow
 flow_schedule = {"title": "Schedule",
                 "type": "sub",
-                "1":("Day", view_another_day, flow_availability),
-                "2":("Week", view_another_week, flow_availability)
+                "1":("Day", view_another_day, flow_timeoff),
+                "2":("Week", view_another_week, flow_timeoff)
                 }
 
 # appointment flow
@@ -432,6 +431,6 @@ flow_records = {"title": "Records",
 main_flow_gp = {"title": "GP MAIN MENU",
                 "type":"main",
                 "1":("View Schedule", display_next_menu, flow_schedule),
-                "2":("Manage availability", display_next_menu, flow_availability),
+                "2":("Manage timeoff", display_next_menu, flow_timeoff),
                 "3":("Manage Appointments", display_next_menu, flow_appointments),
                 "4":("Records", display_next_menu, flow_records)}
