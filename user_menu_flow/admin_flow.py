@@ -401,11 +401,15 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
 
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
 
+
+
 def pairings_section_menu(next_dict):
     '''
     Returns to the section menu.
     '''
     return utils.display(gp_patient_pair_flow)
+
+
 
 def pairing_gp(next_dict):
     '''
@@ -420,13 +424,81 @@ def pairing_gp(next_dict):
     choice = int(input('\nPlease choose a patient ID\n'
     '-->'))
     selected_patient = Patient.select(choice)
+    patient_id = selected_patient[0].patient_id
+    gp_id = selected_patient[0].gp_id
+    gp_lastname = GP.select(gp_id)[0].last_name
+
+    print('Patient {} is currently registered with Dr {}.'.format(patient_id, gp_lastname))
     print("\n----------------------------------------------------\n"
-          "                ",'PATIENT DETAILS', "\n")
-    print(selected_patient[2])
+          "                ",'CHANGE DEFAULT GP', "\n")
+    print('[ 1 ] Auto-Reallocate')
+    print('[ 2 ] Select GP From List')
+    choice = int(input('\n-->'))
+
+    if choice == 1:
+        new_gp = Patient.change_gp('auto', patient_id)
+        if new_gp[0]:
+            print("\n----------------------------------------------------\n"
+            "                ",'CONFIRM?', "\n")
+            print("[ 1 ] Yes")
+            print("[ 2 ] No")
+            y_n = int(input("\n-->"))
+
+            if y_n == 1:
+                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
+                return utils.display(next_dict))
+
+            elif y_n == 2:
+                print("\n\U00002757 Action cancelled.")
+                return utils.display(next_dict)
+
+            else:
+                print("\n\U00002757 Input not valid.")
+                return utils.display(next_dict)
+        
+        else:
+            print("\n\U00002757 All GPs are full.")
+            return utils.display(next_dict)
+
+
+    elif choice == 2:
+        gp_list = GP.select_list('not_full')
+        print("\n----------------------------------------------------\n"
+            "                ",'NON-FULL GP LIST', "\n")
+        print(gp_list[1])
+        new_gp_id = int(input('\nPlease choose a GP to allocate the Patient to.\n'
+        '-->'))
+        new_gp = change_gp('specific', patient_id, new_gp_id=new_gp_id)
+        if new_gp[0]:
+            print("\n----------------------------------------------------\n"
+            "                ",'CONFIRM?', "\n")
+            print("[ 1 ] Yes")
+            print("[ 2 ] No")
+            y_n = int(input("\n-->"))
+
+            if y_n == 1:
+                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
+                return utils.display(next_dict))
+
+            elif y_n == 2:
+                print("\n\U00002757 Action cancelled.")
+                return utils.display(next_dict)
+
+            else:
+                print("\n\U00002757 Input not valid.")
+                return utils.display(next_dict)
+        else:
+            print("\n\U00002757 All GPs are full.")
+            return utils.display(next_dict)
+        
+    
+    else:
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
+    
 
 
 
-    return utils.display(next_dict)
 
 def pairing_patient(next_dict):
     '''
