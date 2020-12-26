@@ -69,6 +69,8 @@ def logout():
     """Logout user and return to main page."""
     globals.usr_type = ""
     globals.usr_id = ""
+    globals.patient_id = ""
+    globals.appt_id = ""
     print("\n\U00002705 Succesfully logged out.")
 
 
