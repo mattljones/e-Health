@@ -94,7 +94,23 @@ def empty_note(next_dict):
     return display_prescription(next_dict)
 
 def enter_note(next_dict):
-    pass
+    # TODO: confirm the attendance before entering note, VALUE constraint
+    Appointment.change_status(globals.appt_id, "attending")
+    
+    # temporarily to display the change
+    print(Appointment.select_GP_appt(globals.usr_id))
+
+    print("\nPlease enter your note")
+    gp_note = input("--> ")
+    record = Record.select(globals.patient_id)[0]
+    # DEBUG
+    print("globals.appt_id")
+    record.appointment_notes[globals.appt_id] = gp_note
+    record.update()
+
+    # temporarily to display the change
+    print(Record.select(globals.patient_id)[4])
+
     return display_prescription(next_dict)
 
 def prescibe(next_dict):
@@ -119,7 +135,14 @@ def enter_field(next_dict):
     return display_next_menu(next_dict)
 
 def enter_appoint_id(next_dict):
-    pass
+    # TODO: return to home page
+    # TODO: how to get the patient id through the appointment id
+    print("\nPlease enter the id of patient whose appointment you want to confirm attendance and edit notes")
+    patient_id = input("--> ")
+    print("\nPlease enter the id of appointment which you want to confirm attendance and edit notes")
+    appt_id = input("--> ")
+    globals.patient_id = patient_id
+    globals.appt_id = appt_id
     return display_next_menu(next_dict)
 
 ############################ SEQUENTIAL STEPS MENUS ########################
@@ -134,7 +157,12 @@ def correct_note_change(next_dict):
 
 # TODO: booking id input validation
 
-def displey_pending_appt(next_dict):
+def display_confirmed_appt(next_dict):
+    print("\nYour confirmed appointments: ")
+    print(Appointment.select_GP_confirmed(globals.usr_id))
+    return display_next_menu(next_dict)
+
+def display_pending_appt(next_dict):
     # TODO: how to tell if there is an unconfirmed appointment
     # print("\nYour do not have any pending appointment!")
     print("\nYour pending appointments: ")
@@ -152,7 +180,7 @@ def another_confirm_rej(next_dict):
     print("\nPleas enter the id of appointment you want to reject")
     reject_id = input("\n--> ")
     Appointment.change_status(reject_id, "rejected")
-    print(Appointment.select_GP_appt(globals.usr_id)[1])
+    print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\n----------------------------------------------------\n"
           "                ", "Confrim another appointment?", "\n")
@@ -175,7 +203,7 @@ def another_confirm_one(next_dict):
     print("\nPleas enter the id of appointment you want to confirm")
     confirm_id = input("\n--> ")
     Appointment.change_status(confirm_id, "confirmed")
-    print(Appointment.select_GP_appt(globals.usr_id)[1])
+    print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\n----------------------------------------------------\n"
           "                ", "Confrim another appointment?", "\n")
@@ -195,7 +223,7 @@ def another_confirm_all(next_dict):
                  "3":("Reject One", another_confirm_rej, next_dict)
                 }
     Appointment.confirm_all_GP_pending(globals.usr_id)
-    print(Appointment.select_GP_appt(globals.usr_id)[1])
+    print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\n----------------------------------------------------\n"
           "                ", "Confrim another appointment?", "\n")
@@ -398,8 +426,8 @@ flow_schedule = {"title": "Schedule",
 # appointment flow
 flow_appointments = {"title": "Appointments",
                  "type": "sub",
-                 "1":("Confirm", displey_pending_appt, flow_confirm_appoint),
-                 "2":("Notes", display_next_menu, flow_notes)
+                 "1":("Confirm", display_pending_appt, flow_confirm_appoint),
+                 "2":("Notes", display_confirmed_appt, flow_notes)
                 }
 
 flow_confirm_change = {"title": "Confirm edit",

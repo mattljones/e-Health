@@ -149,6 +149,8 @@ c.execute("""
         booking_status = 'confirmed' or
         booking_status = 'rejected' or
         booking_status = 'cancelled' or
+        booking_status = 'attending' or
+        booking_status = 'not attending' or
         booking_status = 'time off' or
         booking_status = 'sick leave'),
     booking_status_change_time DATETIME NOT NULL,
