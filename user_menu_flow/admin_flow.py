@@ -354,8 +354,6 @@ def confirm_patient(next_dict):
         if y_n == 1:
             for id in ids:
                 Patient.confirm('single', patient_id = int(id))
-                #NOTE: IS GP PAIRED TO PATIENT WHEN THEY REGISTER OR AFTER CONFIRMATION?
-                Patient.change_gp('auto', patient_id = int(id))
 
             return utils.display(next_dict)
         
@@ -413,6 +411,21 @@ def pairing_gp(next_dict):
     '''
     Search for a patient and pair them up with a GP.
     '''
+    # TODO: Better way to reuse code from view_patient()
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+    choice = int(input('\nPlease choose a patient ID\n'
+    '-->'))
+    selected_patient = Patient.select(choice)
+    print("\n----------------------------------------------------\n"
+          "                ",'PATIENT DETAILS', "\n")
+    print(selected_patient[2])
+
+
+
     return utils.display(next_dict)
 
 def pairing_patient(next_dict):
