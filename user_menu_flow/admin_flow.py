@@ -399,6 +399,7 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         return utils.display(next_dict)
 
 
+
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
 
 
@@ -415,7 +416,9 @@ def pairing_gp(next_dict):
     '''
     Search for a patient and pair them up with a GP.
     '''
+
     # TODO: Better way to reuse code from view_patient()
+
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
@@ -437,6 +440,7 @@ def pairing_gp(next_dict):
 
     if choice == 1:
         new_gp = Patient.change_gp('auto', patient_id)
+
         if new_gp[0]:
             print("\n----------------------------------------------------\n"
             "                ",'CONFIRM?', "\n")
@@ -466,9 +470,10 @@ def pairing_gp(next_dict):
         print("\n----------------------------------------------------\n"
             "                ",'NON-FULL GP LIST', "\n")
         print(gp_list[1])
-        new_gp_id = int(input('\nPlease choose a GP to allocate the Patient to.\n'
+        new_gp_id = int(input('\nPlease choose a GP to allocate the patient to.\n'
         '-->'))
-        new_gp = change_gp('specific', patient_id, new_gp_id=new_gp_id)
+        new_gp = Patient.change_gp('specific', patient_id, new_gp_id=new_gp_id)
+
         if new_gp[0]:
             print("\n----------------------------------------------------\n"
             "                ",'CONFIRM?', "\n")
@@ -498,13 +503,101 @@ def pairing_gp(next_dict):
     
 
 
-
-
 def pairing_patient(next_dict):
     '''
     Select a GP and pair patients to them if they are not full.
     '''
-    return utils.display(next_dict)
+    gp_list = GP.select_list('not_full')
+    print("\n----------------------------------------------------\n"
+    "                ",'NON-FULL GP LIST', "\n")
+    print(gp_list[1])
+    new_gp_id = int(input('\nPlease choose a GP to allocate patients to.\n'
+    '-->'))
+
+
+    print("\n----------------------------------------------------\n"
+    "                ",'ADD PATIENTS', "\n")
+    print('[ 1 ] By IDs')
+    print('[ 2 ] Search by last name')
+    choice = int(input('\n-->'))
+
+    if choice == 1:
+        print("\n----------------------------------------------------\n"
+        "                ",'ENTER IDS', "\n")
+        id_choice = input('''
+        Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
+        '-->')
+        patient_ids = id_choice.replace(' ', '').split(',')
+
+        print("\n----------------------------------------------------\n"
+        "                ",'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = int(input("\n-->"))
+
+        if y_n == 1:
+
+            for id in patient_ids:
+                new_gp = Patient.change_gp('specific', id, new_gp_id=new_gp_id)
+
+                if new_gp[0]:
+                    print("\n\U00002705 Patient with ID {} has allocated to Dr {}.".format(id, new_gp[1]))
+                    return utils.display(next_dict)
+
+                else:
+                    print("\n\U00002757 This GP is full.")
+                    return utils.display(next_dict)
+        
+        elif y_n == 2:
+            print("\n\U00002757 Action cancelled.")
+            return utils.display(next_dict)
+
+        else:
+            print("\n\U00002757 Input not valid.")
+            return utils.display(next_dict)
+    
+    elif choice == 2:
+
+        print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+        last_name = input("Please enter the patient's last name:\n"
+        "-->")
+        choose_patient('matching', patient_last_name=last_name)
+        choice = int(input('\nPlease choose a patient ID\n'
+        '-->'))
+        selected_patient = Patient.select(choice)
+        patient_id = selected_patient[0].patient_id
+
+        print("\n----------------------------------------------------\n"
+        "                ",'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = int(input("\n-->"))
+
+        if y_n == 1:
+            new_gp = Patient.change_gp('specific', patient_id, new_gp_id=new_gp_id)
+
+            if new_gp[0]:
+                print("\n\U00002705 Patient with ID {} has allocated to Dr {}.".format(patient_id, new_gp[1]))
+                return utils.display(next_dict)
+
+            else:
+                print("\n\U00002757 This GP is full.")
+                return utils.display(next_dict)
+        
+        elif y_n == 2:
+            print("\n\U00002757 Action cancelled.")
+            return utils.display(next_dict)
+
+        else:
+            print("\n\U00002757 Input not valid.")
+            return utils.display(next_dict)
+
+    else:
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
+
+
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
