@@ -41,14 +41,24 @@ class Appointment:
         """
         # fist we need to check to make sure that the booking is still available
 
-        booking_check_query = """SELECT *
+        booking_check_query_gp = """SELECT *
                                  FROM booking
                                  WHERE gp_id == {}
                                  AND booking_start_time == '{}'""".format(self.gp_id,
                                                                           self.booking_start_time)
-        booking_check_result = u.db_read_query(booking_check_query).empty
 
-        if booking_check_result:
+        booking_check_result_gp = u.db_read_query(booking_check_query_gp).empty
+
+        booking_check_query_patient = """SELECT *
+                                         FROM booking
+                                         WHERE patient_id == {}
+                                         AND booking_start_time == '{}'""".format(self.patient_id,
+                                                                                  self.booking_start_time)
+
+        booking_check_result_patient = u.db_read_query(booking_check_query_patient).empty
+
+        if booking_check_result_gp and booking_check_result_patient:
+            booking_check_result, reason = True, 'The appointment has been booked!'
             query = """ INSERT INTO booking
             (booking_id, booking_start_time, booking_status,
             booking_agenda, booking_type,gp_id,gp_last_name,patient_id,booking_status_change_time)
@@ -60,8 +70,11 @@ class Appointment:
                                                                        self.patient_id,
                                                                        dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
             u.db_execute(query)
-
-        return booking_check_result
+        elif booking_check_result_gp:
+            booking_check_result, reason = False, "You already have a booking with a GP at this time and date"
+        else:
+            booking_check_result, reason = False, "GP is not available at this time and date"
+        return booking_check_result, reason
 
     # Update an appointment with GP
     # Need to add Error handling, check if the appointment actually exists
@@ -429,8 +442,8 @@ if __name__ == "__main__":
     #                     booking_agenda, booking_type,gp_id,patient_id
 
     # THIS WORKS! : Testing book appointment method
-    # print(Appointment('Null', '2020-12-31 16:00', 'booked',
-    #                   'booking agenda edit test 3', 'offline', ' ', 1, 1).book())
+    print(Appointment('Null', '2020-12-01 08:00', 'booked',
+                      'booking agenda edit test 3', 'offline', ' ', 1, 2).book())
 
     # THIS WORKS! : Testing Update Method
     # Appointment(53, '2020-12-31 16:00', 'confirmed',
