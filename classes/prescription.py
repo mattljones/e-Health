@@ -1,5 +1,11 @@
 # prescription.py
 
+# Switching path to master to get functions from utils folder
+import sys
+from pathlib import Path
+path_to_master_repo = Path(__file__).parents[1]
+sys.path.insert(1, str(path_to_master_repo))
+
 # import libraries
 import pandas as pd
 import sqlite3 as sql
@@ -80,7 +86,7 @@ class Prescription:
                                     WHERE
                                         patient_id = {}
                                     AND
-                                        booking_status = 'confirmed';'''.format(patient_id)
+                                        booking_status = 'attending';'''.format(patient_id)
         # Execute query
         df_object = u.db_read_query(select_patient_query)
 
@@ -93,6 +99,7 @@ class Prescription:
 ### DEVELOPMENT ###
 
 if __name__ == "__main__":
+    print(Prescription.select_patient(51)[1])
     pass
 
 ### TESTING ###
