@@ -661,7 +661,6 @@ def view_time_off(next_dict):
           "                ",'TIME OFF', "\n")
 
     off = Schedule.select_upcoming_timeoff(gp_id_choice)
-    # Show the formatted version of the time off timetable
     print(off[1])
 
     return utils.display(next_dict)
@@ -697,6 +696,49 @@ def add_time_off_custom(next_dict):
     '''
     Adds a custom amount of time off to a GP's schedule.
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'ADD TIME OFF', "\n")
+
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
+    timeoff_type_input = input('\n-->')
+
+    while timeoff_type_input not in ('1', '2'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
+
+    # Prompt user for time off range
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to add {} from {} to {}?\n'.format(timeoff_type, start_date, end_date))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Add timeoff to db
+        print("\n\U00002705 Time off successfuly added.")
+        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+    else:
+        # Return to main add time off menu
+        return add_time_off(next_dict)
+
     return utils.display(next_dict)
 
 
