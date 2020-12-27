@@ -603,31 +603,22 @@ def pairing_patient(next_dict):
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
-def schedules_main(type):
-    # NOTE: I suspect that this does the same thing as retrieve
-    # Using same code for now, substitute function name in dict if needed
+def schedules_main(next_dict):
     '''
     Returns the numbered list of GPs to choose from
     '''
-    df = GP.select_list(type)
-    df_show = df[1]
-    print("\n----------------------------------------------------\n"
-          "                ",'GP LIST', "\n")
-    print(df_show)
-    return int(input("\nPlease select a GP ID. \n--> "))
+    return utils.display(next_dict)
 
 def schedules_section_menu(next_dict):
     '''
     Returns to the section menu.
     '''
-    
     return utils.display(view_schedule_flow)
 
 def schedule_date(next_dict):
     '''
     Choice of schedule date period.
     '''
-
     return utils.display(next_dict)
 
 def view_schedule(next_dict):
