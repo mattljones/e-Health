@@ -18,6 +18,7 @@ from system import globals
 from classes.gp import GP
 from classes.patient import Patient
 from classes.schedule import Schedule
+from classes.appointment import Appointment
 
 from user_menu_flow import gp_flow
 
@@ -74,8 +75,6 @@ def retrieve_gp_list(type):
     Shows the list of GPs and allows choice from that list.
     '''
     df = GP.select_list(type)
-    # NOTE: I don't understand the purpose of the line below (commented for now)
-    # df_raw = df[0]
     df_show = df[1]
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
@@ -606,9 +605,9 @@ def pairing_patient(next_dict):
 
 
 
-def schedules_main(next_dict):
-    # NOTE: I suspect that this does the same thing as retrieve
-    # Using same code for now, substitute function name in dict if needed
+def choose_gp(next_dict):
+    # NOTE: This does the same thing as retrieve_gp_list()
+    # Using similar code for now, substitute function name in dict later if needed
     '''
     Returns the numbered list of GPs to choose from
     '''
@@ -617,8 +616,9 @@ def schedules_main(next_dict):
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
     print(df_show)
-    global sched_id_choice
-    sched_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    global gp_id_choice
+    gp_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    
     return utils.display(next_dict)
 
 
@@ -636,7 +636,7 @@ def view_schedule_day(next_dict):
     View a GP's current schedule for a day.
     '''    
     start_date = utils.get_start_date()
-    sched = Schedule.select(sched_id_choice, 'day', start_date)
+    sched = Schedule.select(gp_id_choice, 'day', start_date)
     print("\n----------------------------------------------------\n"
           "                ",'DAILY SCHEDULE', "\n")
     print(sched[1])
@@ -649,7 +649,7 @@ def view_schedule_week(next_dict):
     View a GP's current schedule for a week.
     '''    
     start_date = utils.get_start_date()
-    sched = Schedule.select(sched_id_choice, 'week', start_date)
+    sched = Schedule.select(gp_id_choice, 'week', start_date)
     print("\n----------------------------------------------------\n"
           "                ",'WEEKLY SCHEDULE', "\n")
     print(sched[1])
@@ -660,6 +660,13 @@ def view_schedule_week(next_dict):
 def view_time_off(next_dict):
     '''
     View a GP's current time off.
+    '''
+    return utils.display(next_dict)
+
+
+def add_time_off(next_dict):
+    '''
+    Returns menu to add time off to a GP's schedule.
     '''
     return utils.display(next_dict)
 
@@ -688,6 +695,20 @@ def add_time_off_custom(next_dict):
     return utils.display(next_dict)
 
 
+def remove_time_off(next_dict):
+    '''
+    Remove a custom amount of time off to a GP's schedule.
+    '''
+    return utils.display(next_dict)
+
+
+def remove_time_off_custom(next_dict):
+    '''
+    Remove a custom amount of time off to a GP's schedule.
+    '''
+    return utils.display(next_dict)   
+
+
 
 def remove_time_off_all(next_dict):
     '''
@@ -696,16 +717,13 @@ def remove_time_off_all(next_dict):
     return utils.display(next_dict)
 
 
-
-def remove_time_off_all(next_dict):
-    '''
-    Remove time off from a GP's schedule.
-    '''
+def schedule_date(next_dict):
+    # TODO: Remove /replace later if necessary
     return utils.display(next_dict)
-
-    
 
 ###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
+
+
 
 def appointments_section_menu(next_dict):
     '''
@@ -713,23 +731,37 @@ def appointments_section_menu(next_dict):
     '''
     return utils.display(manage_appointment_flow)
 
+
+def view_appointment(next_dict):
+    '''
+    View appointments for a GP.
+    '''
+    return utils.display(next_dict)
+
+
 def add_appointment(next_dict):
     '''
     Schedule an appointment for a GP.
     '''
     return utils.display(next_dict)
 
-def choose_appointment(next_dict):
+
+
+def choose_appointment_day(next_dict):
     '''
-    Choose the appointment from the available slots
+    Choose the appointment from a day of available slots
     '''
     return utils.display(next_dict)
 
-def view_appointment(next_dict):
+
+
+def choose_appointment_week(next_dict):
     '''
-    View a current list of appointments.
+    Choose the appointment from a week of available slots
     '''
     return utils.display(next_dict)
+
+
 
 def appointment_by_patient(next_dict):
     '''
@@ -737,11 +769,15 @@ def appointment_by_patient(next_dict):
     '''
     return utils.display(next_dict)
 
+
+
 def appointment_check(next_dict):
     '''
     Check whether the appointment selected is available.
     '''
     return utils.display(next_dict)
+    
+
 
 def appointment_by_gp(next_dict):
     '''
@@ -749,26 +785,40 @@ def appointment_by_gp(next_dict):
     '''
     return utils.display(next_dict)
 
-def delete_appointment(next_dict):
+
+
+def delete_appointment_day(next_dict):
     '''
-    Allows deleting of appointments.
+    Allows deleting of appointments from a specific day.
     '''
     return utils.display(next_dict)
 
 
-###### APPOINTMENT SUMMARIES FUNCTIONS ######
 
-def summaries_main(next_dict):
+def delete_appointment_week(next_dict):
     '''
-    Immediate actions when the view appointment summaries option is chosen. 
-    '''
-
-def appointment_summary_date(next_dict):
-    '''
-    Returns the appointment summaries based on the user choice.
+    Allows deleting of appointments from a specific week.
     '''
     return utils.display(next_dict)
-    
+
+
+
+###### RECORDS FUNCTIONS ######
+
+#NOTE: This whole section has been simplified from the flow diagram, 
+#      with 'summaries' changed to 'records'. Now, only choice to be
+#      made is selecting the patient, which is done within the one 
+#      function.
+
+
+
+def records_main(next_dict):
+    '''
+    Allows the selection of a patient's medical records. 
+    '''
+    return utils.display(next_dict)
+
+
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
@@ -891,7 +941,7 @@ remove_time_off_final_actions = {
     "1": ("Remove More Time Off", remove_time_off, empty_dict),
     "2": ("Manage Upcoming Time Off", empty_method, empty_dict),
     "3": ("Manage GP Availability", empty_method, empty_dict),
-    "4": ("Choose a different GP", schedules_main, empty_dict),
+    "4": ("Choose a different GP", choose_gp, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -908,7 +958,7 @@ appointment_conflict_final_actions = {
     "1": ("Try Adding Again", add_time_off, empty_dict),
     "2": ("Manage Upcoming Time Off", empty_method, empty_dict),
     "3": ("Manage GP Availability", empty_method, empty_dict),
-    "4": ("Choose a different GP", schedules_main, empty_dict),
+    "4": ("Choose a different GP", choose_gp, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -917,7 +967,7 @@ add_time_off_final_actions = {
     "type": "sub",
     "1": ("Add More Time Off", add_time_off, empty_dict),
     "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
-    "3": ("Choose a different GP", schedules_main, empty_dict),
+    "3": ("Choose a different GP", choose_gp, empty_dict),
     "4": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -935,7 +985,7 @@ view_time_off_final_actions = {
     "1": ("Add Time Off", add_time_off, add_time_off_flow),
     "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
     "3": ("Manage GP Availability", empty_method, empty_dict),
-    "4": ("Choose a different GP", schedules_main, empty_dict),
+    "4": ("Choose a different GP", choose_gp, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -959,7 +1009,7 @@ view_schedule_final_actions = {
     "type": "sub",
     "1": ("Modify GP Availability", empty_method, manage_availability_flow),
     "2": ("View a Different Time Period", schedule_date, empty_dict),
-    "3": ("Choose a different GP", schedules_main, empty_dict),
+    "3": ("Choose a different GP", choose_gp, empty_dict),
     "4": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -991,9 +1041,8 @@ appointment_deleted_gp_final_actions = {
 delete_gp_appointment_flow ={
     "title": "SELECT APPOINTMENT DATE",
     "type": "sub",
-    "1": ("Day", delete_appointment, appointment_deleted_gp_final_actions),
-    "2": ("Week", delete_appointment,appointment_deleted_gp_final_actions),
-    "3": ("Custom", delete_appointment, appointment_deleted_gp_final_actions)
+    "1": ("Day", delete_appointment_day, appointment_deleted_gp_final_actions),
+    "2": ("Week", delete_appointment_week, appointment_deleted_gp_final_actions)
 }
 
 appointment_deleted_patient_final_actions = {
@@ -1015,7 +1064,7 @@ view_cancel_appointment_flow = {
 gp_availability_error_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Try again", appointment_by_gp, empty_dict),
+    "1": ("Try again", empty_method, empty_dict),
     "2": ("Add Another Appointment", add_appointment, empty_dict),
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
@@ -1024,7 +1073,7 @@ appointment_made_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Add Another Appointment For This Patient", add_appointment, empty_dict),
-    "2": ("Add Appointment For Another Patient", add_appointment, empty_dict),
+    "2": ("Add Appointment For Another Patient", empty_method, empty_dict),
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
@@ -1038,16 +1087,15 @@ availability_error_flow = {
 add_new_appointment_flow = {
     "title": "SELECT APPOINTMENT DATE",
     "type": "sub",
-    "1": ("Day", choose_appointment, appointment_made_final_actions),
-    "2": ("Week", choose_appointment, appointment_made_final_actions),
-    "3": ("Custom", choose_appointment, appointment_made_final_actions)
+    "1": ("Day", choose_appointment_day, appointment_made_final_actions),
+    "2": ("Week", choose_appointment_week, appointment_made_final_actions)
 }
 
 manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
     "type": "sub",
     "1": ("Add a New Appointment", add_appointment, add_new_appointment_flow),
-    "2": ("View/Cancel Upcoming Appointment", view_appointment, view_cancel_appointment_flow)
+    "2": ("View/Cancel Upcoming Appointment", empty_method, view_cancel_appointment_flow)
 }
 
 ###### VIEW APPOINTMENT SUMMARIES SUB-MENU ######
@@ -1055,16 +1103,8 @@ manage_appointment_flow = {
 appointment_summary_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View a Different Appointment", appointment_summary_date, empty_dict),
-    "2": ("View a Different Patient", summaries_main, empty_dict),
-}
-
-appointment_summary_date_flow = {
-    "title": "SELECT APPOINTMENT DATE",
-    "type": "sub",
-    "1": ("Day", appointment_summary_date, appointment_summary_final_actions),
-    "2": ("Week", appointment_summary_date, appointment_summary_final_actions),
-    "3": ("Custom", appointment_summary_date, appointment_summary_final_actions)
+    "1": ("View a Different Appointment", empty_method, empty_dict),
+    "2": ("View a Different Patient", records_main, empty_dict),
 }
 
 ###### MAIN MENU ####
@@ -1075,9 +1115,9 @@ main_flow_admin = {
     "1":("Manage GP Accounts", empty_method, manage_gp_accounts_flow),
     "2":("Manage Patient Accounts", empty_method, manage_patient_accounts_flow ),
     "3":("Manage GP-Patient Pairings", empty_method, gp_patient_pair_flow),
-    "4":("Manage GP Schedules", schedules_main, view_schedule_flow),
+    "4":("Manage GP Schedules", choose_gp, view_schedule_flow),
     "5":("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
-    "6":("View Appointment Summaries", summaries_main, appointment_summary_date_flow)
+    "6":("View Appointment Summaries", records_main, appointment_summary_final_actions)
 }
 
 
