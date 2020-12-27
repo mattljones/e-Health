@@ -15,6 +15,7 @@ from system import utils
 from classes.appointment import Appointment
 from classes.record import Record
 from classes.schedule import Schedule
+from classes.prescription import Prescription
 
 # import global variables from globals.py
 from system import globals
@@ -34,6 +35,32 @@ def edit_notes(next_dict):
     record.update()
     print(Record.select(globals.patient_id)[4])
     return display_prescription(next_dict)
+
+def simple_note(next_dict):
+    flow_submit_note = {"title": "Submit Note",
+                 "type": "sub",
+                 "1":("Submit", display_next_menu, flow_prescription),
+                 "2":("No", simple_note, flow_prescription)
+                 }
+    
+    record = Record.select(globals.patient_id)[0]
+    print("\nPlase input the new note")
+    new_note = input("--> ")
+    record.appointment_notes[globals.appt_id] = new_note
+    record.update()
+    
+    # TODO: display the note
+    print("The note should be shown here")
+
+    print("\n----------------------------------------------------\n"
+        "                ", "Submit Note?", "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    usr_choice = input("\n--> ")
+    if usr_choice == '1':
+        return display_next_menu(flow_prescription)
+    elif usr_choice == '2':
+        return simple_note(flow_submit_note)
 
 def edit_cc(next_dict):
     record = Record.select(globals.patient_id)[0]
@@ -76,8 +103,8 @@ def edit_cc(next_dict):
         print("\n【Patient Table】\n", Record.select(globals.patient_id)[4])
     return display_prescription(next_dict)
 
-def enter_drug(next_dict):
-    pass
+def final_confirm_prescribe(next_dict):
+    print(Prescription.select_patient(globals.patient_id)[1])
     return display_next_menu(next_dict)
 
 def display_prescription(next_dict):
@@ -104,35 +131,57 @@ def enter_note(next_dict):
     gp_note = input("--> ")
     record = Record.select(globals.patient_id)[0]
     # DEBUG
-    print("globals.appt_id")
     record.appointment_notes[globals.appt_id] = gp_note
     record.update()
 
-    # temporarily to display the change
-    print(Record.select(globals.patient_id)[4])
+    # TODO: display the note
+    print("The note should be shown here")
 
     return display_prescription(next_dict)
 
-def prescibe(next_dict):
+def edit_prescibe(next_dict):
     # TODO: take the input of field of drug
     flow_dosage = {"title": "Dosage",
                  "type": "auto",
-                 "next":(enter_dosage, flow_freq)
+                 "next":(enter_dosage, flow_end)
                 }
     return display_next_menu(flow_dosage)
 
 def enter_freq(next_dict):
-    pass
+    print("\nPlease enter the frequency of taking drugs")
+    print("--> ")
     # TODO: display the prescription so far
+    print(Prescription.select_patient(globals.patient_id)[1])
     return display_prescription(next_dict)
 
 def enter_dosage(next_dict):
-    pass
+    print("\nPlease enter the dosage")
+    print("--> ")
     return display_next_menu(next_dict)
 
-def enter_field(next_dict):
-    pass
-    return display_next_menu(next_dict)
+def enter_prescription(next_dict):
+    flow_check_prescription = {"title": "Check prescription",
+                 "type": "sub",
+                 "1":("Confirm", display_next_menu, flow_drug),
+                 "2":("Edit", edit_prescibe, flow_end)
+            }
+    print(Prescription.select_drug_list()[1])
+    prescription = Prescription()
+    prescription.booking_id = globals.appt_id
+    
+    print("\nPlease enter the field for prescibed drug")
+    prescription.drug_id = input("--> ")
+
+    print("\nPlease enter the dosage")
+    prescription.drug_dosage = input("--> ")
+
+    print("\nPlease enter the frequency of taking drugs")
+    prescription.drug_frequency_dosage = input("--> ")
+
+    prescription.insert()
+    print(Prescription.select_patient(globals.patient_id)[1])
+
+    return display_next_menu(flow_check_prescription)
 
 def enter_appoint_id(next_dict):
     # TODO: return to home page
@@ -345,39 +394,39 @@ flow_end = {"title": "CONTINUE E-HEALTH OR LOGOUT ?",
 flow_final_confirm = {"title": "Final confrim notes & prescription",
                  "type": "sub",
                  "1":("Yes", display_next_menu, flow_end),
-                 "2":("No", prescibe, flow_end)
+                 "2":("No", edit_prescibe, flow_end)
             }
 
 # add drugs flow
 flow_drug = {"title": "Add drugs?",
                  "type": "sub",
-                 "1":("Yes", prescibe, flow_end),
-                 "2":("No", display_next_menu, flow_final_confirm)
+                 "1":("Yes", enter_prescription, flow_end),
+                 "2":("No", final_confirm_prescribe, flow_final_confirm)
             }
 
 # prescription check flow
 flow_check_prescription = {"title": "Check prescription",
                  "type": "sub",
                  "1":("Confirm", display_next_menu, flow_drug),
-                 "2":("Edit", prescibe, flow_end)
+                 "2":("Edit", edit_prescibe, flow_end)
             }
 
 # frequency flow
-flow_freq = {"title": "Frequency",
-                 "type": "auto",
-                 "next":(enter_freq, flow_check_prescription)
-            }
+# flow_freq = {"title": "Frequency",
+#                  "type": "auto",
+#                  "next":(enter_freq, flow_check_prescription)
+#             }
 
 # dosage flow
-flow_dosage = {"title": "Dosage",
-                 "type": "auto",
-                 "next":(enter_dosage, flow_freq)
-                }
+# flow_dosage = {"title": "Dosage",
+#                  "type": "auto",
+#                  "next":(enter_dosage, flow_freq)
+#                 }
 
 # prescription flow
 flow_prescription = {"title": "Prescription",
                  "type": "sub",
-                 "1":("Enter field for prescibed drug", enter_field, flow_dosage),
+                 "1":("Enter field for prescibed drug", enter_prescription, flow_check_prescription),
                  "2":("Skip", empty_prescription, flow_final_confirm)
                  }
 
@@ -386,7 +435,7 @@ flow_prescription = {"title": "Prescription",
 flow_submit_note = {"title": "Submit Note",
                  "type": "sub",
                  "1":("Submit", display_next_menu, flow_prescription),
-                 "2":("No", display_next_menu, flow_end)
+                 "2":("No", simple_note, flow_end)
                  }
 
 # confirm attendance flow
