@@ -622,13 +622,11 @@ def choose_gp(next_dict):
     return utils.display(next_dict)
 
 
-
 def schedules_section_menu(next_dict):
     '''
     Returns to the section menu.
     '''
     return utils.display(view_schedule_flow)
-
 
 
 def view_schedule_day(next_dict):
@@ -643,7 +641,6 @@ def view_schedule_day(next_dict):
     return utils.display(next_dict)
 
 
-
 def view_schedule_week(next_dict):
     '''
     View a GP's current schedule for a week.
@@ -656,11 +653,16 @@ def view_schedule_week(next_dict):
     return utils.display(next_dict)
 
 
-
 def view_time_off(next_dict):
     '''
     View a GP's current time off.
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'TIME OFF', "\n")
+
+    off = Schedule.select_upcoming_timeoff(gp_id_choice)
+    print(off[1])
+
     return utils.display(next_dict)
 
 
@@ -676,6 +678,8 @@ def add_time_off_day(next_dict):
     '''
     Adds a day of time off to a GP's schedule.
     '''
+
+
     return utils.display(next_dict)
 
 
@@ -692,6 +696,49 @@ def add_time_off_custom(next_dict):
     '''
     Adds a custom amount of time off to a GP's schedule.
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'ADD TIME OFF', "\n")
+
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
+    timeoff_type_input = input('\n-->')
+
+    while timeoff_type_input not in ('1', '2'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
+
+    # Prompt user for time off range
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to add {} from {} to {}?\n'.format(timeoff_type, start_date, end_date))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Add timeoff to db
+        print("\n\U00002705 Time off successfuly added.")
+        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+    else:
+        # Return to main add time off menu
+        return add_time_off(next_dict)
+
     return utils.display(next_dict)
 
 
@@ -1000,7 +1047,7 @@ manage_time_off_flow = {
 manage_availability_flow = {
     "title": "MANAGE AVIALABILITY",
     "type": "sub",
-    "1": ("View/Cancel Upcoming Appointments", view_appointment, empty_dict),
+    "1": ("Manage Upcoming Appointments", view_appointment, empty_dict),
     "2": ("Manage Upcoming Time Off", empty_method, manage_time_off_flow)
 }
 
@@ -1095,7 +1142,7 @@ manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
     "type": "sub",
     "1": ("Add a New Appointment", add_appointment, add_new_appointment_flow),
-    "2": ("View/Cancel Upcoming Appointment", empty_method, view_cancel_appointment_flow)
+    "2": ("Manage Upcoming Appointment", empty_method, view_cancel_appointment_flow)
 }
 
 ###### VIEW APPOINTMENT SUMMARIES SUB-MENU ######
