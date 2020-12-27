@@ -1,9 +1,9 @@
 # admin_flow.py
 
 # library imports 
+from datetime import datetime, timedelta
 from pathlib import Path
 import sys 
-import datetime
 
 # Change python path for imports
 p = Path(__file__).parents[1]
@@ -261,7 +261,6 @@ def patient_account_section_menu(next_dict):
     return utils.display(manage_patient_accounts_flow)
 
 
-
 def choose_patient(type, patient_last_name=None):
     '''
     Choose patient account.
@@ -271,7 +270,6 @@ def choose_patient(type, patient_last_name=None):
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
     
-
 
 def view_patient(next_dict):
     '''
@@ -306,7 +304,6 @@ def view_patient(next_dict):
         
     elif y_n == 2:
         return utils.display(next_dict)
-
 
 
 def confirm_patient(next_dict):
@@ -401,9 +398,7 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         return utils.display(next_dict)
 
 
-
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
-
 
 
 def pairings_section_menu(next_dict):
@@ -411,7 +406,6 @@ def pairings_section_menu(next_dict):
     Returns to the section menu.
     '''
     return utils.display(gp_patient_pair_flow)
-
 
 
 def pairing_gp(next_dict):
@@ -503,7 +497,6 @@ def pairing_gp(next_dict):
         print("\n\U00002757 Input not valid.")
         return utils.display(next_dict)
     
-
 
 def pairing_patient(next_dict):
     '''
@@ -600,9 +593,7 @@ def pairing_patient(next_dict):
         return utils.display(next_dict)
 
 
-
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
-
 
 
 def choose_gp(next_dict):
@@ -673,23 +664,69 @@ def add_time_off(next_dict):
     return utils.display(next_dict)
 
 
-
 def add_time_off_day(next_dict):
     '''
     Adds a day of time off to a GP's schedule.
     '''
+    # NOTE: Minimize code repetition
+    print("\n----------------------------------------------------\n"
+          "                ",'ADD TIME OFF', "\n")
 
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
+    timeoff_type_input = input('\n-->')
 
-    return utils.display(next_dict)
+    while timeoff_type_input not in ('1', '2'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
 
+    # Prompt user for start date only
+    start_date = utils.get_start_date()
+
+    # Add one day to start date
+    s = datetime.strptime(start_date, "%Y-%m-%d")
+    e = s + timedelta(days=1) 
+    end_date = datetime.strftime(e, "%Y-%m-%d")  
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to add one day of {} on {}?\n'.format(timeoff_type, start_date))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Add timeoff to db
+        print("\n\U00002705 Time off successfuly added.")
+        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+        return utils.display(next_dict)
+        
+    else:
+        # Return to main add time off menu
+        return add_time_off(next_dict)
 
 
 def add_time_off_week(next_dict):
     '''
     Adds a week of time off to a GP's schedule.
     '''
-    return utils.display(next_dict)
+    # NOTE: Minimize code repetition
 
+
+    return utils.display(next_dict)
 
 
 def add_time_off_custom(next_dict):
@@ -735,11 +772,11 @@ def add_time_off_custom(next_dict):
         # Add timeoff to db
         print("\n\U00002705 Time off successfuly added.")
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+        return utils.display(next_dict)
+
     else:
         # Return to main add time off menu
         return add_time_off(next_dict)
-
-    return utils.display(next_dict)
 
 
 def remove_time_off(next_dict):
@@ -756,7 +793,6 @@ def remove_time_off_custom(next_dict):
     return utils.display(next_dict)   
 
 
-
 def remove_time_off_all(next_dict):
     '''
     Remove time off from a GP's schedule.
@@ -768,8 +804,8 @@ def schedule_date(next_dict):
     # TODO: Remove /replace later if necessary
     return utils.display(next_dict)
 
-###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
 
+###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
 
 
 def appointments_section_menu(next_dict):
@@ -793,13 +829,11 @@ def add_appointment(next_dict):
     return utils.display(next_dict)
 
 
-
 def choose_appointment_day(next_dict):
     '''
     Choose the appointment from a day of available slots
     '''
     return utils.display(next_dict)
-
 
 
 def choose_appointment_week(next_dict):
@@ -809,13 +843,11 @@ def choose_appointment_week(next_dict):
     return utils.display(next_dict)
 
 
-
 def appointment_by_patient(next_dict):
     '''
     Find a patient's upcoming appointments.
     '''
     return utils.display(next_dict)
-
 
 
 def appointment_check(next_dict):
@@ -825,13 +857,11 @@ def appointment_check(next_dict):
     return utils.display(next_dict)
     
 
-
 def appointment_by_gp(next_dict):
     '''
     Find a GP's upcoming appointments with date options.
     '''
     return utils.display(next_dict)
-
 
 
 def delete_appointment_day(next_dict):
@@ -841,13 +871,11 @@ def delete_appointment_day(next_dict):
     return utils.display(next_dict)
 
 
-
 def delete_appointment_week(next_dict):
     '''
     Allows deleting of appointments from a specific week.
     '''
     return utils.display(next_dict)
-
 
 
 ###### RECORDS FUNCTIONS ######
@@ -857,14 +885,11 @@ def delete_appointment_week(next_dict):
 #      made is selecting the patient, which is done within the one 
 #      function.
 
-
-
 def records_main(next_dict):
     '''
     Allows the selection of a patient's medical records. 
     '''
     return utils.display(next_dict)
-
 
 
 ############################ SEQUENTIAL STEPS MENUS ########################
@@ -1179,9 +1204,3 @@ if __name__ == '__main__':
     '-->'))
     selected_patient = Patient.select(choice)
     print(selected_patient[2])
-
-        
-    
-    
-    
-    
