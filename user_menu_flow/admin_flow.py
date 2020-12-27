@@ -18,6 +18,7 @@ from system import globals
 from classes.gp import GP
 from classes.patient import Patient
 from classes.schedule import Schedule
+from classes.appointment import Appointment
 
 from user_menu_flow import gp_flow
 
@@ -703,9 +704,11 @@ def remove_time_off_all(next_dict):
     '''
     return utils.display(next_dict)
 
-    
+
 
 ###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
+
+
 
 def appointments_section_menu(next_dict):
     '''
@@ -713,23 +716,31 @@ def appointments_section_menu(next_dict):
     '''
     return utils.display(manage_appointment_flow)
 
+
+
 def add_appointment(next_dict):
     '''
     Schedule an appointment for a GP.
     '''
     return utils.display(next_dict)
 
-def choose_appointment(next_dict):
+
+
+def choose_appointment_day(next_dict):
     '''
-    Choose the appointment from the available slots
+    Choose the appointment from a day of available slots
     '''
     return utils.display(next_dict)
 
-def view_appointment(next_dict):
+
+
+def choose_appointment_week(next_dict):
     '''
-    View a current list of appointments.
+    Choose the appointment from a week of available slots
     '''
     return utils.display(next_dict)
+
+
 
 def appointment_by_patient(next_dict):
     '''
@@ -737,11 +748,15 @@ def appointment_by_patient(next_dict):
     '''
     return utils.display(next_dict)
 
+
+
 def appointment_check(next_dict):
     '''
     Check whether the appointment selected is available.
     '''
     return utils.display(next_dict)
+    
+
 
 def appointment_by_gp(next_dict):
     '''
@@ -749,25 +764,41 @@ def appointment_by_gp(next_dict):
     '''
     return utils.display(next_dict)
 
-def delete_appointment(next_dict):
+
+
+def delete_appointment_day(next_dict):
     '''
-    Allows deleting of appointments.
+    Allows deleting of appointments from a specific day.
     '''
     return utils.display(next_dict)
 
 
+
+def delete_appointment_day(next_dict):
+    '''
+    Allows deleting of appointments from a specific week.
+    '''
+    return utils.display(next_dict)
+
+
+
 ###### APPOINTMENT SUMMARIES FUNCTIONS ######
+
+
 
 def summaries_main(next_dict):
     '''
     Immediate actions when the view appointment summaries option is chosen. 
     '''
 
+
+
 def appointment_summary_date(next_dict):
     '''
     Returns the appointment summaries based on the user choice.
     '''
     return utils.display(next_dict)
+
     
 
 ############################ SEQUENTIAL STEPS MENUS ########################
@@ -991,9 +1022,8 @@ appointment_deleted_gp_final_actions = {
 delete_gp_appointment_flow ={
     "title": "SELECT APPOINTMENT DATE",
     "type": "sub",
-    "1": ("Day", delete_appointment, appointment_deleted_gp_final_actions),
-    "2": ("Week", delete_appointment,appointment_deleted_gp_final_actions),
-    "3": ("Custom", delete_appointment, appointment_deleted_gp_final_actions)
+    "1": ("Day", delete_appointment_day, appointment_deleted_gp_final_actions),
+    "2": ("Week", delete_appointment_week, appointment_deleted_gp_final_actions)
 }
 
 appointment_deleted_patient_final_actions = {
@@ -1015,7 +1045,7 @@ view_cancel_appointment_flow = {
 gp_availability_error_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Try again", appointment_by_gp, empty_dict),
+    "1": ("Try again", empty_method, empty_dict),
     "2": ("Add Another Appointment", add_appointment, empty_dict),
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
@@ -1024,7 +1054,7 @@ appointment_made_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Add Another Appointment For This Patient", add_appointment, empty_dict),
-    "2": ("Add Appointment For Another Patient", add_appointment, empty_dict),
+    "2": ("Add Appointment For Another Patient", empty_method, empty_dict),
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
@@ -1038,16 +1068,15 @@ availability_error_flow = {
 add_new_appointment_flow = {
     "title": "SELECT APPOINTMENT DATE",
     "type": "sub",
-    "1": ("Day", choose_appointment, appointment_made_final_actions),
-    "2": ("Week", choose_appointment, appointment_made_final_actions),
-    "3": ("Custom", choose_appointment, appointment_made_final_actions)
+    "1": ("Day", choose_appointment_day, appointment_made_final_actions),
+    "2": ("Week", choose_appointment_week, appointment_made_final_actions)
 }
 
 manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
     "type": "sub",
     "1": ("Add a New Appointment", add_appointment, add_new_appointment_flow),
-    "2": ("View/Cancel Upcoming Appointment", view_appointment, view_cancel_appointment_flow)
+    "2": ("View/Cancel Upcoming Appointment", empty_method, view_cancel_appointment_flow)
 }
 
 ###### VIEW APPOINTMENT SUMMARIES SUB-MENU ######
