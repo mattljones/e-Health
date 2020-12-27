@@ -620,6 +620,7 @@ def schedules_section_menu(next_dict):
     '''
     Returns to the section menu.
     '''
+    
     return utils.display(view_schedule_flow)
 
 def schedule_date(next_dict):
