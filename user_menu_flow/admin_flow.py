@@ -604,6 +604,8 @@ def pairing_patient(next_dict):
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
+
+
 def schedules_main(next_dict):
     # NOTE: I suspect that this does the same thing as retrieve
     # Using same code for now, substitute function name in dict if needed
@@ -655,37 +657,53 @@ def view_schedule_week(next_dict):
 
 
 
-def manage_availability(next_dict):
-    '''
-    Manage the availability of GPs.
-    '''
-    return utils.display(next_dict)
-
-
-
-def manage_time_off(next_dict):
-    '''
-    Manage a GP's time off.
-    '''
-    return utils.display(next_dict)
-
 def view_time_off(next_dict):
     '''
     View a GP's current time off.
     '''
     return utils.display(next_dict)
 
-def add_time_off(next_dict):
+
+
+def add_time_off_day(next_dict):
     '''
-    Add time off to a GP's schedule.
+    Adds a day of time off to a GP's schedule.
     '''
     return utils.display(next_dict)
 
-def remove_time_off(next_dict):
+
+
+def add_time_off_week(next_dict):
+    '''
+    Adds a week of time off to a GP's schedule.
+    '''
+    return utils.display(next_dict)
+
+
+
+def add_time_off_custom(next_dict):
+    '''
+    Adds a custom amount of time off to a GP's schedule.
+    '''
+    return utils.display(next_dict)
+
+
+
+def remove_time_off_all(next_dict):
     '''
     Remove time off from a GP's schedule.
     '''
     return utils.display(next_dict)
+
+
+
+def remove_time_off_all(next_dict):
+    '''
+    Remove time off from a GP's schedule.
+    '''
+    return utils.display(next_dict)
+
+    
 
 ###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
 
@@ -871,8 +889,8 @@ remove_time_off_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Remove More Time Off", remove_time_off, empty_dict),
-    "2": ("Manage Upcoming Time Off", manage_time_off, empty_dict),
-    "3": ("Manage GP Availability", manage_availability, empty_dict),
+    "2": ("Manage Upcoming Time Off", empty_method, empty_dict),
+    "3": ("Manage GP Availability", empty_method, empty_dict),
     "4": ("Choose a different GP", schedules_main, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
@@ -880,18 +898,16 @@ remove_time_off_final_actions = {
 remove_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
-    "1": ("All", empty_method, remove_time_off_final_actions),
-    "2": ("Day", empty_method, remove_time_off_final_actions),
-    "3": ("Week", empty_method, remove_time_off_final_actions),
-    "4": ("Custom", empty_method, remove_time_off_final_actions)
+    "1": ("All", remove_time_off_all, remove_time_off_final_actions),
+    "2": ("Custom", remove_time_off_custom, remove_time_off_final_actions)
 }
 
 appointment_conflict_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Try Adding Again", add_time_off, empty_dict),
-    "2": ("Manage Upcoming Time Off", manage_time_off, empty_dict),
-    "3": ("Manage GP Availability", manage_availability, empty_dict),
+    "2": ("Manage Upcoming Time Off", empty_method, empty_dict),
+    "3": ("Manage GP Availability", empty_method, empty_dict),
     "4": ("Choose a different GP", schedules_main, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
@@ -908,9 +924,9 @@ add_time_off_final_actions = {
 add_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
-    "1": ("Day", empty_method, add_time_off_final_actions),
-    "2": ("Week", empty_method, add_time_off_final_actions),
-    "3": ("Custom", empty_method, add_time_off_final_actions),
+    "1": ("Day", add_time_off_day, add_time_off_final_actions),
+    "2": ("Week", add_time_off_week, add_time_off_final_actions),
+    "3": ("Custom", add_time_off_custom, add_time_off_final_actions),
 }
 
 view_time_off_final_actions = {
@@ -918,7 +934,7 @@ view_time_off_final_actions = {
     "type": "sub",
     "1": ("Add Time Off", add_time_off, add_time_off_flow),
     "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
-    "3": ("Manage GP Availability", manage_availability, empty_dict),
+    "3": ("Manage GP Availability", empty_method, empty_dict),
     "4": ("Choose a different GP", schedules_main, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
@@ -935,13 +951,13 @@ manage_availability_flow = {
     "title": "MANAGE AVIALABILITY",
     "type": "sub",
     "1": ("View/Cancel Upcoming Appointments", view_appointment, empty_dict),
-    "2": ("Manage Upcoming Time Off", manage_time_off, manage_time_off_flow)
+    "2": ("Manage Upcoming Time Off", empty_method, manage_time_off_flow)
 }
 
 view_schedule_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Modify GP Availability", manage_availability, manage_availability_flow),
+    "1": ("Modify GP Availability", empty_method, manage_availability_flow),
     "2": ("View a Different Time Period", schedule_date, empty_dict),
     "3": ("Choose a different GP", schedules_main, empty_dict),
     "4": ("Section Menu", schedules_section_menu, empty_dict)
@@ -958,7 +974,7 @@ view_schedule_flow = {
     "title": "VIEW AND MANAGE SCHEDULE",
     "type": "sub",
     "1": ("View GP Schedule", empty_method, schedule_length_flow),
-    "2": ("Manage GP Availability", manage_availability, manage_availability_flow)
+    "2": ("Manage GP Availability", empty_method, manage_availability_flow)
 }
 
 ###### MANAGE UPCOMING APPOINTMENTS SUB-MENU ######
