@@ -661,7 +661,7 @@ def add_time_off(next_dict):
     '''
     Returns menu to add time off to a GP's schedule.
     '''
-    return utils.display(next_dict)
+    return utils.display(add_time_off_flow)
 
 
 def add_time_off_day(next_dict):
@@ -716,7 +716,7 @@ def add_time_off_day(next_dict):
         
     else:
         # Return to main add time off menu
-        return add_time_off(next_dict)
+        return utils.display(add_time_off_flow)
 
 
 def add_time_off_week(next_dict):
@@ -826,15 +826,17 @@ def add_time_off_custom(next_dict):
 
 def remove_time_off(next_dict):
     '''
-    Remove a custom amount of time off to a GP's schedule.
+    Returns menu to remove a custom amount of time off to a GP's schedule.
     '''
-    return utils.display(next_dict)
+    return utils.display(remove_time_off_flow)
 
 
 def remove_time_off_custom(next_dict):
     '''
     Remove a custom amount of time off to a GP's schedule.
     '''
+
+
     return utils.display(next_dict)   
 
 
