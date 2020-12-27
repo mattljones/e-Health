@@ -48,3 +48,5 @@
 48,2020-12-24 15:10,booked,2020-12-08 16:47:31,,offline,,10,Irvine,15
 49,2020-12-24 16:00,booked,2020-12-08 16:47:31,,online,,1,Daniels,2
 50,2020-12-24 16:10,rejected,2020-12-08 16:47:31,,online,,2,Chambers,49
+51,2020-12-25 09:00,confirmed,2020-12-26 16:49:31,test,online,gp note test,16,Pasteur,51
+52,2020-12-29 09:30,booked,2020-12-26 20:49:12,repetitive booking test,online,,16,Pasteur,52

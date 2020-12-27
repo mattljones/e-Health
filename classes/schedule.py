@@ -7,11 +7,11 @@ import datetime
 
 # Switching path to master to get functions from utils folder
 # TODO get rid of pathlib once 'from system import utils as u' works
-import sys
-from pathlib import Path
-
-path_to_master_repo = Path(__file__).parents[1]
-sys.path.insert(1, str(path_to_master_repo))
+# import sys
+# from pathlib import Path
+#
+# path_to_master_repo = Path(__file__).parents[1]
+# sys.path.insert(1, str(path_to_master_repo))
 
 # Importing utility methods from the 'system' package
 from system import utils as u
@@ -59,6 +59,10 @@ class Schedule:
             sql_result_df['Patient (ID)'] = sql_result_df['Patient First Name'].astype(str) + ' ' + sql_result_df[
                 'Patient Last Name'].astype(str) + ' (' + sql_result_df['Patient (ID)'].astype(str) + ')'
 
+            # Replace 'nan nan (nan) in 'Patient (ID)' column of sql_result_df, this can happen if there is time off
+            # inserted for a gp so that no patient_id exists, and therefore no information about the patient can be shown
+            sql_result_df['Patient (ID)'].replace({"nan nan (nan)": ''}, inplace=True)
+
             # Producing the empty DataFrame for a day
             df_select_day_empty = u.day_empty_df(start_date, 2)
 
@@ -79,10 +83,6 @@ class Schedule:
             # Set index
             df_object = df_object.set_index(df_select_day_empty.index)
 
-            # Produce df_print
-            df_print = df_object.to_markdown(tablefmt="grid", index=True)
-
-            return df_object, df_print
 
         if type == 'week':
 
@@ -116,10 +116,13 @@ class Schedule:
                 time_row = datetime.datetime.strptime(sql_result_df.loc[i, 'time'], '%H:%M').strftime('%H:%M')
                 df_object.loc[time_row, date_column] = sql_result_df.loc[i, 'booking_status']
 
-            # Produce df_print
-            df_print = df_object.to_markdown(tablefmt="grid", index=True)
+        # Produce df_print
+        df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-        return df_object, df_print
+        # produce df_print_morning and df_print_afternoon
+        df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
+
+        return df_object, df_print, df_print_morning, df_print_afternoon
 
     @staticmethod  # SELECT select_upcoming_timeoff - STATIC
     def select_upcoming_timeoff(gp_id):
@@ -202,7 +205,7 @@ class Schedule:
                         AND
                             gp_id = ?
                         AND
-                            booking_status IN ('confirmed', 'booked');""", (new_timeoff_range[i], gp_id))
+                            booking_status IN ('confirmed', 'booked', 'sick leave', 'time off');""", (new_timeoff_range[i], gp_id))
             # Appending to empty DataFrame
             df_object = df_object.append(c.fetchall(), ignore_index=True)
 
@@ -236,6 +239,10 @@ class Schedule:
         '''
         schedule = Schedule()
         if schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date, end_date=end_date)[0] == False:
+
+            # store start_date as a string so that check_timeoff_conflict is callable later
+            start_date_check_timeoff_conflict = start_date
+            end_date_check_timeoff_conflict = end_date
 
             # start_date transformation str to datetime
             start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
@@ -279,6 +286,16 @@ class Schedule:
                 if '08:00' <= timeoff_range_weekdays_only[i][11:] <= '16:50':
                     new_timeoff_range.append(timeoff_range_weekdays_only[i])
 
+            # Get gp_last_name from database
+            gp_last_name_query = '''
+                                    SELECT DISTINCT
+                                        gp_last_name
+                                    FROM
+                                        gp
+                                    WHERE
+                                        gp_id = {};'''.format(gp_id)
+            gp_last_name_from_db = u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
+
             # Insert into database
             for i in range(len(new_timeoff_range)):
                 # Initialize query
@@ -292,14 +309,15 @@ class Schedule:
                                             booking_type,
                                             booking_notes,
                                             gp_id,
+                                            gp_last_name,
                                             patient_id)
                                         VALUES
-                                            (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, NULL);'''.format(
-                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id)
+                                            (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, '{}', NULL);'''.format(
+                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id, gp_last_name_from_db)
                 # Execute query
                 u.db_execute(insert_timeoff_query)
 
-            return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date, end_date=end_date)
+            return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date_check_timeoff_conflict, end_date=end_date_check_timeoff_conflict)
 
 
         # If there are already booked or confirmed appointments during start_date to end_date
@@ -383,7 +401,7 @@ class Schedule:
 ### DEVELOPMENT ###
 
 if __name__ == "__main__":
-    Schedule.insert_timeoff(16, 'time off', '2020-12-23', '2020-12-25')
+    # Schedule.insert_timeoff(16, 'time off', '2020-12-23', '2020-12-25')
     pass
 
 ### TESTING ###
@@ -391,10 +409,10 @@ if __name__ == "__main__":
 # schedule = Schedule()
 
 ## testing select day
-# df = schedule.select(2, 'day', '2020-12-1')[1]
+# df = schedule.select(16, 'day', '2020-12-24')[1]
 
 ## testing select week
-# df = schedule.select(2, 'week', '2021-1-18')[1]
+# df = schedule.select(2, 'week', '2020-12-08')[2]
 
 ## testing check_timeoff_conflict
 # df = schedule.check_timeoff_conflict(2, '2020-12-01', '2021-1-13')[2]
@@ -403,7 +421,7 @@ if __name__ == "__main__":
 # df = schedule.select_upcoming_timeoff(2)[1]
 
 ## testing insert_timeoff_custom --> check_timeoff_conflict False
-# schedule.insert_timeoff(2, 'sick leave', '2020-12-23', '2021-01-23')
+# schedule.insert_timeoff(16, 'sick leave', '2020-12-24', '2020-12-25')
 
 ## testing insert_timeoff_custom --> check_timeoff_conflict True
 # schedule.insert_timeoff(2, 'sick leave', '2020-12-1', '2021-12-23')
@@ -412,4 +430,4 @@ if __name__ == "__main__":
 # schedule.delete_timeoff(gp_id=2, type='custom', timeoff_type='sick leave', start_date='2021-1-20', end_date='2021-1-25')
 
 ## testing delete_timeoff all
-# schedule.delete_timeoff(gp_id=2, type='all', timeoff_type='sick leave')
+# schedule.delete_timeoff(gp_id=16, type='all', timeoff_type='sick leave')

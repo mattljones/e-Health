@@ -15,9 +15,11 @@ from system import utils
 # import global variables from globals.py
 from system import globals
 
-from classes import gp
-from classes import patient
+from classes.gp import GP
+from classes.patient import Patient
+from classes.schedule import Schedule
 
+from user_menu_flow import gp_flow
 
 ############################### INPUT MENU PAGES ###########################
 
@@ -30,21 +32,23 @@ def gp_account_section_menu(next_dict):
     return utils.display(manage_gp_accounts_flow)
 
 
-
 def view_gp(next_dict):
     '''
     Select from a list of GPs and allows choice for viewing.
     '''
     choice = retrieve_gp_list('all')
 
-    doctor_df = gp.GP.select(choice)
-    doctor = doctor_df[0]
+    doctor_df = GP.select(choice)
+    # NOTE: I don't understand the fuction of the line below (commented for now)
+    # doctor = doctor_df[0]
+
+    # TODO: proper input validation
     print("\n----------------------------------------------------\n"
           "                ",'GP DETAILS', "\n")
     print(doctor_df[2])
-    index_choice = int(input("Choose an value to edit. \n"
+    index_choice = int(input("Choose a value to edit. \n"
     "-->"))
-    value_choice = input("\nChoose an value to edit. \n"
+    value_choice = input("\nChoose a value to edit. \n"
     "-->") 
 
     print("\n----------------------------------------------------\n"
@@ -53,29 +57,30 @@ def view_gp(next_dict):
     print("[ 2 ] No")
     y_n = int(input("\n-->"))
     if y_n == 1:
-
-        #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
+        # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
         return utils.display(next_dict)
         
     elif y_n == 2:
         return utils.display(next_dict)
-
+    else:
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
 
 
 def retrieve_gp_list(type):
+    # NOTE: Either display only OR rename function (e.g. choose_gp)
     '''
     Shows the list of GPs and allows choice from that list.
     '''
-    df = gp.GP.select_list(type)
-    df_raw = df[0]
+    df = GP.select_list(type)
+    # NOTE: I don't understand the purpose of the line below (commented for now)
+    # df_raw = df[0]
     df_show = df[1]
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
     print(df_show)
-    return int(input("\nPlease select a GP_ID\n"
-                "--> "))
-
+    return int(input("\nPlease select a GP ID. \n--> "))
 
 
 def same_gp(next_dict):
@@ -83,10 +88,9 @@ def same_gp(next_dict):
     Allows viewing/editing of the same GP.
     '''
 
-    #TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
+    # TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
 
     pass
-
 
 
 def add_gp(next_dict):
@@ -95,6 +99,8 @@ def add_gp(next_dict):
     '''
     print("\n----------------------------------------------------\n"
           "                ",'ENTER GP DETAILS', "\n")
+
+    # TODO: Input validation (see patient registration in register_login_flow)
     first_name = input('Please enter First Name: \n'
     '--> ')
     last_name = input('\nPlease enter Last Name: \n'
@@ -107,95 +113,144 @@ def add_gp(next_dict):
     '--> ')
     password_raw = input('\nPlease enter Password: \n'
     '--> ')
-    registration_date = datetime.date.today()
     working_days = input('\nPlease enter Working Days: \n'
     '--> ')
 
-    # AUTO SET DEPARTMENT AND SPECIALISATION IDS TO GP. 
-    # COULD LIST OUT DEPARTMENTS AND SPECIALISATIONS AND GIVE CHOICE.
+    # TODO: LIST OUT DEPARTMENTS AND SPECIALISATIONS AND GIVE CHOICE.
 
+    # Default department and specialiations: 1
     department_id = 1
     specialisation_id = 1
 
+    # Default status: active 
     status = 'active'
-    gp1 = gp.GP(id_ = None,
+
+    new_gp = GP(id_ = None,
                 first_name=first_name, 
                 last_name=last_name, 
                 gender=gender, 
                 birth_date=birth_date, 
                 email=email, 
-                password_raw=password_raw,
-                registration_date=registration_date, 
+                password_raw=password_raw, 
                 working_days=working_days, 
                 department_id=department_id, 
                 specialisation_id=specialisation_id, 
                 status=status)
 
-    #TODO: WORK OUT HOW TO ENTER DEPARTMENT AND SPECIALISATION AND GET IDS FROM THAT
-    #TODO: GENERATE GP ID
-
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
+
     y_n = int(input("\n-->"))
+    
     if y_n == 1:
-
-        #TODO: UPDATE THE DATABASE WITH THE NEW INFO.
-
+        # Insert new GP in db
+        GP.insert(new_gp)
+        print("\n\U00002705 Dr. {} has been registered.".format(last_name))
         return utils.display(next_dict)
         
     elif y_n == 2:
+        print("\n\U00002757 GP not added.")
         return utils.display(next_dict)
 
+    else:
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
 
 
 def deactivate_gp(next_dict):
     '''
     Deactivates a GP.
     '''
-    retrieve = retrieve_gp_list('active')
-    gp1 = retrieve[0]
-    choice = retrieve[1]
+    # List and prompt admin for a gp id
+    gp_id = retrieve_gp_list('active')
 
-    doctor_df = gp1.select(choice)
-    doctor = doctor_df[0]
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
+    print("Do you want to deactive GP with ID: {}?\n".format(gp_id))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
+
     y_n = int(input("\n-->"))
+
     if y_n == 1:
-        doctor.change_status('inactive')
-        return utils.display(next_dict)
-        
-    elif y_n == 2:
+        GP.change_status(gp_id, 'inactive')
+        print("\n\U00002705 GP with ID [{}] has been deactivated.".format(gp_id))
         return utils.display(next_dict)
 
+    elif y_n == 2:
+        print("\n\U00002757 Deactivation cancelled.")
+        return utils.display(next_dict)
+
+    else:
+        print(("\n\U00002757 Input not valid."))
+        return utils.display(next_dict)
 
 
 def delete_gp(next_dict):
     '''
+    # NOTE: Integrate docstrings with info from GP.delete()
     Deletes a GP.
     '''
-    retrieve = retrieve_gp_list('all')
-    gp1 = retrieve[0]
-    choice = retrieve[1]
+    # List and prompt admin for a gp id
+    gp_id = retrieve_gp_list('all')
 
-    doctor_df = gp1.select(choice)
-    doctor = doctor_df[0]
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
+    print("Do you want to delete GP with ID: {}?\n".format(gp_id))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
+
     y_n = int(input("\n-->"))
+
+    ## TODO: Avoid text repetition
+    ## Default output unicode + text for different scenarios 
+    # gp_deleted = 
+    # patients_yes =
+    # patients_no =
+    # appointments_yes = 
+    # appointments_no = 
+
+    # TODO: Test cases where patients and/or apps not allocated successfully
+    # TODO: Improve code indentation for better readabality
     if y_n == 1:
-        doctor.delete()
-        return utils.display(next_dict)
-        
-    elif y_n == 2:
+        # Patients and appointments reallocated
+        if GP.delete(gp_id)[0]: 
+            print("""\n\U00002705 GP with ID {} has been deleted.
+\U00002705 Patients reallocated successfully.
+\U00002705 Appointments reallocated successfully.""".format(gp_id))
+
+        # Patients reallocated | Appointment *not* reallocated
+        elif GP.delete(gp_id)[1] == 'apps':
+            print("""\n\U00002705 GP with ID {} has been deleted. 
+\U00002705 Patients reallocated successfully.
+\U00002757 The following appointments have *NOT* been reallocated: {}"""
+                    .format(gp_id, GP.delete(gp_id)[4]))
+
+        # Appointments reallocated | Patients *not* reallocated
+        elif GP.delete(gp_id)[1] == 'patients':
+            print("""\n\U00002705 GP with ID {} has been deleted. 
+\U00002705 Appointments reallocated successfully.
+\U00002757 {} patients have *NOT* been reallocated due to all GPs having reached capacity."""
+                    .format(gp_id, GP.delete(gp_id)[2]))
+
+        # Patients and appointment *not* reallocated
+        elif GP.delete(gp_id)[1] == 'both':
+            print("""\n\U00002705 GP with ID {} has been deleted. 
+\U00002757 {} patients have *NOT* been reallocated due to all GPs having reached capacity.
+\U00002757 The following appointments have *NOT* been reallocated: {}"""
+                    .format(gp_id, GP.delete(gp_id)[2], GP.delete(gp_id)[4]))
+
         return utils.display(next_dict)
 
+    elif y_n == 2:
+        print("\n\U00002757 Action cancelled.")
+        return utils.display(next_dict)
+
+    else:
+        print(("\n\U00002757 Input not valid."))
+        return utils.display(next_dict)
 
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
@@ -212,7 +267,7 @@ def choose_patient(type, patient_last_name=None):
     '''
     Choose patient account.
     '''
-    df = patient.Patient.select_list(type,patient_last_name)
+    df = Patient.select_list(type,patient_last_name)
     print("\n----------------------------------------------------\n"
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
@@ -230,7 +285,7 @@ def view_patient(next_dict):
     choose_patient('matching', patient_last_name=last_name)
     choice = int(input('\nPlease choose a patient ID\n'
     '-->'))
-    selected_patient = patient.Patient.select(choice)
+    selected_patient = Patient.select(choice)
     print("\n----------------------------------------------------\n"
           "                ",'PATIENT DETAILS', "\n")
     print(selected_patient[2])
@@ -246,7 +301,7 @@ def view_patient(next_dict):
     y_n = int(input("\n-->"))
     if y_n == 1:
 
-        #TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
+        # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
         return utils.display(next_dict)
         
@@ -256,6 +311,7 @@ def view_patient(next_dict):
 
 
 def confirm_patient(next_dict):
+    # NOTE: We could use a gp_flow func here
     '''
     Confirm pending patient registrations.
     '''
@@ -276,9 +332,9 @@ def confirm_patient(next_dict):
         y_n = int(input("\n-->"))
 
         if y_n == 1:
-            patient.Patient.confirm('all')
+            Patient.confirm('all')
 
-            #TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
+            # TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
 
             return utils.display(next_dict)
         
@@ -300,15 +356,12 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             for id in ids:
-                patient.Patient.confirm('single', patient_id = int(id))
-                #NOTE: IS GP PAIRED TO PATIENT WHEN THEY REGISTER OR AFTER CONFIRMATION?
-                patient.Patient.change_gp('auto', patient_id = int(id))
+                Patient.confirm('single', patient_id = int(id))
 
             return utils.display(next_dict)
         
         elif y_n == 2:
             return utils.display(next_dict)
-
 
 
 def delete_patient(next_dict):
@@ -317,11 +370,17 @@ def delete_patient(next_dict):
     '''
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
+
     last_name = input("Please enter the patient's last name:\n"
     "-->")
+
     choose_patient('matching', patient_last_name=last_name)
-    choice = int(input('\nPlease choose a patient ID(s)\n'
-    '-->')).split()
+    choice = input('''
+Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
+    '-->')
+    # Eliminating whitespace from string and splitting it into single IDs
+    patient_ids = choice.replace(' ', '').split(',')
+
 
     print("\n----------------------------------------------------\n"
     "                ",'CONFIRM?', "\n")
@@ -329,17 +388,24 @@ def delete_patient(next_dict):
     print("[ 2 ] No")
     y_n = int(input("\n-->"))
     if y_n == 1:
-        for id in choice:
-            patient.Patient.delete(id)
-
+        for id in patient_ids:
+            Patient.delete(id)
+            print("\n\U00002705 Patient with ID {} has been deleted.".format(id))
         return utils.display(next_dict)
         
     elif y_n == 2:
+        print("\n\U00002757 Action cancelled.")
         return utils.display(next_dict)
 
-    
+    else:
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
+
+
 
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
+
+
 
 def pairings_section_menu(next_dict):
     '''
@@ -347,25 +413,213 @@ def pairings_section_menu(next_dict):
     '''
     return utils.display(gp_patient_pair_flow)
 
+
+
 def pairing_gp(next_dict):
     '''
     Search for a patient and pair them up with a GP.
     '''
-    return utils.display(next_dict)
+
+    # TODO: Better way to reuse code from view_patient()
+
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+    choice = int(input('\nPlease choose a patient ID\n'
+    '-->'))
+    selected_patient = Patient.select(choice)
+    patient_id = selected_patient[0].patient_id
+    gp_id = selected_patient[0].gp_id
+    gp_lastname = GP.select(gp_id)[0].last_name
+
+    print('Patient {} is currently registered with Dr {}.'.format(patient_id, gp_lastname))
+    print("\n----------------------------------------------------\n"
+          "                ",'CHANGE DEFAULT GP', "\n")
+    print('[ 1 ] Auto-Reallocate')
+    print('[ 2 ] Select GP From List')
+    choice = int(input('\n-->'))
+
+    if choice == 1:
+        new_gp = Patient.change_gp('auto', patient_id)
+
+        if new_gp[0]:
+            print("\n----------------------------------------------------\n"
+            "                ",'CONFIRM?', "\n")
+            print("[ 1 ] Yes")
+            print("[ 2 ] No")
+            y_n = int(input("\n-->"))
+
+            if y_n == 1:
+                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
+                return utils.display(next_dict)
+
+            elif y_n == 2:
+                print("\n\U00002757 Action cancelled.")
+                return utils.display(next_dict)
+
+            else:
+                print("\n\U00002757 Input not valid.")
+                return utils.display(next_dict)
+        
+        else:
+            print("\n\U00002757 All GPs are full.")
+            return utils.display(next_dict)
+
+
+    elif choice == 2:
+        gp_list = GP.select_list('not_full')
+        print("\n----------------------------------------------------\n"
+            "                ",'NON-FULL GP LIST', "\n")
+        print(gp_list[1])
+        new_gp_id = int(input('\nPlease choose a GP to allocate the patient to.\n'
+        '-->'))
+        new_gp = Patient.change_gp('specific', patient_id, new_gp_id=new_gp_id)
+
+        if new_gp[0]:
+            print("\n----------------------------------------------------\n"
+            "                ",'CONFIRM?', "\n")
+            print("[ 1 ] Yes")
+            print("[ 2 ] No")
+            y_n = int(input("\n-->"))
+
+            if y_n == 1:
+                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
+                return utils.display(next_dict)
+
+            elif y_n == 2:
+                print("\n\U00002757 Action cancelled.")
+                return utils.display(next_dict)
+
+            else:
+                print("\n\U00002757 Input not valid.")
+                return utils.display(next_dict)
+        else:
+            print("\n\U00002757 All GPs are full.")
+            return utils.display(next_dict)
+        
+    
+    else:
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
+    
+
 
 def pairing_patient(next_dict):
     '''
     Select a GP and pair patients to them if they are not full.
     '''
-    return utils.display(next_dict)
+    gp_list = GP.select_list('not_full')
+    print("\n----------------------------------------------------\n"
+    "                ",'NON-FULL GP LIST', "\n")
+    print(gp_list[1])
+    new_gp_id = int(input('\nPlease choose a GP to allocate patients to.\n'
+    '-->'))
+
+
+    print("\n----------------------------------------------------\n"
+    "                ",'ADD PATIENTS', "\n")
+    print('[ 1 ] By IDs')
+    print('[ 2 ] Search by last name')
+    choice = int(input('\n-->'))
+
+    if choice == 1:
+        print("\n----------------------------------------------------\n"
+        "                ",'ENTER IDS', "\n")
+        id_choice = input('''
+        Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
+        '-->')
+        patient_ids = id_choice.replace(' ', '').split(',')
+
+        print("\n----------------------------------------------------\n"
+        "                ",'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = int(input("\n-->"))
+
+        if y_n == 1:
+
+            for id in patient_ids:
+                new_gp = Patient.change_gp('specific', id, new_gp_id=new_gp_id)
+
+                if new_gp[0]:
+                    print("\n\U00002705 Patient with ID {} has allocated to Dr {}.".format(id, new_gp[1]))
+                    return utils.display(next_dict)
+
+                else:
+                    print("\n\U00002757 This GP is full.")
+                    return utils.display(next_dict)
+        
+        elif y_n == 2:
+            print("\n\U00002757 Action cancelled.")
+            return utils.display(next_dict)
+
+        else:
+            print("\n\U00002757 Input not valid.")
+            return utils.display(next_dict)
+    
+    elif choice == 2:
+
+        print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+        last_name = input("Please enter the patient's last name:\n"
+        "-->")
+        choose_patient('matching', patient_last_name=last_name)
+        choice = int(input('\nPlease choose a patient ID\n'
+        '-->'))
+        selected_patient = Patient.select(choice)
+        patient_id = selected_patient[0].patient_id
+
+        print("\n----------------------------------------------------\n"
+        "                ",'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = int(input("\n-->"))
+
+        if y_n == 1:
+            new_gp = Patient.change_gp('specific', patient_id, new_gp_id=new_gp_id)
+
+            if new_gp[0]:
+                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
+                return utils.display(next_dict)
+
+            else:
+                print("\n\U00002757 This GP is full.")
+                return utils.display(next_dict)
+        
+        elif y_n == 2:
+            print("\n\U00002757 Action cancelled.")
+            return utils.display(next_dict)
+
+        else:
+            print("\n\U00002757 Input not valid.")
+            return utils.display(next_dict)
+
+    else:
+        print("\n\U00002757 Input not valid.")
+        return utils.display(next_dict)
+
+
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
 def schedules_main(next_dict):
+    # NOTE: I suspect that this does the same thing as retrieve
+    # Using same code for now, substitute function name in dict if needed
     '''
     Returns the numbered list of GPs to choose from
     '''
+    df = GP.select_list('all')
+    df_show = df[1]
+    print("\n----------------------------------------------------\n"
+          "                ",'GP LIST', "\n")
+    print(df_show)
+    global sched_id_choice
+    sched_id_choice = int(input("\nPlease select a GP ID. \n--> "))
     return utils.display(next_dict)
+
+
 
 def schedules_section_menu(next_dict):
     '''
@@ -373,23 +627,41 @@ def schedules_section_menu(next_dict):
     '''
     return utils.display(view_schedule_flow)
 
-def schedule_date(next_dict):
+
+
+def view_schedule_day(next_dict):
     '''
-    Choice of schedule date period.
-    '''
+    View a GP's current schedule for a day.
+    '''    
+    start_date = utils.get_start_date()
+    sched = Schedule.select(sched_id_choice, 'day', start_date)
+    print("\n----------------------------------------------------\n"
+          "                ",'DAILY SCHEDULE', "\n")
+    print(sched[1])
     return utils.display(next_dict)
 
-def view_schedule(next_dict):
+
+
+def view_schedule_week(next_dict):
     '''
-    View a GP's current schedule.
+    View a GP's current schedule for a week.
     '''    
+    start_date = utils.get_start_date()
+    sched = Schedule.select(sched_id_choice, 'week', start_date)
+    print("\n----------------------------------------------------\n"
+          "                ",'WEEKLY SCHEDULE', "\n")
+    print(sched[1])
     return utils.display(next_dict)
+
+
 
 def manage_availability(next_dict):
     '''
     Manage the availability of GPs.
     '''
     return utils.display(next_dict)
+
+
 
 def manage_time_off(next_dict):
     '''
@@ -678,15 +950,14 @@ view_schedule_final_actions = {
 schedule_length_flow = {
     "title": "SELECT SCHEDULE LENGTH",
     "type": "sub",
-    "1": ("Day", view_schedule, view_schedule_final_actions),
-    "2": ("Week", view_schedule, view_schedule_final_actions),
-    "3": ("Custom", view_schedule, view_schedule_final_actions)
+    "1": ("Day", view_schedule_day, view_schedule_final_actions),
+    "2": ("Week", view_schedule_week, view_schedule_final_actions),
 }
 
 view_schedule_flow = {
     "title": "VIEW AND MANAGE SCHEDULE",
     "type": "sub",
-    "1": ("View GP Schedule", schedule_date, schedule_length_flow),
+    "1": ("View GP Schedule", empty_method, schedule_length_flow),
     "2": ("Manage GP Availability", manage_availability, manage_availability_flow)
 }
 
@@ -799,11 +1070,11 @@ main_flow_admin = {
 if __name__ == '__main__':
     #utils.display(main_flow_admin)
 
-    test_patient = patient.Patient.select_list('pending')
+    test_patient = Patient.select_list('pending')
     print(test_patient[1])
     choice = int(input('\nPlease choose a patient ID\n'
     '-->'))
-    selected_patient = patient.Patient.select(choice)
+    selected_patient = Patient.select(choice)
     print(selected_patient[2])
 
         

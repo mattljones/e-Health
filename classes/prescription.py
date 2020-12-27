@@ -67,9 +67,9 @@ class Prescription:
         select_patient_query = '''
                                     SELECT
                                         drug_name AS "Drug Name",
-                                        drug_dosage AS "Drug Dosage",
-                                        drug_frequency_dosage AS "Intake Frequency",
-                                        prescription_expiry_date AS "Expiry Date",
+                                        drug_dosage AS "Dosage",
+                                        drug_frequency_dosage AS "Frequency",
+                                        prescription_expiry_date AS "Expires",
                                         p.booking_id AS "Apt. ID"
                                     FROM
                                         prescription AS p

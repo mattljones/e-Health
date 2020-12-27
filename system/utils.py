@@ -69,6 +69,8 @@ def logout():
     """Logout user and return to main page."""
     globals.usr_type = ""
     globals.usr_id = ""
+    globals.patient_id = ""
+    globals.appt_id = ""
     print("\n\U00002705 Succesfully logged out.")
 
 
@@ -163,7 +165,7 @@ def hash_salt(password):
 
     return hash_salt
 
-
+# TODO: trim input (no spaces)
 def validate(user_input):
     """
     Validate user input.  
@@ -306,7 +308,7 @@ def validate_date(user_input):
 def get_start_date():
     print("Please enter the start date (YYYY-MM-DD)\n"
           "Enter 'T' short for today")
-    start_date = input("\n--> ")
+    start_date = input("--> ")
     valid = False
     while valid == False:
         if start_date in ("T","t"): 
@@ -325,8 +327,8 @@ def get_start_date():
             start_date = input("\n--> ")
 
 def get_end_date():
-    print("Please enter the end date (YYYY-MM-DD)")
-    end_date = input("\n--> ")
+    print("\nPlease enter the end date (YYYY-MM-DD)")
+    end_date = input("--> ")
     valid = False
     while valid == False:
         if end_date in ("T","t"): 

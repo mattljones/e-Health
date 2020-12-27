@@ -98,20 +98,20 @@ class Record:
 
         # 1 - GENERATING 'PATIENT' DATAFRAMES
         query_attributes = """
-                           SELECT patient_id AS 'Patient ID', 
+                           SELECT patient_id AS 'ID', 
                                   patient_first_name AS 'First Name', 
                                   patient_last_name AS 'Last Name', 
                                   patient_gender AS 'Gender',
                                   patient_birth_date AS 'Birth Date', 
-                                  patient_NHS_blood_donor AS 'NHS Blood Donor', 
-                                  patient_NHS_organ_donor AS 'NHS Organ Donor'
+                                  patient_NHS_blood_donor AS 'Blood Donor', 
+                                  patient_NHS_organ_donor AS 'Organ Donor'
                            FROM patient
                            WHERE patient_id = '{}'
                            """.format(patient_id)
         query_conditions = """
-                           SELECT pmc.patient_medical_condition_type_id AS 'Condition ID',
+                           SELECT pmc.patient_medical_condition_type_id AS 'Cond. ID',
                                   patient_medical_condition_type_name AS 'Condition',
-                                  pmc.patient_id AS 'Patient ID' 
+                                  pmc.patient_id AS 'ID' 
                            FROM patient_medical_condition pmc, patient_medical_condition_type pmct
                            WHERE pmc.patient_id = '{}'
                            AND pmc.patient_medical_condition_type_id = pmct.patient_medical_condition_type_id
@@ -121,13 +121,13 @@ class Record:
         df_conds = pd.read_sql_query(query_conditions, conn)
         conn.close()
         # joining regular patient attributes with medical conditions
-        df_patient_merge = pd.merge(df_atts, df_conds, how='left', on='Patient ID')
+        df_patient_merge = pd.merge(df_atts, df_conds, how='left', on='ID')
         # replacing nulls with blank strings
         df_patient_object = df_patient_merge.where(pd.notnull(df_patient_merge), '')
         # adding line breaks between conditions so printed in one row 
-        columns1 = ['Patient ID', 'First Name', 'Last Name', 'Gender',\
-                    'Birth Date', 'NHS Blood Donor', 'NHS Organ Donor']
-        columns2 = ['Condition ID', 'Condition']
+        columns1 = ['ID', 'First Name', 'Last Name', 'Gender',\
+                    'Birth Date', 'Blood Donor', 'Organ Donor']
+        columns2 = ['Cond. ID', 'Condition']
         df_patient_breaks = df_patient_object.groupby(columns1)[columns2].agg('\n'.join).reset_index() 
         df_patient_print = df_patient_breaks.to_markdown(tablefmt="grid", index=False)
 
@@ -138,15 +138,24 @@ class Record:
         df_apps_merge = pd.merge(df_apps, df_prescs, how='left', on='Apt. ID')
         # replacing nulls with blank strings & adding text wrapping for notes
         df_apps_object = df_apps_merge.where(pd.notnull(df_apps_merge), '')
-        df_apps_object['Notes'] = df_apps_object['Notes'].str.wrap(30)
+        df_apps_object['Notes'] = df_apps_object['Notes'].str.wrap(20)
+        # rename column to save horizontal space
+        df_apps_object.rename(columns={'Apt. ID': 'ID'}, inplace=True)
+        # add line breaks in columns to save horizontal space & re-format slightly
+        df_apps_object['GP'] = df_apps_object['GP'].apply(lambda x: x[0:4]\
+                                                    + x[4:].replace(' ', '\n', 1))
+        df_apps_object['Date'] = df_apps_object['Date'].apply(lambda x: x[0:10]\
+                                                        + '\n' + '(' + x[11:] + ')')
+        # adding a GP ID column for use in GP user flow (GPs can only edit own notes)
+        df_apps_object['GP ID'] = df_apps_object['GP'].astype(str).str[-2]
         # adding line breaks between prescriptions so printed in one row
-        columns1 = ['Apt. ID', 'GP', 'Date', 'Type', 'Notes']
-        columns2 = ['Drug Name', 'Drug Dosage', 'Intake Frequency', 'Expiry Date']
+        columns1 = ['ID', 'Date', 'GP', 'Type', 'Notes']
+        columns2 = ['Drug Name', 'Dosage', 'Frequency', 'Expires']
         df_apps_breaks = df_apps_object.groupby(columns1)[columns2].agg('\n'.join).reset_index()
         df_apps_print = df_apps_breaks.to_markdown(tablefmt="grid", index=False)
 
         # 3 - GENERATING RECORD INSTANCE
-        record_instance = cls(patient_id, df_conds['Condition ID'].tolist(),\
+        record_instance = cls(patient_id, df_conds['Cond. ID'].tolist(),\
                               dict(zip(df_apps['Apt. ID'], df_apps['Notes'])))
                               
         return record_instance, df_patient_object, df_patient_print, df_apps_object, df_apps_print

@@ -94,7 +94,23 @@ def empty_note(next_dict):
     return display_prescription(next_dict)
 
 def enter_note(next_dict):
-    pass
+    # TODO: confirm the attendance before entering note, VALUE constraint
+    Appointment.change_status(globals.appt_id, "attending")
+    
+    # temporarily to display the change
+    print(Appointment.select_GP_appt(globals.usr_id))
+
+    print("\nPlease enter your note")
+    gp_note = input("--> ")
+    record = Record.select(globals.patient_id)[0]
+    # DEBUG
+    print("globals.appt_id")
+    record.appointment_notes[globals.appt_id] = gp_note
+    record.update()
+
+    # temporarily to display the change
+    print(Record.select(globals.patient_id)[4])
+
     return display_prescription(next_dict)
 
 def prescibe(next_dict):
@@ -119,7 +135,14 @@ def enter_field(next_dict):
     return display_next_menu(next_dict)
 
 def enter_appoint_id(next_dict):
-    pass
+    # TODO: return to home page
+    # TODO: how to get the patient id through the appointment id
+    print("\nPlease enter the id of patient whose appointment you want to confirm attendance and edit notes")
+    patient_id = input("--> ")
+    print("\nPlease enter the id of appointment which you want to confirm attendance and edit notes")
+    appt_id = input("--> ")
+    globals.patient_id = patient_id
+    globals.appt_id = appt_id
     return display_next_menu(next_dict)
 
 ############################ SEQUENTIAL STEPS MENUS ########################
@@ -132,12 +155,33 @@ def correct_note_change(next_dict):
                 }
     return display_next_menu(flow_record_edit)
 
-def another_confirm(next_dict):
+# TODO: booking id input validation
+
+def display_confirmed_appt(next_dict):
+    print("\nYour confirmed appointments: ")
+    print(Appointment.select_GP_confirmed(globals.usr_id))
+    return display_next_menu(next_dict)
+
+def display_pending_appt(next_dict):
+    # TODO: how to tell if there is an unconfirmed appointment
+    # print("\nYour do not have any pending appointment!")
+    print("\nYour pending appointments: ")
+    print(Appointment.select_GP_pending(globals.usr_id)[1])
+    return display_next_menu(next_dict)
+
+def another_confirm_rej(next_dict):
     flow_confirm_appoint = {"title": "Confirm Appointments",
                  "type": "sub",
-                 "1":("Confirm", another_confirm, next_dict),
-                 "2":("Reject", another_confirm, next_dict)
+                 "1":("Confirm All", another_confirm_all, next_dict),
+                 "2":("Confirm One", another_confirm_one, next_dict),
+                 "3":("Reject One", another_confirm_rej, next_dict)
                 }
+
+    print("\nPleas enter the id of appointment you want to reject")
+    reject_id = input("\n--> ")
+    Appointment.change_status(reject_id, "rejected")
+    print(Appointment.select_GP_appt(globals.usr_id))
+
     print("\n----------------------------------------------------\n"
           "                ", "Confrim another appointment?", "\n")
     print("[ 1 ] Yes")
@@ -148,32 +192,74 @@ def another_confirm(next_dict):
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
-def add_avail(next_dict):
-    flow_availability = {"title": "Schedule",
+def another_confirm_one(next_dict):
+    flow_confirm_appoint = {"title": "Confirm Appointments",
                  "type": "sub",
-                 "1":("Add", add_avail, next_dict),
-                 "2":("Remove", remove_avail, next_dict)
+                 "1":("Confirm All", another_confirm_all, next_dict),
+                 "2":("Confirm One", another_confirm_one, next_dict),
+                 "3":("Reject One", another_confirm_rej, next_dict)
                 }
-    # TODO: add availability
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
-    Schedule.delete_timeoff(globals.usr_id, 'time off', start_date, end_date)
+
+    print("\nPleas enter the id of appointment you want to confirm")
+    confirm_id = input("\n--> ")
+    Appointment.change_status(confirm_id, "confirmed")
+    print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\n----------------------------------------------------\n"
-          "                ", "Add or Remove a new availabilty?", "\n")
+          "                ", "Confrim another appointment?", "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return display_next_menu(flow_availability)
+        return display_next_menu(flow_confirm_appoint)
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
-def remove_avail(next_dict):
-    flow_availability = {"title": "Schedule",
+def another_confirm_all(next_dict):
+    flow_confirm_appoint = {"title": "Confirm Appointments",
                  "type": "sub",
-                 "1":("Add", add_avail, next_dict),
-                 "2":("Remove", remove_avail, next_dict)
+                 "1":("Confirm All", another_confirm_all, next_dict),
+                 "2":("Confirm One", another_confirm_one, next_dict),
+                 "3":("Reject One", another_confirm_rej, next_dict)
+                }
+    Appointment.confirm_all_GP_pending(globals.usr_id)
+    print(Appointment.select_GP_appt(globals.usr_id))
+
+    print("\n----------------------------------------------------\n"
+          "                ", "Confrim another appointment?", "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    usr_choice = input("\n--> ")
+    if usr_choice == '1':
+        return display_next_menu(flow_confirm_appoint)
+    elif usr_choice == '2':
+        return display_next_menu(next_dict)
+
+def remove_timeoff(next_dict):
+    flow_timeoff = {"title": "Schedule",
+                 "type": "sub",
+                 "1":("Add", add_timeoff, next_dict),
+                 "2":("Remove", remove_timeoff, next_dict)
+                }
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+    Schedule.delete_timeoff(globals.usr_id, 'custom', 'time off', start_date, end_date)
+
+    print("\n----------------------------------------------------\n"
+          "                ", "Add or Remove a new timeoff?", "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    usr_choice = input("\n--> ")
+    if usr_choice == '1':
+        return display_next_menu(flow_timeoff)
+    elif usr_choice == '2':
+        return display_next_menu(next_dict)
+
+def add_timeoff(next_dict):
+    flow_timeoff = {"title": "Schedule",
+                 "type": "sub",
+                 "1":("Add", add_timeoff, next_dict),
+                 "2":("Remove", remove_timeoff, next_dict)
                 }
     # TODO: add availability
     # TODO: fix Schedule.insert_timeoff
@@ -187,7 +273,7 @@ def remove_avail(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return display_next_menu(flow_availability)
+        return display_next_menu(flow_timeoff)
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
@@ -195,8 +281,7 @@ def view_another_day(next_dict):
     flow_schedule = {"title": "Schedule",
                  "type": "sub",
                  "1":("Day", view_another_day, next_dict),
-                 "2":("Week", view_another_week, next_dict),
-                 "3":("Custom", view_another_custom, next_dict),
+                 "2":("Week", view_another_week, next_dict)
                 }
     #call schedule class method to display the schedule by day
     print("\n----------------------------------------------------\n"
@@ -208,7 +293,7 @@ def view_another_day(next_dict):
     print("\n----------------------------------------------------\n"
           "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
-    print("[ 2 ] Manage the availability")
+    print("[ 2 ] Manage timeoff")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
         return display_next_menu(flow_schedule)
@@ -219,8 +304,7 @@ def view_another_week(next_dict):
     flow_schedule = {"title": "Schedule",
                  "type": "sub",
                  "1":("Day", view_another_day, next_dict),
-                 "2":("Week", view_another_week, next_dict),
-                 "3":("Custom", view_another_custom, next_dict),
+                 "2":("Week", view_another_week, next_dict)
                 }
     #call schedule class method to display the schedule by week
     print("\n----------------------------------------------------\n"
@@ -232,25 +316,7 @@ def view_another_week(next_dict):
     print("\n----------------------------------------------------\n"
           "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
-    print("[ 2 ] Manage the availability")
-    usr_choice = input("\n--> ")
-    if usr_choice == '1':
-        return display_next_menu(flow_schedule)
-    elif usr_choice == '2':
-        return display_next_menu(next_dict)
-
-def view_another_custom(next_dict):
-    flow_schedule = {"title": "Schedule",
-                 "type": "sub",
-                 "1":("Day", view_another_day, next_dict),
-                 "2":("Week", view_another_week, next_dict),
-                 "3":("Custom", view_another_custom, next_dict),
-                }
-    # TODO: call schedule class method to display the customed schedule
-    print("\n----------------------------------------------------\n"
-          "                ", "Schedule", "\n")
-    print("[ 1 ] View another schedule")
-    print("[ 2 ] Manage the availability")
+    print("[ 2 ] Manage timeoff")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
         return display_next_menu(flow_schedule)
@@ -338,30 +404,30 @@ flow_notes = {"title": "Notes -- enter appointment id",
 
 # confirm appointment flow
 flow_confirm_appoint = {"title": "Confirm Appointments",
-                 "type": "sub",
-                 "1":("Confirm", another_confirm, flow_end),
-                 "2":("Reject", another_confirm, flow_end)
+                "type": "sub",
+                "1":("Confirm All", another_confirm_all, flow_end),
+                "2":("Confirm One", another_confirm_one, flow_end),
+                "3":("Reject One", another_confirm_rej, flow_end)
                 }
 
-# availability flow
-flow_availability = {"title": "Schedule",
+# timeoff flow
+flow_timeoff = {"title": "Schedule",
                  "type": "sub",
-                 "1":("Add", add_avail, flow_end),
-                 "2":("Remove", remove_avail, flow_end)
+                 "1":("Add", add_timeoff, flow_end),
+                 "2":("Remove", remove_timeoff, flow_end)
                 }
 # schedule flow
 flow_schedule = {"title": "Schedule",
                 "type": "sub",
-                "1":("Day", view_another_day, flow_availability),
-                "2":("Week", view_another_week, flow_availability),
-                "3":("Custom", view_another_custom, flow_availability),
+                "1":("Day", view_another_day, flow_timeoff),
+                "2":("Week", view_another_week, flow_timeoff)
                 }
 
 # appointment flow
 flow_appointments = {"title": "Appointments",
                  "type": "sub",
-                 "1":("Confirm", display_next_menu, flow_confirm_appoint),
-                 "2":("Notes", display_next_menu, flow_notes)
+                 "1":("Confirm", display_pending_appt, flow_confirm_appoint),
+                 "2":("Notes", display_confirmed_appt, flow_notes)
                 }
 
 flow_confirm_change = {"title": "Confirm edit",
@@ -393,6 +459,6 @@ flow_records = {"title": "Records",
 main_flow_gp = {"title": "GP MAIN MENU",
                 "type":"main",
                 "1":("View Schedule", display_next_menu, flow_schedule),
-                "2":("Manage availability", display_next_menu, flow_availability),
+                "2":("Manage timeoff", display_next_menu, flow_timeoff),
                 "3":("Manage Appointments", display_next_menu, flow_appointments),
                 "4":("Records", display_next_menu, flow_records)}
