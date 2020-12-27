@@ -108,7 +108,7 @@ def final_confirm_prescribe(next_dict):
     return display_next_menu(next_dict)
 
 def enter_note(next_dict):
-    # TODO: confirm the attendance before entering note, VALUE constraint
+    # TODO: √ confirm the attendance before entering note, VALUE constraint
     Appointment.change_status(globals.appt_id, "attending")
     
     # temporarily to display the change
@@ -127,7 +127,7 @@ def enter_note(next_dict):
     return display_next_menu(next_dict)
 
 def edit_prescibe(next_dict):
-    # TODO: take the input of field of drug
+    # TODO: update/delete parts of the prescription
     flow_dosage = {"title": "Dosage",
                  "type": "auto",
                  "next":(enter_dosage, flow_end)
@@ -137,7 +137,7 @@ def edit_prescibe(next_dict):
 def enter_freq(next_dict):
     print("\nPlease enter the frequency of taking drugs")
     print("--> ")
-    # TODO: display the prescription so far
+    # TODO: display the prescription so far?
     print(Prescription.select_patient(globals.patient_id)[1])
     return display_next_menu(next_dict)
 

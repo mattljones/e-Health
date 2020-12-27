@@ -486,7 +486,7 @@ class Appointment:
 
 if __name__ == "__main__":
     Appointment.change_status(51, 'confirmed')
-    Appointment.change_status(52, 'booked')
+    Appointment.change_status(52, 'confirmed')
     print(Appointment.select_GP_appt(16))
     # print(Appointment.select_availability('week', 16, '2020-12-27')[2])
     # print(Appointment.select_availability('day', 1, '2020-12-23'))
