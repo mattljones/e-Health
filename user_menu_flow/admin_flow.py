@@ -18,6 +18,7 @@ from system import globals
 from classes.gp import GP
 from classes.patient import Patient
 
+from user_menu_flow import gp_flow
 
 ############################### INPUT MENU PAGES ###########################
 
@@ -67,12 +68,12 @@ def view_gp(next_dict):
 
 
 def retrieve_gp_list(type):
-    # NOTE: display OR prompt user (not both in a single function)
+    # NOTE: Either display only OR rename function (e.g. choose_gp)
     '''
     Shows the list of GPs and allows choice from that list.
     '''
     df = GP.select_list(type)
-    # NOTE: I don't understand the fuction of the line below (commented for now)
+    # NOTE: I don't understand the purpose of the line below (commented for now)
     # df_raw = df[0]
     df_show = df[1]
     print("\n----------------------------------------------------\n"
@@ -309,6 +310,7 @@ def view_patient(next_dict):
 
 
 def confirm_patient(next_dict):
+    # NOTE: We could use a gp_flow func here
     '''
     Confirm pending patient registrations.
     '''
@@ -578,7 +580,7 @@ def pairing_patient(next_dict):
             new_gp = Patient.change_gp('specific', patient_id, new_gp_id=new_gp_id)
 
             if new_gp[0]:
-                print("\n\U00002705 Patient with ID {} has allocated to Dr {}.".format(patient_id, new_gp[1]))
+                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
                 return utils.display(next_dict)
 
             else:
@@ -601,11 +603,18 @@ def pairing_patient(next_dict):
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
-def schedules_main(next_dict):
+def schedules_main(type):
+    # NOTE: I suspect that this does the same thing as retrieve
+    # Using same code for now, substitute function name in dict if needed
     '''
     Returns the numbered list of GPs to choose from
     '''
-    return utils.display(next_dict)
+    df = GP.select_list(type)
+    df_show = df[1]
+    print("\n----------------------------------------------------\n"
+          "                ",'GP LIST', "\n")
+    print(df_show)
+    return int(input("\nPlease select a GP ID. \n--> "))
 
 def schedules_section_menu(next_dict):
     '''
@@ -617,6 +626,7 @@ def schedule_date(next_dict):
     '''
     Choice of schedule date period.
     '''
+
     return utils.display(next_dict)
 
 def view_schedule(next_dict):
