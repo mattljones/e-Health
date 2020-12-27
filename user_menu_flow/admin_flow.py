@@ -17,6 +17,7 @@ from system import globals
 
 from classes.gp import GP
 from classes.patient import Patient
+from classes.schedule import Schedule
 
 from user_menu_flow import gp_flow
 
@@ -603,44 +604,64 @@ def pairing_patient(next_dict):
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
-def schedules_main(type):
+def schedules_main(next_dict):
     # NOTE: I suspect that this does the same thing as retrieve
     # Using same code for now, substitute function name in dict if needed
     '''
     Returns the numbered list of GPs to choose from
     '''
-    df = GP.select_list(type)
+    df = GP.select_list('all')
     df_show = df[1]
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
     print(df_show)
-    return int(input("\nPlease select a GP ID. \n--> "))
+    global sched_id_choice
+    sched_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    return utils.display(next_dict)
+
+
 
 def schedules_section_menu(next_dict):
     '''
     Returns to the section menu.
     '''
-    
     return utils.display(view_schedule_flow)
 
-def schedule_date(next_dict):
-    '''
-    Choice of schedule date period.
-    '''
 
-    return utils.display(next_dict)
 
-def view_schedule(next_dict):
+def view_schedule_day(next_dict):
     '''
-    View a GP's current schedule.
+    View a GP's current schedule for a day.
     '''    
+    start_date = utils.get_start_date()
+    sched = Schedule.select(sched_id_choice, 'day', start_date)
+    print("\n----------------------------------------------------\n"
+          "                ",'DAILY SCHEDULE', "\n")
+    print(sched[1])
     return utils.display(next_dict)
+
+
+
+def view_schedule_week(next_dict):
+    '''
+    View a GP's current schedule for a week.
+    '''    
+    start_date = utils.get_start_date()
+    sched = Schedule.select(sched_id_choice, 'week', start_date)
+    print("\n----------------------------------------------------\n"
+          "                ",'WEEKLY SCHEDULE', "\n")
+    print(sched[1])
+    return utils.display(next_dict)
+
+
 
 def manage_availability(next_dict):
     '''
     Manage the availability of GPs.
     '''
     return utils.display(next_dict)
+
+
 
 def manage_time_off(next_dict):
     '''
@@ -929,15 +950,14 @@ view_schedule_final_actions = {
 schedule_length_flow = {
     "title": "SELECT SCHEDULE LENGTH",
     "type": "sub",
-    "1": ("Day", view_schedule, view_schedule_final_actions),
-    "2": ("Week", view_schedule, view_schedule_final_actions),
-    "3": ("Custom", view_schedule, view_schedule_final_actions)
+    "1": ("Day", view_schedule_day, view_schedule_final_actions),
+    "2": ("Week", view_schedule_week, view_schedule_final_actions),
 }
 
 view_schedule_flow = {
     "title": "VIEW AND MANAGE SCHEDULE",
     "type": "sub",
-    "1": ("View GP Schedule", schedule_date, schedule_length_flow),
+    "1": ("View GP Schedule", empty_method, schedule_length_flow),
     "2": ("Manage GP Availability", manage_availability, manage_availability_flow)
 }
 
