@@ -34,7 +34,7 @@ def edit_notes(next_dict):
     record.appointment_notes[apt_id] = new_note
     record.update()
     print(Record.select(globals.patient_id)[4])
-    return display_prescription(next_dict)
+    return display_next_menu(next_dict)
 
 def simple_note(next_dict):
     flow_submit_note = {"title": "Submit Note",
@@ -101,24 +101,11 @@ def edit_cc(next_dict):
     else:
         print("\n【Patient Table】\n", Record.select(globals.patient_id)[2])
         print("\n【Patient Table】\n", Record.select(globals.patient_id)[4])
-    return display_prescription(next_dict)
+    return display_next_menu(next_dict)
 
 def final_confirm_prescribe(next_dict):
     print(Prescription.select_patient(globals.patient_id)[1])
     return display_next_menu(next_dict)
-
-def display_prescription(next_dict):
-    # TODO: display notes & prescription
-    pass
-    return display_next_menu(next_dict)
-
-def empty_prescription(next_dict):
-    # TODO: take a blank prescription
-    return display_prescription(next_dict)
-
-def empty_note(next_dict):
-    # TODO: take a blank note
-    return display_prescription(next_dict)
 
 def enter_note(next_dict):
     # TODO: confirm the attendance before entering note, VALUE constraint
@@ -137,7 +124,7 @@ def enter_note(next_dict):
     # TODO: display the note
     print("The note should be shown here")
 
-    return display_prescription(next_dict)
+    return display_next_menu(next_dict)
 
 def edit_prescibe(next_dict):
     # TODO: take the input of field of drug
@@ -152,7 +139,7 @@ def enter_freq(next_dict):
     print("--> ")
     # TODO: display the prescription so far
     print(Prescription.select_patient(globals.patient_id)[1])
-    return display_prescription(next_dict)
+    return display_next_menu(next_dict)
 
 def enter_dosage(next_dict):
     print("\nPlease enter the dosage")
@@ -310,8 +297,6 @@ def add_timeoff(next_dict):
                  "1":("Add", add_timeoff, next_dict),
                  "2":("Remove", remove_timeoff, next_dict)
                 }
-    # TODO: add availability
-    # TODO: fix Schedule.insert_timeoff
     start_date = utils.get_start_date()
     end_date = utils.get_end_date()
     Schedule.insert_timeoff(globals.usr_id, 'time off', start_date, end_date)
@@ -373,7 +358,7 @@ def view_another_week(next_dict):
         return display_next_menu(next_dict)
 
 def view_records(next_dict):
-    # TODO: display 10 latest clients
+    # TODO: display 10 latest clients?
     print("\nPlease enter patient id you want to search:")
     patient_id = input("--> ")
     globals.patient_id = patient_id
@@ -411,23 +396,11 @@ flow_check_prescription = {"title": "Check prescription",
                  "2":("Edit", edit_prescibe, flow_end)
             }
 
-# frequency flow
-# flow_freq = {"title": "Frequency",
-#                  "type": "auto",
-#                  "next":(enter_freq, flow_check_prescription)
-#             }
-
-# dosage flow
-# flow_dosage = {"title": "Dosage",
-#                  "type": "auto",
-#                  "next":(enter_dosage, flow_freq)
-#                 }
-
 # prescription flow
 flow_prescription = {"title": "Prescription",
                  "type": "sub",
                  "1":("Enter field for prescibed drug", enter_prescription, flow_check_prescription),
-                 "2":("Skip", empty_prescription, flow_final_confirm)
+                 "2":("Skip", display_next_menu, flow_final_confirm)
                  }
 
 # submit note flow
@@ -442,7 +415,7 @@ flow_submit_note = {"title": "Submit Note",
 flow_confirm_attendance = {"title": "Confirm Attendance",
                  "type": "sub",
                  "1":("Yes", enter_note, flow_submit_note),
-                 "2":("No", empty_note, flow_end)
+                 "2":("No", display_next_menu, flow_end)
                 }
 
 # notes flow
