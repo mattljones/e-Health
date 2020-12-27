@@ -782,24 +782,22 @@ def delete_appointment_day(next_dict):
 
 
 
-###### APPOINTMENT SUMMARIES FUNCTIONS ######
+###### RECORDS FUNCTIONS ######
+
+#NOTE: This whole section has been simplified from the flow diagram, 
+#      with 'summaries' changed to 'records'. Now, only choice to be
+#      made is selecting the patient, which is done within the one 
+#      function.
 
 
 
-def summaries_main(next_dict):
+def records_main(next_dict):
     '''
-    Immediate actions when the view appointment summaries option is chosen. 
-    '''
-
-
-
-def appointment_summary_date(next_dict):
-    '''
-    Returns the appointment summaries based on the user choice.
+    Allows the selection of a patient's medical records. 
     '''
     return utils.display(next_dict)
 
-    
+
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
@@ -1084,16 +1082,8 @@ manage_appointment_flow = {
 appointment_summary_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View a Different Appointment", appointment_summary_date, empty_dict),
+    "1": ("View a Different Appointment", empty_method, empty_dict),
     "2": ("View a Different Patient", summaries_main, empty_dict),
-}
-
-appointment_summary_date_flow = {
-    "title": "SELECT APPOINTMENT DATE",
-    "type": "sub",
-    "1": ("Day", appointment_summary_date, appointment_summary_final_actions),
-    "2": ("Week", appointment_summary_date, appointment_summary_final_actions),
-    "3": ("Custom", appointment_summary_date, appointment_summary_final_actions)
 }
 
 ###### MAIN MENU ####
@@ -1106,7 +1096,7 @@ main_flow_admin = {
     "3":("Manage GP-Patient Pairings", empty_method, gp_patient_pair_flow),
     "4":("Manage GP Schedules", schedules_main, view_schedule_flow),
     "5":("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
-    "6":("View Appointment Summaries", summaries_main, appointment_summary_date_flow)
+    "6":("View Appointment Summaries", summaries_main, appointment_summary_final_actions)
 }
 
 
