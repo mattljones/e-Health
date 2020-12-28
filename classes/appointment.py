@@ -84,8 +84,6 @@ class Appointment:
         query = """UPDATE booking 
                    SET booking_notes = '{}' 
                    WHERE booking_id = {}""".format(self.booking_notes, self.booking_id)
-        
-        print(query)
         u.db_execute(query)
 
     # Need to add  Error handling, check if the appointment actually exists
@@ -485,8 +483,8 @@ if __name__ == "__main__":
 
     Appointment.change_status(51, 'confirmed')
     Appointment.change_status(52, 'confirmed')
-    confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
-    print(confirmed_id)
+    # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
+    # print(confirmed_id)
 
     # gp_note = "test test test"
     # appointment = Appointment(booking_id=51, gp_id=51)
@@ -515,7 +513,8 @@ if __name__ == "__main__":
     #                   'booking agenda edit test 3', 'offline', ' ', 1, 2).book())
 
     # THIS WORKS! : Testing Update Method
-    Appointment(booking_id=1, booking_notes='Testing updating').update()
+    # Appointment(booking_id=16, booking_notes='Testing updating').update()
+    # print(Appointment.select(16)[1].loc[0,"Notes [4]"])
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
     # print(Appointment.select(53)[2])

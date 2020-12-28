@@ -43,14 +43,14 @@ def simple_note(next_dict):
                  "2":("No", simple_note, flow_prescription)
                  }
     
-    record = Record.select(globals.patient_id)[0]
+
     print("\nPlase input the new note")
     new_note = input("--> ")
-    record.appointment_notes[globals.appt_id] = new_note
-    record.update()
+    Appointment(booking_id=globals.appt_id, booking_notes=new_note).update()
     
     # TODO: display the note
     print("The note should be shown here")
+    print(Appointment.select(globals.appt_id)[1].loc[0,"Notes [4]"])
 
     print("\n----------------------------------------------------\n"
         "                ", "Submit Note?", "\n")
@@ -121,7 +121,7 @@ def enter_note(next_dict):
 
     print("\nPlease enter your note")
     gp_note = input("--> ")
-
+    Appointment(booking_id=globals.appt_id, booking_notes=gp_note).update()
     # DEBUG
     # appointment = Appointment(booking_id=globals.appt_id, gp_id=globals.usr_id)
     # appointment.booking_notes = gp_note
