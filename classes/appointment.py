@@ -80,11 +80,41 @@ class Appointment:
     # Need to add Error handling, check if the appointment actually exists
     def update(self):
 
+        # self.booking_id = booking_id
+        # self.booking_start_time = booking_start_time
+        # self.booking_status = booking_status
+        # self.booking_agenda = booking_agenda
+        # self.booking_type = booking_type
+        # self.booking_notes = booking_notes
+        # self.gp_id = gp_id
+        # self.patient_id = patient_id
+
         # Updating booking notes
         query = """UPDATE booking 
                    SET booking_notes = '{}' 
                    WHERE booking_id = {}""".format(self.booking_notes, self.booking_id)
-        print(query)
+
+        u.db_execute(query)
+
+        # Updating agenda
+        query = """UPDATE booking 
+                   SET booking_agenda = '{}' 
+                   WHERE booking_id = {}""".format(self.booking_agenda, self.booking_id)
+
+        u.db_execute(query)
+
+        # Updating booking_type
+        query = """UPDATE booking 
+                   SET booking_type = '{}' 
+                   WHERE booking_id = {}""".format(self.booking_type, self.booking_id)
+
+        u.db_execute(query)
+
+        # Updating booking_time
+        query = """UPDATE booking 
+                   SET booking_start_time = '{}' 
+                   WHERE booking_id = {}""".format(self.booking_start_time, self.booking_id)
+
         u.db_execute(query)
 
     # Need to add  Error handling, check if the appointment actually exists
@@ -132,11 +162,14 @@ class Appointment:
         df_object['Notes'] = df_object['Notes'].str.wrap(20)
         df_object['Patient'] = df_object['Patient'].str.wrap(10)
         df_object['GP'] = df_object['GP'].str.wrap(15)
+
+        df_print_notes = df_object[['Apt. ID', 'Patient', 'Notes']].to_markdown(tablefmt="grid", index=False)
+
         df_object.columns = ['Apt. ID []', 'GP []', 'Patient []', 'Date []', 'Status [1]', 'Status change time []',
                              'Agenda [2]', 'Type [3]', 'Notes [4]']
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        return appointment_instance, df_object, df_print
+        return appointment_instance, df_object, df_print, df_print_notes
 
     # Display GPs bookings for upcoming time span
     @staticmethod
@@ -504,10 +537,10 @@ if __name__ == "__main__":
     #                   'booking agenda edit test 3', 'offline', ' ', 1, 2).book())
 
     # THIS WORKS! : Testing Update Method
-    Appointment(booking_id=1, booking_notes='Testing updating').update()
+    # Appointment(booking_id=1, booking_notes='Testing updating').update()
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    # print(Appointment.select(53)[2])
+    print(Appointment.select(52)[3])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 1, '2020-12-13')[3])
