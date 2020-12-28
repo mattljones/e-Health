@@ -485,9 +485,16 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
-    Appointment.change_status(51, 'confirmed')
-    Appointment.change_status(52, 'confirmed')
-    print(Appointment.select_GP_appt(16))
+    # tmp = Appointment.select_GP_pending(16)[0].index.values.size
+    # print(tmp)
+    # tmp = Appointment.select_GP_pending(16)[0]['Apt. ID'].values
+    # usr_input = '['+'51'+']'
+    # print(usr_input in tmp)
+    # print(Appointment.select(51)[1].loc[0,"Apt. ID []"])
+    # print(Appointment.select(51)[1].loc[0,"Notes [4]"])
+    Appointment.change_status(51, 'booked')
+    Appointment.change_status(52, 'booked')
+    # print(Appointment.select_GP_appt(16))
     # print(Appointment.select_availability('week', 16, '2020-12-27')[2])
     # print(Appointment.select_availability('day', 1, '2020-12-23'))
     pass
