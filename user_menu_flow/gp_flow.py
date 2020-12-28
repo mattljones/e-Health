@@ -47,10 +47,7 @@ def simple_note(next_dict):
     print("\nPlase input the new note")
     new_note = input("--> ")
     Appointment(booking_id=globals.appt_id, booking_notes=new_note).update()
-    
-    # TODO: display the note
-    print("The note should be shown here")
-    print(Appointment.select(globals.appt_id)[1].loc[0,"Notes [4]"])
+    print(Appointment.select(globals.appt_id)[3])
 
     print("\n----------------------------------------------------\n"
         "                ", "Submit Note?", "\n")
@@ -129,10 +126,7 @@ def enter_note(next_dict):
     # Record.select(globals.patient_id)[0]
     # record.appointment_notes[globals.appt_id] = gp_note
     # record.update()
-
-    # TODO: display the note
-    print("The note should be shown here")
-    print(Appointment.select(globals.appt_id)[1].loc[0,"Notes [4]"])
+    print(Appointment.select(globals.appt_id)[3])
 
     return display_next_menu(next_dict)
 

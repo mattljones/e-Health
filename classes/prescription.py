@@ -86,7 +86,7 @@ class Prescription:
                                     WHERE
                                         patient_id = {}
                                     AND
-                                        booking_status = 'attending';'''.format(patient_id)
+                                        booking_status = 'attended';'''.format(patient_id)
         # Execute query
         df_object = u.db_read_query(select_patient_query)
 
