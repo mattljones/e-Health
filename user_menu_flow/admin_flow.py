@@ -967,8 +967,14 @@ def appointments_section_menu(next_dict):
 
 def view_appointment(next_dict):
     '''
-    View appointments for a GP.
+    View all appointments for a specific GP after the current time.
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'APPOINTMENTS', "\n")
+
+    apps = Appointment.select_GP_appt(gp_id_choice)
+    print(apps)
+
     return utils.display(next_dict)
 
 
@@ -981,14 +987,14 @@ def add_appointment(next_dict):
 
 def choose_appointment_day(next_dict):
     '''
-    Choose the appointment from a day of available slots
+    Choose the appointment from a day of available slots.
     '''
     return utils.display(next_dict)
 
 
 def choose_appointment_week(next_dict):
     '''
-    Choose the appointment from a week of available slots
+    Choose the appointment from a week of available slots.
     '''
     return utils.display(next_dict)
 
@@ -1220,9 +1226,9 @@ manage_time_off_flow = {
 }
 
 manage_availability_flow = {
-    "title": "MANAGE AVIALABILITY",
+    "title": "VIEW AND MANAGE AVAILABILITY",
     "type": "sub",
-    "1": ("Manage Upcoming Appointments", view_appointment, empty_dict),
+    "1": ("View Upcoming Appointments", view_appointment, empty_dict),
     "2": ("Manage Upcoming Time Off", empty_method, manage_time_off_flow)
 }
 
