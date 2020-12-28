@@ -126,31 +126,30 @@ def enter_note(next_dict):
 
     return display_next_menu(next_dict)
 
-def edit_prescibe(next_dict):
-    # TODO: update/delete parts of the prescription
-    flow_dosage = {"title": "Dosage",
-                 "type": "auto",
-                 "next":(enter_dosage, flow_end)
-                }
-    return display_next_menu(flow_dosage)
+# def edit_prescibe(next_dict):
+#     # TODO: update/delete parts of the prescription
+#     flow_dosage = {"title": "Dosage",
+#                  "type": "auto",
+#                  "next":(enter_dosage, flow_end)
+#                 }
+#     return display_next_menu(flow_dosage)
 
-def enter_freq(next_dict):
-    print("\nPlease enter the frequency of taking drugs")
-    print("--> ")
-    # TODO: display the prescription so far?
-    print(Prescription.select_patient(globals.patient_id)[1])
-    return display_next_menu(next_dict)
+# def enter_freq(next_dict):
+#     print("\nPlease enter the frequency of taking drugs")
+#     print("--> ")
+#     print(Prescription.select_patient(globals.patient_id)[1])
+#     return display_next_menu(next_dict)
 
-def enter_dosage(next_dict):
-    print("\nPlease enter the dosage")
-    print("--> ")
-    return display_next_menu(next_dict)
+# def enter_dosage(next_dict):
+#     print("\nPlease enter the dosage")
+#     print("--> ")
+#     return display_next_menu(next_dict)
 
 def enter_prescription(next_dict):
-    flow_check_prescription = {"title": "Check prescription",
+    flow_drug = {"title": "Add drugs?",
                  "type": "sub",
-                 "1":("Confirm", display_next_menu, flow_drug),
-                 "2":("Edit", edit_prescibe, flow_end)
+                 "1":("Yes", enter_prescription, flow_end),
+                 "2":("No", final_confirm_prescribe, flow_end)
             }
     print(Prescription.select_drug_list()[1])
     prescription = Prescription()
@@ -168,7 +167,7 @@ def enter_prescription(next_dict):
     prescription.insert()
     print(Prescription.select_patient(globals.patient_id)[1])
 
-    return display_next_menu(flow_check_prescription)
+    return display_next_menu(flow_drug)
 
 def enter_appoint_id(next_dict):
     # TODO: return to home page
@@ -199,11 +198,15 @@ def display_confirmed_appt(next_dict):
     return display_next_menu(next_dict)
 
 def display_pending_appt(next_dict):
-    # TODO: how to tell if there is an unconfirmed appointment
-    # print("\nYour do not have any pending appointment!")
-    print("\nYour pending appointments: ")
-    print(Appointment.select_GP_pending(globals.usr_id)[1])
-    return display_next_menu(next_dict)
+    no_pending_flag = Appointment.select_GP_pending(globals.usr_id)[0].index.values.size
+    if no_pending_flag == 0:
+        print("\nYour do not have any pending appointment!")
+        return display_next_menu(flow_end)
+    else:
+        print(no_pending_flag)
+        print("\nYour pending appointments: ")
+        print(Appointment.select_GP_pending(globals.usr_id)[1])
+        return display_next_menu(next_dict)
 
 def another_confirm_rej(next_dict):
     flow_confirm_appoint = {"title": "Confirm Appointments",
@@ -213,9 +216,15 @@ def another_confirm_rej(next_dict):
                  "3":("Reject One", another_confirm_rej, next_dict)
                 }
 
-    print("\nPleas enter the id of appointment you want to reject")
-    reject_id = input("\n--> ")
-    Appointment.change_status(reject_id, "rejected")
+    print("\nPleas enter the id of appointment you want to confirm")
+    confirm_id = input("\n--> ")
+    validate_confirm_id = '['+ confirm_id +']'
+    pending_id = Appointment.select_GP_pending(16)[0]['Apt. ID'].values
+    while validate_confirm_id not in pending_id:
+        print("The id does not exit in the pending list, try again!")
+        confirm_id = input("\n--> ")
+        validate_confirm_id = '['+ confirm_id +']'
+    Appointment.change_status(confirm_id, "rejected")
     print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\n----------------------------------------------------\n"
@@ -224,7 +233,7 @@ def another_confirm_rej(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return display_next_menu(flow_confirm_appoint)
+        return display_pending_appt(flow_confirm_appoint)
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
@@ -238,6 +247,12 @@ def another_confirm_one(next_dict):
 
     print("\nPleas enter the id of appointment you want to confirm")
     confirm_id = input("\n--> ")
+    validate_confirm_id = '['+ confirm_id +']'
+    pending_id = Appointment.select_GP_pending(16)[0]['Apt. ID'].values
+    while validate_confirm_id not in pending_id:
+        print("The id does not exit in the pending list, try again!")
+        confirm_id = input("\n--> ")
+        validate_confirm_id = '['+ confirm_id +']'
     Appointment.change_status(confirm_id, "confirmed")
     print(Appointment.select_GP_appt(globals.usr_id))
 
@@ -247,7 +262,7 @@ def another_confirm_one(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     if usr_choice == '1':
-        return display_next_menu(flow_confirm_appoint)
+        return display_pending_appt(flow_confirm_appoint)
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
@@ -376,35 +391,34 @@ flow_end = {"title": "CONTINUE E-HEALTH OR LOGOUT ?",
               "type":"sub"}
 
 # final confirm notes & prescription flow
-flow_final_confirm = {"title": "Final confrim notes & prescription",
-                 "type": "sub",
-                 "1":("Yes", display_next_menu, flow_end),
-                 "2":("No", edit_prescibe, flow_end)
-            }
+# flow_final_confirm = {"title": "Final confrim notes & prescription",
+#                  "type": "sub",
+#                  "1":("Yes", display_next_menu, flow_end),
+#                  "2":("No", edit_prescibe, flow_end)
+#             }
 
 # add drugs flow
 flow_drug = {"title": "Add drugs?",
                  "type": "sub",
                  "1":("Yes", enter_prescription, flow_end),
-                 "2":("No", final_confirm_prescribe, flow_final_confirm)
+                 "2":("No", final_confirm_prescribe, flow_end)
             }
 
 # prescription check flow
-flow_check_prescription = {"title": "Check prescription",
-                 "type": "sub",
-                 "1":("Confirm", display_next_menu, flow_drug),
-                 "2":("Edit", edit_prescibe, flow_end)
-            }
+# flow_check_prescription = {"title": "Check prescription",
+#                  "type": "sub",
+#                  "1":("Confirm", display_next_menu, flow_drug),
+#                  "2":("Edit", edit_prescibe, flow_end)
+#             }
 
 # prescription flow
 flow_prescription = {"title": "Prescription",
                  "type": "sub",
-                 "1":("Enter field for prescibed drug", enter_prescription, flow_check_prescription),
-                 "2":("Skip", display_next_menu, flow_final_confirm)
+                 "1":("Enter field for prescibed drug", enter_prescription, flow_drug),
+                 "2":("Skip", display_next_menu, flow_end)
                  }
 
 # submit note flow
-# TODO: public notes?
 flow_submit_note = {"title": "Submit Note",
                  "type": "sub",
                  "1":("Submit", display_next_menu, flow_prescription),
@@ -419,7 +433,7 @@ flow_confirm_attendance = {"title": "Confirm Attendance",
                 }
 
 # notes flow
-flow_notes = {"title": "Notes -- enter appointment id",
+flow_notes = {"title": "Notes -- enter appointment id?",
               "type": "auto",
               "next":(enter_appoint_id, flow_confirm_attendance)
             }
