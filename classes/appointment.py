@@ -80,18 +80,11 @@ class Appointment:
     # Need to add Error handling, check if the appointment actually exists
     def update(self):
 
+        # Updating booking notes
         query = """UPDATE booking 
-                     SET booking_start_time = '{}', booking_status = '{}', 
-                     booking_status_change_time = '{}', booking_agenda = '{}', booking_type = '{}',
-                         booking_notes = '{}', gp_id = {}, gp_last_name = '{}', patient_id = {}
-                     WHERE booking_id = {}""".format(self.booking_start_time,
-                                                     self.booking_status,
-                                                     dt.datetime.today().strftime("%Y-%m-%d %H:%M"),
-                                                     self.booking_agenda, self.booking_type,
-                                                     self.booking_notes, self.gp_id,
-                                                     Appointment.get_gp_last_name(self.gp_id),
-                                                     self.patient_id, self.booking_id)
-
+                   SET booking_notes = '{}' 
+                   WHERE booking_id = {}""".format(self.booking_notes, self.booking_id)
+        print(query)
         u.db_execute(query)
 
     # Need to add  Error handling, check if the appointment actually exists
@@ -504,8 +497,7 @@ if __name__ == "__main__":
     #                   'booking agenda edit test 3', 'offline', ' ', 1, 2).book())
 
     # THIS WORKS! : Testing Update Method
-    # Appointment(53, '2020-12-31 16:00', 'confirmed',
-    #              'booking agenda updating to Confirmned', 'online', ' ', 10, 10).update()
+    Appointment(booking_id=1, booking_notes='Testing updating').update()
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
     # print(Appointment.select(53)[2])
@@ -542,4 +534,4 @@ if __name__ == "__main__":
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
 
-    print(Appointment.select_GP_confirmed(2)[0])
+    # print(Appointment.select_GP_confirmed(2)[0])
