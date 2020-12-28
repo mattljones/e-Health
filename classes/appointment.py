@@ -520,7 +520,7 @@ if __name__ == "__main__":
     # print(Appointment.select(16)[1].loc[0,"Notes [4]"])
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    print(Appointment.select(51)[3])
+    # print(Appointment.select(51)[3])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 1, '2020-12-13')[3])
@@ -555,7 +555,12 @@ if __name__ == "__main__":
     # Appointment.confirm_all_GP_pending(2)
 
 
-    # tmp = Appointment.select_GP_confirmed(16)[2]
-    # print(tmp)
+    tmp = Appointment.select_GP_confirmed(16)[2]
     
+    # print(tmp)
+    # row = tmp.loc[tmp['Apt. ID'] == '[51]']
+    # print(int(row['patient_id'].values))
+
+    id = int(tmp.loc[tmp['Apt. ID'] == '[51]']['patient_id'].values)
+    print(id)
     # print(Appointment.select_GP_confirmed(2)[0])

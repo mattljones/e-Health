@@ -161,6 +161,10 @@ def enter_prescription(next_dict):
     
     print("\nPlease enter the field for prescibed drug")
     prescription.drug_id = input("--> ")
+    while prescription.drug_id not in [str(i) for i in range(1, 21)]:
+        print("Invalid input, please try again!")
+        print("\nPlease enter the field for prescibed drug")
+        prescription.drug_id = input("--> ")
 
     print("\nPlease enter the dosage")
     prescription.drug_dosage = input("--> ")
@@ -185,10 +189,12 @@ def enter_appoint_id(next_dict):
         print("The id does not exit in the confirmed list, try again!")
         appt_id = input("\n--> ")
         validate_appt_id = '['+ appt_id +']'
-
-    # patient_id = 1
-    # globals.patient_id = patient_id
     globals.appt_id = appt_id
+    df = Appointment.select_GP_confirmed(globals.usr_id)[2]
+    appt_id = "[" + appt_id + "]"
+    patient_id = int(df.loc[df['Apt. ID'] == appt_id]['patient_id'].values)
+    globals.patient_id = patient_id
+
     return display_next_menu(next_dict)
 
 ############################ SEQUENTIAL STEPS MENUS ########################
