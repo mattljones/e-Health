@@ -540,7 +540,7 @@ if __name__ == "__main__":
     # Appointment(booking_id=1, booking_notes='Testing updating').update()
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    print(Appointment.select(52)[3])
+    # print(Appointment.select(52)[3])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 1, '2020-12-13')[3])
