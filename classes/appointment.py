@@ -131,11 +131,14 @@ class Appointment:
         df_object['Notes'] = df_object['Notes'].str.wrap(20)
         df_object['Patient'] = df_object['Patient'].str.wrap(10)
         df_object['GP'] = df_object['GP'].str.wrap(15)
+
+        df_print_notes = df_object[['Apt. ID', 'Patient', 'Notes']].to_markdown(tablefmt="grid", index=False)
+
         df_object.columns = ['Apt. ID []', 'GP []', 'Patient []', 'Date []', 'Status [1]', 'Status change time []',
                              'Agenda [2]', 'Type [3]', 'Notes [4]']
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        return appointment_instance, df_object, df_print
+        return appointment_instance, df_object, df_print, df_print_notes
 
     # Display GPs bookings for upcoming time span
     @staticmethod
@@ -517,7 +520,7 @@ if __name__ == "__main__":
     # print(Appointment.select(16)[1].loc[0,"Notes [4]"])
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    # print(Appointment.select(53)[2])
+    print(Appointment.select(51)[3])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 1, '2020-12-13')[3])
