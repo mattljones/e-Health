@@ -260,8 +260,8 @@ class Appointment:
     @staticmethod
     def select_GP_confirmed(gp_id):
 
-        pending_query = """SELECT booking_id AS 'Apt. ID', p.patient_first_name AS 'Patient + ID',
-                   p.patient_last_name AS 'P. Last Name', b.patient_id, booking_start_time AS 'Date', booking_status 
+        pending_query = """SELECT booking_id AS 'Apt. ID', b.patient_id, p.patient_first_name AS 'Patient + ID',
+                   p.patient_last_name AS 'P. Last Name', booking_start_time AS 'Date', booking_status 
                    AS 'Status', booking_status_change_time AS 'Status change time',
                    booking_agenda AS 'Agenda',booking_type AS 'Type'
                    FROM booking b
@@ -270,17 +270,20 @@ class Appointment:
                    AND b.gp_id =={}""".format(gp_id)
 
         df_object = u.db_read_query(pending_query)
+
         df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
                                     df_object['P. Last Name'].astype(str) + ' (' + \
                                     df_object['patient_id'].astype(str) + ')'
 
         df_object['Apt. ID'] = "[" + df_object['Apt. ID'].astype(str) + "]"
+
         # Dropping no longer needed columns
+        df_with_p_id = df_object
         df_object = df_object.drop(columns=['P. Last Name', "patient_id"])
         df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        return df_print
+        return df_print, df_object, df_with_p_id
 
     # Displays the DF of all pending appointment for a specific GP after the current time
     @staticmethod
@@ -485,9 +488,9 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
-    Appointment.change_status(51, 'confirmed')
-    Appointment.change_status(52, 'booked')
-    print(Appointment.select_GP_appt(16))
+    # Appointment.change_status(51, 'confirmed')
+    # Appointment.change_status(52, 'booked')
+    # print(Appointment.select_GP_appt(16))
     # print(Appointment.select_availability('week', 16, '2020-12-27')[2])
     # print(Appointment.select_availability('day', 1, '2020-12-23'))
     pass
@@ -538,3 +541,5 @@ if __name__ == "__main__":
 
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
+
+    print(Appointment.select_GP_confirmed(2)[0])
