@@ -710,8 +710,8 @@ def add_time_off_day(next_dict):
 
     if user_confirmation == '1':
         # Add timeoff to db
-        print("\n\U00002705 Time off successfully added.")
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+        print("\n\U00002705 Time off successfully added.")
         return utils.display(next_dict)
         
     else:
@@ -765,8 +765,8 @@ def add_time_off_week(next_dict):
 
     if user_confirmation == '1':
         # Add timeoff to db
-        print("\n\U00002705 Time off successfully added.")
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+        print("\n\U00002705 Time off successfully added.")
         return utils.display(next_dict)
         
     else:
@@ -815,8 +815,8 @@ def add_time_off_custom(next_dict):
 
     if user_confirmation == '1':
         # Add timeoff to db
-        print("\n\U00002705 Time off successfully added.")
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+        print("\n\U00002705 Time off successfully added.")
         return utils.display(next_dict)
 
     else:
@@ -832,19 +832,124 @@ def remove_time_off(next_dict):
 
 
 def remove_time_off_custom(next_dict):
+    # TODO: Request timeoff_type=None from classes team 
     '''
     Remove a custom amount of time off to a GP's schedule.
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'REMOVE TIME OFF - CUSTOM', "\n")
 
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off \n [ 3 ] Both")
+    timeoff_type_input = input('\n-->')
 
-    return utils.display(next_dict)   
+    while timeoff_type_input not in ('1', '2', '3'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
+    elif timeoff_type_input == '3':
+        timeoff_type = 'all time off'
+
+    # Prompt user for time off range
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to remove {} from {} to {}?\n'.format(timeoff_type, start_date, end_date))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Remove timeoff of a specific type from db
+        if timeoff_type_input in ('1', '2'):
+            Schedule.delete_timeoff(gp_id_choice, 'custom', timeoff_type, start_date, end_date)
+            print("\n\U00002705 Time off successfully removed.")
+
+        # Remove timeoff of both types from db
+        elif timeoff_type_input == '3':
+            Schedule.delete_timeoff(gp_id_choice, 'custom', 'sick leave', start_date, end_date)
+            Schedule.delete_timeoff(gp_id_choice, 'custom', 'time off', start_date, end_date)
+        
+        # Proceed with next section
+        return utils.display(next_dict)
+
+    else:
+        # Return to main remove time off menu
+        return remove_time_off(next_dict)
 
 
 def remove_time_off_all(next_dict):
     '''
     Remove time off from a GP's schedule.
     '''
-    return utils.display(next_dict)
+    print("\n----------------------------------------------------\n"
+          "                ",'REMOVE TIME OFF - ALL', "\n")
+
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off \n [ 3 ] Both")
+    timeoff_type_input = input('\n-->')
+
+    while timeoff_type_input not in ('1', '2', '3'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
+    elif timeoff_type_input == '3':
+        timeoff_type = 'all time off'
+
+    # Prompt user for time off range
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to remove {} from the schedule?\n'.format(timeoff_type))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Remove timeoff of a specific type from db
+        if timeoff_type_input in ('1', '2'):
+            Schedule.delete_timeoff(gp_id_choice, 'all', timeoff_type)
+            print("\n\U00002705 Time off successfully removed.")
+
+        # Remove timeoff of both types from db
+        elif timeoff_type_input == '3':
+            Schedule.delete_timeoff(gp_id_choice, 'all', 'sick leave')
+            Schedule.delete_timeoff(gp_id_choice, 'all', 'time off')
+        
+        # Proceed with next section
+        return utils.display(next_dict)
+
+    else:
+        # Return to main remove time off menu
+        return remove_time_off(next_dict)
 
 
 def schedule_date(next_dict):
