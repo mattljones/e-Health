@@ -270,7 +270,7 @@ def choose_patient(type, patient_last_name=None):
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
     
-
+# NOTE: Rename this edit_patient?
 def view_patient(next_dict):
     '''
     View a Patient Account.
@@ -520,7 +520,7 @@ def pairing_patient(next_dict):
         print("\n----------------------------------------------------\n"
         "                ",'ENTER IDS', "\n")
         id_choice = input('''
-        Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
+Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
         '-->')
         patient_ids = id_choice.replace(' ', '').split(',')
 
@@ -969,9 +969,6 @@ def view_appointment(next_dict):
     '''
     View all appointments for a specific GP after the current time.
     '''
-    print("\n----------------------------------------------------\n"
-          "                ",'APPOINTMENTS', "\n")
-
     apps = Appointment.select_GP_appt(gp_id_choice)
     print(apps)
 
@@ -1003,6 +1000,24 @@ def appointment_by_patient(next_dict):
     '''
     Find a patient's upcoming appointments.
     '''
+    # NOTE: Reusing code from view_patient (which actually also handles updating)
+
+    # Create a shortlist by last name
+    print("\n----------------------------------------------------\n"
+          "                ",'SELECT PATIENT', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+
+    # Select ID of the patient of interest 
+    selected_patient_id = input('\nPlease choose a patient ID\n-->')
+    
+    # Select all upcoming appointments for this patient ID
+    appts = Appointment.select_patient('upcoming', selected_patient_id)
+
+    # Print the appointments information
+    print(appts[1])
+
     return utils.display(next_dict)
 
 
