@@ -91,7 +91,7 @@ class Appointment:
                                                      self.booking_notes, self.gp_id,
                                                      Appointment.get_gp_last_name(self.gp_id),
                                                      self.patient_id, self.booking_id)
-
+        print(query)
         u.db_execute(query)
 
     # Need to add  Error handling, check if the appointment actually exists
@@ -488,6 +488,18 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
+
+    Appointment.change_status(51, 'confirmed')
+    Appointment.change_status(52, 'confirmed')
+    confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
+    print(confirmed_id)
+
+    # gp_note = "test test test"
+    # appointment = Appointment(booking_id=51, gp_id=51)
+    # appointment.booking_notes = gp_note
+    # appointment.update()
+    # print(Appointment.select(globals.appt_id)[1].loc[0,"Notes [4]"])
+
     # tmp = Appointment.select_GP_pending(16)[0].index.values.size
     # print(tmp)
     # tmp = Appointment.select_GP_pending(16)[0]['Apt. ID'].values
@@ -495,8 +507,6 @@ if __name__ == "__main__":
     # print(usr_input in tmp)
     # print(Appointment.select(51)[1].loc[0,"Apt. ID []"])
     # print(Appointment.select(51)[1].loc[0,"Notes [4]"])
-    Appointment.change_status(51, 'booked')
-    Appointment.change_status(52, 'booked')
     # print(Appointment.select_GP_appt(16))
     # print(Appointment.select_availability('week', 16, '2020-12-27')[2])
     # print(Appointment.select_availability('day', 1, '2020-12-23'))
@@ -549,4 +559,7 @@ if __name__ == "__main__":
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
 
-    print(Appointment.select_GP_confirmed(2)[0])
+    # tmp = Appointment.select_GP_confirmed(16)[2]
+    # print(tmp)
+    
+    
