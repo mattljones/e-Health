@@ -949,8 +949,10 @@ def remove_time_off_all(next_dict):
 
 
 def schedule_date(next_dict):
-    # TODO: Remove /replace later if necessary
-    return utils.display(next_dict)
+    '''
+    Returns menu to select date length.
+    '''
+    return utils.display(schedule_length_flow)
 
 
 ###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
