@@ -80,40 +80,10 @@ class Appointment:
     # Need to add Error handling, check if the appointment actually exists
     def update(self):
 
-        # self.booking_id = booking_id
-        # self.booking_start_time = booking_start_time
-        # self.booking_status = booking_status
-        # self.booking_agenda = booking_agenda
-        # self.booking_type = booking_type
-        # self.booking_notes = booking_notes
-        # self.gp_id = gp_id
-        # self.patient_id = patient_id
-
         # Updating booking notes
         query = """UPDATE booking 
                    SET booking_notes = '{}' 
                    WHERE booking_id = {}""".format(self.booking_notes, self.booking_id)
-
-        u.db_execute(query)
-
-        # Updating agenda
-        query = """UPDATE booking 
-                   SET booking_agenda = '{}' 
-                   WHERE booking_id = {}""".format(self.booking_agenda, self.booking_id)
-
-        u.db_execute(query)
-
-        # Updating booking_type
-        query = """UPDATE booking 
-                   SET booking_type = '{}' 
-                   WHERE booking_id = {}""".format(self.booking_type, self.booking_id)
-
-        u.db_execute(query)
-
-        # Updating booking_time
-        query = """UPDATE booking 
-                   SET booking_start_time = '{}' 
-                   WHERE booking_id = {}""".format(self.booking_start_time, self.booking_id)
 
         u.db_execute(query)
 
