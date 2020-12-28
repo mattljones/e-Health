@@ -915,10 +915,6 @@ def remove_time_off_all(next_dict):
     elif timeoff_type_input == '3':
         timeoff_type = 'all time off'
 
-    # Prompt user for time off range
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
-
     # Confirmation step
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
