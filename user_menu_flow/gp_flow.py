@@ -43,14 +43,14 @@ def simple_note(next_dict):
                  "2":("No", simple_note, flow_prescription)
                  }
     
-    record = Record.select(globals.patient_id)[0]
+
     print("\nPlase input the new note")
     new_note = input("--> ")
-    record.appointment_notes[globals.appt_id] = new_note
-    record.update()
+    Appointment(booking_id=globals.appt_id, booking_notes=new_note).update()
     
     # TODO: display the note
     print("The note should be shown here")
+    print(Appointment.select(globals.appt_id)[1].loc[0,"Notes [4]"])
 
     print("\n----------------------------------------------------\n"
         "                ", "Submit Note?", "\n")
@@ -107,22 +107,32 @@ def final_confirm_prescribe(next_dict):
     print(Prescription.select_patient(globals.patient_id)[1])
     return display_next_menu(next_dict)
 
+def no_attend(next_dict):
+    Appointment.change_status(globals.appt_id, "cancelled")
+    print(Appointment.select_GP_appt(globals.usr_id))
+    return display_next_menu(next_dict)
+
 def enter_note(next_dict):
     # TODO: √ confirm the attendance before entering note, VALUE constraint
-    Appointment.change_status(globals.appt_id, "attending")
+    Appointment.change_status(globals.appt_id, "attended")
     
     # temporarily to display the change
     print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\nPlease enter your note")
     gp_note = input("--> ")
-    record = Record.select(globals.patient_id)[0]
+    Appointment(booking_id=globals.appt_id, booking_notes=gp_note).update()
     # DEBUG
-    record.appointment_notes[globals.appt_id] = gp_note
-    record.update()
+    # appointment = Appointment(booking_id=globals.appt_id, gp_id=globals.usr_id)
+    # appointment.booking_notes = gp_note
+    # appointment.update()
+    # Record.select(globals.patient_id)[0]
+    # record.appointment_notes[globals.appt_id] = gp_note
+    # record.update()
 
     # TODO: display the note
     print("The note should be shown here")
+    print(Appointment.select(globals.appt_id)[1].loc[0,"Notes [4]"])
 
     return display_next_menu(next_dict)
 
@@ -171,12 +181,19 @@ def enter_prescription(next_dict):
 
 def enter_appoint_id(next_dict):
     # TODO: return to home page
-    # TODO: how to get the patient id through the appointment id
-    print("\nPlease enter the id of patient whose appointment you want to confirm attendance and edit notes")
-    patient_id = input("--> ")
+    # TODO: how to get the patient id through the appointment id    
     print("\nPlease enter the id of appointment which you want to confirm attendance and edit notes")
-    appt_id = input("--> ")
-    globals.patient_id = patient_id
+    # TODO: √ input validation
+    appt_id = input("\n--> ")
+    validate_appt_id = '['+ appt_id +']'
+    confirmed_id = Appointment.select_GP_confirmed(globals.usr_id)[1]['Apt. ID'].values
+    while validate_appt_id not in confirmed_id:
+        print("The id does not exit in the confirmed list, try again!")
+        appt_id = input("\n--> ")
+        validate_appt_id = '['+ appt_id +']'
+
+    # patient_id = 1
+    # globals.patient_id = patient_id
     globals.appt_id = appt_id
     return display_next_menu(next_dict)
 
@@ -194,7 +211,7 @@ def correct_note_change(next_dict):
 
 def display_confirmed_appt(next_dict):
     print("\nYour confirmed appointments: ")
-    print(Appointment.select_GP_confirmed(globals.usr_id))
+    print(Appointment.select_GP_confirmed(globals.usr_id)[0])
     return display_next_menu(next_dict)
 
 def display_pending_appt(next_dict):
@@ -219,7 +236,7 @@ def another_confirm_rej(next_dict):
     print("\nPleas enter the id of appointment you want to confirm")
     confirm_id = input("\n--> ")
     validate_confirm_id = '['+ confirm_id +']'
-    pending_id = Appointment.select_GP_pending(16)[0]['Apt. ID'].values
+    pending_id = Appointment.select_GP_pending(globals.usr_id)[0]['Apt. ID'].values
     while validate_confirm_id not in pending_id:
         print("The id does not exit in the pending list, try again!")
         confirm_id = input("\n--> ")
@@ -248,7 +265,7 @@ def another_confirm_one(next_dict):
     print("\nPleas enter the id of appointment you want to confirm")
     confirm_id = input("\n--> ")
     validate_confirm_id = '['+ confirm_id +']'
-    pending_id = Appointment.select_GP_pending(16)[0]['Apt. ID'].values
+    pending_id = Appointment.select_GP_pending(globals.usr_id)[0]['Apt. ID'].values
     while validate_confirm_id not in pending_id:
         print("The id does not exit in the pending list, try again!")
         confirm_id = input("\n--> ")
@@ -429,7 +446,7 @@ flow_submit_note = {"title": "Submit Note",
 flow_confirm_attendance = {"title": "Confirm Attendance",
                  "type": "sub",
                  "1":("Yes", enter_note, flow_submit_note),
-                 "2":("No", display_next_menu, flow_end)
+                 "2":("No", no_attend, flow_end)
                 }
 
 # notes flow

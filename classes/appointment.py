@@ -84,7 +84,6 @@ class Appointment:
         query = """UPDATE booking 
                    SET booking_notes = '{}' 
                    WHERE booking_id = {}""".format(self.booking_notes, self.booking_id)
-
         u.db_execute(query)
 
     # Need to add  Error handling, check if the appointment actually exists
@@ -132,14 +131,11 @@ class Appointment:
         df_object['Notes'] = df_object['Notes'].str.wrap(20)
         df_object['Patient'] = df_object['Patient'].str.wrap(10)
         df_object['GP'] = df_object['GP'].str.wrap(15)
-
-        df_print_notes = df_object[['Apt. ID', 'Patient', 'Notes']].to_markdown(tablefmt="grid", index=False)
-
         df_object.columns = ['Apt. ID []', 'GP []', 'Patient []', 'Date []', 'Status [1]', 'Status change time []',
                              'Agenda [2]', 'Type [3]', 'Notes [4]']
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        return appointment_instance, df_object, df_print, df_print_notes
+        return appointment_instance, df_object, df_print
 
     # Display GPs bookings for upcoming time span
     @staticmethod
@@ -484,6 +480,18 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
+
+    Appointment.change_status(51, 'confirmed')
+    Appointment.change_status(52, 'confirmed')
+    # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
+    # print(confirmed_id)
+
+    # gp_note = "test test test"
+    # appointment = Appointment(booking_id=51, gp_id=51)
+    # appointment.booking_notes = gp_note
+    # appointment.update()
+    # print(Appointment.select(globals.appt_id)[1].loc[0,"Notes [4]"])
+
     # tmp = Appointment.select_GP_pending(16)[0].index.values.size
     # print(tmp)
     # tmp = Appointment.select_GP_pending(16)[0]['Apt. ID'].values
@@ -491,8 +499,6 @@ if __name__ == "__main__":
     # print(usr_input in tmp)
     # print(Appointment.select(51)[1].loc[0,"Apt. ID []"])
     # print(Appointment.select(51)[1].loc[0,"Notes [4]"])
-    Appointment.change_status(51, 'booked')
-    Appointment.change_status(52, 'booked')
     # print(Appointment.select_GP_appt(16))
     # print(Appointment.select_availability('week', 16, '2020-12-27')[2])
     # print(Appointment.select_availability('day', 1, '2020-12-23'))
@@ -507,10 +513,11 @@ if __name__ == "__main__":
     #                   'booking agenda edit test 3', 'offline', ' ', 1, 2).book())
 
     # THIS WORKS! : Testing Update Method
-    # Appointment(booking_id=1, booking_notes='Testing updating').update()
+    # Appointment(booking_id=16, booking_notes='Testing updating').update()
+    # print(Appointment.select(16)[1].loc[0,"Notes [4]"])
 
     # THIS WORKS! : Returns a DF for a specific booking based on the booking_id provided
-    # print(Appointment.select(52)[3])
+    # print(Appointment.select(53)[2])
 
     # THIS WORKS! : Showing DF schedule for GP and Admin view
     # print(Appointment.select_GP('week', 1, '2020-12-13')[3])
@@ -544,4 +551,8 @@ if __name__ == "__main__":
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
 
+
+    # tmp = Appointment.select_GP_confirmed(16)[2]
+    # print(tmp)
+    
     # print(Appointment.select_GP_confirmed(2)[0])
