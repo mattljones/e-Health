@@ -147,7 +147,7 @@ class Record:
         df_apps_object['Date'] = df_apps_object['Date'].apply(lambda x: x[0:10]\
                                                         + '\n' + '(' + x[11:] + ')')
         # adding a GP ID column for use in GP user flow (GPs can only edit own notes)
-        df_apps_object['GP ID'] = df_apps_object['GP'].astype(str).str[-2]
+        df_apps_object['GP ID'] = df_apps_object['GP'].apply(lambda x: x[x.index(':') + 2:-1])
         # adding line breaks between prescriptions so printed in one row
         columns1 = ['ID', 'Date', 'GP', 'Type', 'Notes']
         columns2 = ['Drug Name', 'Dosage', 'Frequency', 'Expires']
@@ -197,7 +197,7 @@ if __name__ == "__main__":
     # record_instance.update()
 
     ## Record.select()
-    # record_instance, df_obj1, df_print1, df_obj2, df_print2 = Record.select(43)
+    # record_instance, df_obj1, df_print1, df_obj2, df_print2 = Record.select(51)
     # print(vars(record_instance))
     # print(df_obj1)
     # print(df_print1)

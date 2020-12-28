@@ -1,9 +1,9 @@
 # admin_flow.py
 
 # library imports 
+from datetime import datetime, timedelta
 from pathlib import Path
 import sys 
-import datetime
 
 # Change python path for imports
 p = Path(__file__).parents[1]
@@ -261,7 +261,6 @@ def patient_account_section_menu(next_dict):
     return utils.display(manage_patient_accounts_flow)
 
 
-
 def choose_patient(type, patient_last_name=None):
     '''
     Choose patient account.
@@ -271,8 +270,7 @@ def choose_patient(type, patient_last_name=None):
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
     
-
-
+# NOTE: Rename this edit_patient?
 def view_patient(next_dict):
     '''
     View a Patient Account.
@@ -306,7 +304,6 @@ def view_patient(next_dict):
         
     elif y_n == 2:
         return utils.display(next_dict)
-
 
 
 def confirm_patient(next_dict):
@@ -401,9 +398,7 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         return utils.display(next_dict)
 
 
-
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
-
 
 
 def pairings_section_menu(next_dict):
@@ -411,7 +406,6 @@ def pairings_section_menu(next_dict):
     Returns to the section menu.
     '''
     return utils.display(gp_patient_pair_flow)
-
 
 
 def pairing_gp(next_dict):
@@ -504,7 +498,6 @@ def pairing_gp(next_dict):
         return utils.display(next_dict)
     
 
-
 def pairing_patient(next_dict):
     '''
     Select a GP and pair patients to them if they are not full.
@@ -527,7 +520,7 @@ def pairing_patient(next_dict):
         print("\n----------------------------------------------------\n"
         "                ",'ENTER IDS', "\n")
         id_choice = input('''
-        Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
+Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
         '-->')
         patient_ids = id_choice.replace(' ', '').split(',')
 
@@ -600,9 +593,7 @@ def pairing_patient(next_dict):
         return utils.display(next_dict)
 
 
-
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
-
 
 
 def choose_gp(next_dict):
@@ -670,26 +661,117 @@ def add_time_off(next_dict):
     '''
     Returns menu to add time off to a GP's schedule.
     '''
-    return utils.display(next_dict)
-
+    return utils.display(add_time_off_flow)
 
 
 def add_time_off_day(next_dict):
     '''
     Adds a day of time off to a GP's schedule.
     '''
+    # NOTE: Minimize code repetition
+    print("\n----------------------------------------------------\n"
+          "                ",'ADD TIME OFF - DAY', "\n")
 
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
+    timeoff_type_input = input('\n-->')
 
-    return utils.display(next_dict)
+    while timeoff_type_input not in ('1', '2'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
 
+    # Prompt user for start date only
+    start_date = utils.get_start_date()
+
+    # Add one day to start date
+    s = datetime.strptime(start_date, "%Y-%m-%d")
+    e = s + timedelta(days=1) 
+    end_date = datetime.strftime(e, "%Y-%m-%d")  
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to add one day of {} on {}?\n'.format(timeoff_type, start_date))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Add timeoff to db
+        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+        print("\n\U00002705 Time off successfully added.")
+        return utils.display(next_dict)
+        
+    else:
+        # Return to main add time off menu
+        return utils.display(add_time_off_flow)
 
 
 def add_time_off_week(next_dict):
     '''
     Adds a week of time off to a GP's schedule.
     '''
-    return utils.display(next_dict)
+    # NOTE: Minimize code repetition
+    print("\n----------------------------------------------------\n"
+          "                ",'ADD TIME OFF - WEEK', "\n")
 
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
+    timeoff_type_input = input('\n-->')
+
+    while timeoff_type_input not in ('1', '2'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
+
+    # Prompt user for start date only
+    start_date = utils.get_start_date()
+
+    # Add one day to start date
+    s = datetime.strptime(start_date, "%Y-%m-%d")
+    e = s + timedelta(weeks=1) 
+    end_date = datetime.strftime(e, "%Y-%m-%d")  
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to add one week of {} starting from {}?\n'.format(timeoff_type, start_date))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Add timeoff to db
+        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+        print("\n\U00002705 Time off successfully added.")
+        return utils.display(next_dict)
+        
+    else:
+        # Return to main add time off menu
+        return add_time_off(next_dict)
 
 
 def add_time_off_custom(next_dict):
@@ -697,7 +779,7 @@ def add_time_off_custom(next_dict):
     Adds a custom amount of time off to a GP's schedule.
     '''
     print("\n----------------------------------------------------\n"
-          "                ",'ADD TIME OFF', "\n")
+          "                ",'ADD TIME OFF - CUSTOM', "\n")
 
     # Prompt user for type of time off
     print("Please select the time off type: ")
@@ -733,43 +815,147 @@ def add_time_off_custom(next_dict):
 
     if user_confirmation == '1':
         # Add timeoff to db
-        print("\n\U00002705 Time off successfuly added.")
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+        print("\n\U00002705 Time off successfully added.")
+        return utils.display(next_dict)
+
     else:
         # Return to main add time off menu
         return add_time_off(next_dict)
 
-    return utils.display(next_dict)
-
 
 def remove_time_off(next_dict):
     '''
-    Remove a custom amount of time off to a GP's schedule.
+    Returns menu to remove a custom amount of time off to a GP's schedule.
     '''
-    return utils.display(next_dict)
+    return utils.display(remove_time_off_flow)
 
 
 def remove_time_off_custom(next_dict):
+    # TODO: Request timeoff_type=None from classes team 
     '''
     Remove a custom amount of time off to a GP's schedule.
     '''
-    return utils.display(next_dict)   
+    print("\n----------------------------------------------------\n"
+          "                ",'REMOVE TIME OFF - CUSTOM', "\n")
 
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off \n [ 3 ] Both")
+    timeoff_type_input = input('\n-->')
+
+    while timeoff_type_input not in ('1', '2', '3'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
+    elif timeoff_type_input == '3':
+        timeoff_type = 'all time off'
+
+    # Prompt user for time off range
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to remove {} from {} to {}?\n'.format(timeoff_type, start_date, end_date))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Remove timeoff of a specific type from db
+        if timeoff_type_input in ('1', '2'):
+            Schedule.delete_timeoff(gp_id_choice, 'custom', timeoff_type, start_date, end_date)
+            print("\n\U00002705 Time off successfully removed.")
+
+        # Remove timeoff of both types from db
+        elif timeoff_type_input == '3':
+            Schedule.delete_timeoff(gp_id_choice, 'custom', 'sick leave', start_date, end_date)
+            Schedule.delete_timeoff(gp_id_choice, 'custom', 'time off', start_date, end_date)
+        
+        # Proceed with next section
+        return utils.display(next_dict)
+
+    else:
+        # Return to main remove time off menu
+        return remove_time_off(next_dict)
 
 
 def remove_time_off_all(next_dict):
     '''
     Remove time off from a GP's schedule.
     '''
-    return utils.display(next_dict)
+    print("\n----------------------------------------------------\n"
+          "                ",'REMOVE TIME OFF - ALL', "\n")
+
+    # Prompt user for type of time off
+    print("Please select the time off type: ")
+    print("\n [ 1 ] Sick leave \n [ 2 ] General time off \n [ 3 ] Both")
+    timeoff_type_input = input('\n-->')
+
+    while timeoff_type_input not in ('1', '2', '3'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_type_input = input('\n-->')
+        
+    if timeoff_type_input == '1':
+        timeoff_type = 'sick leave'
+    elif timeoff_type_input == '2':
+        timeoff_type = 'time off'
+    elif timeoff_type_input == '3':
+        timeoff_type = 'all time off'
+
+    # Confirmation step
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+
+    print('\nDo you want to remove {} from the schedule?\n'.format(timeoff_type))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    user_confirmation = input("\n-->")
+
+    while user_confirmation not in ('1','2'):
+            print("\n\U00002757 Invalid entry, please try again")
+            user_confirmation = input("\n--> ")
+
+    if user_confirmation == '1':
+        # Remove timeoff of a specific type from db
+        if timeoff_type_input in ('1', '2'):
+            Schedule.delete_timeoff(gp_id_choice, 'all', timeoff_type)
+            print("\n\U00002705 Time off successfully removed.")
+
+        # Remove timeoff of both types from db
+        elif timeoff_type_input == '3':
+            Schedule.delete_timeoff(gp_id_choice, 'all', 'sick leave')
+            Schedule.delete_timeoff(gp_id_choice, 'all', 'time off')
+        
+        # Proceed with next section
+        return utils.display(next_dict)
+
+    else:
+        # Return to main remove time off menu
+        return remove_time_off(next_dict)
 
 
 def schedule_date(next_dict):
-    # TODO: Remove /replace later if necessary
-    return utils.display(next_dict)
+    '''
+    Returns menu to select date length.
+    '''
+    return utils.display(schedule_length_flow)
+
 
 ###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
-
 
 
 def appointments_section_menu(next_dict):
@@ -781,8 +967,11 @@ def appointments_section_menu(next_dict):
 
 def view_appointment(next_dict):
     '''
-    View appointments for a GP.
+    View all appointments for a specific GP after the current time.
     '''
+    apps = Appointment.select_GP_appt(gp_id_choice)
+    print(apps)
+
     return utils.display(next_dict)
 
 
@@ -793,29 +982,43 @@ def add_appointment(next_dict):
     return utils.display(next_dict)
 
 
-
 def choose_appointment_day(next_dict):
     '''
-    Choose the appointment from a day of available slots
+    Choose the appointment from a day of available slots.
     '''
     return utils.display(next_dict)
-
 
 
 def choose_appointment_week(next_dict):
     '''
-    Choose the appointment from a week of available slots
+    Choose the appointment from a week of available slots.
     '''
     return utils.display(next_dict)
-
 
 
 def appointment_by_patient(next_dict):
     '''
     Find a patient's upcoming appointments.
     '''
-    return utils.display(next_dict)
+    # NOTE: Reusing code from view_patient (which actually also handles updating)
 
+    # Create a shortlist by last name
+    print("\n----------------------------------------------------\n"
+          "                ",'SELECT PATIENT', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+
+    # Select ID of the patient of interest 
+    selected_patient_id = input('\nPlease choose a patient ID\n-->')
+    
+    # Select all upcoming appointments for this patient ID
+    appts = Appointment.select_patient('upcoming', selected_patient_id)
+
+    # Print the appointments information
+    print(appts[1])
+
+    return utils.display(next_dict)
 
 
 def appointment_check(next_dict):
@@ -825,13 +1028,11 @@ def appointment_check(next_dict):
     return utils.display(next_dict)
     
 
-
 def appointment_by_gp(next_dict):
     '''
     Find a GP's upcoming appointments with date options.
     '''
     return utils.display(next_dict)
-
 
 
 def delete_appointment_day(next_dict):
@@ -841,13 +1042,11 @@ def delete_appointment_day(next_dict):
     return utils.display(next_dict)
 
 
-
 def delete_appointment_week(next_dict):
     '''
     Allows deleting of appointments from a specific week.
     '''
     return utils.display(next_dict)
-
 
 
 ###### RECORDS FUNCTIONS ######
@@ -857,14 +1056,11 @@ def delete_appointment_week(next_dict):
 #      made is selecting the patient, which is done within the one 
 #      function.
 
-
-
 def records_main(next_dict):
     '''
     Allows the selection of a patient's medical records. 
     '''
     return utils.display(next_dict)
-
 
 
 ############################ SEQUENTIAL STEPS MENUS ########################
@@ -1045,9 +1241,9 @@ manage_time_off_flow = {
 }
 
 manage_availability_flow = {
-    "title": "MANAGE AVIALABILITY",
+    "title": "VIEW AND MANAGE AVAILABILITY",
     "type": "sub",
-    "1": ("Manage Upcoming Appointments", view_appointment, empty_dict),
+    "1": ("View Upcoming Appointments", view_appointment, empty_dict),
     "2": ("Manage Upcoming Time Off", empty_method, manage_time_off_flow)
 }
 
@@ -1179,9 +1375,3 @@ if __name__ == '__main__':
     '-->'))
     selected_patient = Patient.select(choice)
     print(selected_patient[2])
-
-        
-    
-    
-    
-    
