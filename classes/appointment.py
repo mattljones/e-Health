@@ -3,6 +3,7 @@
 # import libraries
 import pandas as pd
 import datetime as dt
+import random
 
 # Switching path to master to get functions from utils folder
 import sys
@@ -433,10 +434,21 @@ class Appointment:
                              GROUP BY b.gp_id
                              ORDER BY Bookings_Per_Day
                              LIMIT 1;""".format(start_date, end_date, gp_id)
-
         query_result = u.db_read_query(query_get_gp_id)
 
-        number_of_bookings = query_result.loc[0, 'Bookings_Per_Day']
+        if query_result.empty:
+            #     Other GPs don't have any bookings for this date thus we can allocate the GP at Random
+            gp_id_query = """SELECT gp_id, gp_last_name FROM gp WHERE gp_status == 'active'"""
+            result = u.db_read_query(gp_id_query)
+            other_gp_id = random.choice(result['gp_id'].tolist())
+            other_gp_last_name = "DR." + result.loc[result['gp_id'] == other_gp_id, 'gp_last_name'].tolist()[0]
+            number_of_bookings = 0
+
+        else:
+            number_of_bookings = query_result.loc[0, 'Bookings_Per_Day']
+            other_gp_id = query_result.loc[0, 'gp_id']
+            other_gp_last_name = "DR." + query_result.loc[0, 'gp_last_name']
+
         if (select_type == 'day' and number_of_bookings < 49) or (select_type == 'week' and number_of_bookings < 245):
             boolean_available = True
         else:
@@ -445,9 +457,6 @@ class Appointment:
 
             return df_object, df_print, other_gp_id, other_gp_last_name, boolean_available, df_print_morning, \
                    df_print_afternoon
-
-        other_gp_id = query_result.loc[0, 'gp_id']
-        other_gp_last_name = "DR." + query_result.loc[0, 'gp_last_name']
 
         df_object, df_print, df_print_morning, \
         df_print_afternoon = Appointment.select_availability(select_type, other_gp_id, str(start_date))
@@ -490,6 +499,7 @@ class Appointment:
     def get_gp_last_name(gp_id):
         gp_last_name_query = """SELECT gp_last_name FROM gp WHERE gp_id == {} """.format(gp_id)
         return u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
+
 
 # DEVELOPMENT
 
@@ -554,7 +564,8 @@ if __name__ == "__main__":
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
     # Displays the DF of the availability for that GP
-    # print(Appointment.select_other_availability('day', 3, '2020-12-24')[1])
+    # Appointment.select_other_availability(week, 16, 2020 - 12 - 29)
+    print(Appointment.select_other_availability('week', 16, '2021-01-29'))
     # print(Appointment.select_other_availability('week', 1, '2020-12-24')[5])
 
     # THIS WORKS! : Changes status for a specific booking
