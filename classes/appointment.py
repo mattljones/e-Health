@@ -549,7 +549,7 @@ if __name__ == "__main__":
     # For this test I've used patient 9 since their GP by default is 2 so
     # we can easily compare the DF to make sure they look the same
     # print(Appointment.select_availability('week', 9, '2020-12-12')[1])
-    print(Appointment.select_availability('day', 10, '2020-12-28')[1])
+    # print(Appointment.select_availability('day', 10, '2020-12-28')[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
