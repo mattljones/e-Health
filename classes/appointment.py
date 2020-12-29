@@ -49,7 +49,6 @@ class Appointment:
                                  AND (booking_status <> 'rejected' 
                                  OR  booking_status <> 'rejected')""".format(self.gp_id,
                                                                              self.booking_start_time)
-        print(booking_check_query_gp)
         booking_check_result_gp = u.db_read_query(booking_check_query_gp).empty
 
         booking_check_query_patient = """SELECT *
@@ -379,7 +378,8 @@ class Appointment:
 
         if select_type == 'day':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
-            df_object = df_object.drop(['Agenda', 'Type', 'Patient (ID)'], axis=1)
+            df_object = df_object.drop(['Agenda', 'Type',
+                                        'Patient (ID)'], axis=1).rename(columns={'Status': start_date})
 
         elif select_type == 'week':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
@@ -522,7 +522,7 @@ if __name__ == "__main__":
     #                     booking_agenda, booking_type,gp_id,patient_id
 
     # THIS WORKS! : Testing book appointment method
-    # print(Appointment('Null', '2020-12-12 11:00', 'booked',
+    # print(Appointment('Null', '2021-01-12 12:00', 'booked',
     #                   'Testing booking a rejected appointment', 'offline', ' ', 9, 2).book())
 
     # THIS WORKS! : Testing Update Method
