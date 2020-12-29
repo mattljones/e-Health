@@ -179,7 +179,7 @@ def book_appointment(next_dict):
     while confirmation == False:
 
         # While user entry is invalid
-        while len(selected_time_slot.index) != 1 and len(selected_time_slot.index) != 1 and booking_index != '#':
+        while len(selected_time_slot.index) != 1 and booking_index != '#':
             print("\n\U00002757 Invalid entry, please try again")
             booking_index = input("\n--> ")
             selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
