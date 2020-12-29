@@ -258,6 +258,37 @@ class Appointment:
 
         return df_print
 
+    # Displays the DF of all attended appointment for a specific GP
+    @staticmethod
+    def select_GP_attended(gp_id):
+        """
+        :param gp_id: GP specific id that we can fetch from the  global variables
+        :return: df_object is a raw dataframe that can be used to pull data from it
+        :return: df_print is a user friendly DF that can be used to display information to the user
+        """
+
+        pending_query = """SELECT booking_id AS 'Apt. ID', p.patient_first_name AS 'Patient + ID',
+                   p.patient_last_name AS 'P. Last Name', b.patient_id, booking_start_time AS 'Date', booking_status 
+                   AS 'Status', booking_status_change_time AS 'Status change time',
+                   booking_agenda AS 'Agenda',booking_type AS 'Type'
+                   FROM booking b
+                   JOIN patient p on b.patient_id = p.patient_id
+                   WHERE booking_status == 'attended'
+                   AND b.gp_id =={}""".format(gp_id)
+
+        df_object = u.db_read_query(pending_query)
+        df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
+                                    df_object['P. Last Name'].astype(str) + ' (' + \
+                                    df_object['patient_id'].astype(str) + ')'
+
+        df_object['Apt. ID'] = "[" + df_object['Apt. ID'].astype(str) + "]"
+        # Dropping no longer needed columns
+        df_object = df_object.drop(columns=['P. Last Name', "patient_id"])
+        df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
+        df_print = df_object.to_markdown(tablefmt="grid", index=False)
+
+        return df_print
+
     # Displays the DF of confirmed appointments for a specific GP after the current time
     @staticmethod
     def select_GP_confirmed(gp_id):
@@ -493,8 +524,12 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
-    Appointment.change_status(51, 'confirmed')
-    Appointment.change_status(52, 'confirmed')
+    # Appointment.change_status(51, 'confirmed')
+    # Appointment.change_status(52, 'confirmed')
+
+    print(Appointment.select_GP('day', 16, '2020-12-25')[2])
+    print(Appointment.select_GP('day', 16, '2020-12-25')[3])
+
     # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
     # print(confirmed_id)
 
