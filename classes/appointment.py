@@ -49,7 +49,6 @@ class Appointment:
                                  AND (booking_status <> 'rejected' 
                                  OR  booking_status <> 'rejected')""".format(self.gp_id,
                                                                              self.booking_start_time)
-        print(booking_check_query_gp)
         booking_check_result_gp = u.db_read_query(booking_check_query_gp).empty
 
         booking_check_query_patient = """SELECT *
@@ -522,7 +521,7 @@ if __name__ == "__main__":
     #                     booking_agenda, booking_type,gp_id,patient_id
 
     # THIS WORKS! : Testing book appointment method
-    # print(Appointment('Null', '2020-12-12 11:00', 'booked',
+    # print(Appointment('Null', '2021-01-12 12:00', 'booked',
     #                   'Testing booking a rejected appointment', 'offline', ' ', 9, 2).book())
 
     # THIS WORKS! : Testing Update Method
