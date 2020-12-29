@@ -132,7 +132,8 @@ class Record:
         df_patient_print = df_patient_breaks.to_markdown(tablefmt="grid", index=False)
 
         # 2 - GENERATING 'APPOINTMENT' DATAFRAMES
-        df_apps = Appointment.select_patient('previous', patient_id, 'confirmed')[0]
+        # TODO: attended appointments
+        df_apps = Appointment.select_patient('previous', patient_id, 'attended')[0]
         df_prescs = Prescription.select_patient(patient_id)[0]
         # joining appointments with corresponding prescriptions
         df_apps_merge = pd.merge(df_apps, df_prescs, how='left', on='Apt. ID')
