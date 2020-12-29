@@ -409,7 +409,8 @@ class Appointment:
 
         if select_type == 'day':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
-            df_object = df_object.drop(['Agenda', 'Type', 'Patient (ID)'], axis=1)
+            df_object = df_object.drop(['Agenda', 'Type',
+                                        'Patient (ID)'], axis=1).rename(columns={'Status': start_date})
 
         elif select_type == 'week':
             df_object = Schedule.select(gp_id, select_type, start_date)[0]

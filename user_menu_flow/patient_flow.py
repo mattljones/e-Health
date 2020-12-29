@@ -159,6 +159,7 @@ def book_appointment(next_dict):
             print("\nNo availability among other GPs for the dates selected, \nplease book with your personal GP or change dates.")
             return book_appointment(next_dict)
 
+        # if availability, get displayed gp_ID and name
         else:
             gp_id = availability[2]
             gp_name = availability[3]
@@ -170,6 +171,11 @@ def book_appointment(next_dict):
 
     # Require user choice of booking slot
     booking_index = input("\n--> ")
+
+    # Formatting user input correctly
+    if booking_index != '#':
+        while len(booking_index) < 3:
+            booking_index = '0' + booking_index
 
     # Build dataframe with only the cell of timeslot selected by user
     # Will return an empty dataframe (nb rows = 0) for '#' and invalid entry
@@ -185,6 +191,12 @@ def book_appointment(next_dict):
         while len(selected_time_slot.index) != 1 and booking_index != '#':
             print("\n\U00002757 Invalid entry, please try again")
             booking_index = input("\n--> ")
+
+            # Formatting user input correctly
+            if booking_index != '#':
+                while len(booking_index) < 3:
+                    booking_index = '0' + booking_index
+
             selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
 
         # if user wants to display new availability, recursive call of the function itself
