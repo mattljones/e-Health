@@ -306,7 +306,7 @@ def validate_date(user_input):
     return True
 
 def get_start_date():
-    print("Please enter the start date (YYYY-MM-DD)\n"
+    print("\nPlease enter the start date (YYYY-MM-DD)\n"
           "Enter 'T' short for today")
     start_date = input("--> ")
     valid = False

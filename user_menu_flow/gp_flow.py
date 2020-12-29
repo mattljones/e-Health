@@ -111,7 +111,7 @@ def no_attend(next_dict):
     return display_next_menu(next_dict)
 
 def enter_note(next_dict):
-    # TODO: √ confirm the attendance before entering note, VALUE constraint
+    # confirm the attendance before entering note, VALUE constraint
     Appointment.change_status(globals.appt_id, "attended")
     
     # temporarily to display the change
@@ -180,8 +180,7 @@ def enter_prescription(next_dict):
     return display_next_menu(flow_drug)
 
 def enter_appoint_id(next_dict):
-    # TODO: return to home page
-    # TODO: how to get the patient id through the appointment id    
+    # TODO: return to home page   
     print("\nPlease enter the id of appointment which you want to confirm attendance and edit notes")
     # TODO: √ input validation
     appt_id = input("\n--> ")
@@ -313,17 +312,31 @@ def remove_timeoff(next_dict):
                 }
     start_date = utils.get_start_date()
     end_date = utils.get_end_date()
-    Schedule.delete_timeoff(globals.usr_id, 'custom', 'time off', start_date, end_date)
-
+    print("\nWhat is the type of timeoff?")
+    print("[ 1 ] sick leave")
+    print("[ 2 ] time off")
+    type_timeoff = input("--> ")
+    while type_timeoff not in ["1", "2"]:
+        print("Invalid input, try again!")
+        type_timeoff = input("--> ")
+    else:
+        if type_timeoff == "1":
+            Schedule.delete_timeoff(globals.usr_id, 'custom', 'sick leave', start_date, end_date)
+        elif type_timeoff == "2":
+            Schedule.delete_timeoff(globals.usr_id, 'custom', 'time off', start_date, end_date)   
     print("\n----------------------------------------------------\n"
           "                ", "Add or Remove a new timeoff?", "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
-    if usr_choice == '1':
-        return display_next_menu(flow_timeoff)
-    elif usr_choice == '2':
-        return display_next_menu(next_dict)
+    while usr_choice not in ["1", "2"]:
+        print("Invalid input, please try again!")
+        usr_choice = input("\n--> ")
+    else:
+        if usr_choice == '1':
+            return display_next_menu(flow_timeoff)
+        elif usr_choice == '2':
+            return display_next_menu(next_dict)
 
 def add_timeoff(next_dict):
     flow_timeoff = {"title": "Schedule",
@@ -333,17 +346,31 @@ def add_timeoff(next_dict):
                 }
     start_date = utils.get_start_date()
     end_date = utils.get_end_date()
-    Schedule.insert_timeoff(globals.usr_id, 'time off', start_date, end_date)
-
+    print("\nWhat is the type of timeoff?")
+    print("[ 1 ] sick leave")
+    print("[ 2 ] time off")
+    type_timeoff = input("--> ")
+    while type_timeoff not in ["1", "2"]:
+        print("Invalid input, try again!")
+        type_timeoff = input("--> ")
+    else:
+        if type_timeoff == "1":
+            Schedule.insert_timeoff(globals.usr_id, 'sick leave', start_date, end_date)
+        elif type_timeoff =="2":
+            Schedule.insert_timeoff(globals.usr_id, 'time off', start_date, end_date)
     print("\n----------------------------------------------------\n"
-          "                ", "Add or Remove a new availabilty?", "\n")
+          "                ", "Add or Remove a new timeoff?", "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
-    if usr_choice == '1':
-        return display_next_menu(flow_timeoff)
-    elif usr_choice == '2':
-        return display_next_menu(next_dict)
+    while usr_choice not in ["1", "2"]:
+        print("Invalid input, please try again!")
+        usr_choice = input("\n--> ")
+    else:
+        if usr_choice == '1':
+            return display_next_menu(flow_timeoff)
+        elif usr_choice == '2':
+            return display_next_menu(next_dict)
 
 def view_another_day(next_dict):
     flow_schedule = {"title": "Schedule",
@@ -355,18 +382,40 @@ def view_another_day(next_dict):
     print("\n----------------------------------------------------\n"
         "              Schedule View by Day\n")
     start_date = utils.get_start_date()
-    print(start_date)
-    print(Schedule.select(globals.usr_id, 'day', start_date)[1])
+    print("\nWhich time period do you want to search?")
+    print("[ 1 ] Morning")
+    print("[ 2 ] Afternoon")
+    halfday_choice = input("--> ")
+    while halfday_choice not in ["1", "2"]:
+        halfday_choice = input("--> ")
+    else:
+        if halfday_choice == "1":
+            print("\n【", start_date, "Morning】")
+            print("\n\n\n!!! DEBUG: WHAT SHOULD WE DISPLAY HERE?\n\n\nSEE BELOW TWO DIFFERENT TABLES:\n\n\n")
+            print("\nDEBUG: TABLE from apponitment")
+            print(Appointment.select_GP('day', globals.usr_id, start_date)[2])
+            print("\nDEBUG: TABLE from schedule")
+            print(Schedule.select(globals.usr_id, 'day', start_date)[1])
+        elif halfday_choice == "2":
+            print("\n【", start_date, "Afternoon】")
+            print(Appointment.select_GP('day', globals.usr_id, start_date)[3])
 
     print("\n----------------------------------------------------\n"
           "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
     print("[ 2 ] Manage timeoff")
+    print("[ # ] Go back to main page")
     usr_choice = input("\n--> ")
-    if usr_choice == '1':
-        return display_next_menu(flow_schedule)
-    elif usr_choice == '2':
-        return display_next_menu(next_dict)
+    while usr_choice not in ["1", "2", "#"]:
+        print("Invalid input, please try again!")
+        usr_choice = input("\n--> ")
+    else:
+        if usr_choice == '1':
+            return display_next_menu(flow_schedule)
+        elif usr_choice == '2':
+            return display_next_menu(next_dict)
+        elif usr_choice == '#':
+            return display_next_menu(main_flow_gp)
 
 def view_another_week(next_dict):
     flow_schedule = {"title": "Schedule",
@@ -378,27 +427,47 @@ def view_another_week(next_dict):
     print("\n----------------------------------------------------\n"
         "              Schedule View by Week\n")
     start_date = utils.get_start_date()
-    print(start_date)
-    print(Schedule.select(globals.usr_id, 'week', start_date)[1])
+    print("\nWhich time period do you want to search?")
+    print("[ 1 ] Morning")
+    print("[ 2 ] Afternoon")
+    halfday_choice = input("--> ")
+    while halfday_choice not in ["1", "2"]:
+        halfday_choice = input("--> ")
+    else:
+        if halfday_choice == "1":
+            print("\n【", start_date, "Morning】")
+            print(Appointment.select_GP('week', globals.usr_id, start_date)[2])
+        elif halfday_choice == "2":
+            print("\n【", start_date, "Afternoon】")
+            print(Appointment.select_GP('week', globals.usr_id, start_date)[3])
 
     print("\n----------------------------------------------------\n"
           "                ", "Schedule", "\n")
     print("[ 1 ] View another schedule")
     print("[ 2 ] Manage timeoff")
+    print("[ # ] Go back to main page")
     usr_choice = input("\n--> ")
-    if usr_choice == '1':
-        return display_next_menu(flow_schedule)
-    elif usr_choice == '2':
-        return display_next_menu(next_dict)
+    while usr_choice not in ["1", "2", "#"]:
+        print("Invalid input, please try again!")
+        usr_choice = input("\n--> ")
+    else:
+        if usr_choice == '1':
+            return display_next_menu(flow_schedule)
+        elif usr_choice == '2':
+            return display_next_menu(next_dict)
+        elif usr_choice == '#':
+            return display_next_menu(main_flow_gp)
 
 def view_records(next_dict):
     # TODO: display 10 latest clients?
+    print("\n【Your All Attended Appointments】")
+    print(Appointment.select_GP_attended(globals.usr_id))
     print("\nPlease enter patient id you want to search:")
     patient_id = input("--> ")
     globals.patient_id = patient_id
     print("\n【Patient Table】")
     print(Record.select(patient_id)[2])
-    print("\n【Appointment Table】")
+    print("\n【Appointment & Prescription Table】")
     print(Record.select(patient_id)[4])
     return display_next_menu(next_dict)
 
