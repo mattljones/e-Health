@@ -391,8 +391,11 @@ def view_another_day(next_dict):
     else:
         if halfday_choice == "1":
             print("\n【", start_date, "Morning】")
+            print("\n\n\n!!! DEBUG: WHAT SHOULD WE DISPLAY HERE?\n\n\nSEE BELOW TWO DIFFERENT TABLES:\n\n\n")
+            print("\nDEBUG: TABLE from apponitment")
             print(Appointment.select_GP('day', globals.usr_id, start_date)[2])
-            # print(Schedule.select(globals.usr_id, 'day', start_date)[1])
+            print("\nDEBUG: TABLE from schedule")
+            print(Schedule.select(globals.usr_id, 'day', start_date)[1])
         elif halfday_choice == "2":
             print("\n【", start_date, "Afternoon】")
             print(Appointment.select_GP('day', globals.usr_id, start_date)[3])
