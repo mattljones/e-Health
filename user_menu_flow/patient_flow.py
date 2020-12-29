@@ -159,6 +159,7 @@ def book_appointment(next_dict):
             print("\nNo availability among other GPs for the dates selected, \nplease book with your personal GP or change dates.")
             return book_appointment(next_dict)
 
+        # if availability, get displayed gp_ID and name
         else:
             gp_id = availability[2]
             gp_name = availability[3]
