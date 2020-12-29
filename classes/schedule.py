@@ -64,7 +64,7 @@ class Schedule:
             sql_result_df['Patient (ID)'].replace({"nan nan (nan)": ''}, inplace=True)
 
             # Producing the empty DataFrame for a day
-            df_select_day_empty = u.day_empty_df(start_date, 2)
+            df_select_day_empty = u.day_empty_df(start_date, gp_id)
 
             df_object = pd.merge(df_select_day_empty, sql_result_df, left_on=df_select_day_empty.index,
                                  right_on='booking_hours', how='left')

@@ -179,7 +179,7 @@ def book_appointment(next_dict):
     while confirmation == False:
 
         # While user entry is invalid
-        while len(selected_time_slot.index) != 1 and len(selected_time_slot.index) != 1 and booking_index != '#':
+        while len(selected_time_slot.index) != 1 and booking_index != '#':
             print("\n\U00002757 Invalid entry, please try again")
             booking_index = input("\n--> ")
             selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
@@ -257,19 +257,18 @@ def book_appointment(next_dict):
     while utils.validate(booking_agenda) == False:
         booking_agenda = input("\n--> ")
         
-
     # create appointement class instance to book appointment
     booking = Appointment(booking_start_time = str(booking_date) + " " + str(booking_time), booking_agenda = booking_agenda, booking_type = booking_type, patient_id = globals.usr_id, gp_id = gp_id)
 
     # Book appointment on Database
-    success = booking.book()
+    success, reason = booking.book()
 
     if success:
         print("\n\U00002705 Appointment successfuly booked with " + gp_name + " at " + str(booking_time) + " on the " + str(booking_date) + ".")
         return utils.display(next_dict)
 
     else:
-        print("\n\U00002757 The appointment could not be booked because you took too long. \nPlease refresh and try again.")
+        print("\n\U00002757 " + reason)
         return book_appointment(next_dict)
 
 
