@@ -4,6 +4,7 @@
 from pathlib import Path
 import sys
 from datetime import date
+from datetime import timedelta
 
 # Change python path for imports
 p = Path(__file__).parents[1]
@@ -165,7 +166,8 @@ def enter_prescription(next_dict):
         print("Invalid input, please try again!")
         print("\nPlease enter the field for prescibed drug")
         prescription.drug_id = input("--> ")
-
+    
+    prescription.prescription_expiry_date = str(date.today() + timedelta(days=14))
     print("\nPlease enter the dosage")
     prescription.drug_dosage = input("--> ")
 
