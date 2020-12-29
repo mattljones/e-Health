@@ -39,6 +39,7 @@ class Appointment:
         :return: Boolean value if the booking was made. If false, this implies that:
         that particular GP already has a booking on that date i.e. DF returned from the DB != EmptyDF
         """
+
         # fist we need to check to make sure that the booking is still available
 
         booking_check_query_gp = """SELECT *
