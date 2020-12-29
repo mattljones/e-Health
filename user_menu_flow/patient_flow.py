@@ -257,19 +257,18 @@ def book_appointment(next_dict):
     while utils.validate(booking_agenda) == False:
         booking_agenda = input("\n--> ")
         
-
     # create appointement class instance to book appointment
     booking = Appointment(booking_start_time = str(booking_date) + " " + str(booking_time), booking_agenda = booking_agenda, booking_type = booking_type, patient_id = globals.usr_id, gp_id = gp_id)
 
     # Book appointment on Database
-    success = booking.book()
+    success, reason = booking.book()
 
     if success:
         print("\n\U00002705 Appointment successfuly booked with " + gp_name + " at " + str(booking_time) + " on the " + str(booking_date) + ".")
         return utils.display(next_dict)
 
     else:
-        print("\n\U00002757 The appointment could not be booked because you took too long. \nPlease refresh and try again.")
+        print("\n\U00002757 " + reason)
         return book_appointment(next_dict)
 
 
