@@ -435,7 +435,7 @@ class Appointment:
             boolean_available = False
 
         other_gp_id = query_result.loc[0, 'gp_id']
-        other_gp_last_name = "DR." + query_result.loc[0, 'gp_last_name']
+        other_gp_last_name = "Dr." + query_result.loc[0, 'gp_last_name']
 
         df_object, df_print, df_print_morning, \
         df_print_afternoon = Appointment.select_availability(select_type, other_gp_id, str(start_date))
@@ -484,8 +484,8 @@ class Appointment:
 
 if __name__ == "__main__":
 
-    Appointment.change_status(51, 'confirmed')
-    Appointment.change_status(52, 'confirmed')
+    #Appointment.change_status(51, 'confirmed')
+    #Appointment.change_status(52, 'confirmed')
     # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
     # print(confirmed_id)
 
@@ -555,12 +555,12 @@ if __name__ == "__main__":
     # Appointment.confirm_all_GP_pending(2)
 
 
-    tmp = Appointment.select_GP_confirmed(16)[2]
+    #tmp = Appointment.select_GP_confirmed(16)[2]
     
     # print(tmp)
     # row = tmp.loc[tmp['Apt. ID'] == '[51]']
     # print(int(row['patient_id'].values))
 
-    id = int(tmp.loc[tmp['Apt. ID'] == '[51]']['patient_id'].values)
-    print(id)
+    #id = int(tmp.loc[tmp['Apt. ID'] == '[51]']['patient_id'].values)
+    #print(id)
     # print(Appointment.select_GP_confirmed(2)[0])

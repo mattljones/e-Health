@@ -152,14 +152,17 @@ def book_appointment(next_dict):
 
     else: 
         availability = Appointment.select_other_availability(view, Patient.select_gp_details(globals.usr_id)[0], start_date)
-        gp_id = availability[2]
-        gp_name = availability[3]
         boolean_available = availability[4]
 
         # if no availability amongst other GPs
         if boolean_available == False:
             print("\nNo availability among other GPs for the dates selected, \nplease book with your personal GP or change dates.")
             return book_appointment(next_dict)
+
+        else:
+            gp_id = availability[2]
+            gp_name = availability[3]
+
 
     print("\n" + availability[1])
 
