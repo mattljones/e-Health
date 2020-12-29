@@ -43,10 +43,12 @@ class Appointment:
 
         booking_check_query_gp = """SELECT *
                                  FROM booking
-                                 WHERE gp_id == {}
-                                 AND booking_start_time == '{}'""".format(self.gp_id,
-                                                                          self.booking_start_time)
-
+                                 WHERE gp_id == {} AND booking_status <> ('rejected' or 'canceled')
+                                 AND booking_start_time == '{}'
+                                 AND (booking_status <> 'rejected' 
+                                 OR  booking_status <> 'rejected')""".format(self.gp_id,
+                                                                             self.booking_start_time)
+        print(booking_check_query_gp)
         booking_check_result_gp = u.db_read_query(booking_check_query_gp).empty
 
         booking_check_query_patient = """SELECT *
@@ -56,6 +58,10 @@ class Appointment:
                                                                                   self.booking_start_time)
 
         booking_check_result_patient = u.db_read_query(booking_check_query_patient).empty
+
+        if dt.datetime.strptime(self.booking_start_time, '%Y-%m-%d %H:%M') <= dt.datetime.now():
+            booking_check_result, reason = False, "You can not book an appointment in the past"
+            return booking_check_result, reason
 
         if booking_check_result_gp and booking_check_result_patient:
             booking_check_result, reason = True, 'The appointment has been booked!'
@@ -70,6 +76,7 @@ class Appointment:
                                                                        self.patient_id,
                                                                        dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
             u.db_execute(query)
+
         elif booking_check_result_gp:
             booking_check_result, reason = False, "You already have a booking with a GP at this time and date"
         else:
@@ -377,7 +384,7 @@ class Appointment:
             df_object = Schedule.select(gp_id, select_type, start_date)[0]
 
         df_object = df_object.replace(('rejected', 'cancelled'), "").replace(
-            ('WEEKEND', 'booked', 'rejected', 'confirmed', 'cancelled', 'time off', 'sick leave', 'LUNCH'),
+            ('WEEKEND', 'booked', 'rejected', 'confirmed', 'cancelled', 'time off', 'sick leave', 'LUNCH', 'attended'),
             'Unavailable')
 
         column_number_list = list(range(0, df_object.shape[1]))
@@ -432,7 +439,11 @@ class Appointment:
         if (select_type == 'day' and number_of_bookings < 49) or (select_type == 'week' and number_of_bookings < 245):
             boolean_available = True
         else:
-            boolean_available = False
+            df_object, df_print, other_gp_id, other_gp_last_name, \
+            boolean_available, df_print_morning, df_print_afternoon = None, None, None, None, False, None, None
+
+            return df_object, df_print, other_gp_id, other_gp_last_name, boolean_available, df_print_morning, \
+                   df_print_afternoon
 
         other_gp_id = query_result.loc[0, 'gp_id']
         other_gp_last_name = "DR." + query_result.loc[0, 'gp_last_name']
@@ -479,11 +490,9 @@ class Appointment:
         gp_last_name_query = """SELECT gp_last_name FROM gp WHERE gp_id == {} """.format(gp_id)
         return u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
 
-
 # DEVELOPMENT
 
 if __name__ == "__main__":
-
     Appointment.change_status(51, 'confirmed')
     Appointment.change_status(52, 'confirmed')
     # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
@@ -512,8 +521,8 @@ if __name__ == "__main__":
     #                     booking_agenda, booking_type,gp_id,patient_id
 
     # THIS WORKS! : Testing book appointment method
-    # print(Appointment('Null', '2020-12-01 08:00', 'booked',
-    #                   'booking agenda edit test 3', 'offline', ' ', 1, 2).book())
+    # print(Appointment('Null', '2020-12-12 11:00', 'booked',
+    #                   'Testing booking a rejected appointment', 'offline', ' ', 9, 2).book())
 
     # THIS WORKS! : Testing Update Method
     # Appointment(booking_id=16, booking_notes='Testing updating').update()
@@ -538,13 +547,13 @@ if __name__ == "__main__":
     # THIS WORKS! : Showing DF schedule for Patient view
     # For this test I've used patient 9 since their GP by default is 2 so
     # we can easily compare the DF to make sure they look the same
-    # print(Appointment.select_availability('week', 2, '2020-12-11')[3])
-    # print(Appointment.select_availability('day', 9, '2020-12-24')[1])
+    # print(Appointment.select_availability('week', 9, '2020-12-12')[1])
+    # print(Appointment.select_availability('day', 10, '2020-12-28')[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
     # Displays the DF of the availability for that GP
-    # print(Appointment.select_other_availability('day', 1, '2020-12-24')[5])
+    # print(Appointment.select_other_availability('day', 3, '2020-12-24')[1])
     # print(Appointment.select_other_availability('week', 1, '2020-12-24')[5])
 
     # THIS WORKS! : Changes status for a specific booking
@@ -554,13 +563,13 @@ if __name__ == "__main__":
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
 
-
-    tmp = Appointment.select_GP_confirmed(16)[2]
-    
-    # print(tmp)
-    # row = tmp.loc[tmp['Apt. ID'] == '[51]']
-    # print(int(row['patient_id'].values))
-
-    id = int(tmp.loc[tmp['Apt. ID'] == '[51]']['patient_id'].values)
-    print(id)
-    # print(Appointment.select_GP_confirmed(2)[0])
+    # tmp = Appointment.select_GP_confirmed(16)[2]
+    #
+    # # print(tmp)
+    # # row = tmp.loc[tmp['Apt. ID'] == '[51]']
+    # # print(int(row['patient_id'].values))
+    #
+    # id = int(tmp.loc[tmp['Apt. ID'] == '[51]']['patient_id'].values)
+    # print(id)
+    # # print(Appointment.select_GP_confirmed(2)[0])
+    # print(dt.datetime.strptime(dt.datetime.now().strftime("%Y-%m-%d %H:%M"), '%Y-%m-%d %H:%M'))
