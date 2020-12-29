@@ -974,25 +974,75 @@ def view_appointment(next_dict):
 
     return utils.display(next_dict)
 
-
+#NOTE: INCOMPLETE
 def add_appointment(next_dict):
     '''
     Schedule an appointment for a GP.
     '''
+    #NOTE: REALISED THIS WAS BEST LEFT EMPTY AS BECAME MESSY IF NOT.
+    #TODO: GET RID OF THIS AND CALL EMPTY_METHOD.
     return utils.display(next_dict)
 
 
+#NOTE: INCOMPLETE
 def choose_appointment_day(next_dict):
     '''
     Choose the appointment from a day of available slots.
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER DAY', "\n")
+    start_date = utils.get_start_date()
+
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+    patient_id = int(input('\nPlease choose a patient ID\n'
+    '-->'))
+    selected_patient = Patient.select(patient_id)
+
+    gp_id = selected_patient[0].gp_id
+    gp_lastname = GP.select(gp_id)[0].last_name
+    
+    appt_df = Appointment.select_availability('day', gp_id, start_date)
+
+    print(appt_df[1])
+    appt_selected = int(input('\nPlease choose the slot to book the appointment in:\n'
+    '-->\n'))
+    #TODO: BOOK THE APPOINTMENT IF VALID INPUT.
+    #NOTE: LOTS OF SHARED CODE BETWEEN THIS AND CHOOSE APPOINTMENT WEEK.
     return utils.display(next_dict)
 
 
+#NOTE: INCOMPLETE
 def choose_appointment_week(next_dict):
     '''
     Choose the appointment from a week of available slots.
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER WEEK START DATE', "\n")
+    start_date = utils.get_start_date()
+
+    print("\n----------------------------------------------------\n"
+          "                ",'ENTER LAST NAME', "\n")
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+    patient_id = int(input('\nPlease choose a patient ID\n'
+    '-->'))
+    selected_patient = Patient.select(patient_id)
+
+    gp_id = selected_patient[0].gp_id
+    gp_lastname = GP.select(gp_id)[0].last_name
+    
+    appt_df = Appointment.select_availability('week', gp_id, start_date)
+
+    print(appt_df[1])
+    appt_selected = int(input('\nPlease choose the slot to book the appointment in:\n'
+    '-->\n'))
+    #TODO: BOOK THE APPOINTMENT IF VALID INPUT.
+    #NOTE: LOTS OF SHARED CODE BETWEEN THIS AND CHOOSE APPOINTMENT DAY.
     return utils.display(next_dict)
 
 
@@ -1021,6 +1071,7 @@ def appointment_by_patient(next_dict):
     return utils.display(next_dict)
 
 
+#NOTE: INCOMPLETE
 def appointment_check(next_dict):
     '''
     Check whether the appointment selected is available.
@@ -1028,6 +1079,7 @@ def appointment_check(next_dict):
     return utils.display(next_dict)
     
 
+#NOTE: INCOMPLETE
 def appointment_by_gp(next_dict):
     '''
     Find a GP's upcoming appointments with date options.
@@ -1035,6 +1087,7 @@ def appointment_by_gp(next_dict):
     return utils.display(next_dict)
 
 
+#NOTE: INCOMPLETE
 def delete_appointment_day(next_dict):
     '''
     Allows deleting of appointments from a specific day.
@@ -1042,6 +1095,7 @@ def delete_appointment_day(next_dict):
     return utils.display(next_dict)
 
 
+#NOTE: INCOMPLETE
 def delete_appointment_week(next_dict):
     '''
     Allows deleting of appointments from a specific week.
@@ -1056,6 +1110,7 @@ def delete_appointment_week(next_dict):
 #      made is selecting the patient, which is done within the one 
 #      function.
 
+#NOTE: INCOMPLETE
 def records_main(next_dict):
     '''
     Allows the selection of a patient's medical records. 
@@ -1368,10 +1423,5 @@ main_flow_admin = {
 
 if __name__ == '__main__':
     #utils.display(main_flow_admin)
-
-    test_patient = Patient.select_list('pending')
-    print(test_patient[1])
-    choice = int(input('\nPlease choose a patient ID\n'
-    '-->'))
-    selected_patient = Patient.select(choice)
-    print(selected_patient[2])
+    pass
+    
