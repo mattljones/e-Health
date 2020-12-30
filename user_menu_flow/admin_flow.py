@@ -16,6 +16,7 @@ from system import utils
 from system import globals
 
 from classes.gp import GP
+from classes.record import Record
 from classes.patient import Patient
 from classes.schedule import Schedule
 from classes.appointment import Appointment
@@ -270,6 +271,7 @@ def choose_patient(type, patient_last_name=None):
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
     
+
 # NOTE: Rename this edit_patient?
 def view_patient(next_dict):
     '''
@@ -1112,15 +1114,14 @@ def appointment_by_gp(next_dict):
     return utils.display(next_dict)
 
 
-#NOTE: INCOMPLETE
 def delete_appointment_day(next_dict):
+    # NOTE: Assuming we mean to change status to 'rejected' here
     '''
     Allows deleting of appointments from a specific day.
     '''
     return utils.display(next_dict)
 
 
-#NOTE: INCOMPLETE
 def delete_appointment_week(next_dict):
     '''
     Allows deleting of appointments from a specific week.
@@ -1135,11 +1136,32 @@ def delete_appointment_week(next_dict):
 #      made is selecting the patient, which is done within the one 
 #      function.
 
-#NOTE: INCOMPLETE
+
 def records_main(next_dict):
     '''
     Allows the selection of a patient's medical records. 
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'SELECT PATIENT', "\n")
+    
+    # Filter by last name
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+
+    # Select the ID of the patient whose records we want to access    
+    patient_id_input = input('\nPlease choose a patient ID \n-->')
+
+    while type(patient_id_input) != 'int':
+        print("\n\U00002757 Invalid entry, please input a number")
+        patient_id_input = input('\n-->')
+
+    # Retrieve patient records
+    record = Record.select(patient_id_input)
+
+    # Display patient records
+    print(record[2])
+
     return utils.display(next_dict)
 
 
