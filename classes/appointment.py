@@ -531,9 +531,9 @@ class Appointment:
 
 
         query = """UPDATE booking
-                               SET booking_status = '{}'{}
-                               WHERE gp_id = {}
-                               AND booking_start_time > '{}'""".format(new_status, status_update_query, gp_id,
+                   SET booking_status = '{}'{}
+                   WHERE gp_id = {}
+                   AND booking_start_time > '{}'""".format(new_status, status_update_query, gp_id,
                                                                         dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
         u.db_execute(query)
 
@@ -558,7 +558,7 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
-    Appointment.change_status_batch_future(1, 'rejected')
+    # Appointment.change_status_batch_future(1, 'rejected')
     # Appointment.change_status(51, 'confirmed')
     # Appointment.change_status(52, 'confirmed')
 
