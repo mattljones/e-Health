@@ -16,6 +16,7 @@ from system import utils
 from system import globals
 
 from classes.gp import GP
+from classes.record import Record
 from classes.patient import Patient
 from classes.schedule import Schedule
 from classes.appointment import Appointment
@@ -49,7 +50,7 @@ def view_gp(next_dict):
     print(doctor_df[2])
     index_choice = int(input("Choose a value to edit. \n"
     "-->"))
-    value_choice = input("\nChoose a value to edit. \n"
+    value_choice = input("\nChoose a new value to input. \n"
     "-->") 
 
     print("\n----------------------------------------------------\n"
@@ -82,14 +83,23 @@ def retrieve_gp_list(type):
     return int(input("\nPlease select a GP ID. \n--> "))
 
 
+
 def same_gp(next_dict):
     '''
     Allows viewing/editing of the same GP.
     '''
+    #TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP.
+    #NOTE: SIMILAR TO THE same_patient FUNCTION.
+    return utils.display(view_edit_gp_accounts_final_menu)
 
-    # TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
 
-    pass
+
+def view_another_gp(next_dict):
+    '''
+    Allows cycling back to the view_gp function from final_menu.
+    '''
+    return view_gp(view_edit_gp_accounts_final_menu)
+
 
 
 def add_gp(next_dict):
@@ -158,6 +168,13 @@ def add_gp(next_dict):
         return utils.display(next_dict)
 
 
+def add_another_gp(next_dict):
+    '''
+    Allows cycling back to add_gp from final_menu.
+    '''
+    return add_gp(add_new_gp_account_final_menu)
+
+
 def deactivate_gp(next_dict):
     '''
     Deactivates a GP.
@@ -185,6 +202,15 @@ def deactivate_gp(next_dict):
     else:
         print(("\n\U00002757 Input not valid."))
         return utils.display(next_dict)
+
+
+
+def deactivate_another_gp(next_dict):
+    '''
+    Allows cycling back to add_gp from final_menu.
+    '''
+    return deactivate_gp(deactivate_gp_account_final_menu)
+
 
 
 def delete_gp(next_dict):
@@ -252,13 +278,24 @@ def delete_gp(next_dict):
         return utils.display(next_dict)
 
 
+
+def delete_another_gp(next_dict):
+    '''
+    Allows cycling back to delete_gp from final_menu.
+    '''
+    return delete_gp(delete_gp_account_final_menu)
+
+
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
+
+
 
 def patient_account_section_menu(next_dict):
     '''
     Returns to the section menu.
     '''
     return utils.display(manage_patient_accounts_flow)
+
 
 
 def choose_patient(type, patient_last_name=None):
@@ -270,6 +307,21 @@ def choose_patient(type, patient_last_name=None):
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
     
+
+<<<<<<< HEAD
+=======
+
+def same_patient(next_dict):
+    '''
+    Allows editing of the same patient from the final_menu.
+    '''
+    #TODO: FIGURE OUT HOW TO DO THIS.
+    #NOTE: SIMILAR TO same_gp FUNCTION.
+    return utils.display(view_edit_patient_accounts_final_menu)
+
+
+
+>>>>>>> ce16d665d88f5343a4f74d03b1bf97eecb1362a6
 # NOTE: Rename this edit_patient?
 def view_patient(next_dict):
     '''
@@ -288,7 +340,7 @@ def view_patient(next_dict):
     print(selected_patient[2])
     index_choice = int(input("Choose an value to edit. \n"
     "-->"))
-    value_choice = input("\nChoose an value to edit. \n"
+    value_choice = input("\nChoose a new value to input. \n"
     "-->") 
 
     print("\n----------------------------------------------------\n"
@@ -306,6 +358,13 @@ def view_patient(next_dict):
         return utils.display(next_dict)
 
 
+def view_another_patient(next_dict):
+    '''
+    Allows cycling back to the view_patient function from the final_menu.
+    '''
+    return view_patient(view_edit_patient_accounts_final_menu)
+
+
 def confirm_patient(next_dict):
     # NOTE: We could use a gp_flow func here
     '''
@@ -316,8 +375,8 @@ def confirm_patient(next_dict):
           "                ",'CONFIRM ALL NEW PATIENTS?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] Enter Individual ID(s)")
-    choice = input('Please enter your choice:\n'
-    '-->')
+    choice = int(input('Please enter your choice:\n'
+    '-->'))
     
     if choice == 1:
 
@@ -360,6 +419,16 @@ def confirm_patient(next_dict):
             return utils.display(next_dict)
 
 
+
+def confirm_another_patient(next_dict):
+    '''
+    Allows cycling back to the confirm_patient function from the final_menu.
+    '''
+    return confirm_patient(add_new_patient_account_final_menu)
+
+
+
+
 def delete_patient(next_dict):
     '''
     Delete a patient account
@@ -398,6 +467,15 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         return utils.display(next_dict)
 
 
+
+def delete_another_patient(next_dict):
+    '''
+    Allows cycling back to the delete_patient function from the final_menu.
+    '''
+    return delete_patient(delete_patient_account_final_menu)
+
+
+
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
 
 
@@ -408,7 +486,7 @@ def pairings_section_menu(next_dict):
     return utils.display(gp_patient_pair_flow)
 
 
-def pairing_gp(next_dict):
+def pairing_patient(next_dict):
     '''
     Search for a patient and pair them up with a GP.
     '''
@@ -420,10 +498,9 @@ def pairing_gp(next_dict):
     last_name = input("Please enter the patient's last name:\n"
     "-->")
     choose_patient('matching', patient_last_name=last_name)
-    choice = int(input('\nPlease choose a patient ID\n'
+    patient_id = int(input('\nPlease choose a patient ID\n'
     '-->'))
-    selected_patient = Patient.select(choice)
-    patient_id = selected_patient[0].patient_id
+    selected_patient = Patient.select(patient_id)
     gp_id = selected_patient[0].gp_id
     gp_lastname = GP.select(gp_id)[0].last_name
 
@@ -498,7 +575,7 @@ def pairing_gp(next_dict):
         return utils.display(next_dict)
     
 
-def pairing_patient(next_dict):
+def pairing_gp(next_dict):
     '''
     Select a GP and pair patients to them if they are not full.
     '''
@@ -558,10 +635,9 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         last_name = input("Please enter the patient's last name:\n"
         "-->")
         choose_patient('matching', patient_last_name=last_name)
-        choice = int(input('\nPlease choose a patient ID\n'
+        patient_id = int(input('\nPlease choose a patient ID\n'
         '-->'))
-        selected_patient = Patient.select(choice)
-        patient_id = selected_patient[0].patient_id
+        selected_patient = Patient.select(patient_id)
 
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
@@ -1112,15 +1188,14 @@ def appointment_by_gp(next_dict):
     return utils.display(next_dict)
 
 
-#NOTE: INCOMPLETE
 def delete_appointment_day(next_dict):
+    # NOTE: Assuming we mean to change status to 'rejected' here
     '''
     Allows deleting of appointments from a specific day.
     '''
     return utils.display(next_dict)
 
 
-#NOTE: INCOMPLETE
 def delete_appointment_week(next_dict):
     '''
     Allows deleting of appointments from a specific week.
@@ -1135,11 +1210,28 @@ def delete_appointment_week(next_dict):
 #      made is selecting the patient, which is done within the one 
 #      function.
 
-#NOTE: INCOMPLETE
+
 def records_main(next_dict):
     '''
     Allows the selection of a patient's medical records. 
     '''
+    print("\n----------------------------------------------------\n"
+          "                ",'SELECT PATIENT', "\n")
+    
+    # Filter by last name
+    last_name = input("Please enter the patient's last name:\n"
+    "-->")
+    choose_patient('matching', patient_last_name=last_name)
+
+    # Select the ID of the patient whose records we want to access    
+    patient_id_input = input('\nPlease choose a patient ID \n-->')
+
+    # Retrieve patient records
+    record = Record.select(patient_id_input)
+
+    # Display patient records
+    print(record[2])
+
     return utils.display(next_dict)
 
 
@@ -1174,21 +1266,21 @@ yes_no_flow = {
 delete_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another GP", delete_gp,),
+    "1": ("Delete Another GP", delete_another_gp, empty_dict),
     "2": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 deactivate_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Deactivate Another GP", deactivate_gp,),
+    "1": ("Deactivate Another GP", deactivate_another_gp, empty_dict),
     "2": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 add_new_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Another GP", add_gp, empty_dict),
+    "1": ("Add Another GP", add_another_gp, empty_dict),
     "2": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
@@ -1196,7 +1288,7 @@ view_edit_gp_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("View/Modify Same GP", same_gp, empty_dict),
-    "2": ("GP List", retrieve_gp_list, empty_dict),
+    "2": ("GP List", view_another_gp, empty_dict),
     "3": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
@@ -1214,22 +1306,22 @@ manage_gp_accounts_flow = {
 delete_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another Patient", delete_patient, empty_dict),
+    "1": ("Delete Another Patient", delete_another_patient, empty_dict),
     "2": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 add_new_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Another Patient", confirm_patient, empty_dict),
+    "1": ("Add Another Patient", confirm_another_patient, empty_dict),
     "2": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 view_edit_patient_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View/Modify Same Patient", view_patient, empty_dict),
-    "2": ("Patient Search Page", choose_patient, empty_dict),
+    "1": ("View/Modify Same Patient", same_patient, empty_dict),
+    "2": ("Patient Search Page", view_another_patient, empty_dict),
     "3": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
