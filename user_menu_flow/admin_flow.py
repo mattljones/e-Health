@@ -82,16 +82,18 @@ def retrieve_gp_list(type):
     return int(input("\nPlease select a GP ID. \n--> "))
 
 
+
 def same_gp(next_dict):
     '''
     Allows viewing/editing of the same GP.
     '''
-    # TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
-    pass
+    #TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP.
+    #NOTE: SIMILAR TO THE same_patient FUNCTION.
+    return utils.display(view_edit_gp_accounts_final_menu)
 
 
 
-def back_to_gp_list(next_dict):
+def view_another_gp(next_dict):
     '''
     Allows cycling back to the view_gp function from final_menu.
     '''
@@ -285,11 +287,14 @@ def delete_another_gp(next_dict):
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
 
+
+
 def patient_account_section_menu(next_dict):
     '''
     Returns to the section menu.
     '''
     return utils.display(manage_patient_accounts_flow)
+
 
 
 def choose_patient(type, patient_last_name=None):
@@ -301,6 +306,18 @@ def choose_patient(type, patient_last_name=None):
           "                ",'SELECT PATIENT', "\n")
     print(df[1])
     
+
+
+def same_patient(next_dict):
+    '''
+    Allows editing of the same patient from the final_menu.
+    '''
+    #TODO: FIGURE OUT HOW TO DO THIS.
+    #NOTE: SIMILAR TO same_gp FUNCTION.
+    return utils.display(view_edit_patient_accounts_final_menu)
+
+
+
 # NOTE: Rename this edit_patient?
 def view_patient(next_dict):
     '''
@@ -319,7 +336,7 @@ def view_patient(next_dict):
     print(selected_patient[2])
     index_choice = int(input("Choose an value to edit. \n"
     "-->"))
-    value_choice = input("\nChoose an value to edit. \n"
+    value_choice = input("\nChoose a new value to input. \n"
     "-->") 
 
     print("\n----------------------------------------------------\n"
@@ -337,6 +354,13 @@ def view_patient(next_dict):
         return utils.display(next_dict)
 
 
+def view_another_patient(next_dict):
+    '''
+    Allows cycling back to the view_patient function from the final_menu.
+    '''
+    return view_patient(view_edit_patient_accounts_final_menu)
+
+
 def confirm_patient(next_dict):
     # NOTE: We could use a gp_flow func here
     '''
@@ -347,8 +371,8 @@ def confirm_patient(next_dict):
           "                ",'CONFIRM ALL NEW PATIENTS?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] Enter Individual ID(s)")
-    choice = input('Please enter your choice:\n'
-    '-->')
+    choice = int(input('Please enter your choice:\n'
+    '-->'))
     
     if choice == 1:
 
@@ -391,6 +415,16 @@ def confirm_patient(next_dict):
             return utils.display(next_dict)
 
 
+
+def confirm_another_patient(next_dict):
+    '''
+    Allows cycling back to the confirm_patient function from the final_menu.
+    '''
+    return confirm_patient(add_new_patient_account_final_menu)
+
+
+
+
 def delete_patient(next_dict):
     '''
     Delete a patient account
@@ -427,6 +461,15 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
     else:
         print("\n\U00002757 Input not valid.")
         return utils.display(next_dict)
+
+
+
+def delete_another_patient(next_dict):
+    '''
+    Allows cycling back to the delete_patient function from the final_menu.
+    '''
+    return delete_patient(delete_patient_account_final_menu)
+
 
 
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
@@ -1227,7 +1270,7 @@ view_edit_gp_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("View/Modify Same GP", same_gp, empty_dict),
-    "2": ("GP List", back_to_gp_list, empty_dict),
+    "2": ("GP List", view_another_gp, empty_dict),
     "3": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
@@ -1245,22 +1288,22 @@ manage_gp_accounts_flow = {
 delete_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another Patient", delete_patient, empty_dict),
+    "1": ("Delete Another Patient", delete_another_patient, empty_dict),
     "2": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 add_new_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Another Patient", confirm_patient, empty_dict),
+    "1": ("Add Another Patient", confirm_another_patient, empty_dict),
     "2": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 view_edit_patient_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View/Modify Same Patient", view_patient, empty_dict),
-    "2": ("Patient Search Page", choose_patient, empty_dict),
+    "1": ("View/Modify Same Patient", same_patient, empty_dict),
+    "2": ("Patient Search Page", view_another_patient, empty_dict),
     "3": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
