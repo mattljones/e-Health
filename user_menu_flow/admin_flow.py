@@ -281,6 +281,7 @@ def delete_another_gp(next_dict):
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
 
+
 def patient_account_section_menu(next_dict):
     '''
     Returns to the section menu.
@@ -400,14 +401,11 @@ def confirm_patient(next_dict):
             return utils.display(next_dict)
 
 
-
 def confirm_another_patient(next_dict):
     '''
     Allows cycling back to the confirm_patient function from the final_menu.
     '''
     return confirm_patient(add_new_patient_account_final_menu)
-
-
 
 
 def delete_patient(next_dict):
@@ -448,13 +446,11 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         return utils.display(next_dict)
 
 
-
 def delete_another_patient(next_dict):
     '''
     Allows cycling back to the delete_patient function from the final_menu.
     '''
     return delete_patient(delete_patient_account_final_menu)
-
 
 
 ###### MANAGE GP-PATIENT PAIRINGS FUNCTIONS ######
@@ -654,7 +650,7 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
 
 
 def choose_gp(next_dict):
-    # NOTE: This does the same thing as retrieve_gp_list()
+    # NOTE: This seems to be doing the same thing as retrieve_gp_list()
     # Using similar code for now, substitute function name in dict later if needed
     '''
     Returns the numbered list of GPs to choose from
@@ -889,7 +885,6 @@ def remove_time_off(next_dict):
 
 
 def remove_time_off_custom(next_dict):
-    # TODO: Request timeoff_type=None from classes team 
     '''
     Remove a custom amount of time off to a GP's schedule.
     '''
@@ -1036,7 +1031,6 @@ def add_appointment(next_dict):
     '''
     Schedule an appointment for a GP.
     '''
-    #NOTE: REALISED THIS WAS BEST LEFT EMPTY AS BECAME MESSY IF NOT.
     #TODO: GET RID OF THIS AND CALL EMPTY_METHOD.
     return utils.display(next_dict)
 
@@ -1520,6 +1514,6 @@ main_flow_admin = {
 ############################# TESTING ###############################
 
 if __name__ == '__main__':
-    #utils.display(main_flow_admin)
+    utils.display(main_flow_admin)
     pass
     
