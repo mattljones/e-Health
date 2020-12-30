@@ -523,7 +523,13 @@ class Appointment:
 
     @staticmethod
     def change_status_batch_future(start_date, end_date, gp_id, new_status, reject_reason=None):
-
+        """"
+        :param start_date: start date (inclusive)
+        :param end_date: end date (inclusive)
+        :param gp_id: ID of GP that needs their bookings' statuses changed
+        :param new_status: new status to change to, have to provide a reject reason as a last parameter for the function
+        :param reject_reason: Reason for why GP rejected the booking
+        """
         start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
         end_date = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
 
