@@ -176,6 +176,8 @@ class Appointment:
                            AND booking_status == 'confirmed';""".format(gp_id, start_date)
 
             sql_result_df = u.db_read_query(day_query)
+            raw_sql_df = sql_result_df[['Booking ID']]
+
             sql_result_df['Booking ID'] = '[' + sql_result_df['Booking ID'].astype(str) + ']'
             sql_result_df['Patient'] = sql_result_df['patient_first_name'].astype(str) + " " + \
                                        sql_result_df['patient_last_name'].astype(str) + \
@@ -203,7 +205,7 @@ class Appointment:
             df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
             df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-            return df_object, df_print, df_print_morning, df_print_afternoon
+            return df_object, df_print, df_print_morning, df_print_afternoon, raw_sql_df
 
         elif select_type == 'week':
             # forms an empty DF for a week from the date specified for a specific GP
@@ -220,6 +222,7 @@ class Appointment:
                        AND start_date BETWEEN '{}' and '{}' 
                        AND booking_status = 'confirmed';""".format(gp_id, start_date, end_date)
             sql_result_df = u.db_read_query(week_query)
+            raw_sql_df = sql_result_df[['booking_id']]
             sql_result_df['booking_id'] = '[' + sql_result_df['booking_id'].astype(str) + ']'
 
             # inserts all the data from the sql_result_df into the empty week DF
@@ -232,7 +235,7 @@ class Appointment:
             df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
             df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-            return df_object, df_print, df_print_morning, df_print_afternoon
+            return df_object, df_print, df_print_morning, df_print_afternoon, raw_sql_df
 
     # Displays the DF of all appointments for a specific GP after the current time
     @staticmethod
@@ -507,7 +510,9 @@ class Appointment:
         if new_status == 'rejected':
 
             query = """UPDATE booking SET booking_status = '{}', booking_agenda = '{}'
-                       WHERE booking_id = {};""".format(new_status, reject_reason, booking_id)
+                       WHERE booking_id = {}
+                       AND booking_start_time > '{}';""".format(new_status, reject_reason, booking_id,
+                                                                dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
             # print(query)
             u.db_execute(query)
 
@@ -516,6 +521,31 @@ class Appointment:
             query = """UPDATE booking SET booking_status = '{}' WHERE booking_id = {};""".format(new_status, booking_id)
             u.db_execute(query)
 
+    @staticmethod
+    def change_status_batch_future(start_date, end_date, gp_id, new_status, reject_reason=None):
+        """"
+        :param start_date: start date (inclusive)
+        :param end_date: end date (inclusive)
+        :param gp_id: ID of GP that needs their bookings' statuses changed
+        :param new_status: new status to change to, have to provide a reject reason as a last parameter for the function
+        :param reject_reason: Reason for why GP rejected the booking
+        """
+        start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+        if new_status != 'rejected':
+            status_update_query = ""
+        else:
+            status_update_query = ", booking_agenda = '{}'".format(reject_reason)
+
+
+        query = """UPDATE booking
+                   SET booking_status = '{}'{}
+                   WHERE gp_id = {}
+                   AND (date(booking_start_time) BETWEEN '{}' AND '{}')""".format(new_status, status_update_query,
+                                                                                        gp_id, start_date, end_date)
+        u.db_execute(query)
+
     # Confirm all of the appointments for a specific GP
     @staticmethod
     def confirm_all_GP_pending(gp_id):
@@ -523,7 +553,8 @@ class Appointment:
         :param gp_id: GP ID to confirm all of the appointments
         """
         query = """UPDATE booking SET booking_status = 'confirmed' 
-                   WHERE gp_id = {} AND booking_status = 'booked';""".format(gp_id)
+                   WHERE gp_id = {} AND booking_status = 'booked'
+                   AND booking_start_time > '{}';""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
         u.db_execute(query)
         print("\nAll appointments have been confirmed!\n")
 
@@ -536,11 +567,14 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
+    # Appointment.change_status_batch_future(1, 'rejected')
     # Appointment.change_status(51, 'confirmed')
     # Appointment.change_status(52, 'confirmed')
 
-    print(Appointment.select_GP('day', 16, '2020-12-25')[2])
-    print(Appointment.select_GP('day', 16, '2020-12-25')[3])
+    # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
+
+    # print(Appointment.select_GP('week', 16, '2020-12-25')[2])
+    # print(Appointment.select_GP('day', 16, '2020-12-25')[3])
 
     # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
     # print(confirmed_id)
