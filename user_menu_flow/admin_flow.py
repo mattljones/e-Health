@@ -482,7 +482,7 @@ def pairings_section_menu(next_dict):
     return utils.display(gp_patient_pair_flow)
 
 
-def pairing_gp(next_dict):
+def pairing_patient(next_dict):
     '''
     Search for a patient and pair them up with a GP.
     '''
@@ -494,10 +494,9 @@ def pairing_gp(next_dict):
     last_name = input("Please enter the patient's last name:\n"
     "-->")
     choose_patient('matching', patient_last_name=last_name)
-    choice = int(input('\nPlease choose a patient ID\n'
+    patient_id = int(input('\nPlease choose a patient ID\n'
     '-->'))
-    selected_patient = Patient.select(choice)
-    patient_id = selected_patient[0].patient_id
+    selected_patient = Patient.select(patient_id)
     gp_id = selected_patient[0].gp_id
     gp_lastname = GP.select(gp_id)[0].last_name
 
@@ -572,7 +571,7 @@ def pairing_gp(next_dict):
         return utils.display(next_dict)
     
 
-def pairing_patient(next_dict):
+def pairing_gp(next_dict):
     '''
     Select a GP and pair patients to them if they are not full.
     '''
@@ -632,10 +631,9 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         last_name = input("Please enter the patient's last name:\n"
         "-->")
         choose_patient('matching', patient_last_name=last_name)
-        choice = int(input('\nPlease choose a patient ID\n'
+        patient_id = int(input('\nPlease choose a patient ID\n'
         '-->'))
-        selected_patient = Patient.select(choice)
-        patient_id = selected_patient[0].patient_id
+        selected_patient = Patient.select(patient_id)
 
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
