@@ -230,6 +230,7 @@ def delete_gp(next_dict):
     # appointments_yes = 
     # appointments_no = 
 
+    # TODO: Change output message when patients have NOT been allocated (shortfall)
     # TODO: Test cases where patients and/or apps not allocated successfully
     # TODO: Improve code indentation for better readabality
     if y_n == 1:
