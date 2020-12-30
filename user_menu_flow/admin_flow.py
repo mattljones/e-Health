@@ -41,10 +41,7 @@ def view_gp(next_dict):
     choice = retrieve_gp_list('all')
 
     doctor_df = GP.select(choice)
-    # NOTE: I don't understand the fuction of the line below (commented for now)
-    # doctor = doctor_df[0]
 
-    # TODO: proper input validation
     print("\n----------------------------------------------------\n"
           "                ",'GP DETAILS', "\n")
     print(doctor_df[2])
@@ -71,7 +68,6 @@ def view_gp(next_dict):
 
 
 def retrieve_gp_list(type):
-    # NOTE: Either display only OR rename function (e.g. choose_gp)
     '''
     Shows the list of GPs and allows choice from that list.
     '''
@@ -83,7 +79,6 @@ def retrieve_gp_list(type):
     return int(input("\nPlease select a GP ID. \n--> "))
 
 
-
 def same_gp(next_dict):
     '''
     Allows viewing/editing of the same GP.
@@ -93,13 +88,11 @@ def same_gp(next_dict):
     return utils.display(view_edit_gp_accounts_final_menu)
 
 
-
 def view_another_gp(next_dict):
     '''
     Allows cycling back to the view_gp function from final_menu.
     '''
     return view_gp(view_edit_gp_accounts_final_menu)
-
 
 
 def add_gp(next_dict):
@@ -288,14 +281,11 @@ def delete_another_gp(next_dict):
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
 
-
-
 def patient_account_section_menu(next_dict):
     '''
     Returns to the section menu.
     '''
     return utils.display(manage_patient_accounts_flow)
-
 
 
 def choose_patient(type, patient_last_name=None):
@@ -308,9 +298,6 @@ def choose_patient(type, patient_last_name=None):
     print(df[1])
     
 
-<<<<<<< HEAD
-=======
-
 def same_patient(next_dict):
     '''
     Allows editing of the same patient from the final_menu.
@@ -320,8 +307,6 @@ def same_patient(next_dict):
     return utils.display(view_edit_patient_accounts_final_menu)
 
 
-
->>>>>>> ce16d665d88f5343a4f74d03b1bf97eecb1362a6
 # NOTE: Rename this edit_patient?
 def view_patient(next_dict):
     '''
@@ -366,7 +351,6 @@ def view_another_patient(next_dict):
 
 
 def confirm_patient(next_dict):
-    # NOTE: We could use a gp_flow func here
     '''
     Confirm pending patient registrations.
     '''
@@ -388,9 +372,6 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             Patient.confirm('all')
-
-            # TODO: MAKE SURE THE NEWLY CONFIRMED PATIENTS HAVE AN ASSIGNED GP.
-
             return utils.display(next_dict)
         
         elif y_n == 2:
