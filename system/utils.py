@@ -137,10 +137,6 @@ def display(my_dict):
         print(asciiart.exit_art)
         sys.exit()
 
-    # TODO: Add help function
-    elif usr_choice in ('H', 'h'):
-        pass
-
     # If invalid entry
     else:
         print("\n\U00002757 Invalid entry, please try again and enter your choice.")
@@ -355,6 +351,12 @@ def login(user_email, password, usr_type):
     c = conn.cursor()
 
     sql_hash_salt = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
+    
+    sql_result_df = db_read_query(sql_hash_salt)
+
+    if sql_result_df.empty :
+        return False
+    
     c.execute(sql_hash_salt)
 
     # Get the full hash + salt from db

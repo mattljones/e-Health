@@ -503,7 +503,7 @@ def display_account_details(next_dict):
             "                ACCOUNT DETAILS \n")
 
     patient_details = Patient.select(globals.usr_id)
-    print(patient_details[2] + "\n")
+    print(patient_details[4] + "\n")
 
     return utils.display(next_dict)
 
