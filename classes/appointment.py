@@ -510,7 +510,9 @@ class Appointment:
         if new_status == 'rejected':
 
             query = """UPDATE booking SET booking_status = '{}', booking_agenda = '{}'
-                       WHERE booking_id = {};""".format(new_status, reject_reason, booking_id)
+                       WHERE booking_id = {}
+                       AND booking_start_time > '{}';""".format(new_status, reject_reason, booking_id,
+                                                                dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
             # print(query)
             u.db_execute(query)
 
@@ -519,6 +521,22 @@ class Appointment:
             query = """UPDATE booking SET booking_status = '{}' WHERE booking_id = {};""".format(new_status, booking_id)
             u.db_execute(query)
 
+    @staticmethod
+    def change_status_batch_future(gp_id, new_status, reject_reason=None):
+
+        if new_status != 'rejected':
+            status_update_query = ""
+        else:
+            status_update_query = ", booking_agenda = '{}'".format(reject_reason)
+
+
+        query = """UPDATE booking
+                               SET booking_status = '{}'{}
+                               WHERE gp_id = {}
+                               AND booking_start_time > '{}'""".format(new_status, status_update_query, gp_id,
+                                                                        dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
+        u.db_execute(query)
+
     # Confirm all of the appointments for a specific GP
     @staticmethod
     def confirm_all_GP_pending(gp_id):
@@ -526,7 +544,8 @@ class Appointment:
         :param gp_id: GP ID to confirm all of the appointments
         """
         query = """UPDATE booking SET booking_status = 'confirmed' 
-                   WHERE gp_id = {} AND booking_status = 'booked';""".format(gp_id)
+                   WHERE gp_id = {} AND booking_status = 'booked'
+                   AND booking_start_time > '{}';""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
         u.db_execute(query)
         print("\nAll appointments have been confirmed!\n")
 
@@ -539,6 +558,7 @@ class Appointment:
 # DEVELOPMENT
 
 if __name__ == "__main__":
+    Appointment.change_status_batch_future(1, 'rejected')
     # Appointment.change_status(51, 'confirmed')
     # Appointment.change_status(52, 'confirmed')
 
