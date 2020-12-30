@@ -1152,10 +1152,6 @@ def records_main(next_dict):
     # Select the ID of the patient whose records we want to access    
     patient_id_input = input('\nPlease choose a patient ID \n-->')
 
-    while type(patient_id_input) != 'int':
-        print("\n\U00002757 Invalid entry, please input a number")
-        patient_id_input = input('\n-->')
-
     # Retrieve patient records
     record = Record.select(patient_id_input)
 
