@@ -371,7 +371,8 @@ class Appointment:
                    booking_agenda AS 'Booking Agenda', booking_notes AS 'Notes'
                    FROM booking b
                    JOIN gp g ON b.gp_id = g.gp_id
-                   WHERE patient_id == {} 
+                   WHERE patient_id == {}
+                   AND b.booking_status <> 'cancelled'
                    AND booking_start_time {}= '{}'""".format(patient_id, sign[timeframe],
                                                              dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
@@ -588,7 +589,7 @@ if __name__ == "__main__":
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
     # I've combined select_patient_previous and select_patient_upcoming
     # print(Appointment.select_patient('previous', 2)[1])
-    # print(Appointment.select_patient('upcoming', 4)[1])
+    # print(Appointment.select_patient('upcoming', 51)[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
     # For this test I've used patient 9 since their GP by default is 2 so
@@ -600,7 +601,7 @@ if __name__ == "__main__":
     # Queries the DB for a GP that is not current GP and finds a GP with fewest appointments.
     # Displays the DF of the availability for that GP
     # Appointment.select_other_availability(week, 16, 2020 - 12 - 29)
-    print(Appointment.select_other_availability('week', 16, '2021-01-29'))
+    # print(Appointment.select_other_availability('week', 16, '2021-01-29'))
     # print(Appointment.select_other_availability('week', 1, '2020-12-24')[5])
 
     # THIS WORKS! : Changes status for a specific booking

@@ -143,7 +143,7 @@ def display(my_dict):
 
     # If invalid entry
     else:
-        print("\n\U00002757 Invalid entry, please try again")
+        print("\n\U00002757 Invalid entry, please try again and enter your choice.")
         return display(my_dict)
 
 
@@ -322,7 +322,7 @@ def get_start_date():
             else:
                 print("\n\U00002757 Schedule date cannot be earlier than today.")
         else:
-            print("\n\U00002757 Invalid entry, please try again")
+            print("\n\U00002757 Invalid entry, please try again and enter your choice.")
         if valid == False:
             start_date = input("\n--> ")
 
@@ -342,7 +342,7 @@ def get_end_date():
             else:
                 print("\n\U00002757 Schedule date cannot be earlier than today.")
         else:
-            print("\n\U00002757 Invalid entry, please try again")
+            print("\n\U00002757 Invalid entry, please try again and enter your choice.")
         if valid == False:
             end_date = input("\n--> ")
 
