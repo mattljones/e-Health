@@ -1071,19 +1071,44 @@ def appointment_by_patient(next_dict):
     return utils.display(next_dict)
 
 
-#NOTE: INCOMPLETE
 def appointment_check(next_dict):
+    # NOTE to Tom: I don't see this being use anywhere else. Still useful?
     '''
     Check whether the appointment selected is available.
     '''
     return utils.display(next_dict)
     
 
-#NOTE: INCOMPLETE
 def appointment_by_gp(next_dict):
     '''
-    Find a GP's upcoming appointments with date options.
+    Find a GP's appointments after a certain date and display them in day/week view.
     '''
+    print("\n----------------------------------------------------\n"
+      "                ",'SELECT DATE', "\n")
+
+    # Prompt user for starting date
+    start_date = utils.get_start_date()
+
+    print("\n----------------------------------------------------\n"
+      "                ",'SELECT VIEW', "\n")
+
+    # Prompt user for type of view
+    print("Please select the date view: ")
+    print("\n [ 1 ] Day \n [ 2 ] Week")
+    view_input = input('\n-->')
+
+    while view_input not in ('1', '2'):
+        print("\n\U00002757 Invalid entry, please try again")
+        view_input = input('\n-->')
+        
+    if view_input == '1':
+        view_type = 'day'
+    elif view_input == '2':
+        view_type = 'week'
+
+    appts = Appointment.select_GP(view_type, gp_id_choice, start_date)
+    print(appts[1])
+
     return utils.display(next_dict)
 
 
