@@ -49,7 +49,7 @@ def view_gp(next_dict):
     print(doctor_df[2])
     index_choice = int(input("Choose a value to edit. \n"
     "-->"))
-    value_choice = input("\nChoose a value to edit. \n"
+    value_choice = input("\nChoose a new value to input. \n"
     "-->") 
 
     print("\n----------------------------------------------------\n"
@@ -86,10 +86,17 @@ def same_gp(next_dict):
     '''
     Allows viewing/editing of the same GP.
     '''
-
     # TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP
-
     pass
+
+
+
+def back_to_gp_list(next_dict):
+    '''
+    Allows cycling back to the view_gp function from final_menu.
+    '''
+    return view_gp(view_edit_gp_accounts_final_menu)
+
 
 
 def add_gp(next_dict):
@@ -158,6 +165,13 @@ def add_gp(next_dict):
         return utils.display(next_dict)
 
 
+def add_another_gp(next_dict):
+    '''
+    Allows cycling back to add_gp from final_menu.
+    '''
+    return add_gp(add_new_gp_account_final_menu)
+
+
 def deactivate_gp(next_dict):
     '''
     Deactivates a GP.
@@ -185,6 +199,15 @@ def deactivate_gp(next_dict):
     else:
         print(("\n\U00002757 Input not valid."))
         return utils.display(next_dict)
+
+
+
+def deactivate_another_gp(next_dict):
+    '''
+    Allows cycling back to add_gp from final_menu.
+    '''
+    return deactivate_gp(deactivate_gp_account_final_menu)
+
 
 
 def delete_gp(next_dict):
@@ -250,6 +273,14 @@ def delete_gp(next_dict):
     else:
         print(("\n\U00002757 Input not valid."))
         return utils.display(next_dict)
+
+
+
+def delete_another_gp(next_dict):
+    '''
+    Allows cycling back to delete_gp from final_menu.
+    '''
+    return delete_gp(delete_gp_account_final_menu)
 
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
@@ -1174,21 +1205,21 @@ yes_no_flow = {
 delete_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another GP", delete_gp,),
+    "1": ("Delete Another GP", delete_another_gp, empty_dict),
     "2": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 deactivate_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Deactivate Another GP", deactivate_gp,),
+    "1": ("Deactivate Another GP", deactivate_another_gp, empty_dict),
     "2": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 add_new_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Another GP", add_gp, empty_dict),
+    "1": ("Add Another GP", add_another_gp, empty_dict),
     "2": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
@@ -1196,7 +1227,7 @@ view_edit_gp_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("View/Modify Same GP", same_gp, empty_dict),
-    "2": ("GP List", retrieve_gp_list, empty_dict),
+    "2": ("GP List", back_to_gp_list, empty_dict),
     "3": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
