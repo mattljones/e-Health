@@ -176,6 +176,8 @@ class Appointment:
                            AND booking_status == 'confirmed';""".format(gp_id, start_date)
 
             sql_result_df = u.db_read_query(day_query)
+            raw_sql_df = sql_result_df[['Booking ID']]
+
             sql_result_df['Booking ID'] = '[' + sql_result_df['Booking ID'].astype(str) + ']'
             sql_result_df['Patient'] = sql_result_df['patient_first_name'].astype(str) + " " + \
                                        sql_result_df['patient_last_name'].astype(str) + \
@@ -203,7 +205,7 @@ class Appointment:
             df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
             df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-            return df_object, df_print, df_print_morning, df_print_afternoon
+            return df_object, df_print, df_print_morning, df_print_afternoon, raw_sql_df
 
         elif select_type == 'week':
             # forms an empty DF for a week from the date specified for a specific GP
@@ -220,6 +222,7 @@ class Appointment:
                        AND start_date BETWEEN '{}' and '{}' 
                        AND booking_status = 'confirmed';""".format(gp_id, start_date, end_date)
             sql_result_df = u.db_read_query(week_query)
+            raw_sql_df = sql_result_df[['booking_id']]
             sql_result_df['booking_id'] = '[' + sql_result_df['booking_id'].astype(str) + ']'
 
             # inserts all the data from the sql_result_df into the empty week DF
@@ -232,7 +235,7 @@ class Appointment:
             df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
             df_print = df_object.to_markdown(tablefmt="grid", index=True)
 
-            return df_object, df_print, df_print_morning, df_print_afternoon
+            return df_object, df_print, df_print_morning, df_print_afternoon, raw_sql_df
 
     # Displays the DF of all appointments for a specific GP after the current time
     @staticmethod
@@ -539,8 +542,8 @@ if __name__ == "__main__":
     # Appointment.change_status(51, 'confirmed')
     # Appointment.change_status(52, 'confirmed')
 
-    print(Appointment.select_GP('day', 16, '2020-12-25')[2])
-    print(Appointment.select_GP('day', 16, '2020-12-25')[3])
+    # print(Appointment.select_GP('week', 16, '2020-12-25')[2])
+    # print(Appointment.select_GP('day', 16, '2020-12-25')[3])
 
     # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
     # print(confirmed_id)
