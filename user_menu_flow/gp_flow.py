@@ -317,24 +317,9 @@ def another_confirm_one(next_dict):
         return display_next_menu(next_dict)
 
 def another_confirm_all(next_dict):
-    flow_confirm_appoint = {"title": "Confirm Appointments",
-                 "type": "sub",
-                 "1":("Confirm All", another_confirm_all, next_dict),
-                 "2":("Confirm One", another_confirm_one, next_dict),
-                 "3":("Reject One", another_confirm_rej, next_dict)
-                }
     Appointment.confirm_all_GP_pending(globals.usr_id)
     print(Appointment.select_GP_appt(globals.usr_id))
-
-    print("\n----------------------------------------------------\n"
-          "                ", "Confrim another appointment?", "\n")
-    print("[ 1 ] Yes")
-    print("[ 2 ] No")
-    usr_choice = input("\n--> ")
-    if usr_choice == '1':
-        return display_next_menu(flow_confirm_appoint)
-    elif usr_choice == '2':
-        return display_next_menu(next_dict)
+    return display_next_menu(next_dict)
 
 def remove_timeoff(next_dict):
     flow_timeoff = {"title": "View Schedule",
