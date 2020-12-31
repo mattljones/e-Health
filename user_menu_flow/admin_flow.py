@@ -378,7 +378,7 @@ def view_edit_patient(next_dict):
 
     if y_n == 1:
         # Get raw df to edit
-        df = selected_patient[1]
+        df = selected_patient[0]
 
         # Update the selected section to the new value 
         df.__dict__[profile[key]] = new_value
