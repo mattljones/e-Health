@@ -30,10 +30,22 @@ def gp_account_section_menu(next_dict):
     return utils.display(manage_gp_accounts_flow)
 
 
-def view_gp(next_dict):
+def view_edit_gp(next_dict):
     '''
     Select from a list of GPs and allows choice for viewing.
     '''
+
+    profile = {
+    1: 'gp_first_name',
+    2: 'gp_last_name',
+    3: 'gp_gender',
+    4: 'gp_birth_date',
+    5: 'gp_email',
+    6: 'gp_working_days',
+    7: 'gp_department_id',
+    8: 'gp_specialisation_id',
+    9: 'gp_status',
+    }
 
     # Check if gp id already selected previously for reuse
     if 'gp_id_choice' in globals():
@@ -46,23 +58,37 @@ def view_gp(next_dict):
     print("\n----------------------------------------------------\n"
           "                ",'GP DETAILS', "\n")
     print(doctor_df[2])
-    index_choice = int(input("Choose a value to edit. \n"
-    "--> "))
-    value_choice = input("\nChoose a new value to input. \n"
-    "--> ") 
+    key = int(input("Choose a value to edit. \n--> "))
+
+    if key not in range(1,len(profile)+1):
+        print("\n\U00002757 Input not valid.")
+        key = int(input("Choose a value to edit. \n--> "))
+
+    new_value = input("\nChoose a new value to input. \n--> ") 
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
+    print("Do you want to edit field [{}] with the new value {}?".format(index, value))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
+
     y_n = int(input("\n--> "))
+    
     if y_n == 1:
-        # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
+        # Get raw df to edit
+        df = doctor_df[0]
+
+        # Update the selected section to the new value 
+        df.__dict__[profile[key]] = new_value
+
+        # Update in the database
+        df.update()
 
         return utils.display(next_dict)
         
     elif y_n == 2:
         return utils.display(next_dict)
+
     else:
         print("\n\U00002757 Input not valid.")
         return utils.display(next_dict)
@@ -85,20 +111,20 @@ def retrieve_gp_list(type):
 
 def view_same_gp(next_dict):
     '''
-    Allows cycling back to the view_gp function for the same GP,
+    Allows cycling back to the view_edit_gp function for the same GP,
     stored in the global variable gp_choice.
     '''
-    return view_gp(view_edit_gp_accounts_final_menu)
+    return view_edit_gp(view_edit_gp_accounts_final_menu)
 
 
 def view_another_gp(next_dict):
     '''
-    Allows cycling back to the view_gp function from final_menu,
+    Allows cycling back to the view_edit_gp function from final_menu,
     deleting the global variable so a different GP can be viewed.
     '''
     global gp_id_choice
     del gp_id_choice
-    return view_gp(view_edit_gp_accounts_final_menu)
+    return view_edit_gp(view_edit_gp_accounts_final_menu)
 
 
 def add_gp(next_dict):
@@ -302,7 +328,6 @@ def same_patient(next_dict):
 
 
 # TODO: Use global variable for patient_id
-# NOTE: Rename this edit_patient?
 def view_patient(next_dict):
     '''
     View a Patient Account.
@@ -1369,7 +1394,7 @@ view_edit_gp_accounts_final_menu = {
 manage_gp_accounts_flow = {
     "title": "MANAGE GP ACCOUNTS",
     "type": "sub",
-    "1":("View/Edit GP Details", view_gp, view_edit_gp_accounts_final_menu),
+    "1":("View/Edit GP Details", view_edit_gp, view_edit_gp_accounts_final_menu),
     "2":("Add New GP Account", add_gp, add_new_gp_account_final_menu),
     "3":("Deactivate GP Account", deactivate_gp, deactivate_gp_account_final_menu),
     "4":("Delete GP Account", delete_gp, delete_gp_account_final_menu)
