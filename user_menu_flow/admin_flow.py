@@ -319,7 +319,7 @@ def retrieve_patient():
     return patient_id_choice
 
 
-# NOTE: Rename this edit_patient?
+
 def view_edit_patient(next_dict):
     '''
     View a Patient Account.
@@ -332,7 +332,7 @@ def view_edit_patient(next_dict):
     4: 'birth_date',
     5: 'email',
     6: 'NHS_blood_donor',
-    7: 'HHS_organ_donor',
+    7: 'NHS_organ_donor',
     8: 'status'
     }
 
@@ -352,7 +352,7 @@ def view_edit_patient(next_dict):
     "                ",'EDIT THIS PATIENT?', "\n")
     print('[ 1 ] Yes')
     print('[ 2 ] Choose Another Patient')
-    edit_choice = int(input('-->'))
+    edit_choice = int(input('--> '))
 
     while edit_choice not in (1, 2):
         print("\n\U00002757 Invalid entry, please try again")
@@ -361,35 +361,43 @@ def view_edit_patient(next_dict):
     if edit_choice == 2:
 
         del patient_id_choice
-        return view_patient(next_dict)
+        return view_edit_patient(next_dict)
 
     else:
-        index_choice = int(input("Choose an value to edit. \n"
-        "--> "))
-        value_choice = input("\nChoose a new value to input. \n"
-        "--> ") 
+        key = int(input("Choose a value to edit. \n--> "))
+        new_value = input("\nChoose a new value to input. \n--> ") 
 
         print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
+        print("Do you want to edit field [{}] with the new value '{}'?".format(key, new_value))
         print("[ 1 ] Yes")
         print("[ 2 ] No")
+    
+    y_n = int(input("\n--> "))
+    
+    while y_n not in (1,2):
+        print("\n\U00002757 Input not valid.")
         y_n = int(input("\n--> "))
-        if y_n == 1:
-            df = selected_patient[0]
-            # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
-            # Update in the database
-            df.update()
-            print("\n\U00002705 Patient profile successfully updated.")
-            return utils.display(next_dict)
+    if y_n == 1:
+        # Get raw df to edit
+        df = selected_patient[0]
+
+        # Update the selected section to the new value 
+        df.__dict__[profile[key]] = new_value
+
+        # Update in the database
+        df.update()
+        print("\n\U00002705 Patient profile successfully updated.")
+        return utils.display(next_dict)
         
-        elif y_n == 2:
-            return utils.display(next_dict)
+    elif y_n == 2:
+        return utils.display(next_dict)
 
 
 def view_same_patient(next_dict):
     '''
-    Allows cycling back to the view_patient function from the final_menu
+    Allows cycling back to the view_edit_patient function from the final_menu
     for the same patient.
     '''
     return view_edit_patient(view_edit_patient_accounts_final_menu)
@@ -398,7 +406,7 @@ def view_same_patient(next_dict):
 
 def view_another_patient(next_dict):
     '''
-    Allows cycling back to the view_patient function from the final_menu
+    Allows cycling back to the view_edit_patient function from the final_menu
     for another patient.
     '''
     global patient_id_choice
