@@ -329,12 +329,11 @@ class Schedule:
 
     @staticmethod  # DELETE delete_timeoff - STATIC
     ## TODO: only if requested by user flow team: make timeoff_type=None
-    def delete_timeoff(gp_id, type, timeoff_type, start_date=None, end_date=None):
+    def delete_timeoff(gp_id, type, start_date=None, end_date=None):
         '''
         Deletes timeoff from database (either all or for a custom date range.
         :param gp_id: gp_id that is stored in database/db_comp0066.db
         :param type: 'all' to delete all upcoming timeoffs or 'custom' to delete timeoffs during a certain time period
-        :param timeoff_type: 'sick leave' or 'time off'
         :param start_date: e.g. 2020-12-8
         :param end_date: e.g. 2020-12-10
         :return: success string
@@ -371,9 +370,9 @@ class Schedule:
                                             WHERE
                                                 strftime('%Y-%m-%d %H:%M', booking_start_time) = '{}'
                                             AND
-                                                booking_status = '{}'
+                                                booking_status IN ('sick leave', 'time off')
                                             AND
-                                                gp_id = {};'''.format(new_timeoff_range[i], timeoff_type, gp_id)
+                                                gp_id = {};'''.format(new_timeoff_range[i], gp_id)
                 # Execute query
                 u.db_execute(delete_timeoff_days_query)
 
@@ -388,10 +387,9 @@ class Schedule:
                                         WHERE
                                             strftime('%Y-%m-%d %H:%M', booking_start_time) >= '{}'
                                         AND
-                                            booking_status = '{}'
+                                            booking_status IN ('sick leave', 'time off')
                                         AND
-                                            gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                                                  timeoff_type, gp_id)
+                                            gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id)
             # Execute query
             u.db_execute(delete_timeoff_all_query)
 
@@ -427,7 +425,7 @@ if __name__ == "__main__":
 # schedule.insert_timeoff(2, 'sick leave', '2020-12-1', '2021-12-23')
 
 ## testing delete_timeoff custom
-# schedule.delete_timeoff(gp_id=2, type='custom', timeoff_type='sick leave', start_date='2021-1-20', end_date='2021-1-25')
+# schedule.delete_timeoff(gp_id=16, type='custom', start_date='2020-12-20', end_date='2020-12-25')
 
 ## testing delete_timeoff all
-# schedule.delete_timeoff(gp_id=16, type='all', timeoff_type='sick leave')
+# schedule.delete_timeoff(gp_id=16, type='all')

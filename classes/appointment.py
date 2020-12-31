@@ -568,13 +568,14 @@ class Appointment:
 
 if __name__ == "__main__":
     # Appointment.change_status_batch_future(1, 'rejected')
-    Appointment.change_status(51, 'confirmed')
+    Appointment.change_status(51, 'booked')
     Appointment.change_status(52, 'booked')
+    print(Appointment.select_GP_pending(16)[1])
 
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
 
     # print(Appointment.select_GP('week', 16, '2020-12-25')[2])
-    # print(Appointment.select_GP('day', 16, '2020-12-25')[3])
+    # print(Appointment.select_GP('day', 16, '2021-01-14')[2])
 
     # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
     # print(confirmed_id)
@@ -624,7 +625,7 @@ if __name__ == "__main__":
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
     # I've combined select_patient_previous and select_patient_upcoming
-    print(Appointment.select_patient('previous', 2)[1])
+    # print(Appointment.select_patient('previous', 2)[1])
     # print(Appointment.select_patient('upcoming', 51)[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
