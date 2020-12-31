@@ -161,7 +161,7 @@ def hash_salt(password):
 
     return hash_salt
 
-# TODO: trim input (no spaces)
+
 def validate(user_input):
     """
     Validate user input.  
@@ -171,6 +171,9 @@ def validate(user_input):
         - Input too long (> 50 chars) 
         - Does not contain "'" or '"' to avoid SQL injections
     """
+
+    # Remove leading and trailing whitespaces
+    user_input = user_input.strip()
 
     try:
         if user_input == '':
@@ -201,6 +204,9 @@ def validate_email(user_input):
         - Not unique email address
         - Does not contain "'" or '"' to avoid SQL injections
     """
+
+    # Remove leading and trailing whitespaces
+    user_input = user_input.strip()
 
     email_query = 'SELECT patient_email FROM patient'
     emails = db_read_query(email_query)   
@@ -238,6 +244,9 @@ def validate_password(user_input):
         - Input too short (< 8 chars)
         - Does not contain "'" or '"' to avoid SQL injections
     """
+
+    # Remove leading and trailing whitespaces
+    user_input = user_input.strip()
 
     try:
         if user_input == '':
