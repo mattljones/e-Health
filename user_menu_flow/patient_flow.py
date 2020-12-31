@@ -161,16 +161,19 @@ def book_appointment(next_dict):
             gp_id = availability[2]
             gp_name = availability[3]
 
+    # Print morning availability
+    print("\n" + availability[2])
 
-    print("\n" + availability[1])
+    print("\nEnter the index of the time slot to book.")
 
-    print("\nEnter the index of the time slot to book \nor '#' to display other availabilitites (different dates or GPs)")
+    print("\n[ A ] Display afternoon availability")
+    print("[ # ] Display other availabilitites (different dates or GPs) ")
 
     # Require user choice of booking slot
     booking_index = input("\n--> ")
 
     # Formatting user input correctly
-    if booking_index != '#':
+    if booking_index not in ('#','A','a') :
         while len(booking_index) < 3:
             booking_index = '0' + booking_index
 
@@ -185,8 +188,28 @@ def book_appointment(next_dict):
     while confirmation == False:
 
         # While user entry is invalid
-        while len(selected_time_slot.index) != 1 and booking_index != '#':
+        while len(selected_time_slot.index) != 1 and booking_index not in ('#','A','a'):
             print("\n\U00002757 Invalid entry, please try again and enter a valid time slot index.")
+            booking_index = input("\n--> ")
+
+            # Formatting user input correctly
+            if booking_index not in ('#','A','a') :
+                while len(booking_index) < 3:
+                    booking_index = '0' + booking_index
+
+            selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
+
+        # if user wants to display new availability, recursive call of the function itself
+        if booking_index == "#":
+            return book_appointment(next_dict)
+
+        # if user wants to display afternoon availability
+        elif booking_index in ("A","a"):
+            # Print afternoon availability
+            print("\n" + availability[3])
+            print("\nEnter the index of the time slot to book \nor '#' to display other availabilitites (different dates or GPs)")
+            
+            # Require user choice of booking slot
             booking_index = input("\n--> ")
 
             # Formatting user input correctly
@@ -195,10 +218,6 @@ def book_appointment(next_dict):
                     booking_index = '0' + booking_index
 
             selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
-
-        # if user wants to display new availability, recursive call of the function itself
-        if booking_index == "#":
-             return book_appointment(next_dict)
 
         # Confirm time slot selection
         else :
