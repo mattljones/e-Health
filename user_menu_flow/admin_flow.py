@@ -691,7 +691,6 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         choose_patient('matching', patient_last_name=last_name)
         patient_id = int(input('\nPlease choose a patient ID\n'
         '--> '))
-        selected_patient = Patient.select(patient_id)
 
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
