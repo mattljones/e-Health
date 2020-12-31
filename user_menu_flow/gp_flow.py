@@ -329,18 +329,7 @@ def remove_timeoff(next_dict):
                 }
     start_date = utils.get_start_date()
     end_date = utils.get_end_date()
-    print("\nWhat is the type of timeoff?")
-    print("[ 1 ] sick leave")
-    print("[ 2 ] time off")
-    type_timeoff = input("--> ")
-    while type_timeoff not in ["1", "2"]:
-        print("Invalid input, try again!")
-        type_timeoff = input("--> ")
-    else:
-        if type_timeoff == "1":
-            Schedule.delete_timeoff(globals.usr_id, 'custom', 'sick leave', start_date, end_date)
-        elif type_timeoff == "2":
-            Schedule.delete_timeoff(globals.usr_id, 'custom', 'time off', start_date, end_date)   
+    Schedule.delete_timeoff(globals.usr_id, 'custom', start_date, end_date) 
     print("\n----------------------------------------------------\n"
           "                ", "Add or Remove a new timeoff?", "\n")
     print("[ 1 ] Yes")
