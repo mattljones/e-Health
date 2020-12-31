@@ -36,15 +36,15 @@ def view_edit_gp(next_dict):
     '''
 
     profile = {
-    1: 'gp_first_name',
-    2: 'gp_last_name',
-    3: 'gp_gender',
-    4: 'gp_birth_date',
-    5: 'gp_email',
-    6: 'gp_working_days',
-    7: 'gp_department_id',
-    8: 'gp_specialisation_id',
-    9: 'gp_status',
+    1: 'first_name',
+    2: 'last_name',
+    3: 'gender',
+    4: 'birth_date',
+    5: 'email',
+    6: 'working_days',
+    7: 'department_id',
+    8: 'specialisation_id',
+    9: 'status',
     }
 
     # Check if gp id already selected previously for reuse
@@ -83,7 +83,7 @@ def view_edit_gp(next_dict):
 
         # Update in the database
         df.update()
-
+        print("\n\U00002705 GP profile successfully updated.")
         return utils.display(next_dict)
         
     elif y_n == 2:
@@ -328,24 +328,43 @@ def same_patient(next_dict):
 
 
 # TODO: Use global variable for patient_id
-def view_patient(next_dict):
+def view_edit_patient(next_dict):
     '''
     View a Patient Account.
     '''
+
+    profile = {
+    1: 'first_name'
+    2: 'last_name'
+    3: 'gender'
+    4: 'birth_date'
+    5: 'email'
+    6: 'NHS_blood_donor'
+    7: 'HHS_organ_donor'
+    8: 'status'
+    }
+
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
     "--> ")
+
     choose_patient('matching', patient_last_name=last_name)
     choice = int(input('\nPlease choose a patient ID\n'
     '--> '))
     selected_patient = Patient.select(choice)
+    
     print("\n----------------------------------------------------\n"
           "                ",'PATIENT DETAILS', "\n")
     print(selected_patient[2])
-    index_choice = int(input("Choose an value to edit. \n"
-    "--> "))
-    value_choice = input("\nChoose a new value to input. \n"
+    
+    key = int(input("Choose an value to edit. \n--> "))
+
+    while key not in range(1, len(profile)+1):
+        print("\n\U00002757 Input not valid.")
+        key = int(input("Choose an value to edit. \n--> "))
+
+    new_value = input("\nChoose a new value to input. \n"
     "--> ") 
 
     print("\n----------------------------------------------------\n"
@@ -353,10 +372,21 @@ def view_patient(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
     y_n = int(input("\n--> "))
+
+    while y_n not in (1,2):
+        print("\n\U00002757 Input not valid.")
+        y_n = int(input("\n--> "))
+
     if y_n == 1:
+        # Get raw df to edit
+        df = selected_patient[1]
 
-        # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
+        # Update the selected section to the new value 
+        df.__dict__[profile[key]] = new_value
 
+        # Update in the database
+        df.update()
+        print("\n\U00002705 GP profile successfully updated.")
         return utils.display(next_dict)
         
     elif y_n == 2:
@@ -365,9 +395,9 @@ def view_patient(next_dict):
 
 def view_another_patient(next_dict):
     '''
-    Allows cycling back to the view_patient function from the final_menu.
+    Allows cycling back to the view_edit_patient function from the final_menu.
     '''
-    return view_patient(view_edit_patient_accounts_final_menu)
+    return view_edit_patient(view_edit_patient_accounts_final_menu)
 
 
 def confirm_patient(next_dict):
@@ -487,7 +517,7 @@ def pairing_patient(next_dict):
     Search for a patient and pair them up with a GP.
     '''
 
-    # NOTE: Better way to reuse code from view_patient()
+    # NOTE: Better way to reuse code from view_edit_patient()
 
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
@@ -992,13 +1022,13 @@ def remove_time_off_custom(next_dict):
     if user_confirmation == '1':
         # Remove timeoff of a specific type from db
         if timeoff_type_input in ('1', '2'):
-            Schedule.delete_timeoff(gp_id_choice, 'custom', timeoff_type, start_date, end_date)
+            Schedule.delete_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
             print("\n\U00002705 Time off successfully removed.")
 
         # Remove timeoff of both types from db
         elif timeoff_type_input == '3':
-            Schedule.delete_timeoff(gp_id_choice, 'custom', 'sick leave', start_date, end_date)
-            Schedule.delete_timeoff(gp_id_choice, 'custom', 'time off', start_date, end_date)
+            Schedule.delete_timeoff(gp_id_choice, 'sick leave', start_date, end_date)
+            Schedule.delete_timeoff(gp_id_choice, 'time off', start_date, end_date)
         
         # Proceed with next section
         return utils.display(next_dict)
@@ -1154,7 +1184,7 @@ def appointment_by_patient(next_dict):
     '''
     Find a patient's upcoming appointments.
     '''
-    # NOTE: Reusing code from view_patient (which actually also handles updating)
+    # NOTE: Reusing code from view_edit_patient
 
     # Create a shortlist by last name
     print("\n----------------------------------------------------\n"
@@ -1414,7 +1444,7 @@ view_edit_patient_accounts_final_menu = {
 manage_patient_accounts_flow = {
     "title": "MANAGE PATIENT ACCOUNTS",
     "type": "sub",
-    "1":("View/Edit Patient Details", view_patient, view_edit_patient_accounts_final_menu),
+    "1":("View/Edit Patient Details", view_edit_patient, view_edit_patient_accounts_final_menu),
     "2":("Add New Patient Account", confirm_patient, add_new_patient_account_final_menu),
     "3":("Delete Patient Account", delete_patient, delete_patient_account_final_menu)
 }
