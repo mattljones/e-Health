@@ -44,7 +44,7 @@ def view_edit_gp(next_dict):
     6: 'working_days',
     7: 'department_id',
     8: 'specialisation_id',
-    9: 'status',
+    9: 'status'
     }
 
     # Check if gp id already selected previously for reuse
@@ -240,7 +240,6 @@ def deactivate_another_gp(next_dict):
 
 def delete_gp(next_dict):
     '''
-    # NOTE: Integrate docstrings with info from GP.delete()
     Deletes a GP.
     '''
     # List and prompt admin for a gp id
@@ -334,13 +333,13 @@ def view_edit_patient(next_dict):
     '''
 
     profile = {
-    1: 'first_name'
-    2: 'last_name'
-    3: 'gender'
-    4: 'birth_date'
-    5: 'email'
-    6: 'NHS_blood_donor'
-    7: 'HHS_organ_donor'
+    1: 'first_name',
+    2: 'last_name',
+    3: 'gender',
+    4: 'birth_date',
+    5: 'email',
+    6: 'NHS_blood_donor',
+    7: 'HHS_organ_donor',
     8: 'status'
     }
 
@@ -386,7 +385,7 @@ def view_edit_patient(next_dict):
 
         # Update in the database
         df.update()
-        print("\n\U00002705 GP profile successfully updated.")
+        print("\n\U00002705 Patient profile successfully updated.")
         return utils.display(next_dict)
         
     elif y_n == 2:
@@ -516,8 +515,6 @@ def pairing_patient(next_dict):
     '''
     Search for a patient and pair them up with a GP.
     '''
-
-    # NOTE: Better way to reuse code from view_edit_patient()
 
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
@@ -813,7 +810,6 @@ def add_time_off_day(next_dict):
     '''
     Adds a day of time off to a GP's schedule.
     '''
-    # NOTE: Minimize code repetition
     print("\n----------------------------------------------------\n"
           "                ",'ADD TIME OFF - DAY', "\n")
 
@@ -868,7 +864,6 @@ def add_time_off_week(next_dict):
     '''
     Adds a week of time off to a GP's schedule.
     '''
-    # NOTE: Minimize code repetition
     print("\n----------------------------------------------------\n"
           "                ",'ADD TIME OFF - WEEK', "\n")
 
@@ -1184,8 +1179,6 @@ def appointment_by_patient(next_dict):
     '''
     Find a patient's upcoming appointments.
     '''
-    # NOTE: Reusing code from view_edit_patient
-
     # Create a shortlist by last name
     print("\n----------------------------------------------------\n"
           "                ",'SELECT PATIENT', "\n")
@@ -1321,10 +1314,9 @@ def delete_appointment_week(next_dict):
 
 ###### RECORDS FUNCTIONS ######
 
-#NOTE: This whole section has been simplified from the flow diagram, 
-#      with 'summaries' changed to 'records'. Now, only choice to be
-#      made is selecting the patient, which is done within the one 
-#      function.
+# This whole section has been simplified from the flow diagram, 
+# with 'summaries' changed to 'records'. Now, only choice to be
+# made is selecting the patient, which is done within the one function.
 
 
 def records_main(next_dict):
