@@ -133,7 +133,7 @@ def display(my_dict):
         return my_dict[usr_choice][1](my_dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
-        print("\n" + line + "\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
+        print("\n" + line + "\n" + "\n\U0001F51A THANK YOU FOR USING E-HEALTH. SEE YOU NEXT TIME!")
         print(asciiart.exit_art)
         sys.exit()
 
