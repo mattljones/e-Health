@@ -487,17 +487,17 @@ class Appointment:
         if (select_type == 'day' and number_of_bookings < 49) or (select_type == 'week' and number_of_bookings < 245):
             boolean_available = True
         else:
-            df_object, df_print, other_gp_id, other_gp_last_name, \
-            boolean_available, df_print_morning, df_print_afternoon = None, None, None, None, False, None, None
+            df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id, other_gp_last_name, \
+            boolean_available = None, None, None, None, None, None, False
 
-            return df_object, df_print, other_gp_id, other_gp_last_name, boolean_available, df_print_morning, \
-                   df_print_afternoon
+            return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id,\
+                   other_gp_last_name, boolean_available
 
         df_object, df_print, df_print_morning, \
         df_print_afternoon = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return df_object, df_print, other_gp_id, other_gp_last_name, \
-               boolean_available, df_print_morning, df_print_afternoon
+        return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id,\
+               other_gp_last_name, boolean_available
 
     # Change status of a specific appointment
     @staticmethod
@@ -593,7 +593,9 @@ if __name__ == "__main__":
     # print(Appointment.select(51)[1].loc[0,"Apt. ID []"])
     # print(Appointment.select(51)[1].loc[0,"Notes [4]"])
     # print(Appointment.select_GP_appt(16))
-    # print(Appointment.select_availability('week', 16, '2020-12-27')[2])
+    print(Appointment.select_availability('week', 1, '2021-02-04')[1])
+
+    # print(Schedule.select(1, 'week', '2021-01-01')[1])
     # print(Appointment.select_availability('day', 1, '2020-12-23'))
     pass
 
