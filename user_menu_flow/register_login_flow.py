@@ -227,7 +227,7 @@ flow_1 = {"title":"LOGIN AS ?",
 
 
 # login home page dictionary
-main_flow_register = {"title":"\N{hospital} WELCOME TO E-HEALTH! \n\n\U00002757 Open your terminal in full screen for a better user experience \U00002757",
+main_flow_register = {"title":"\U0001F3E5 WELCOME TO E-HEALTH! \n\n\U00002757 Open your terminal in full screen for a better user experience \U00002757",
                       "type":"main",
                       "1":("Login",empty_method,flow_1),
                       "2":("Register",register_page,empty_dict)}
