@@ -304,7 +304,8 @@ class Appointment:
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE booking_status == 'confirmed'
-                   AND b.gp_id =={}""".format(gp_id)
+                   AND b.gp_id =={}
+                   AND booking_start_time <{}""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
         df_object = u.db_read_query(pending_query)
 
@@ -338,7 +339,7 @@ class Appointment:
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE booking_status == 'booked' 
-                   AND b.booking_start_time > '{}' 
+                   AND b.booking_start_time < '{}' 
                    AND b.gp_id =={}""".format(dt.datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
 
         df_object = u.db_read_query(pending_query)
@@ -386,10 +387,10 @@ class Appointment:
         query_results = query_results.drop(columns='GP ID')
         # This variable stores the printable version of the DF
 
-        if timeframe == 'previous' and status == 'confirmed':
+        if timeframe == 'previous' and status == 'attended':
             # Matt this ↓ is a DF for you to use, only with confirmed bookings
             # your input would look like select_patient('previous',patient_id,'confirmed')
-            df_object = query_results[query_results['Status'] == 'confirmed'].drop(columns=['Status',
+            df_object = query_results[query_results['Status'] == 'attended'].drop(columns=['Status',
                                                                                             'Booking Agenda'])
             df_print = df_object.to_markdown(tablefmt="grid", index=False)
             return df_object, df_print
@@ -568,14 +569,13 @@ class Appointment:
 
 if __name__ == "__main__":
     # Appointment.change_status_batch_future(1, 'rejected')
-    Appointment.change_status(51, 'booked')
+    Appointment.change_status(51, 'confirmed')
     Appointment.change_status(52, 'booked')
-    print(Appointment.select_GP_pending(16)[1])
 
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
 
     # print(Appointment.select_GP('week', 16, '2020-12-25')[2])
-    # print(Appointment.select_GP('day', 16, '2021-01-14')[2])
+    # print(Appointment.select_GP('day', 16, '2020-12-25')[3])
 
     # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
     # print(confirmed_id)
@@ -648,9 +648,9 @@ if __name__ == "__main__":
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
 
-    # tmp = Appointment.select_GP_confirmed(16)[2]
-    #
-    # # print(tmp)
+    tmp = Appointment.select_GP_confirmed(16)[2]
+
+    # print(tmp)
     # # row = tmp.loc[tmp['Apt. ID'] == '[51]']
     # # print(int(row['patient_id'].values))
     #
