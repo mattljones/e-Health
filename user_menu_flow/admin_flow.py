@@ -30,7 +30,6 @@ def gp_account_section_menu(next_dict):
     return utils.display(manage_gp_accounts_flow)
 
 
-
 def view_edit_gp(next_dict):
     '''
     Select from a list of GPs and allows choice for viewing.
@@ -231,13 +230,11 @@ def deactivate_gp(next_dict):
         return utils.display(next_dict)
 
 
-
 def deactivate_another_gp(next_dict):
     '''
     Allows cycling back to add_gp from final_menu.
     '''
     return deactivate_gp(deactivate_gp_account_final_menu)
-
 
 
 def delete_gp(next_dict):
@@ -321,7 +318,6 @@ def choose_patient(type, patient_last_name=None):
     print(df[1])
     
 
-
 def retrieve_patient():
     print("\n----------------------------------------------------\n"
     "                ",'ENTER LAST NAME', "\n")
@@ -332,7 +328,6 @@ def retrieve_patient():
     patient_id_choice = int(input('\nPlease choose a patient ID\n'
     '--> '))
     return patient_id_choice
-
 
 
 def view_edit_patient(next_dict):
@@ -418,7 +413,6 @@ def view_same_patient(next_dict):
     return view_edit_patient(view_edit_patient_accounts_final_menu)
 
 
-
 def view_another_patient(next_dict):
     '''
     Allows cycling back to the view_edit_patient function from the final_menu
@@ -427,7 +421,6 @@ def view_another_patient(next_dict):
     global patient_id_choice
     del patient_id_choice
     return view_edit_patient(view_edit_patient_accounts_final_menu)
-
 
 
 def confirm_patient(next_dict):
@@ -773,13 +766,11 @@ def view_schedule_week(next_dict):
     return utils.display(next_dict)
 
 
-
 def view_another_schedule(next_dict):
     '''
     Allows cycling back to the schedule_length_flow from the final_menu.
     '''
     return utils.display(schedule_length_flow)
-
 
 
 def choose_another_gp(next_dict):
@@ -789,14 +780,12 @@ def choose_another_gp(next_dict):
     return choose_gp(view_schedule_flow)
 
 
-
 def appointments_shortcut(next_dict):
     '''
     Allows the viewing of appointments (in sub-menu 5) from the manage_availability_flow
     (in sub-menu 4). 
     '''
     return utils.display(delete_gp_appointment_flow)
-
 
 
 def view_time_off(next_dict):
@@ -812,7 +801,6 @@ def view_time_off(next_dict):
     return utils.display(next_dict)
 
 
-
 def manage_more_availability(next_dict):
     '''
     Allows cycling back to the manage_availability_flow menu from the final_menu.
@@ -820,13 +808,11 @@ def manage_more_availability(next_dict):
     return utils.display(manage_availability_flow)
 
 
-
 def manage_more_time_off(next_dict):
     '''
     Allows cycling back to the manage_time_off_flow menu from the final_menu.
     '''
     return utils.display(manage_time_off_flow)
-
 
 
 def add_time_off(next_dict):
@@ -994,13 +980,11 @@ def add_time_off_custom(next_dict):
         return add_time_off(next_dict)
 
 
-
 def remove_time_off(next_dict):
     '''
     Returns menu to remove a custom amount of time off to a GP's schedule.
     '''
     return utils.display(remove_time_off_flow)
-
 
 
 def remove_time_off_custom(next_dict):
@@ -1119,13 +1103,11 @@ def remove_time_off_all(next_dict):
         return remove_time_off(next_dict)
 
 
-
 def remove_more_time_off(next_dict):
     '''
     Allows cycling back to the remove_time_off menu from the final_menu.
     '''
     return utils.display(remove_time_off_flow)
-
 
 
 ###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
@@ -1216,13 +1198,11 @@ def add_appointment(next_dict):
         return utils.display(next_dict)
 
 
-
 def add_another_appointment_diff_patient(next_dict):
     '''
     Allows cycling back to the add_appointment function for a different patient choice.
     '''
     return add_appointment(appointment_made_final_actions)
-
 
 
 def add_another_appointment_same_patient(next_dict):
@@ -1232,7 +1212,6 @@ def add_another_appointment_same_patient(next_dict):
     global patient_id_choice
     del patient_id_choice
     return add_appointment(appointment_made_final_actions)
-
 
 
 def appointment_by_patient(next_dict):
@@ -1405,6 +1384,7 @@ def records_main(next_dict):
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
+
 def empty_method(next_dict):
     '''
     Empty method to be stored in the tuple of the dictionary of the user 
@@ -1412,7 +1392,9 @@ def empty_method(next_dict):
     '''
     return utils.display(next_dict)
 
+
 ########################## MENU NAVIGATION DICTIONARIES ######################
+
 
 # Empty nested dictionary to store in tuple for last menu
 # before going back to main page (for display function return parameter).
