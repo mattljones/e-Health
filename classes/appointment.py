@@ -305,7 +305,7 @@ class Appointment:
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE booking_status == 'confirmed'
                    AND b.gp_id =={}
-                   AND booking_start_time <'{}'""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
+                   AND booking_start_time < '{}'""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
         df_object = u.db_read_query(pending_query)
 
