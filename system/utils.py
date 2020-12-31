@@ -161,7 +161,7 @@ def hash_salt(password):
 
     return hash_salt
 
-# TODO: trim input (no spaces)
+
 def validate(user_input):
     """
     Validate user input.  
@@ -171,6 +171,9 @@ def validate(user_input):
         - Input too long (> 50 chars) 
         - Does not contain "'" or '"' to avoid SQL injections
     """
+
+    # Remove leading and trailing whitespaces
+    user_input = user_input.strip()
 
     try:
         if user_input == '':
@@ -201,6 +204,9 @@ def validate_email(user_input):
         - Not unique email address
         - Does not contain "'" or '"' to avoid SQL injections
     """
+
+    # Remove leading and trailing whitespaces
+    user_input = user_input.strip()
 
     email_query = 'SELECT patient_email FROM patient'
     emails = db_read_query(email_query)   
@@ -239,6 +245,9 @@ def validate_password(user_input):
         - Does not contain "'" or '"' to avoid SQL injections
     """
 
+    # Remove leading and trailing whitespaces
+    user_input = user_input.strip()
+
     try:
         if user_input == '':
             raise EmptyError
@@ -258,7 +267,6 @@ def validate_password(user_input):
     return True
 
 
-# TODO: Rewrite using datetime.strptime() and datetime.date()
 def validate_date(user_input):
     """
     Validate user input for date such as DOB.  
@@ -268,6 +276,10 @@ def validate_date(user_input):
         - Does not contain "'" or '"' to avoid SQL injections
         - Date must be in format YYYY-MM-DD
     """
+
+    year = int(user_input[:4])
+    month = int(user_input[5:7])
+    day = int(user_input[8:])
 
     try:
         if user_input == '':
@@ -279,12 +291,8 @@ def validate_date(user_input):
               (user_input[7] != '-')):
             raise DateFormatError
 
-        int(user_input[:4])
-        int(user_input[5:7])
-        int(user_input[8:])
-
-        if int(user_input[5:7]) > 12 or int(user_input[8:]) > 31:
-            raise DateFormatError
+        # Checking that year, month and day are valid 
+        dt.date(year, month, day)
 
     except InvalidCharacterError:
         print("\U00002757 Invalid character: ' and \" are not accepted.")
