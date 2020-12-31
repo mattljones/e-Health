@@ -143,28 +143,32 @@ def book_appointment(next_dict):
 
     # Calling the Appointment class static method select_availability or select_other_availability to display desired availibility
     if personal_gp == True: 
-        availability = Appointment.select_availability(view, Patient.select_gp_details(globals.usr_id)[0], start_date)
         gp_id = Patient.select_gp_details(globals.usr_id)[0]
         gp_name = Patient.select_gp_details(globals.usr_id)[1]
+        availability = Appointment.select_availability(view, gp_id, start_date)
 
     else: 
         availability = Appointment.select_other_availability(view, Patient.select_gp_details(globals.usr_id)[0], start_date)
-        boolean_available = availability[4]
+        boolean_available = availability[6]
 
         # if no availability amongst other GPs
         if boolean_available == False:
-            print("\nNo availability among other GPs for the dates selected, \nplease book with your personal GP or change dates.")
+            print("\n\U00002757 No availability among other GPs for the dates selected, \nplease book with your personal GP or change dates.")
             return book_appointment(next_dict)
 
         # if availability, get displayed gp_ID and name
         else:
-            gp_id = availability[2]
-            gp_name = availability[3]
+            gp_id = availability[4]
+            gp_name = availability[5]
 
+    # morning availability first with 3 user choices outside of booking indexes
+    morning = True
+    options = ('#','A','a')
+    
     # Print morning availability
-    print("\n" + availability[2])
+    print("\n\n--- Morning ---\n" + availability[2])
 
-    print("\nEnter the index of the time slot to book.")
+    print("\n[ ... ] Enter the index of the time slot to book")
 
     print("\n[ A ] Display afternoon availability")
     print("[ # ] Display other availabilitites (different dates or GPs) ")
@@ -173,7 +177,7 @@ def book_appointment(next_dict):
     booking_index = input("\n--> ")
 
     # Formatting user input correctly
-    if booking_index not in ('#','A','a') :
+    if booking_index not in options :
         while len(booking_index) < 3:
             booking_index = '0' + booking_index
 
@@ -188,12 +192,12 @@ def book_appointment(next_dict):
     while confirmation == False:
 
         # While user entry is invalid
-        while len(selected_time_slot.index) != 1 and booking_index not in ('#','A','a'):
+        while len(selected_time_slot.index) != 1 and booking_index not in options:
             print("\n\U00002757 Invalid entry, please try again and enter a valid time slot index.")
             booking_index = input("\n--> ")
 
             # Formatting user input correctly
-            if booking_index not in ('#','A','a') :
+            if booking_index not in options :
                 while len(booking_index) < 3:
                     booking_index = '0' + booking_index
 
@@ -205,15 +209,19 @@ def book_appointment(next_dict):
 
         # if user wants to display afternoon availability
         elif booking_index in ("A","a"):
+            # Updating Boolean and options
+            morning = False
+            options = ('#')
             # Print afternoon availability
-            print("\n" + availability[3])
-            print("\nEnter the index of the time slot to book \nor '#' to display other availabilitites (different dates or GPs)")
+            print("\n\n--- Afternoon ---\n" + availability[3])
+            print("\n[ ... ] Enter the index of the time slot to book")
+            print("[ # ] Display other availabilitites (different dates or GPs) ")
             
             # Require user choice of booking slot
             booking_index = input("\n--> ")
 
             # Formatting user input correctly
-            if booking_index != '#':
+            if booking_index not in options:
                 while len(booking_index) < 3:
                     booking_index = '0' + booking_index
 
@@ -248,8 +256,19 @@ def book_appointment(next_dict):
                 confirmation = False
 
                 # initialising variables
-                print("\nEnter the index of the time slot to book \nor '#' to display other availabilitites (different dates or GPs)")
+                print("\n[ ... ] Enter the index of the time slot to book")
+
+                if morning == True:
+                    print("\n[ A ] Display afternoon availability")
+                
+                print("[ # ] Display other availabilitites (different dates or GPs) ")
                 booking_index = input("\n--> ")
+
+                # Formatting user input correctly
+                if booking_index not in options:
+                    while len(booking_index) < 3:
+                        booking_index = '0' + booking_index
+
                 selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
     
 
