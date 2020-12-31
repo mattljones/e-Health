@@ -143,34 +143,41 @@ def book_appointment(next_dict):
 
     # Calling the Appointment class static method select_availability or select_other_availability to display desired availibility
     if personal_gp == True: 
-        availability = Appointment.select_availability(view, Patient.select_gp_details(globals.usr_id)[0], start_date)
         gp_id = Patient.select_gp_details(globals.usr_id)[0]
         gp_name = Patient.select_gp_details(globals.usr_id)[1]
+        availability = Appointment.select_availability(view, gp_id, start_date)
 
     else: 
         availability = Appointment.select_other_availability(view, Patient.select_gp_details(globals.usr_id)[0], start_date)
-        boolean_available = availability[4]
+        boolean_available = availability[6]
 
         # if no availability amongst other GPs
         if boolean_available == False:
-            print("\nNo availability among other GPs for the dates selected, \nplease book with your personal GP or change dates.")
+            print("\n\U00002757 No availability among other GPs for the dates selected, \nplease book with your personal GP or change dates.")
             return book_appointment(next_dict)
 
         # if availability, get displayed gp_ID and name
         else:
-            gp_id = availability[2]
-            gp_name = availability[3]
+            gp_id = availability[4]
+            gp_name = availability[5]
 
+    # morning availability first with 3 user choices outside of booking indexes
+    morning = True
+    options = ('#','A','a')
+    
+    # Print morning availability
+    print("\n\n--- Morning ---\n" + availability[2])
 
-    print("\n" + availability[1])
+    print("\n[ ... ] Enter the index of the time slot to book")
 
-    print("\nEnter the index of the time slot to book \nor '#' to display other availabilitites (different dates or GPs)")
+    print("\n[ A ] Display afternoon availability")
+    print("[ # ] Display other availabilities (different dates or GPs) ")
 
     # Require user choice of booking slot
     booking_index = input("\n--> ")
 
     # Formatting user input correctly
-    if booking_index != '#':
+    if booking_index not in options :
         while len(booking_index) < 3:
             booking_index = '0' + booking_index
 
@@ -185,12 +192,12 @@ def book_appointment(next_dict):
     while confirmation == False:
 
         # While user entry is invalid
-        while len(selected_time_slot.index) != 1 and booking_index != '#':
+        while len(selected_time_slot.index) != 1 and booking_index not in options:
             print("\n\U00002757 Invalid entry, please try again and enter a valid time slot index.")
             booking_index = input("\n--> ")
 
             # Formatting user input correctly
-            if booking_index != '#':
+            if booking_index not in options :
                 while len(booking_index) < 3:
                     booking_index = '0' + booking_index
 
@@ -198,7 +205,27 @@ def book_appointment(next_dict):
 
         # if user wants to display new availability, recursive call of the function itself
         if booking_index == "#":
-             return book_appointment(next_dict)
+            return book_appointment(next_dict)
+
+        # if user wants to display afternoon availability
+        elif booking_index in ("A","a"):
+            # Updating Boolean and options
+            morning = False
+            options = ('#')
+            # Print afternoon availability
+            print("\n\n--- Afternoon ---\n" + availability[3])
+            print("\n[ ... ] Enter the index of the time slot to book")
+            print("[ # ] Display other availabilities (different dates or GPs) ")
+            
+            # Require user choice of booking slot
+            booking_index = input("\n--> ")
+
+            # Formatting user input correctly
+            if booking_index not in options:
+                while len(booking_index) < 3:
+                    booking_index = '0' + booking_index
+
+            selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
 
         # Confirm time slot selection
         else :
@@ -229,8 +256,19 @@ def book_appointment(next_dict):
                 confirmation = False
 
                 # initialising variables
-                print("\nEnter the index of the time slot to book \nor '#' to display other availabilitites (different dates or GPs)")
+                print("\n[ ... ] Enter the index of the time slot to book")
+
+                if morning == True:
+                    print("\n[ A ] Display afternoon availability")
+                
+                print("[ # ] Display other availabilities (different dates or GPs) ")
                 booking_index = input("\n--> ")
+
+                # Formatting user input correctly
+                if booking_index not in options:
+                    while len(booking_index) < 3:
+                        booking_index = '0' + booking_index
+
                 selected_time_slot = availability[0].where(availability[0]=="["+booking_index+"]").dropna(how='all').dropna(axis=1)
     
 
@@ -275,7 +313,7 @@ def book_appointment(next_dict):
     success, reason = booking.book()
 
     if success:
-        print("\n\U00002705 Appointment successfuly booked with " + gp_name + " at " + str(booking_time) + " on the " + str(booking_date) + ".")
+        print("\n\U00002705 Appointment successfully booked with " + gp_name + " at " + str(booking_time) + " on the " + str(booking_date) + ".")
         return utils.display(next_dict)
 
     else:
@@ -291,6 +329,9 @@ def change_account_details(next_dict):
     print("\n---------------------------------------------------- \n"
         "                   UPDATE ACCOUNT DETAILS\n"
         "\nPlease, update your details using the following form")
+    
+    print("\nTo change any information requiring verification (e.g. your name),"
+        "\nor to have your account deleted, please contact a member of staff.")
 
     # Create a patient class instance with patient details as class variables
     patient = Patient.select(globals.usr_id)[0]
@@ -384,7 +425,7 @@ def change_account_details(next_dict):
     # updating DB
     patient.update()
 
-    print("\n\U00002705 Account successfuly updated and changes saved.")
+    print("\n\U00002705 Account successfully updated and changes saved.")
 
     return utils.display(next_dict)
 
@@ -452,7 +493,7 @@ def access_prescription(next_dict):
     from previous appointment.
     '''
     print("\n----------------------------------------------------\n"
-            "       PAST APPOINTMENTS & PRESCIPTIONS \n")
+            "       PAST APPOINTMENTS & PRESCRIPTIONS \n")
 
     # Print table of past appointments and their prescription
     records = Record.select(globals.usr_id)
@@ -469,7 +510,7 @@ def display_default_GP(next_dict):
     print("\n----------------------------------------------------\n"
             "                REGISTERED GP \n")
 
-    print("Your are registered with " + Patient.select_gp_details(globals.usr_id)[1] + ".\n")
+    print("You are registered with " + Patient.select_gp_details(globals.usr_id)[1] + ".\n")
     return utils.display(next_dict)
 
 
@@ -546,7 +587,7 @@ flow_2 = {"title": "CHANGE REGISTERED GP ?",
 
 
 # "Change account details" page dictionary
-flow_3 = {"title": "CHANGE ACCOUNT DETAILS",
+flow_3 = {"title": "CHANGE ACCOUNT DETAILS ?",
             "type":"sub",
             "1":("Yes",change_account_details, empty_dict)}
 
