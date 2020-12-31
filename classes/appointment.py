@@ -304,7 +304,8 @@ class Appointment:
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE booking_status == 'confirmed'
-                   AND b.gp_id =={}""".format(gp_id)
+                   AND b.gp_id =={}
+                   AND booking_start_time <{}""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
         df_object = u.db_read_query(pending_query)
 
@@ -386,10 +387,10 @@ class Appointment:
         query_results = query_results.drop(columns='GP ID')
         # This variable stores the printable version of the DF
 
-        if timeframe == 'previous' and status == 'confirmed':
+        if timeframe == 'previous' and status == 'attended':
             # Matt this ↓ is a DF for you to use, only with confirmed bookings
             # your input would look like select_patient('previous',patient_id,'confirmed')
-            df_object = query_results[query_results['Status'] == 'confirmed'].drop(columns=['Status',
+            df_object = query_results[query_results['Status'] == 'attended'].drop(columns=['Status',
                                                                                             'Booking Agenda'])
             df_print = df_object.to_markdown(tablefmt="grid", index=False)
             return df_object, df_print
@@ -624,7 +625,7 @@ if __name__ == "__main__":
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
     # I've combined select_patient_previous and select_patient_upcoming
-    print(Appointment.select_patient('previous', 2)[1])
+    # print(Appointment.select_patient('previous', 2)[1])
     # print(Appointment.select_patient('upcoming', 51)[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
@@ -647,9 +648,9 @@ if __name__ == "__main__":
     # THIS WORKS! : Confirms all of the appointments
     # Appointment.confirm_all_GP_pending(2)
 
-    # tmp = Appointment.select_GP_confirmed(16)[2]
-    #
-    # # print(tmp)
+    tmp = Appointment.select_GP_confirmed(16)[2]
+
+    # print(tmp)
     # # row = tmp.loc[tmp['Apt. ID'] == '[51]']
     # # print(int(row['patient_id'].values))
     #
