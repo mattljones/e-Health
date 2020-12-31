@@ -49,35 +49,50 @@ def view_edit_gp(next_dict):
     }
 
     # Check if gp id already selected previously for reuse
-    if 'gp_id_choice' in globals():
-        choice = gp_id_choice
-    else:
+    if 'gp_id_choice' not in globals():
         choice = retrieve_gp_list('all')
+    else:
+        global gp_id_choice
+        choice = gp_id_choice
 
     doctor_df = GP.select(choice)
 
     print("\n----------------------------------------------------\n"
           "                ",'GP DETAILS', "\n")
     print(doctor_df[2])
-    index_choice = int(input("Choose a value to edit. \n"
-    "--> "))
-    value_choice = input("\nChoose a new value to input. \n"
-    "--> ") 
+    key = int(input("Choose a value to edit. \n--> "))
+
+    if key not in range(1,len(profile)+1):
+        print("\n\U00002757 Input not valid.")
+        key = int(input("Choose a value to edit. \n--> "))
+
+    new_value = input("\nChoose a new value to input. \n--> ") 
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
+    print("Do you want to edit field [{}] with the new value '{}'?".format(key, new_value))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
-    y_n = int(input("\n--> "))
-    if y_n == 1:
-        # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
+    y_n = int(input("\n--> "))
+
+    while y_n not in (1,2):
+        print("\n\U00002757 Input not valid.")
+        y_n = int(input("\n--> "))
+    
+    if y_n == 1:
+        # Get raw df to edit
+        df = doctor_df[0]
+
+        # Update the selected section to the new value 
+        df.__dict__[profile[key]] = new_value
+
+        # Update in the database
+        df.update()
+        print("\n\U00002705 GP profile successfully updated.")
         return utils.display(next_dict)
         
     elif y_n == 2:
-        return utils.display(next_dict)
-    else:
-        print("\n\U00002757 Input not valid.")
         return utils.display(next_dict)
 
 
