@@ -82,18 +82,22 @@ def retrieve_gp_list(type):
     return gp_id_choice
 
 
-def same_gp(next_dict):
-    # NOTE: This functions serves no purpose. 
+
+def view_same_gp(next_dict):
     '''
-    Allows viewing/editing of the same GP.
+    Allows cycling back to the view_gp function for the same GP,
+    stored in the global variable gp_choice.
     '''
-    return utils.display(next_dict)
+    return view_gp(view_edit_gp_accounts_final_menu)
 
 
 def view_another_gp(next_dict):
     '''
-    Allows cycling back to the view_gp function from final_menu.
+    Allows cycling back to the view_gp function from final_menu,
+    deleting the global variable so a different GP can be viewed.
     '''
+    global gp_id_choice
+    del gp_id_choice
     return view_gp(view_edit_gp_accounts_final_menu)
 
 
@@ -1357,8 +1361,8 @@ add_new_gp_account_final_menu = {
 view_edit_gp_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View/Modify Same GP", same_gp, empty_dict),
-    "2": ("GP List", view_another_gp, empty_dict),
+    "1": ("View/Modify Same GP", view_same_gp, empty_dict),
+    "2": ("View/Modify Another GP", view_another_gp, empty_dict),
     "3": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
