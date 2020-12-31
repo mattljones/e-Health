@@ -46,15 +46,15 @@ def view_gp(next_dict):
           "                ",'GP DETAILS', "\n")
     print(doctor_df[2])
     index_choice = int(input("Choose a value to edit. \n"
-    "-->"))
+    "--> "))
     value_choice = input("\nChoose a new value to input. \n"
-    "-->") 
+    "--> ") 
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
-    y_n = int(input("\n-->"))
+    y_n = int(input("\n--> "))
     if y_n == 1:
         # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
 
@@ -144,7 +144,7 @@ def add_gp(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    y_n = int(input("\n-->"))
+    y_n = int(input("\n--> "))
     
     if y_n == 1:
         # Insert new GP in db
@@ -181,7 +181,7 @@ def deactivate_gp(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    y_n = int(input("\n-->"))
+    y_n = int(input("\n--> "))
 
     if y_n == 1:
         GP.change_status(gp_id, 'inactive')
@@ -220,19 +220,12 @@ def delete_gp(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    y_n = int(input("\n-->"))
+    y_n = int(input("\n--> "))
 
-    ## TODO: Avoid text repetition
-    ## Default output unicode + text for different scenarios 
-    # gp_deleted = 
-    # patients_yes =
-    # patients_no =
-    # appointments_yes = 
-    # appointments_no = 
+    while y_n not in (1, 2):
+        print(("\n\U00002757 Input not valid."))
+        y_n = int(input("\n--> "))
 
-    # TODO: Change output message when patients have NOT been allocated (shortfall)
-    # TODO: Test cases where patients and/or apps not allocated successfully
-    # TODO: Improve code indentation for better readabality
     if y_n == 1:
         # Patients and appointments reallocated
         if GP.delete(gp_id)[0]: 
@@ -266,11 +259,6 @@ def delete_gp(next_dict):
     elif y_n == 2:
         print("\n\U00002757 Action cancelled.")
         return utils.display(next_dict)
-
-    else:
-        print(("\n\U00002757 Input not valid."))
-        return utils.display(next_dict)
-
 
 
 def delete_another_gp(next_dict):
@@ -317,24 +305,24 @@ def view_patient(next_dict):
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
-    "-->")
+    "--> ")
     choose_patient('matching', patient_last_name=last_name)
     choice = int(input('\nPlease choose a patient ID\n'
-    '-->'))
+    '--> '))
     selected_patient = Patient.select(choice)
     print("\n----------------------------------------------------\n"
           "                ",'PATIENT DETAILS', "\n")
     print(selected_patient[2])
     index_choice = int(input("Choose an value to edit. \n"
-    "-->"))
+    "--> "))
     value_choice = input("\nChoose a new value to input. \n"
-    "-->") 
+    "--> ") 
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
-    y_n = int(input("\n-->"))
+    y_n = int(input("\n--> "))
     if y_n == 1:
 
         # TODO: UPDATE THE DATABASE WITH THE ENTERED VALUES
@@ -362,7 +350,7 @@ def confirm_patient(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] Enter Individual ID(s)")
     choice = int(input('Please enter your choice:\n'
-    '-->'))
+    '--> '))
     
     if choice == 1:
 
@@ -370,7 +358,7 @@ def confirm_patient(next_dict):
           "                ",'CONFIRM?', "\n")
         print("[ 1 ] Yes")
         print("[ 2 ] No")
-        y_n = int(input("\n-->"))
+        y_n = int(input("\n--> "))
 
         if y_n == 1:
             Patient.confirm('all')
@@ -384,13 +372,13 @@ def confirm_patient(next_dict):
         print("\n----------------------------------------------------\n"
         "                ",'ENTER PATIENT ID(S) TO CONFIRM', "\n")
         ids = input('Please enter ID(s) here, comma-separated.\n'
-        '-->').split()
+        '--> ').split()
 
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
         print("[ 1 ] Yes")
         print("[ 2 ] No")
-        y_n = int(input("\n-->"))
+        y_n = int(input("\n--> "))
 
         if y_n == 1:
             for id in ids:
@@ -417,12 +405,12 @@ def delete_patient(next_dict):
           "                ",'ENTER LAST NAME', "\n")
 
     last_name = input("Please enter the patient's last name:\n"
-    "-->")
+    "--> ")
 
     choose_patient('matching', patient_last_name=last_name)
     choice = input('''
 Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
-    '-->')
+    '--> ')
     # Eliminating whitespace from string and splitting it into single IDs
     patient_ids = choice.replace(' ', '').split(',')
 
@@ -431,7 +419,7 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
     "                ",'CONFIRM?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
-    y_n = int(input("\n-->"))
+    y_n = int(input("\n--> "))
     if y_n == 1:
         for id in patient_ids:
             Patient.delete(id)
@@ -469,15 +457,15 @@ def pairing_patient(next_dict):
     Search for a patient and pair them up with a GP.
     '''
 
-    # TODO: Better way to reuse code from view_patient()
+    # NOTE: Better way to reuse code from view_patient()
 
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
-    "-->")
+    "--> ")
     choose_patient('matching', patient_last_name=last_name)
     patient_id = int(input('\nPlease choose a patient ID\n'
-    '-->'))
+    '--> '))
     selected_patient = Patient.select(patient_id)
     gp_id = selected_patient[0].gp_id
     gp_lastname = GP.select(gp_id)[0].last_name
@@ -487,7 +475,7 @@ def pairing_patient(next_dict):
           "                ",'CHANGE DEFAULT GP', "\n")
     print('[ 1 ] Auto-Reallocate')
     print('[ 2 ] Select GP From List')
-    choice = int(input('\n-->'))
+    choice = int(input('\n--> '))
 
     if choice == 1:
         new_gp = Patient.change_gp('auto', patient_id)
@@ -497,7 +485,7 @@ def pairing_patient(next_dict):
             "                ",'CONFIRM?', "\n")
             print("[ 1 ] Yes")
             print("[ 2 ] No")
-            y_n = int(input("\n-->"))
+            y_n = int(input("\n--> "))
 
             if y_n == 1:
                 print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
@@ -522,7 +510,7 @@ def pairing_patient(next_dict):
             "                ",'NON-FULL GP LIST', "\n")
         print(gp_list[1])
         new_gp_id = int(input('\nPlease choose a GP to allocate the patient to.\n'
-        '-->'))
+        '--> '))
         new_gp = Patient.change_gp('specific', patient_id, new_gp_id=new_gp_id)
 
         if new_gp[0]:
@@ -530,7 +518,7 @@ def pairing_patient(next_dict):
             "                ",'CONFIRM?', "\n")
             print("[ 1 ] Yes")
             print("[ 2 ] No")
-            y_n = int(input("\n-->"))
+            y_n = int(input("\n--> "))
 
             if y_n == 1:
                 print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
@@ -562,28 +550,28 @@ def pairing_gp(next_dict):
     "                ",'NON-FULL GP LIST', "\n")
     print(gp_list[1])
     new_gp_id = int(input('\nPlease choose a GP to allocate patients to.\n'
-    '-->'))
+    '--> '))
 
 
     print("\n----------------------------------------------------\n"
     "                ",'ADD PATIENTS', "\n")
     print('[ 1 ] By IDs')
     print('[ 2 ] Search by last name')
-    choice = int(input('\n-->'))
+    choice = int(input('\n--> '))
 
     if choice == 1:
         print("\n----------------------------------------------------\n"
         "                ",'ENTER IDS', "\n")
         id_choice = input('''
 Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
-        '-->')
+        '--> ')
         patient_ids = id_choice.replace(' ', '').split(',')
 
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
         print("[ 1 ] Yes")
         print("[ 2 ] No")
-        y_n = int(input("\n-->"))
+        y_n = int(input("\n--> "))
 
         if y_n == 1:
 
@@ -611,17 +599,17 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
         last_name = input("Please enter the patient's last name:\n"
-        "-->")
+        "--> ")
         choose_patient('matching', patient_last_name=last_name)
         patient_id = int(input('\nPlease choose a patient ID\n'
-        '-->'))
+        '--> '))
         selected_patient = Patient.select(patient_id)
 
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
         print("[ 1 ] Yes")
         print("[ 2 ] No")
-        y_n = int(input("\n-->"))
+        y_n = int(input("\n--> "))
 
         if y_n == 1:
             new_gp = Patient.change_gp('specific', patient_id, new_gp_id=new_gp_id)
@@ -729,11 +717,11 @@ def add_time_off_day(next_dict):
     # Prompt user for type of time off
     print("Please select the time off type: ")
     print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
-    timeoff_type_input = input('\n-->')
+    timeoff_type_input = input('\n--> ')
 
     while timeoff_type_input not in ('1', '2'):
         print("\n\U00002757 Invalid entry, please try again")
-        timeoff_type_input = input('\n-->')
+        timeoff_type_input = input('\n--> ')
         
     if timeoff_type_input == '1':
         timeoff_type = 'sick leave'
@@ -756,7 +744,7 @@ def add_time_off_day(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    user_confirmation = input("\n-->")
+    user_confirmation = input("\n--> ")
 
     while user_confirmation not in ('1','2'):
             print("\n\U00002757 Invalid entry, please try again")
@@ -784,11 +772,11 @@ def add_time_off_week(next_dict):
     # Prompt user for type of time off
     print("Please select the time off type: ")
     print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
-    timeoff_type_input = input('\n-->')
+    timeoff_type_input = input('\n--> ')
 
     while timeoff_type_input not in ('1', '2'):
         print("\n\U00002757 Invalid entry, please try again")
-        timeoff_type_input = input('\n-->')
+        timeoff_type_input = input('\n--> ')
         
     if timeoff_type_input == '1':
         timeoff_type = 'sick leave'
@@ -811,7 +799,7 @@ def add_time_off_week(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    user_confirmation = input("\n-->")
+    user_confirmation = input("\n--> ")
 
     while user_confirmation not in ('1','2'):
             print("\n\U00002757 Invalid entry, please try again")
@@ -838,11 +826,11 @@ def add_time_off_custom(next_dict):
     # Prompt user for type of time off
     print("Please select the time off type: ")
     print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
-    timeoff_type_input = input('\n-->')
+    timeoff_type_input = input('\n--> ')
 
     while timeoff_type_input not in ('1', '2'):
         print("\n\U00002757 Invalid entry, please try again")
-        timeoff_type_input = input('\n-->')
+        timeoff_type_input = input('\n--> ')
         
     if timeoff_type_input == '1':
         timeoff_type = 'sick leave'
@@ -861,7 +849,7 @@ def add_time_off_custom(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    user_confirmation = input("\n-->")
+    user_confirmation = input("\n--> ")
 
     while user_confirmation not in ('1','2'):
             print("\n\U00002757 Invalid entry, please try again")
@@ -895,11 +883,11 @@ def remove_time_off_custom(next_dict):
     # Prompt user for type of time off
     print("Please select the time off type: ")
     print("\n [ 1 ] Sick leave \n [ 2 ] General time off \n [ 3 ] Both")
-    timeoff_type_input = input('\n-->')
+    timeoff_type_input = input('\n--> ')
 
     while timeoff_type_input not in ('1', '2', '3'):
         print("\n\U00002757 Invalid entry, please try again")
-        timeoff_type_input = input('\n-->')
+        timeoff_type_input = input('\n--> ')
         
     if timeoff_type_input == '1':
         timeoff_type = 'sick leave'
@@ -920,7 +908,7 @@ def remove_time_off_custom(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    user_confirmation = input("\n-->")
+    user_confirmation = input("\n--> ")
 
     while user_confirmation not in ('1','2'):
             print("\n\U00002757 Invalid entry, please try again")
@@ -955,11 +943,11 @@ def remove_time_off_all(next_dict):
     # Prompt user for type of time off
     print("Please select the time off type: ")
     print("\n [ 1 ] Sick leave \n [ 2 ] General time off \n [ 3 ] Both")
-    timeoff_type_input = input('\n-->')
+    timeoff_type_input = input('\n--> ')
 
     while timeoff_type_input not in ('1', '2', '3'):
         print("\n\U00002757 Invalid entry, please try again")
-        timeoff_type_input = input('\n-->')
+        timeoff_type_input = input('\n--> ')
         
     if timeoff_type_input == '1':
         timeoff_type = 'sick leave'
@@ -976,7 +964,7 @@ def remove_time_off_all(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    user_confirmation = input("\n-->")
+    user_confirmation = input("\n--> ")
 
     while user_confirmation not in ('1','2'):
             print("\n\U00002757 Invalid entry, please try again")
@@ -1048,10 +1036,10 @@ def choose_appointment_day(next_dict):
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
-    "-->")
+    "--> ")
     choose_patient('matching', patient_last_name=last_name)
     patient_id = int(input('\nPlease choose a patient ID\n'
-    '-->'))
+    '--> '))
     selected_patient = Patient.select(patient_id)
 
     gp_id = selected_patient[0].gp_id
@@ -1079,10 +1067,10 @@ def choose_appointment_week(next_dict):
     print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
-    "-->")
+    "--> ")
     choose_patient('matching', patient_last_name=last_name)
     patient_id = int(input('\nPlease choose a patient ID\n'
-    '-->'))
+    '--> '))
     selected_patient = Patient.select(patient_id)
 
     gp_id = selected_patient[0].gp_id
@@ -1108,11 +1096,11 @@ def appointment_by_patient(next_dict):
     print("\n----------------------------------------------------\n"
           "                ",'SELECT PATIENT', "\n")
     last_name = input("Please enter the patient's last name:\n"
-    "-->")
+    "--> ")
     choose_patient('matching', patient_last_name=last_name)
 
     # Select ID of the patient of interest 
-    selected_patient_id = input('\nPlease choose a patient ID\n-->')
+    selected_patient_id = input('\nPlease choose a patient ID\n--> ')
     
     # Select all upcoming appointments for this patient ID
     appts = Appointment.select_patient('upcoming', selected_patient_id)
@@ -1156,11 +1144,11 @@ def appointment_by_gp(next_dict):
     # Prompt user for type of view
     print("Please select the date view: ")
     print("\n [ 1 ] Day \n [ 2 ] Week")
-    view_input = input('\n-->')
+    view_input = input('\n--> ')
 
     while view_input not in ('1', '2'):
         print("\n\U00002757 Invalid entry, please try again")
-        view_input = input('\n-->')
+        view_input = input('\n--> ')
         
     if view_input == '1':
         view_type = 'day'
@@ -1194,7 +1182,7 @@ def delete_appointment_day(next_dict):
 
     while y_n not in ('1', '2'):
         print("\n\U00002757 Invalid entry, please try again")
-        y_n = input('\n-->')
+        y_n = input('\n--> ')
         
     if y_n == '1':
          Appointment.change_status_batch_future(start, end, gp_id_choice, "rejected", reason)
@@ -1226,7 +1214,7 @@ def delete_appointment_week(next_dict):
 
     while y_n not in ('1', '2'):
         print("\n\U00002757 Invalid entry, please try again")
-        y_n = input('\n-->')
+        y_n = input('\n--> ')
         
     if y_n == '1':
          Appointment.change_status_batch_future(start, end, gp_id_choice, "rejected", reason)
@@ -1254,11 +1242,11 @@ def records_main(next_dict):
     
     # Filter by last name
     last_name = input("Please enter the patient's last name:\n"
-    "-->")
+    "--> ")
     choose_patient('matching', patient_last_name=last_name)
 
     # Select the ID of the patient whose records we want to access    
-    patient_id_input = input('\nPlease choose a patient ID \n-->')
+    patient_id_input = input('\nPlease choose a patient ID \n--> ')
 
     # Retrieve patient records
     record = Record.select(patient_id_input)
