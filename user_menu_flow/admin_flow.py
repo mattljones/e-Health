@@ -294,11 +294,10 @@ def same_patient(next_dict):
     '''
     Allows editing of the same patient from the final_menu.
     '''
-    #TODO: FIGURE OUT HOW TO DO THIS.
-    #NOTE: SIMILAR TO same_gp FUNCTION.
     return utils.display(view_edit_patient_accounts_final_menu)
 
 
+# TODO: Use global variable for patient_id
 # NOTE: Rename this edit_patient?
 def view_patient(next_dict):
     '''

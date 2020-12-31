@@ -210,8 +210,7 @@ def validate_email(user_input):
             raise EmptyError
         elif '@' not in user_input:
             raise EmailFormatError
-        # TODO: Use exact match
-        elif emails['patient_email'].str.contains(user_input).any():
+        elif (emails['patient_email'] == user_input.lower()).any():
             raise DuplicateEmailError
         elif ('"' in user_input) or ("'" in user_input):
             raise InvalidCharacterError
