@@ -1135,10 +1135,19 @@ def appointment_by_gp(next_dict):
     '''
     Find a GP's appointments after a certain date and display them in day/week view.
     '''
+    # Prompt user for GP
+    df = GP.select_list('all')
+    df_show = df[1]
+    print("\n----------------------------------------------------\n"
+          "                ",'GP LIST', "\n")
+    print(df_show)
+    global gp_id_choice
+    gp_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    
+    # Prompt user for starting date
     print("\n----------------------------------------------------\n"
       "                ",'SELECT DATE', "\n")
 
-    # Prompt user for starting date
     start_date = utils.get_start_date()
 
     print("\n----------------------------------------------------\n"
@@ -1163,20 +1172,69 @@ def appointment_by_gp(next_dict):
 
     return utils.display(next_dict)
 
-
+# NOTE: delete_appointment could be done with day / week / custom
+# Appointment class method supports it already
 def delete_appointment_day(next_dict):
-    # NOTE: Assuming we mean to change status to 'rejected' here
     '''
-    Allows deleting of appointments from a specific day.
+    Allows deleting of all appointments for a specific GP in a specific day.
     '''
-    return utils.display(next_dict)
 
+    start = utils.get_start_date()
+    end = start
+
+    print("\n----------------------------------------------------\n"
+          "                ",'INSERT REASON', "\n")
+    reason = input("Please insert reason for batch rejection: \n--> ")    
+
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("Do you want to reject all appointments on {} for GP with ID {}?\n".format(start, gp_id_choice))
+    print("[ 1 ] Yes\n[ 2 ] No")
+    y_n = input('\n--> ')
+
+    while y_n not in ('1', '2'):
+        print("\n\U00002757 Invalid entry, please try again")
+        y_n = input('\n-->')
+        
+    if y_n == '1':
+         Appointment.change_status_batch_future(start, end, gp_id_choice, "rejected", reason)
+         print("\U00002705 Appointments rejected.")
+         utils.display(next_dict)
+
+    elif y_n == '2':
+        utils.display(delete_gp_appointment_flow)
 
 def delete_appointment_week(next_dict):
     '''
-    Allows deleting of appointments from a specific week.
+    Allows deleting of all appointments for a specific GP in a specific week.
     '''
-    return utils.display(next_dict)
+    
+    start = utils.get_start_date()
+    end = start + timedelta(weeks=1) 
+
+    print("\n----------------------------------------------------\n"
+          "                ",'INSERT REASON', "\n")
+    reason = input("Please insert reason for batch rejection: \n--> ")    
+
+    print("\n----------------------------------------------------\n"
+          "                ",'CONFIRM?', "\n")
+    print("Do you want to reject all appointments from {} to {} for GP with ID {}?\n"
+    .format(start, end, gp_id_choice))
+
+    print("[ 1 ] Yes\n[ 2 ] No")
+    y_n = input('\n--> ')
+
+    while y_n not in ('1', '2'):
+        print("\n\U00002757 Invalid entry, please try again")
+        y_n = input('\n-->')
+        
+    if y_n == '1':
+         Appointment.change_status_batch_future(start, end, gp_id_choice, "rejected", reason)
+         print("\U00002705 Appointments rejected.")
+         utils.display(next_dict)
+
+    elif y_n == '2':
+        utils.display(delete_gp_appointment_flow)
 
 
 ###### RECORDS FUNCTIONS ######
@@ -1430,7 +1488,7 @@ appointment_deleted_gp_final_actions = {
 }
 
 delete_gp_appointment_flow ={
-    "title": "SELECT APPOINTMENT DATE",
+    "title": "DATE RANGE - APPOINTMENTS TO REJECT",
     "type": "sub",
     "1": ("Day", delete_appointment_day, appointment_deleted_gp_final_actions),
     "2": ("Week", delete_appointment_week, appointment_deleted_gp_final_actions)
