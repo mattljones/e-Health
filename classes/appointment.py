@@ -392,7 +392,7 @@ class Appointment:
             # Matt this ↓ is a DF for you to use, only with confirmed bookings
             # your input would look like select_patient('previous',patient_id,'confirmed')
             df_object = query_results[query_results['Status'] == 'attended'].drop(columns=['Status',
-                                                                                            'Booking Agenda'])
+                                                                                           'Booking Agenda'])
             df_print = df_object.to_markdown(tablefmt="grid", index=False)
             return df_object, df_print
 
@@ -431,8 +431,10 @@ class Appointment:
 
         for column_index in column_number_list:
             for row_index in row_number_list:
-                if df_object.iloc[row_index, column_index] == "":
-                    df_object.iloc[row_index, column_index] = '[' + str(column_index) + str(row_index) + ']'
+                if len(str(row_index)) == 1:
+                    row_index = '0' + str(row_index)
+                if df_object.iloc[int(row_index), column_index] == "":
+                    df_object.iloc[int(row_index), column_index] = '[' + str(column_index) + str(row_index) + ']'
 
         df_print = df_object.to_markdown(tablefmt="grid", index=True)
         df_print_morning, df_print_afternoon = u.split_week_df(df_object, gp_id)
@@ -492,13 +494,13 @@ class Appointment:
             df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id, other_gp_last_name, \
             boolean_available = None, None, None, None, None, None, False
 
-            return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id,\
+            return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id, \
                    other_gp_last_name, boolean_available
 
         df_object, df_print, df_print_morning, \
         df_print_afternoon = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id,\
+        return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id, \
                other_gp_last_name, boolean_available
 
     # Change status of a specific appointment
@@ -540,12 +542,11 @@ class Appointment:
         else:
             status_update_query = ", booking_agenda = '{}'".format(reject_reason)
 
-
         query = """UPDATE booking
                    SET booking_status = '{}'{}
                    WHERE gp_id = {}
                    AND (date(booking_start_time) BETWEEN '{}' AND '{}')""".format(new_status, status_update_query,
-                                                                                        gp_id, start_date, end_date)
+                                                                                  gp_id, start_date, end_date)
         u.db_execute(query)
 
     # Confirm all of the appointments for a specific GP
@@ -632,7 +633,7 @@ if __name__ == "__main__":
     # THIS WORKS! : Showing DF schedule for Patient view
     # For this test I've used patient 9 since their GP by default is 2 so
     # we can easily compare the DF to make sure they look the same
-    # print(Appointment.select_availability('week', 9, '2020-12-12')[1])
+    # print(Appointment.select_other_availability('week', 9, '2020-12-12')[1])
     # print(Appointment.select_availability('day', 10, '2020-12-28')[1])
 
     # THIS WORKS! : Showing DF schedule for Patient view
@@ -659,3 +660,14 @@ if __name__ == "__main__":
     # print(id)
     # # print(Appointment.select_GP_confirmed(2)[0])
     # print(dt.datetime.strptime(dt.datetime.now().strftime("%Y-%m-%d %H:%M"), '%Y-%m-%d %H:%M'))
+
+    #@Zonguye, this is the code you need
+
+    # date_time_now = dt.date.today().strftime("%Y-%m-%d")
+    # df = Schedule.select(1, 'day', date_time_now)[0]
+    # without_lunch = df[df['Status'] != "LUNCH"]
+    # final_df = without_lunch[without_lunch['Status'] != ""]
+    # print(final_df.to_markdown(tablefmt="grid", index=False))
+
+
+    # print(len(str(100)))
