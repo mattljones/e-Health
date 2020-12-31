@@ -40,7 +40,7 @@ def cancel_appointment(next_dict):
     
     # If user entry is invalid, ask for input again
     while booking_id not in str(upcoming[0]['Apt. ID'].tolist()) and booking_id != '#':
-        print("\n\U00002757 Invalid entry, please try again")
+        print("\n\U00002757 Invalid entry, please try again and enter a valid booking ID.")
         booking_id = input("\n--> ")
 
     # If do not want to cancel appointment, redirects to empty dictionary
@@ -73,7 +73,7 @@ def book_appointment(next_dict):
 
     # If invalid entry, ask for input again
     while i not in ("1","2","#"):
-        print("\n\U00002757 Invalid entry, please try again")
+        print("\n\U00002757 Invalid entry, please try again and enter 1, 2 or #.")
         i = input("\n--> ")
     
     # If user want to stop apppointment booking process
@@ -98,7 +98,7 @@ def book_appointment(next_dict):
 
     # If invalid entry, ask for input again
     while i not in ("1","2","#"):
-        print("\n\U00002757 Invalid entry, please try again")
+        print("\n\U00002757 Invalid entry, please try again and enter 1, 2 or #.")
         i = input("\n--> ")
     
     # If user want to stop apppointment booking process
@@ -115,8 +115,8 @@ def book_appointment(next_dict):
             "                 START DATE\n")
 
     print("Please enter the date (YYYY-MM-DD) from which\n" 
-          "you want to diplay availibility\n\n"
-          "Enter 'T' to see availibility from today")
+          "you want to display availability\n\n"
+          "Enter 'T' to see availability from today")
 
     # Boolean for input validation
     valid = False
@@ -138,9 +138,6 @@ def book_appointment(next_dict):
             else:
                 print("\n\U00002757 Appointment date must be in the future.")
         
-        else:
-            print("\n\U00002757 Invalid entry, please try again")
-
         if valid == False:
             start_date = input("\n--> ")
 
@@ -189,7 +186,7 @@ def book_appointment(next_dict):
 
         # While user entry is invalid
         while len(selected_time_slot.index) != 1 and booking_index != '#':
-            print("\n\U00002757 Invalid entry, please try again")
+            print("\n\U00002757 Invalid entry, please try again and enter a valid time slot index.")
             booking_index = input("\n--> ")
 
             # Formatting user input correctly
@@ -220,7 +217,7 @@ def book_appointment(next_dict):
 
             # while invalid user input
             while user_confirmation not in ("1","2"):
-                print("\n\U00002757 Invalid entry, please try again")
+                print("\n\U00002757 Invalid entry, please try again and enter 1 or 2.")
                 user_confirmation = input("\n--> ")
 
             # If user confirms booking, exit loop
@@ -248,7 +245,7 @@ def book_appointment(next_dict):
     
     # while invalid user input
     while i not in ("1","2","#"):
-        print("\n\U00002757 Invalid entry, please try again")
+        print("\n\U00002757 Invalid entry, please try again and enter 1, 2 or #.")
         i = input("\n--> ")
 
     # cancel appointment booking
@@ -263,7 +260,6 @@ def book_appointment(next_dict):
     else:
         booking_type = "offline"
         
-
     # Require appointment agenda
     print("\nEnter short appointment agenda to inform GP of \nthe reason for the appointment.")
     booking_agenda = input("\n--> ")
@@ -285,6 +281,112 @@ def book_appointment(next_dict):
     else:
         print("\n\U00002757 " + reason)
         return book_appointment(next_dict)
+
+
+def change_account_details(next_dict):
+    '''
+    Change the patient's account details.
+    '''
+
+    print("\n---------------------------------------------------- \n"
+        "                   UPDATE ACCOUNT DETAILS\n"
+        "\nPlease, update your details using the following form")
+
+    # Create a patient class instance with patient details as class variables
+    patient = Patient.select(globals.usr_id)[0]
+
+    # register gender dictionary
+    gender = {"title": "Gender",
+              "1":"male",
+              "2":"female",
+              "3":"non binary",
+              "4":"prefer not to say"}
+    
+    # register NHS blood donor dictionary
+    blood_donor = {"title": "NHS Blood donor",
+                   "1":"yes",
+                   "2":"no"}
+
+    # register NHS blood donor dictionary
+    organ_donor = {"title": "NHS Organ donor",
+                   "1":"yes",
+                   "2":"no"}
+
+
+    print("\nChange email address?")
+
+    print("\n[ 1 ] Yes")
+    print("[ 2 ] No")
+    print("\n[ # ] Cancel account update")
+
+    # Require user choice
+    i = input("\n--> ")
+
+    # If invalid entry, ask for input again
+    while i not in ("1","2","#"):
+        print("\n\U00002757 Invalid entry, please try again and enter 1, 2 or #.")
+        i = input("\n--> ")
+    
+    # If user want to stop updating account
+    if i == "#": 
+        print("\n\U00002705 Changes were not saved.")
+        return utils.display(next_dict)
+
+    # If user want to update email
+    elif i == "1": 
+        
+        email_update_confirm = False
+
+        # user input new email address
+        while email_update_confirm == False:
+
+            single_input = input("\n--> New email address: ")
+            
+            # Input validation for email
+            if utils.validate_email(single_input):
+                patient.email = single_input
+                email_update_confirm = True
+
+    # Dictionary choices for MCQ entries to update
+    MCQ_details_dict = [gender,blood_donor,organ_donor]
+
+    # user input for following 3 MCQ entries
+    MCQ_usr_input = []
+
+    # Registration MCQ entries
+    i = 0
+    while i < len(MCQ_details_dict):
+        print("\n------------------")
+        print(MCQ_details_dict[i]["title"])
+
+        # Print user options and corresponding keys
+        for key in MCQ_details_dict[i]:
+            if key != "title":
+                print("  [", key, "] " + MCQ_details_dict[i][key])
+
+        # User input 
+        usr_choice = input("\n--> ") 
+
+        # If valid input, store in usr_input
+        if usr_choice in MCQ_details_dict[i]:
+            MCQ_usr_input.append(MCQ_details_dict[i][usr_choice])
+
+        # If invalid input
+        else:
+            print("\n\U00002757 Invalid entry, please try again")
+            i -= 1
+        
+        i += 1
+
+    # updating patient instance class variables to match user updates
+    patient.gender, patient.NHS_blood_donor, patient.NHS_organ_donor = MCQ_usr_input[0], MCQ_usr_input[1], MCQ_usr_input[2]
+
+    # updating DB
+    patient.update()
+
+    print("\n\U00002705 Account successfuly updated and changes saved.")
+
+    return utils.display(next_dict)
 
 
 ############################ SEQUENTIAL STEPS MENUS ########################
@@ -387,7 +489,21 @@ def change_GP_pair(next_dict):
     # if unsuccessful change
     else:
         print("\n\U00002757 Unknown error encountered while changing registered GP."
-              "\nPlease try again later.")
+              "\nPlease try again.")
+
+    return utils.display(next_dict)
+
+
+def display_account_details(next_dict):
+    '''
+    Display the patient's account details.
+    '''
+    
+    print("\n----------------------------------------------------\n"
+            "                ACCOUNT DETAILS \n")
+
+    patient_details = Patient.select(globals.usr_id)
+    print(patient_details[4] + "\n")
 
     return utils.display(next_dict)
 
@@ -429,8 +545,15 @@ flow_2 = {"title": "CHANGE REGISTERED GP ?",
             "1":("Yes - You will be assigned to another GP but you cannot choose it.",change_GP_pair, empty_dict)}
 
 
+# "Change account details" page dictionary
+flow_3 = {"title": "CHANGE ACCOUNT DETAILS",
+            "type":"sub",
+            "1":("Yes",change_account_details, empty_dict)}
+
+
 # patient main page dictionary
 main_flow_patient = {"title": "PATIENT MAIN MENU",
                      "type":"main",
                      "1":("Book & Manage Appointments", manage_appointment,flow_1),
-                     "2":("Display & Change default GP", display_default_GP, flow_2)}
+                     "2":("Display & Change default GP", display_default_GP, flow_2),
+                     "3":("Display & Change account details", display_account_details, flow_3)}

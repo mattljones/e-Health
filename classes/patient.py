@@ -87,20 +87,22 @@ class Patient(User):
 
         Returns:
             patient_instance (instance): Used for storing future user inputs
-            df_object (pandas DF): Raw DF (can be searched etc.)
-            df_print (string): Pretty DF for printing
+            df_object_admin (pandas DF): Raw DF (can be searched etc.) for admin flow
+            df_print_admin (string): Pretty DF for printing in admin flow
+            df_object_patient (pandas DF): Raw DF (can be searched etc.) for patient flow
+            df_print_patient (string): Pretty DF for printing in patient flow
         """
 
         query = """
                 SELECT patient_id AS 'Patient ID', 
                        patient.gp_id,
                        gp.gp_last_name AS 'Default GP',
-                       patient_registration_date AS 'Registration Date',
                        patient_first_name AS '[1] First Name', 
                        patient_last_name AS '[2] Last Name', 
                        patient_gender AS '[3] Gender',
                        patient_birth_date AS '[4] Birth Date', 
-                       patient_email AS '[5] Email',  
+                       patient_email AS '[5] Email', 
+                       patient_registration_date AS 'Registration Date', 
                        patient_NHS_blood_donor AS '[6] Blood donor',
                        patient_NHS_blood_donor AS '[7] Organ donor',
                        patient_status AS '[8] Status'
@@ -115,13 +117,25 @@ class Patient(User):
         patient_instance = cls(*df.values[0][:2], *df.values[0][3:]) 
         # collecting GP information 
         df['Default GP'] = 'Dr. ' + df['Default GP'].astype(str) \
-                               + ' (ID: ' + df['gp_id'].astype(str) + ')' 
+                                  + ' (ID: ' + df['gp_id'].astype(str) + ')' 
         # removing GP ID as this has been combined with the GP's name (above)
         df_display = df.drop(columns = ['gp_id'])  
-        # transposing for better readability
-        df_object = df_display.transpose().rename(columns={0:"Value"}) 
-        df_print = df_object.to_markdown(tablefmt="grid", index=True)
-        return patient_instance, df_object, df_print
+        # generating admin flow dataframes
+        df_object_admin = df_display.transpose().rename(columns={0:"Value"}) 
+        df_print_admin = df_object_admin.to_markdown(tablefmt="grid", index=True)
+        # generating patient flow dataframes (indexes not needed)
+        df_display.rename(columns={"[1] First Name" : "First Name",
+                                   "[2] Last Name" : "Last Name",
+                                   "[3] Gender" : "Gender",
+                                   "[4] Birth Date" : "Birth Date",
+                                   "[5] Email" : "Email",
+                                   "[6] Blood donor" : "Blood donor",
+                                   "[7] Organ donor" : "Organ donor",
+                                   "[8] Status" : "Status"}, inplace=True)
+        df_object_patient = df_display.transpose().rename(columns={0:"Value"})
+        df_print_patient = df_object_patient.to_markdown(tablefmt="grid", index=True) 
+
+        return patient_instance, df_object_admin, df_print_admin, df_object_patient, df_print_patient
 
 
     @staticmethod
@@ -327,10 +341,12 @@ if __name__ == "__main__":
     #test_patient.update()
 
     ## Patient.select()
-    # patient_instance, df_obj, df_print = Patient.select(4)
+    # patient_instance, df_obj1, df_print1, df_obj2, df_print2 = Patient.select(4)
     # print(vars(patient_instance))
-    # print(df_obj)
-    # print(df_print)
+    # print(df_obj1)
+    # print(df_print1)
+    # print(df_obj2)
+    # print(df_print2)
 
     ## Patient.select_list()
     # df_obj, df_print = Patient.select_list('matching', 'Moon')

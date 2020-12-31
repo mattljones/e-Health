@@ -55,6 +55,9 @@ def simple_note(next_dict):
     print("[ 1 ] Yes")
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
+    while usr_choice not in ["1", "2"]:
+        print("\nInvalid input, please try again!")
+        usr_choice = input("\n--> ")
     if usr_choice == '1':
         return display_next_menu(flow_prescription)
     elif usr_choice == '2':
@@ -62,39 +65,63 @@ def simple_note(next_dict):
 
 def edit_cc(next_dict):
     record = Record.select(globals.patient_id)[0]
+    print("\n【Condition List】")
+    print(Record.select_conditions()[1])
     # TODO: exception control; validation
+    # TODO: UNIQUE Constraint Exception
     edit_cond_flag = True
     while edit_cond_flag:
         if record.conditions:
-            print("[1] Add condtion\n"
+            print("\n[1] Add condtion\n"
                 "[2] Remove condition\n")
             add_or_delete = input("--> ")
+            while add_or_delete not in ["1", "2"]:
+                print("\nInvalid input, please try again!")
+                add_or_delete = input("--> ")
             if add_or_delete == '1':
                 print("\nPlase input the condition id you want to add (1-20)")
                 cond_id = input("--> ")
-                record.conditions.append(cond_id)
-                record.update()
+                while cond_id not in [str(i) for i in range(21)]:
+                    print("\nInvalid input, please try again!")
+                    cond_id = input("--> ")
+                else:
+                    record.conditions.append(cond_id)
+                    record.update()
             elif add_or_delete == '2':
                 print("\nPlase input the condition id you want to remove")
                 cond_id = input("--> ")
-                record.conditions.remove(cond_id)
-                record.update()
+                while cond_id not in [str(i) for i in range(21)]:
+                    print("\nInvalid input, please try again!")
+                    cond_id = input("--> ")
+                else:
+                    record.conditions.remove(cond_id)
+                    record.update()
         else:
             print("[1] Add condtion\n"
                 "[2] End (There's no more condition to remove)\n")
             add_or_delete = input("--> ")
+            while add_or_delete not in ["1", "2"]:
+                print("\nInvalid input, please try again!")
+                add_or_delete = input("--> ")
             if add_or_delete == '1':
                 print("\nPlase input the condition id you want to add (1-20)")
                 cond_id = input("--> ")
-                record.conditions.append(cond_id)
-                record.update()
+                while cond_id not in [str(i) for i in range(21)]:
+                    print("\nInvalid input, please try again!")
+                    cond_id = input("--> ")
+                else:
+                    record.conditions.append(cond_id)
+                    record.update()
             elif add_or_delete == '2':
                 edit_cond_flag = False
         print("\nMore change?")
         print("[1] Yes\n"
             "[2] No\n")
-        tmp = input("--> ")
-        if tmp == '2':
+        more_change_cc = input("--> ")
+        while more_change_cc not in ["1", "2"]:
+            print("\nInvalid input, please try again!")
+            more_change_cc = input("--> ")
+        if more_change_cc == '2':
             edit_cond_flag = False
     else:
         print("\n【Patient Table】\n", Record.select(globals.patient_id)[2])
@@ -156,6 +183,7 @@ def enter_prescription(next_dict):
                  "1":("Yes", enter_prescription, flow_end),
                  "2":("No", final_confirm_prescribe, flow_end)
             }
+    print("\n【Drug List】")
     print(Prescription.select_drug_list()[1])
     prescription = Prescription()
     prescription.booking_id = globals.appt_id
@@ -180,7 +208,7 @@ def enter_prescription(next_dict):
     return display_next_menu(flow_drug)
 
 def enter_appoint_id(next_dict):
-    # TODO: return to home page   
+    # TODO: return to home page  
     print("\nPlease enter the id of appointment which you want to confirm attendance and edit notes")
     # TODO: √ input validation
     appt_id = input("\n--> ")
@@ -211,6 +239,10 @@ def correct_note_change(next_dict):
 # TODO: booking id input validation
 
 def display_confirmed_appt(next_dict):
+    no_confirmed_flag = Appointment.select_GP_confirmed(globals.usr_id)[1].index.values.size
+    if no_confirmed_flag == 0:
+        print("\nYour do not have any confirmed appointment!")
+        return display_next_menu(flow_end)
     print("\nYour confirmed appointments: ")
     print(Appointment.select_GP_confirmed(globals.usr_id)[0])
     return display_next_menu(next_dict)
@@ -305,7 +337,7 @@ def another_confirm_all(next_dict):
         return display_next_menu(next_dict)
 
 def remove_timeoff(next_dict):
-    flow_timeoff = {"title": "Schedule",
+    flow_timeoff = {"title": "View Schedule",
                  "type": "sub",
                  "1":("Add", add_timeoff, next_dict),
                  "2":("Remove", remove_timeoff, next_dict)
@@ -339,7 +371,7 @@ def remove_timeoff(next_dict):
             return display_next_menu(next_dict)
 
 def add_timeoff(next_dict):
-    flow_timeoff = {"title": "Schedule",
+    flow_timeoff = {"title": "View Schedule",
                  "type": "sub",
                  "1":("Add", add_timeoff, next_dict),
                  "2":("Remove", remove_timeoff, next_dict)
@@ -373,7 +405,7 @@ def add_timeoff(next_dict):
             return display_next_menu(next_dict)
 
 def view_another_day(next_dict):
-    flow_schedule = {"title": "Schedule",
+    flow_schedule = {"title": "View Schedule",
                  "type": "sub",
                  "1":("Day", view_another_day, next_dict),
                  "2":("Week", view_another_week, next_dict)
@@ -382,43 +414,36 @@ def view_another_day(next_dict):
     print("\n----------------------------------------------------\n"
         "              Schedule View by Day\n")
     start_date = utils.get_start_date()
-    print("\nWhich time period do you want to search?")
-    print("[ 1 ] Morning")
-    print("[ 2 ] Afternoon")
+    print("\n【", start_date, "Morning】")
+    print(Schedule.select(globals.usr_id, 'day', start_date)[2])
+    print("\nDo you want to view the schedule in afternoon?")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
     halfday_choice = input("--> ")
     while halfday_choice not in ["1", "2"]:
         halfday_choice = input("--> ")
     else:
         if halfday_choice == "1":
-            print("\n【", start_date, "Morning】")
-            print("\n\n\n!!! DEBUG: WHAT SHOULD WE DISPLAY HERE?\n\n\nSEE BELOW TWO DIFFERENT TABLES:\n\n\n")
-            print("\nDEBUG: TABLE from apponitment")
-            print(Appointment.select_GP('day', globals.usr_id, start_date)[2])
-            print("\nDEBUG: TABLE from schedule")
-            print(Schedule.select(globals.usr_id, 'day', start_date)[1])
-        elif halfday_choice == "2":
             print("\n【", start_date, "Afternoon】")
-            print(Appointment.select_GP('day', globals.usr_id, start_date)[3])
-
-    print("\n----------------------------------------------------\n"
-          "                ", "Schedule", "\n")
-    print("[ 1 ] View another schedule")
-    print("[ 2 ] Manage timeoff")
-    print("[ # ] Go back to main page")
-    usr_choice = input("\n--> ")
-    while usr_choice not in ["1", "2", "#"]:
-        print("Invalid input, please try again!")
+            print(Schedule.select(globals.usr_id, 'day', start_date)[3])
+        print("\n" + "-" * 52 + "\n" + " " * 16 + "View Schedule\n")
+        print("[ 1 ] View another schedule")
+        print("[ 2 ] Manage timeoff")
+        print("[ # ] Go back to main page")
         usr_choice = input("\n--> ")
-    else:
-        if usr_choice == '1':
-            return display_next_menu(flow_schedule)
-        elif usr_choice == '2':
-            return display_next_menu(next_dict)
-        elif usr_choice == '#':
-            return display_next_menu(main_flow_gp)
+        while usr_choice not in ["1", "2", "#"]:
+            print("Invalid input, please try again!")
+            usr_choice = input("\n--> ")
+        else:
+            if usr_choice == '1':
+                return display_next_menu(flow_schedule)
+            elif usr_choice == '2':
+                return display_next_menu(next_dict)
+            elif usr_choice == '#':
+                return display_next_menu(main_flow_gp)
 
 def view_another_week(next_dict):
-    flow_schedule = {"title": "Schedule",
+    flow_schedule = {"title": "View Schedule",
                  "type": "sub",
                  "1":("Day", view_another_day, next_dict),
                  "2":("Week", view_another_week, next_dict)
@@ -427,36 +452,34 @@ def view_another_week(next_dict):
     print("\n----------------------------------------------------\n"
         "              Schedule View by Week\n")
     start_date = utils.get_start_date()
-    print("\nWhich time period do you want to search?")
-    print("[ 1 ] Morning")
-    print("[ 2 ] Afternoon")
+    end_date = date.fromisoformat(start_date) + timedelta(days=6)
+    print("\n【From ", start_date, " to ", end_date, " Morning】")
+    print(Schedule.select(globals.usr_id, 'week', start_date)[2])
+    print("\nDo you want to view the schedule in afternoon?")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
     halfday_choice = input("--> ")
     while halfday_choice not in ["1", "2"]:
         halfday_choice = input("--> ")
     else:
         if halfday_choice == "1":
-            print("\n【", start_date, "Morning】")
-            print(Appointment.select_GP('week', globals.usr_id, start_date)[2])
-        elif halfday_choice == "2":
-            print("\n【", start_date, "Afternoon】")
-            print(Appointment.select_GP('week', globals.usr_id, start_date)[3])
-
-    print("\n----------------------------------------------------\n"
-          "                ", "Schedule", "\n")
-    print("[ 1 ] View another schedule")
-    print("[ 2 ] Manage timeoff")
-    print("[ # ] Go back to main page")
-    usr_choice = input("\n--> ")
-    while usr_choice not in ["1", "2", "#"]:
-        print("Invalid input, please try again!")
+            print("\n【From ", start_date, " to ", end_date, " Afternoon】")
+            print(Schedule.select(globals.usr_id, 'week', start_date)[3])
+        print("\n" + "-" * 52 + "\n" + " " * 16 + "View Schedule\n")
+        print("[ 1 ] View another schedule")
+        print("[ 2 ] Manage timeoff")
+        print("[ # ] Go back to main page")
         usr_choice = input("\n--> ")
-    else:
-        if usr_choice == '1':
-            return display_next_menu(flow_schedule)
-        elif usr_choice == '2':
-            return display_next_menu(next_dict)
-        elif usr_choice == '#':
-            return display_next_menu(main_flow_gp)
+        while usr_choice not in ["1", "2", "#"]:
+            print("Invalid input, please try again!")
+            usr_choice = input("\n--> ")
+        else:
+            if usr_choice == '1':
+                return display_next_menu(flow_schedule)
+            elif usr_choice == '2':
+                return display_next_menu(next_dict)
+            elif usr_choice == '#':
+                return display_next_menu(main_flow_gp)
 
 def view_records(next_dict):
     # TODO: display 10 latest clients?
@@ -535,13 +558,13 @@ flow_confirm_appoint = {"title": "Confirm Appointments",
                 }
 
 # timeoff flow
-flow_timeoff = {"title": "Schedule",
+flow_timeoff = {"title": "View Schedule",
                  "type": "sub",
                  "1":("Add", add_timeoff, flow_end),
                  "2":("Remove", remove_timeoff, flow_end)
                 }
 # schedule flow
-flow_schedule = {"title": "Schedule",
+flow_schedule = {"title": "View Schedule",
                 "type": "sub",
                 "1":("Day", view_another_day, flow_timeoff),
                 "2":("Week", view_another_week, flow_timeoff)

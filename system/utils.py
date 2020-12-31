@@ -133,17 +133,13 @@ def display(my_dict):
         return my_dict[usr_choice][1](my_dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
-        print("\n" + line + "\n" + "\n\U0001F51A Thanks for using e-health. Goodbye!")
+        print("\n" + line + "\n" + "\n\U0001F51A THANK YOU FOR USING E-HEALTH. SEE YOU NEXT TIME!")
         print(asciiart.exit_art)
         sys.exit()
 
-    # TODO: Add help function
-    elif usr_choice in ('H', 'h'):
-        pass
-
     # If invalid entry
     else:
-        print("\n\U00002757 Invalid entry, please try again")
+        print("\n\U00002757 Invalid entry, please try again and enter your choice.")
         return display(my_dict)
 
 
@@ -214,6 +210,7 @@ def validate_email(user_input):
             raise EmptyError
         elif '@' not in user_input:
             raise EmailFormatError
+        # TODO: Use exact match
         elif emails['patient_email'].str.contains(user_input).any():
             raise DuplicateEmailError
         elif ('"' in user_input) or ("'" in user_input):
@@ -322,7 +319,7 @@ def get_start_date():
             else:
                 print("\n\U00002757 Schedule date cannot be earlier than today.")
         else:
-            print("\n\U00002757 Invalid entry, please try again")
+            print("\n\U00002757 Invalid entry, please try again and enter your choice.")
         if valid == False:
             start_date = input("\n--> ")
 
@@ -342,7 +339,7 @@ def get_end_date():
             else:
                 print("\n\U00002757 Schedule date cannot be earlier than today.")
         else:
-            print("\n\U00002757 Invalid entry, please try again")
+            print("\n\U00002757 Invalid entry, please try again and enter your choice.")
         if valid == False:
             end_date = input("\n--> ")
 
@@ -354,6 +351,12 @@ def login(user_email, password, usr_type):
     c = conn.cursor()
 
     sql_hash_salt = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
+    
+    sql_result_df = db_read_query(sql_hash_salt)
+
+    if sql_result_df.empty :
+        return False
+    
     c.execute(sql_hash_salt)
 
     # Get the full hash + salt from db
