@@ -267,7 +267,6 @@ def validate_password(user_input):
     return True
 
 
-# TODO: Rewrite using datetime.strptime() and datetime.date()
 def validate_date(user_input):
     """
     Validate user input for date such as DOB.  
@@ -277,6 +276,10 @@ def validate_date(user_input):
         - Does not contain "'" or '"' to avoid SQL injections
         - Date must be in format YYYY-MM-DD
     """
+
+    year = int(user_input[:4])
+    month = int(user_input[5:7])
+    day = int(user_input[8:])
 
     try:
         if user_input == '':
@@ -288,12 +291,8 @@ def validate_date(user_input):
               (user_input[7] != '-')):
             raise DateFormatError
 
-        int(user_input[:4])
-        int(user_input[5:7])
-        int(user_input[8:])
-
-        if int(user_input[5:7]) > 12 or int(user_input[8:]) > 31:
-            raise DateFormatError
+        # Checking that year, month and day are valid 
+        dt.date(year, month, day)
 
     except InvalidCharacterError:
         print("\U00002757 Invalid character: ' and \" are not accepted.")
