@@ -329,6 +329,9 @@ def change_account_details(next_dict):
     print("\n---------------------------------------------------- \n"
         "                   UPDATE ACCOUNT DETAILS\n"
         "\nPlease, update your details using the following form")
+    
+    print("\nTo change any information requiring verification (e.g. your name),"
+        "\nor to have your account deleted, please contact a member of staff.")
 
     # Create a patient class instance with patient details as class variables
     patient = Patient.select(globals.usr_id)[0]
@@ -584,7 +587,7 @@ flow_2 = {"title": "CHANGE REGISTERED GP ?",
 
 
 # "Change account details" page dictionary
-flow_3 = {"title": "CHANGE ACCOUNT DETAILS",
+flow_3 = {"title": "CHANGE ACCOUNT DETAILS ?",
             "type":"sub",
             "1":("Yes",change_account_details, empty_dict)}
 
