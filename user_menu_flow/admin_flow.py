@@ -12,16 +12,12 @@ sys.path.insert(1, str(p))
 # Importing utility methods from the 'system' package
 from system import utils
 
-# import global variables from globals.py
-from system import globals
-
+# Importing class methods
 from classes.gp import GP
 from classes.record import Record
 from classes.patient import Patient
 from classes.schedule import Schedule
 from classes.appointment import Appointment
-
-from user_menu_flow import gp_flow
 
 ############################### INPUT MENU PAGES ###########################
 
@@ -38,7 +34,12 @@ def view_gp(next_dict):
     '''
     Select from a list of GPs and allows choice for viewing.
     '''
-    choice = retrieve_gp_list('all')
+
+    # Check if gp id already selected previously for reuse
+    if 'gp_id_choice' in globals():
+        choice = gp_id_choice
+    else:
+        choice = retrieve_gp_list('all')
 
     doctor_df = GP.select(choice)
 
@@ -76,16 +77,17 @@ def retrieve_gp_list(type):
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
     print(df_show)
-    return int(input("\nPlease select a GP ID. \n--> "))
+    global gp_id_choice
+    gp_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    return gp_id_choice
 
 
 def same_gp(next_dict):
+    # NOTE: This functions serves no purpose. 
     '''
     Allows viewing/editing of the same GP.
     '''
-    #TODO: COME UP WITH SOME WAY OF EDITING THE SAME GP.
-    #NOTE: SIMILAR TO THE same_patient FUNCTION.
-    return utils.display(view_edit_gp_accounts_final_menu)
+    return utils.display(next_dict)
 
 
 def view_another_gp(next_dict):
