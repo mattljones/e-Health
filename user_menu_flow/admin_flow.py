@@ -244,21 +244,21 @@ def delete_gp(next_dict):
         elif GP.delete(gp_id)[1] == 'apps':
             print("""\n\U00002705 GP with ID {} has been deleted. 
 \U00002705 Patients reallocated successfully.
-\U00002757 The following appointments have *NOT* been reallocated: {}"""
+\U00002757 Appointments *NOT* reallocated due to conflict in the following appointments: {}"""
                     .format(gp_id, GP.delete(gp_id)[4]))
 
         # Appointments reallocated | Patients *not* reallocated
         elif GP.delete(gp_id)[1] == 'patients':
             print("""\n\U00002705 GP with ID {} has been deleted. 
 \U00002705 Appointments reallocated successfully.
-\U00002757 {} patients have *NOT* been reallocated due to all GPs having reached capacity."""
+\U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
                     .format(gp_id, GP.delete(gp_id)[2]))
 
         # Patients and appointment *not* reallocated
         elif GP.delete(gp_id)[1] == 'both':
             print("""\n\U00002705 GP with ID {} has been deleted. 
-\U00002757 {} patients have *NOT* been reallocated due to all GPs having reached capacity.
-\U00002757 The following appointments have *NOT* been reallocated: {}"""
+\U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.
+\U00002757 Appointments *NOT* reallocated due to conflict in the following appointments: {}"""
                     .format(gp_id, GP.delete(gp_id)[2], GP.delete(gp_id)[4]))
 
         return utils.display(next_dict)
