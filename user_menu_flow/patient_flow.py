@@ -171,7 +171,7 @@ def book_appointment(next_dict):
     print("\n[ ... ] Enter the index of the time slot to book")
 
     print("\n[ A ] Display afternoon availability")
-    print("[ # ] Display other availabilitites (different dates or GPs) ")
+    print("[ # ] Display other availabilities (different dates or GPs) ")
 
     # Require user choice of booking slot
     booking_index = input("\n--> ")
@@ -215,7 +215,7 @@ def book_appointment(next_dict):
             # Print afternoon availability
             print("\n\n--- Afternoon ---\n" + availability[3])
             print("\n[ ... ] Enter the index of the time slot to book")
-            print("[ # ] Display other availabilitites (different dates or GPs) ")
+            print("[ # ] Display other availabilities (different dates or GPs) ")
             
             # Require user choice of booking slot
             booking_index = input("\n--> ")
@@ -261,7 +261,7 @@ def book_appointment(next_dict):
                 if morning == True:
                     print("\n[ A ] Display afternoon availability")
                 
-                print("[ # ] Display other availabilitites (different dates or GPs) ")
+                print("[ # ] Display other availabilities (different dates or GPs) ")
                 booking_index = input("\n--> ")
 
                 # Formatting user input correctly
@@ -313,7 +313,7 @@ def book_appointment(next_dict):
     success, reason = booking.book()
 
     if success:
-        print("\n\U00002705 Appointment successfuly booked with " + gp_name + " at " + str(booking_time) + " on the " + str(booking_date) + ".")
+        print("\n\U00002705 Appointment successfully booked with " + gp_name + " at " + str(booking_time) + " on the " + str(booking_date) + ".")
         return utils.display(next_dict)
 
     else:
@@ -425,7 +425,7 @@ def change_account_details(next_dict):
     # updating DB
     patient.update()
 
-    print("\n\U00002705 Account successfuly updated and changes saved.")
+    print("\n\U00002705 Account successfully updated and changes saved.")
 
     return utils.display(next_dict)
 
@@ -493,7 +493,7 @@ def access_prescription(next_dict):
     from previous appointment.
     '''
     print("\n----------------------------------------------------\n"
-            "       PAST APPOINTMENTS & PRESCIPTIONS \n")
+            "       PAST APPOINTMENTS & PRESCRIPTIONS \n")
 
     # Print table of past appointments and their prescription
     records = Record.select(globals.usr_id)
@@ -510,7 +510,7 @@ def display_default_GP(next_dict):
     print("\n----------------------------------------------------\n"
             "                REGISTERED GP \n")
 
-    print("Your are registered with " + Patient.select_gp_details(globals.usr_id)[1] + ".\n")
+    print("You are registered with " + Patient.select_gp_details(globals.usr_id)[1] + ".\n")
     return utils.display(next_dict)
 
 
