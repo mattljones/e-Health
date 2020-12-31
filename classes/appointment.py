@@ -395,8 +395,8 @@ class Appointment:
             return df_object, df_print
 
         else:
-            query_results['Booking Agenda'] = query_results['Booking Agenda'].str.wrap(30)
-            query_results['Notes'] = query_results['Notes'].str.wrap(30)
+            query_results['Booking Agenda'] = query_results['Booking Agenda'].str.wrap(20)
+            query_results['Notes'] = query_results['Notes'].str.wrap(20)
             df_object = query_results
             df_print = df_object.to_markdown(tablefmt="grid", index=False)
             return df_object, df_print
@@ -487,17 +487,17 @@ class Appointment:
         if (select_type == 'day' and number_of_bookings < 49) or (select_type == 'week' and number_of_bookings < 245):
             boolean_available = True
         else:
-            df_object, df_print, other_gp_id, other_gp_last_name, \
-            boolean_available, df_print_morning, df_print_afternoon = None, None, None, None, False, None, None
+            df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id, other_gp_last_name, \
+            boolean_available = None, None, None, None, None, None, False
 
-            return df_object, df_print, other_gp_id, other_gp_last_name, boolean_available, df_print_morning, \
-                   df_print_afternoon
+            return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id,\
+                   other_gp_last_name, boolean_available
 
         df_object, df_print, df_print_morning, \
         df_print_afternoon = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return df_object, df_print, other_gp_id, other_gp_last_name, \
-               boolean_available, df_print_morning, df_print_afternoon
+        return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id,\
+               other_gp_last_name, boolean_available
 
     # Change status of a specific appointment
     @staticmethod
@@ -568,13 +568,14 @@ class Appointment:
 
 if __name__ == "__main__":
     # Appointment.change_status_batch_future(1, 'rejected')
-    Appointment.change_status(51, 'confirmed')
+    Appointment.change_status(51, 'booked')
     Appointment.change_status(52, 'booked')
+    print(Appointment.select_GP_pending(16)[1])
 
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
 
     # print(Appointment.select_GP('week', 16, '2020-12-25')[2])
-    # print(Appointment.select_GP('day', 16, '2020-12-25')[3])
+    # print(Appointment.select_GP('day', 16, '2021-01-14')[2])
 
     # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
     # print(confirmed_id)
@@ -593,7 +594,9 @@ if __name__ == "__main__":
     # print(Appointment.select(51)[1].loc[0,"Apt. ID []"])
     # print(Appointment.select(51)[1].loc[0,"Notes [4]"])
     # print(Appointment.select_GP_appt(16))
-    # print(Appointment.select_availability('week', 16, '2020-12-27')[2])
+    # print(Appointment.select_availability('week', 1, '2021-02-04')[1])
+
+    # print(Schedule.select(1, 'week', '2021-01-01')[1])
     # print(Appointment.select_availability('day', 1, '2020-12-23'))
     pass
 
