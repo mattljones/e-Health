@@ -82,18 +82,22 @@ def retrieve_gp_list(type):
     return gp_id_choice
 
 
-def same_gp(next_dict):
-    # NOTE: This functions serves no purpose. 
+
+def view_same_gp(next_dict):
     '''
-    Allows viewing/editing of the same GP.
+    Allows cycling back to the view_gp function for the same GP,
+    stored in the global variable gp_choice.
     '''
-    return utils.display(next_dict)
+    return view_gp(view_edit_gp_accounts_final_menu)
 
 
 def view_another_gp(next_dict):
     '''
-    Allows cycling back to the view_gp function from final_menu.
+    Allows cycling back to the view_gp function from final_menu,
+    deleting the global variable so a different GP can be viewed.
     '''
+    global gp_id_choice
+    del gp_id_choice
     return view_gp(view_edit_gp_accounts_final_menu)
 
 
@@ -687,6 +691,32 @@ def view_schedule_week(next_dict):
     return utils.display(next_dict)
 
 
+
+def view_another_schedule(next_dict):
+    '''
+    Allows cycling back to the schedule_length_flow from the final_menu.
+    '''
+    return utils.display(schedule_length_flow)
+
+
+
+def choose_another_gp(next_dict):
+    '''
+    Allows choice to change the GP viewed from the final_menu.
+    '''
+    return choose_gp(view_schedule_flow)
+
+
+
+def appointments_shortcut(next_dict):
+    '''
+    Allows the viewing of appointments (in sub-menu 5) from the manage_availability_flow
+    (in sub-menu 4). 
+    '''
+    return utils.display(delete_gp_appointment_flow)
+
+
+
 def view_time_off(next_dict):
     '''
     View a GP's current time off.
@@ -698,6 +728,23 @@ def view_time_off(next_dict):
     print(off[1])
 
     return utils.display(next_dict)
+
+
+
+def manage_more_availability(next_dict):
+    '''
+    Allows cycling back to the manage_availability_flow menu from the final_menu.
+    '''
+    return utils.display(manage_availability_flow)
+
+
+
+def manage_more_time_off(next_dict):
+    '''
+    Allows cycling back to the manage_time_off_flow menu from the final_menu.
+    '''
+    return utils.display(manage_time_off_flow)
+
 
 
 def add_time_off(next_dict):
@@ -867,11 +914,13 @@ def add_time_off_custom(next_dict):
         return add_time_off(next_dict)
 
 
+
 def remove_time_off(next_dict):
     '''
     Returns menu to remove a custom amount of time off to a GP's schedule.
     '''
     return utils.display(remove_time_off_flow)
+
 
 
 def remove_time_off_custom(next_dict):
@@ -990,11 +1039,13 @@ def remove_time_off_all(next_dict):
         return remove_time_off(next_dict)
 
 
-def schedule_date(next_dict):
+
+def remove_more_time_off(next_dict):
     '''
-    Returns menu to select date length.
+    Allows cycling back to the remove_time_off menu from the final_menu.
     '''
-    return utils.display(schedule_length_flow)
+    return utils.display(remove_time_off_flow)
+
 
 
 ###### MANAGE UPCOMING APPOINTMENTS FUNCTIONS ######
@@ -1310,8 +1361,8 @@ add_new_gp_account_final_menu = {
 view_edit_gp_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View/Modify Same GP", same_gp, empty_dict),
-    "2": ("GP List", view_another_gp, empty_dict),
+    "1": ("View/Modify Same GP", view_same_gp, empty_dict),
+    "2": ("View/Modify Another GP", view_another_gp, empty_dict),
     "3": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
@@ -1376,10 +1427,10 @@ gp_patient_pair_flow = {
 remove_time_off_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Remove More Time Off", remove_time_off, empty_dict),
-    "2": ("Manage Upcoming Time Off", empty_method, empty_dict),
-    "3": ("Manage GP Availability", empty_method, empty_dict),
-    "4": ("Choose a different GP", choose_gp, empty_dict),
+    "1": ("Remove More Time Off", remove_more_time_off, empty_dict),
+    "2": ("Manage Upcoming Time Off", manage_more_time_off, empty_dict),
+    "3": ("Manage GP Availability", manage_more_availability, empty_dict),
+    "4": ("Choose a different GP", choose_another_gp, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -1394,9 +1445,9 @@ appointment_conflict_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Try Adding Again", add_time_off, empty_dict),
-    "2": ("Manage Upcoming Time Off", empty_method, empty_dict),
-    "3": ("Manage GP Availability", empty_method, empty_dict),
-    "4": ("Choose a different GP", choose_gp, empty_dict),
+    "2": ("Manage Upcoming Time Off", manage_more_time_off, empty_dict),
+    "3": ("Manage GP Availability", manage_more_availability, empty_dict),
+    "4": ("Choose a different GP", choose_another_gp, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -1405,7 +1456,7 @@ add_time_off_final_actions = {
     "type": "sub",
     "1": ("Add More Time Off", add_time_off, empty_dict),
     "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
-    "3": ("Choose a different GP", choose_gp, empty_dict),
+    "3": ("Choose a different GP", choose_another_gp, empty_dict),
     "4": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -1422,8 +1473,8 @@ view_time_off_final_actions = {
     "type": "sub",
     "1": ("Add Time Off", add_time_off, add_time_off_flow),
     "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
-    "3": ("Manage GP Availability", empty_method, empty_dict),
-    "4": ("Choose a different GP", choose_gp, empty_dict),
+    "3": ("Manage GP Availability", manage_more_availability, empty_dict),
+    "4": ("Choose a different GP", choose_another_gp, empty_dict),
     "5": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
@@ -1438,7 +1489,7 @@ manage_time_off_flow = {
 manage_availability_flow = {
     "title": "VIEW AND MANAGE AVAILABILITY",
     "type": "sub",
-    "1": ("View Upcoming Appointments", view_appointment, empty_dict),
+    "1": ("View Upcoming Appointments", appointments_shortcut, empty_dict),
     "2": ("Manage Upcoming Time Off", empty_method, manage_time_off_flow)
 }
 
@@ -1446,8 +1497,8 @@ view_schedule_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Modify GP Availability", empty_method, manage_availability_flow),
-    "2": ("View a Different Time Period", schedule_date, empty_dict),
-    "3": ("Choose a different GP", choose_gp, empty_dict),
+    "2": ("View a Different Time Period", view_another_schedule, empty_dict),
+    "3": ("Choose a different GP", choose_another_gp, empty_dict),
     "4": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
