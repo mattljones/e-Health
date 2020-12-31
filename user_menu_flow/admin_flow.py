@@ -1067,74 +1067,61 @@ def view_appointment(next_dict):
 
     return utils.display(next_dict)
 
+
 #NOTE: INCOMPLETE
 def add_appointment(next_dict):
     '''
-    Schedule an appointment for a GP.
-    '''
-    #TODO: GET RID OF THIS AND CALL EMPTY_METHOD.
-    return utils.display(next_dict)
-
-
-#NOTE: INCOMPLETE
-def choose_appointment_day(next_dict):
-    '''
     Choose the appointment from a day of available slots.
     '''
-    print("\n----------------------------------------------------\n"
-          "                ",'ENTER DAY', "\n")
-    start_date = utils.get_start_date()
 
     print("\n----------------------------------------------------\n"
-          "                ",'ENTER LAST NAME', "\n")
+          "                ",'ENTER PATIENT LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
     "--> ")
     choose_patient('matching', patient_last_name=last_name)
     patient_id = int(input('\nPlease choose a patient ID\n'
     '--> '))
     selected_patient = Patient.select(patient_id)
+    patient_name = selected_patient[0].first_name + ' ' + selected_patient[0].last_name
 
-    gp_id = selected_patient[0].gp_id
-    gp_lastname = GP.select(gp_id)[0].last_name
+    gp_id, gp_name = selected_patient[0].select_gp_details(patient_id)
+
+    print('\nPatient {} (ID: {}) is registered with {} (ID: {})'.format(patient_name, patient_id, gp_name, gp_id))
+    #NOTE: We could put in functionality here to book with a different GP than the one 
+    #      registered with, but might make more sense to have that after checking if
+    #      the patient's GP has no availability.
+
+
+    print("\n----------------------------------------------------\n"
+    "                ",'CHOOSE TIME PERIOD TO VIEW', "\n")
+    print('[ 1 ] Day')
+    print('[ 2 ] Week')
+    time_period_choice = int(input('\n--> '))
+
+    while time_period_choice not in (1,2):
+        print("\n\U00002757 Invalid entry, please try again")
+        time_period_choice = int(input('\n--> '))
+
+    if time_period_choice == 1:
+        print("\n----------------------------------------------------\n"
+        "                ",'ENTER DATE', "\n")
+        start_date = utils.get_start_date()
+        day_week = 'day'
+
+    else:
+        print("\n----------------------------------------------------\n"
+        "                ",'ENTER STARTING DATE', "\n")
+        start_date = utils.get_start_date()
+        day_week = 'week'
+
     
-    appt_df = Appointment.select_availability('day', gp_id, start_date)
+    appt_df = Appointment.select_availability(day_week, gp_id, start_date)
 
     print(appt_df[1])
     appt_selected = int(input('\nPlease choose the slot to book the appointment in:\n'
     '-->\n'))
     #TODO: BOOK THE APPOINTMENT IF VALID INPUT.
     #NOTE: LOTS OF SHARED CODE BETWEEN THIS AND CHOOSE APPOINTMENT WEEK.
-    return utils.display(next_dict)
-
-
-#NOTE: INCOMPLETE
-def choose_appointment_week(next_dict):
-    '''
-    Choose the appointment from a week of available slots.
-    '''
-    print("\n----------------------------------------------------\n"
-          "                ",'ENTER WEEK START DATE', "\n")
-    start_date = utils.get_start_date()
-
-    print("\n----------------------------------------------------\n"
-          "                ",'ENTER LAST NAME', "\n")
-    last_name = input("Please enter the patient's last name:\n"
-    "--> ")
-    choose_patient('matching', patient_last_name=last_name)
-    patient_id = int(input('\nPlease choose a patient ID\n'
-    '--> '))
-    selected_patient = Patient.select(patient_id)
-
-    gp_id = selected_patient[0].gp_id
-    gp_lastname = GP.select(gp_id)[0].last_name
-    
-    appt_df = Appointment.select_availability('week', gp_id, start_date)
-
-    print(appt_df[1])
-    appt_selected = int(input('\nPlease choose the slot to book the appointment in:\n'
-    '-->\n'))
-    #TODO: BOOK THE APPOINTMENT IF VALID INPUT.
-    #NOTE: LOTS OF SHARED CODE BETWEEN THIS AND CHOOSE APPOINTMENT DAY.
     return utils.display(next_dict)
 
 
@@ -1573,17 +1560,11 @@ availability_error_flow = {
     "2": ("View Slots Available With Any GP", appointment_by_gp, empty_dict)
 }
 
-add_new_appointment_flow = {
-    "title": "SELECT APPOINTMENT DATE",
-    "type": "sub",
-    "1": ("Day", choose_appointment_day, appointment_made_final_actions),
-    "2": ("Week", choose_appointment_week, appointment_made_final_actions)
-}
 
 manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
     "type": "sub",
-    "1": ("Add a New Appointment", add_appointment, add_new_appointment_flow),
+    "1": ("Add a New Appointment", add_appointment, appointment_made_final_actions),
     "2": ("Manage Upcoming Appointment", empty_method, view_cancel_appointment_flow)
 }
 
