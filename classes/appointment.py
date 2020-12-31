@@ -305,7 +305,7 @@ class Appointment:
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE booking_status == 'confirmed'
                    AND b.gp_id =={}
-                   AND booking_start_time <{}""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
+                   AND booking_start_time <'{}'""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
         df_object = u.db_read_query(pending_query)
 
@@ -620,7 +620,7 @@ if __name__ == "__main__":
     # print(Appointment.select_GP('day', 1, '2020-12-17')[3])
 
     # THIS WORKS! : Displays all of the appointments with a status 'booked' for a particular GP where date > now
-    # print(Appointment.select_GP_pending(1)[1])
+    print(Appointment.select_GP_pending(1)[1])
 
     # THIS WORKS! : Displays all of the upcoming appointments for a specific patient
     # To get the dataframe of only confirmed appointments then you will have to add a parameter at end 'confirmed'
