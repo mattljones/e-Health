@@ -480,13 +480,13 @@ class Appointment:
             gp_id_query = """SELECT gp_id, gp_last_name FROM gp WHERE gp_status == 'active'"""
             result = u.db_read_query(gp_id_query)
             other_gp_id = random.choice(result['gp_id'].tolist())
-            other_gp_last_name = "DR." + result.loc[result['gp_id'] == other_gp_id, 'gp_last_name'].tolist()[0]
+            other_gp_last_name = "Dr." + ' ' + result.loc[result['gp_id'] == other_gp_id, 'gp_last_name'].tolist()[0]
             number_of_bookings = 0
 
         else:
             number_of_bookings = query_result.loc[0, 'Bookings_Per_Day']
             other_gp_id = query_result.loc[0, 'gp_id']
-            other_gp_last_name = "DR." + query_result.loc[0, 'gp_last_name']
+            other_gp_last_name = "Dr." + ' ' + query_result.loc[0, 'gp_last_name']
 
         if (select_type == 'day' and number_of_bookings < 49) or (select_type == 'week' and number_of_bookings < 245):
             boolean_available = True
