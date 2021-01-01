@@ -30,21 +30,21 @@ from system import globals
 class Error(Exception):
     pass
 
-
 class EmptyError(Error):
     """Raised when input is empty."""
     pass
-
 
 class LenghtError(Error):
     """Raised when input is too long."""
     pass
 
+class LenghtShortError(Error):
+    """Raised when input is too short."""
+    pass
 
 class InvalidCharacterError(Error):
     """Raised when user inputs "'" or '"' to avoid SQL injections."""
     pass
-
 
 class EmailFormatError(Error):
     """Raised when incorrectly formatted email address."""
@@ -56,6 +56,10 @@ class DuplicateEmailError(Error):
 
 class DateFormatError(Error):
     """Raised when date (YYYY-MM-DD) is not correctly formatted."""
+    pass
+
+class NonAlphabeticCharacterError(Error):
+    """Raised when input non alphabetic character"""
     pass
 
 
@@ -190,6 +194,49 @@ def validate(user_input):
         return False
     except LenghtError:
         print("\U00002757 Input is too long.")
+        return False
+    return True
+
+def validate_name(user_input):
+    """
+    Validate user input for names.  
+    
+    Custom errors:
+        - Empty field
+        - Input too short 
+        - Only Aa-Zz characters
+        - Input too long (> 50 chars) 
+        - Does not contain "'" or '"' to avoid SQL injections
+    """
+
+    # Remove leading and trailing whitespaces
+    user_input = user_input.strip()
+
+    try:
+        if user_input == '':
+            raise EmptyError
+        elif len(user_input) > 50 :
+            raise LenghtError
+        elif len(user_input) < 2:
+            raise LenghtShortError
+        elif user_input.isalpha() == False:
+            raise NonAlphabeticCharacterError
+        elif ('"' in user_input) or ("'" in user_input):
+            raise InvalidCharacterError
+    except InvalidCharacterError:
+        print("\U00002757 Invalid character: ' and \" are not accepted.")
+        return False
+    except EmptyError:
+        print("\U00002757 You need to input a value.")
+        return False
+    except LenghtError:
+        print("\U00002757 Input is too long.")
+        return False
+    except LenghtShortError:
+        print("\U00002757 Input is too short.")
+        return False
+    except NonAlphabeticCharacterError:
+        print("\U00002757 Name must only contain Aa-Zz characters.")
         return False
     return True
 
@@ -384,13 +431,26 @@ def login(user_email, password, usr_type):
 
     # Check if new key matches our stored key
     if hash_key_to_check == hash_key:
-        sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
-        c.execute(sql_id)
-        usr_id = c.fetchone()[0]
-        globals.usr_type = usr_type
-        globals.usr_id = usr_id
-        conn.close()
-        return True
+
+        if usr_type == "patient":
+            sql_id = 'SELECT patient_id, patient_status FROM patient WHERE patient_email=' + "'" + user_email + "'"
+            c.execute(sql_id)
+            result = c.fetchone()
+            usr_id, status = result[0], result[1]
+            globals.usr_type = usr_type
+            globals.usr_id = usr_id
+            conn.close()
+            return True, status
+
+        else:
+            sql_id = 'SELECT ' + usr_type + '_id FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
+            c.execute(sql_id)
+            usr_id = c.fetchone()[0]
+            globals.usr_type = usr_type
+            globals.usr_id = usr_id
+            conn.close()
+            return True
+
     else:
         conn.close()
         return False

@@ -2,6 +2,7 @@
 
 # library imports 
 from pathlib import Path
+from datetime import date
 import sys 
 
 # Change python path for imports
@@ -59,7 +60,7 @@ def login_page(login_as):
         elif (login_credentials[i] == "Email address") and (utils.validate(single_input)):
             usr_input.append(single_input)
         # Input validation for password
-        elif (login_credentials[i] == "Password") and (utils.validate_password(single_input)):
+        elif (login_credentials[i] == "Password") and (utils.validate(single_input)):
             usr_input.append(single_input)
 
         # If invalid input
@@ -70,11 +71,19 @@ def login_page(login_as):
 
     # Calling the login() method to check user input against database
     # Returns boolean variable (True = valid credentials; False = invalid credentials)
-    success = utils.login(usr_input[0],usr_input[1],login_as)
+    if login_as == "patient" :
+        success, status = utils.login(usr_input[0],usr_input[1],login_as)
+    else:
+        success = utils.login(usr_input[0],usr_input[1],login_as)
+        status = "confirmed"
 
     # Invalid login credentials
-    if (success == False):
+    if success == False:
         print("\n\U00002757 Invalid email or password, please try again.")
+        return login_page(login_as)
+    
+    elif status != "confirmed":
+        print("\n\U00002757 Please wait for your account to be confirmed before login.")
         return login_page(login_as)
     
     # Valid login credentials
@@ -140,16 +149,26 @@ def register_page(next_dict):
         if (single_input == '#'):
             return utils.display(main_flow_register)
 
+        # Input validation for name
+        elif (usr_details[i] in ("First name", "Last name")) and utils.validate_name(single_input):
+            usr_input.append(single_input)
+
         # Input validation for email
         elif (usr_details[i] == "Email address") and utils.validate_email(single_input):
             usr_input.append(single_input)
 
         # Input validation for password 
         elif (usr_details[i] == "Birth date (YYYY-MM-DD)") and utils.validate_date(single_input):
-            usr_input.append(single_input)
+
+            if date.fromisoformat(single_input) < date.today():
+                usr_input.append(single_input)
+
+            else:
+                print("\U00002757 Birth date must be in the past.")
+                i -= 1
 
         # Input validation for the other registration details
-        elif (usr_details[i] not in ("Email address","Password (8 characters min)", "Birth date (YYYY-MM-DD)")) and utils.validate(single_input):
+        elif (usr_details[i] not in ("First name", "Last name", "Email address", "Password (8 characters min)", "Birth date (YYYY-MM-DD)")) and utils.validate(single_input):
             usr_input.append(single_input)
 
         # Input validation for password 
@@ -230,4 +249,4 @@ flow_1 = {"title":"LOGIN AS ?",
 main_flow_register = {"title":"\U0001F3E5 WELCOME TO E-HEALTH! \n\n\U00002757 Open your terminal in full screen for a better user experience \U00002757",
                       "type":"main",
                       "1":("Login",empty_method,flow_1),
-                      "2":("Register",register_page,empty_dict)}
+                      "2":("Register as a patient",register_page,empty_dict)}

@@ -463,12 +463,12 @@ def manage_appointment(next_dict):
         # If at least one appointment has been booked in the past
         if len(previous[0].index) > 0:
             had_appointment = True
-            print("\n-- Previous Appointments -- \n" + previous[1])
+            print("\n-- Previous appointments -- \n" + previous[1])
         
         # If at least one appointment has been booked in the future
         if len(upcoming[0].index) > 0:
             has_appointment = True
-            print("\n-- Upcoming Appointments -- \n" + upcoming[1])
+            print("\n-- Upcoming appointments -- \n" + upcoming[1])
 
     # If patient has past appointments and upcoming appointemnts 
     if had_appointment and has_appointment:
@@ -595,6 +595,6 @@ flow_3 = {"title": "CHANGE ACCOUNT DETAILS ?",
 # patient main page dictionary
 main_flow_patient = {"title": "PATIENT MAIN MENU",
                      "type":"main",
-                     "1":("Book & Manage Appointments", manage_appointment,flow_1),
-                     "2":("Display & Change default GP", display_default_GP, flow_2),
-                     "3":("Display & Change account details", display_account_details, flow_3)}
+                     "1":("Book & manage appointments", manage_appointment,flow_1),
+                     "2":("Display & change default GP", display_default_GP, flow_2),
+                     "3":("Display & change account details", display_account_details, flow_3)}
