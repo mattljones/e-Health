@@ -132,7 +132,7 @@ def book_appointment(next_dict):
             start_date = date.today().isoformat()
         
         elif utils.validate_date(start_date):
-            if date.fromisoformat(start_date) > date.today():
+            if date.fromisoformat(start_date) >= date.today():
                 valid = True
             
             else:
@@ -472,7 +472,15 @@ def manage_appointment(next_dict):
 
     # If patient has past appointments and upcoming appointemnts 
     if had_appointment and has_appointment:
-        return utils.display(next_dict["both"])
+
+        # Checking whether prescriptions were filled for past appointment
+        records = Record.select(globals.usr_id)
+        
+        if len(records[3].index) == 0:
+            return utils.display(next_dict["has"])
+            
+        else:  
+            return utils.display(next_dict["both"])
 
     # If patient has upcoming appointemnts only
     elif has_appointment :
@@ -480,7 +488,15 @@ def manage_appointment(next_dict):
 
     # If patient has past appointemnts only
     elif had_appointment:
-        return utils.display(next_dict["had"])
+        
+        # Checking whether prescriptions were filled for past appointment
+        records = Record.select(globals.usr_id)
+        
+        if len(records[3].index) == 0:
+            return utils.display(next_dict["neither"])
+
+        else: 
+            return utils.display(next_dict["had"])
 
     # If patient has not booked appointments yet
     else:
