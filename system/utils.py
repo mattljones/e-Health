@@ -409,7 +409,7 @@ def login(user_email, password, usr_type):
     sql_result_df = db_read_query(sql_hash_salt)
 
     if sql_result_df.empty :
-        return False
+        return False, "confirmed"
     
     c.execute(sql_hash_salt)
 
@@ -449,11 +449,11 @@ def login(user_email, password, usr_type):
             globals.usr_type = usr_type
             globals.usr_id = usr_id
             conn.close()
-            return True
+            return True, "confirmed"
 
     else:
         conn.close()
-        return False
+        return False, "confirmed"
 
 
 def register(first_name, last_name, gender, birth_date, 

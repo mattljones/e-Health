@@ -71,12 +71,8 @@ def login_page(login_as):
 
     # Calling the login() method to check user input against database
     # Returns boolean variable (True = valid credentials; False = invalid credentials)
-    if login_as == "patient" :
-        success, status = utils.login(usr_input[0],usr_input[1],login_as)
-    else:
-        success = utils.login(usr_input[0],usr_input[1],login_as)
-        status = "confirmed"
-
+    success, status = utils.login(usr_input[0],usr_input[1],login_as)
+    
     # Invalid login credentials
     if success == False:
         print("\n\U00002757 Invalid email or password, please try again.")
