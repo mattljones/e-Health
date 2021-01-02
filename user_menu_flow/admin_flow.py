@@ -1214,7 +1214,7 @@ def add_another_appointment_same_patient(next_dict):
     return add_appointment(appointment_made_final_actions)
 
 
-def appointment_by_patient(next_dict):
+def delete_appointment_by_patient(next_dict):
     '''
     Find a patient's upcoming appointments.
     '''
@@ -1237,6 +1237,20 @@ def appointment_by_patient(next_dict):
     return utils.display(next_dict)
 
 
+def delete_appointment_by_same_patient(next_dict):
+    '''
+    Allows cycling back to allow deletion of more appointments for the same patient.
+    '''
+    return delete_appointment_by_patient(appointment_deleted_patient_final_actions)
+
+
+def delete_appointment_by_another_patient(next_dict):
+    '''
+    Allows cycling back to allow deletion of more appointments for another patient.
+    '''
+    return delete_appointment_by_patient(appointment_deleted_patient_final_actions)
+
+
 def appointment_check(next_dict):
     # NOTE to Tom: I don't see this being use anywhere else. Still useful?
     '''
@@ -1245,7 +1259,7 @@ def appointment_check(next_dict):
     return utils.display(next_dict)
     
 
-def appointment_by_gp(next_dict):
+def delete_appointment_by_gp(next_dict):
     '''
     Find a GP's appointments after a certain date and display them in day/week view.
     '''
@@ -1285,6 +1299,21 @@ def appointment_by_gp(next_dict):
     print(appts[1])
 
     return utils.display(next_dict)
+
+def delete_another_appointment_by_diff_gp(next_dict):
+    '''
+    Allows cycling back to delete another appointment of the same GP.
+    '''
+    return delete_appointment_by_gp(appointment_deleted_gp_final_actions)
+
+
+
+def delete_another_appointment_by_same_gp(next_dict):
+    '''
+    Allows cycling back to delete another appointment of the same GP.
+    '''
+    return delete_appointment_by_gp(appointment_deleted_gp_final_actions)
+
 
 # NOTE: delete_appointment could be done with day / week / custom
 # Appointment class method supports it already
@@ -1380,6 +1409,21 @@ def records_main(next_dict):
     print(record[2])
 
     return utils.display(next_dict)
+
+
+def another_record_same_patient(next_dict):
+    '''
+    Allows viewing of another record for the same patient.
+    '''
+    return records_main(records_final_menu)
+
+
+
+def another_record_diff_patient(next_dict):
+    '''
+    Allows viewing of another record for the same patient.
+    '''
+    return records_main(records_final_menu)
 
 
 ############################ SEQUENTIAL STEPS MENUS ########################
@@ -1597,33 +1641,26 @@ view_schedule_flow = {
 appointment_deleted_gp_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Other Appointments For This GP", appointment_by_gp, empty_dict),
-    "2": ("View Another Patient's Appointments", appointment_by_patient, empty_dict),
-    "3": ("Search by GP/Date", appointment_by_gp, empty_dict),
+    "1": ("View Other Appointments For This GP", delete_another_appointment_by_same_gp, empty_dict),
+    "2": ("View Another Patient's Appointments", delete_appointment_by_another_patient, empty_dict),
+    "3": ("Search by GP/Date", delete_another_appointment_by_diff_gp, empty_dict),
     "4": ("Section Menu", appointments_section_menu, empty_dict)
-}
-
-delete_gp_appointment_flow ={
-    "title": "DATE RANGE - APPOINTMENTS TO REJECT",
-    "type": "sub",
-    "1": ("Day", delete_appointment_day, appointment_deleted_gp_final_actions),
-    "2": ("Week", delete_appointment_week, appointment_deleted_gp_final_actions)
 }
 
 appointment_deleted_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Other Appointments For This Patient", appointment_by_patient, empty_dict),
-    "2": ("View Another Patient's Appointments", view_appointment, empty_dict),
-    "3": ("Search by GP/Date", appointment_by_gp, empty_dict),
+    "1": ("View Other Appointments For This Patient", delete_appointment_by_same_patient, empty_dict),
+    "2": ("View Another Patient's Appointments", delete_appointment_by_another_patient, empty_dict),
+    "3": ("Search by GP/Date", delete_another_appointment_by_diff_gp, empty_dict),
     "4": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 view_cancel_appointment_flow = {
     "title": "VIEW OR CANCEL AN UPCOMING APPOINTMENT",
     "type": "sub",
-    "1": ("Search By Patient", appointment_by_patient, appointment_deleted_patient_final_actions),
-    "2": ("Search By GP", appointment_by_gp, delete_gp_appointment_flow)
+    "1": ("Search By Patient", delete_appointment_by_patient, appointment_deleted_patient_final_actions),
+    "2": ("Search By GP", delete_appointment_by_gp, appointment_deleted_gp_final_actions)
 }
 
 gp_availability_error_final_actions = {
@@ -1642,12 +1679,6 @@ appointment_made_final_actions = {
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
-availability_error_flow = {
-    "title": "NO PATIENT AVAILABILITY",
-    "type": "sub",
-    "1": ("Choose a Different Time", add_appointment, empty_dict),
-    "2": ("View Slots Available With Any GP", appointment_by_gp, empty_dict)
-}
 
 manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
@@ -1656,13 +1687,13 @@ manage_appointment_flow = {
     "2": ("Manage Upcoming Appointment", empty_method, view_cancel_appointment_flow)
 }
 
-###### VIEW APPOINTMENT SUMMARIES SUB-MENU ######
+###### VIEW APPOINTMENT RECORDS SUB-MENU ######
 
-appointment_summary_final_actions = {
+records_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View a Different Appointment", empty_method, empty_dict),
-    "2": ("View a Different Patient", records_main, empty_dict),
+    "1": ("View a Different Appointment", another_record_same_patient, empty_dict),
+    "2": ("View a Different Patient", another_record_diff_patient, empty_dict),
 }
 
 ###### MAIN MENU ####
@@ -1675,7 +1706,7 @@ main_flow_admin = {
     "3":("Manage GP-Patient Pairings", empty_method, gp_patient_pair_flow),
     "4":("Manage GP Schedules", choose_gp, view_schedule_flow),
     "5":("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
-    "6":("View Appointment Summaries", records_main, appointment_summary_final_actions)
+    "6":("View Appointment Summaries", records_main, records_final_menu)
 }
 
 
