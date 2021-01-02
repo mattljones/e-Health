@@ -571,6 +571,8 @@ if __name__ == "__main__":
     # Appointment.change_status(51, 'confirmed')
     # Appointment.change_status(52, 'booked')
 
+    print(Appointment.select_GP_confirmed(16)[0])
+
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
 
     # print(Appointment.select_GP('week', 16, '2020-12-25')[2])

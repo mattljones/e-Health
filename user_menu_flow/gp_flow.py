@@ -134,6 +134,8 @@ def final_confirm_prescribe(next_dict):
 
 def no_attend(next_dict):
     Appointment.change_status(globals.appt_id, "cancelled")
+    print("\nAppointment " + globals.appt_id + " has been successfully cancelled!")
+    # TODO: delete at the final version
     print(Appointment.select_GP_appt(globals.usr_id))
     return display_next_menu(next_dict)
 
@@ -141,7 +143,7 @@ def enter_note(next_dict):
     # confirm the attendance before entering note, VALUE constraint
     Appointment.change_status(globals.appt_id, "attended")
     
-    # temporarily to display the change
+    # TODO: delet in the final version
     print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\nPlease enter your note")
@@ -210,11 +212,13 @@ def enter_prescription(next_dict):
 def enter_appoint_id(next_dict):
     # TODO: return to home page  
     print("\nPlease enter the id of appointment which you want to confirm attendance and edit notes")
-    # TODO: √ input validation
     appt_id = input("\n--> ")
+    while appt_id == "" or appt_id.isspace() == True:
+        print("\nInvalid input, please try again!")
+        appt_id = input("\n--> ")
     confirmed_id = Appointment.select_GP_confirmed(globals.usr_id)[1]['Apt. ID'].values
     while appt_id not in str(confirmed_id):
-        print("The id does not exit in the confirmed list, try again!")
+        print("\nThe id does not exit in the confirmed list, try again!")
         appt_id = input("\n--> ")
     globals.appt_id = int(appt_id)
     df = Appointment.select_GP_confirmed(globals.usr_id)[2]
@@ -238,9 +242,9 @@ def correct_note_change(next_dict):
 def display_confirmed_appt(next_dict):
     no_confirmed_flag = Appointment.select_GP_confirmed(globals.usr_id)[1].index.values.size
     if no_confirmed_flag == 0:
-        print("\nYour do not have any confirmed appointment!")
+        print("\nYour do not have any confirmed appointment before now!")
         return display_next_menu(flow_end)
-    print("\nYour confirmed appointments: ")
+    print("\nYour confirmed appointments sorted by start time: ")
     print(Appointment.select_GP_confirmed(globals.usr_id)[0])
     return display_next_menu(next_dict)
 
@@ -263,13 +267,15 @@ def another_confirm_rej(next_dict):
                  "3":("Reject One", another_confirm_rej, next_dict)
                 }
 
-    print("\nPleas enter the id of appointment you want to confirm")
+    print("\nPleas enter the id of appointment you want to reject")
     confirm_id = input("\n--> ")
     pending_id = Appointment.select_GP_pending(globals.usr_id)[0]['Apt. ID'].values
     while confirm_id not in str(pending_id):
         print("The id does not exit in the pending list, try again!")
         confirm_id = input("\n--> ")
     Appointment.change_status(confirm_id, "rejected")
+    print("\nAppointment " + confirm_id + " has been successfully rejected!")
+    # TODO: delete at the final version
     print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\n----------------------------------------------------\n"
@@ -297,6 +303,8 @@ def another_confirm_one(next_dict):
         print("The id does not exit in the pending list, try again!")
         confirm_id = input("\n--> ")
     Appointment.change_status(confirm_id, "confirmed")
+    print("\nAppointment " + confirm_id + " has been successfully confirmed!")
+    # TODO: delete at the final version
     print(Appointment.select_GP_appt(globals.usr_id))
 
     print("\n----------------------------------------------------\n"
@@ -311,6 +319,7 @@ def another_confirm_one(next_dict):
 
 def another_confirm_all(next_dict):
     Appointment.confirm_all_GP_pending(globals.usr_id)
+    # TODO: delete at the final version
     print(Appointment.select_GP_appt(globals.usr_id))
     return display_next_menu(next_dict)
 
@@ -449,10 +458,20 @@ def view_another_week(next_dict):
                 return display_next_menu(main_flow_gp)
 
 def view_records(next_dict):
-    # TODO: display 10 latest clients?
-    print("\n【Your All Attended Appointments】")
-    print(Appointment.select_GP_attended(globals.usr_id))
+    # display today's schedule
+    date_time_now = date.today().strftime("%Y-%m-%d")
+    df = Schedule.select(globals.usr_id, 'day', date_time_now)[0]
+    without_lunch = df[df['Status'] != "LUNCH"]
+    final_df = without_lunch[without_lunch['Status'] != ""]
+    if final_df.index.values.size == 0:
+        print("\nYour do not have any appointment today!")
+        return display_next_menu(next_dict)
+    print(final_df.to_markdown(tablefmt="grid", index=False))
+    # print("\n【Your All Attended Appointments】")
+    # print(Appointment.select_GP_attended(globals.usr_id))
+
     print("\nPlease enter patient id you want to search:")
+    # TODO: input validation
     patient_id = input("--> ")
     globals.patient_id = patient_id
     print("\n【Patient Table】")
