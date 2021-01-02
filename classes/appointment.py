@@ -255,7 +255,7 @@ class Appointment:
                                     df_object['P. Last Name'].astype(str) + ' (' + \
                                     df_object['patient_id'].astype(str) + ')'
 
-        df_object['Apt. ID'] = "[" + df_object['Apt. ID'].astype(str) + "]"
+
         # Dropping no longer needed columns
         df_object = df_object.drop(columns=['P. Last Name', "patient_id"])
         df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
@@ -285,8 +285,6 @@ class Appointment:
         df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
                                     df_object['P. Last Name'].astype(str) + ' (' + \
                                     df_object['patient_id'].astype(str) + ')'
-
-        df_object['Apt. ID'] = "[" + df_object['Apt. ID'].astype(str) + "]"
         # Dropping no longer needed columns
         df_object = df_object.drop(columns=['P. Last Name', "patient_id"])
         df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
@@ -315,7 +313,6 @@ class Appointment:
                                     df_object['P. Last Name'].astype(str) + ' (' + \
                                     df_object['patient_id'].astype(str) + ')'
 
-        df_object['Apt. ID'] = "[" + df_object['Apt. ID'].astype(str) + "]"
 
         # Dropping no longer needed columns
         df_with_p_id = df_object
@@ -349,7 +346,6 @@ class Appointment:
                                     df_object['P. Last Name'].astype(str) + ' (' + \
                                     df_object['patient_id'].astype(str) + ')'
 
-        df_object['Apt. ID'] = "[" + df_object['Apt. ID'].astype(str) + "]"
         # Dropping no longer needed columns
         df_object = df_object.drop(columns=['P. Last Name', "patient_id"])
         df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
@@ -514,7 +510,7 @@ class Appointment:
         """
         if new_status == 'rejected':
 
-            query = """UPDATE booking SET booking_status = '{}', booking_agenda = '{}'
+            query = """UPDATE booking SET booking_status = '{}', 3 = '{}'
                        WHERE booking_id = {}
                        AND booking_start_time > '{}';""".format(new_status, reject_reason, booking_id,
                                                                 dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
@@ -572,16 +568,16 @@ class Appointment:
 
 if __name__ == "__main__":
     # Appointment.change_status_batch_future(1, 'rejected')
-    Appointment.change_status(51, 'confirmed')
-    Appointment.change_status(52, 'booked')
+    # Appointment.change_status(51, 'confirmed')
+    # Appointment.change_status(52, 'booked')
 
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
 
     # print(Appointment.select_GP('week', 16, '2020-12-25')[2])
     # print(Appointment.select_GP('day', 16, '2020-12-25')[3])
 
-    # confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
-    # print(confirmed_id)
+    confirmed_id = Appointment.select_GP_confirmed(16)[1]['Apt. ID'].values
+    print(confirmed_id)
 
     # gp_note = "test test test"
     # appointment = Appointment(booking_id=51, gp_id=51)

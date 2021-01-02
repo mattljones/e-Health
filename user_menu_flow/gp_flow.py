@@ -212,16 +212,13 @@ def enter_appoint_id(next_dict):
     print("\nPlease enter the id of appointment which you want to confirm attendance and edit notes")
     # TODO: √ input validation
     appt_id = input("\n--> ")
-    validate_appt_id = '['+ appt_id +']'
     confirmed_id = Appointment.select_GP_confirmed(globals.usr_id)[1]['Apt. ID'].values
-    while validate_appt_id not in confirmed_id:
+    while appt_id not in str(confirmed_id):
         print("The id does not exit in the confirmed list, try again!")
         appt_id = input("\n--> ")
-        validate_appt_id = '['+ appt_id +']'
-    globals.appt_id = appt_id
+    globals.appt_id = int(appt_id)
     df = Appointment.select_GP_confirmed(globals.usr_id)[2]
-    appt_id = "[" + appt_id + "]"
-    patient_id = int(df.loc[df['Apt. ID'] == appt_id]['patient_id'].values)
+    patient_id = int(df.loc[df['Apt. ID'] == int(appt_id)]['patient_id'].values)
     globals.patient_id = patient_id
 
     return display_next_menu(next_dict)
@@ -268,12 +265,10 @@ def another_confirm_rej(next_dict):
 
     print("\nPleas enter the id of appointment you want to confirm")
     confirm_id = input("\n--> ")
-    validate_confirm_id = '['+ confirm_id +']'
     pending_id = Appointment.select_GP_pending(globals.usr_id)[0]['Apt. ID'].values
-    while validate_confirm_id not in pending_id:
+    while confirm_id not in str(pending_id):
         print("The id does not exit in the pending list, try again!")
         confirm_id = input("\n--> ")
-        validate_confirm_id = '['+ confirm_id +']'
     Appointment.change_status(confirm_id, "rejected")
     print(Appointment.select_GP_appt(globals.usr_id))
 
@@ -297,12 +292,10 @@ def another_confirm_one(next_dict):
 
     print("\nPleas enter the id of appointment you want to confirm")
     confirm_id = input("\n--> ")
-    validate_confirm_id = '['+ confirm_id +']'
     pending_id = Appointment.select_GP_pending(globals.usr_id)[0]['Apt. ID'].values
-    while validate_confirm_id not in pending_id:
+    while confirm_id not in str(pending_id):
         print("The id does not exit in the pending list, try again!")
         confirm_id = input("\n--> ")
-        validate_confirm_id = '['+ confirm_id +']'
     Appointment.change_status(confirm_id, "confirmed")
     print(Appointment.select_GP_appt(globals.usr_id))
 
