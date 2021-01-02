@@ -465,19 +465,25 @@ def view_records(next_dict):
     final_df = without_lunch[without_lunch['Status'] != ""]
     if final_df.index.values.size == 0:
         print("\nYour do not have any appointment today!")
-        return display_next_menu(next_dict)
+        return display_next_menu(flow_end)
     print(final_df.to_markdown(tablefmt="grid", index=False))
     # print("\n【Your All Attended Appointments】")
     # print(Appointment.select_GP_attended(globals.usr_id))
 
     print("\nPlease enter patient id you want to search:")
-    # TODO: input validation
+    # input validation
     patient_id = input("--> ")
+    while patient_id.isdigit() == False or patient_id == " " or patient_id.isspace()== True or Record.select(patient_id)[1].index.values.size == 0:
+        print("\nInvalid input or non-existent patient id, please try again!")
+        patient_id = input("--> ")
     globals.patient_id = patient_id
     print("\n【Patient Table】")
     print(Record.select(patient_id)[2])
-    print("\n【Appointment & Prescription Table】")
-    print(Record.select(patient_id)[4])
+    if Record.select(patient_id)[3].index.values.size == 0:
+        print("\nThis patient does not has any attended appointment, so there is no 【Prescription Table】!")
+    else:
+        print("\n【Appointment & Prescription Table】")
+        print(Record.select(patient_id)[4])
     return display_next_menu(next_dict)
 
 ########################## MENU NAVIGATION DICTIONARIES ######################
