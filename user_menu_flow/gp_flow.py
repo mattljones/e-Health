@@ -468,12 +468,11 @@ def view_records(next_dict):
     df = Schedule.select(globals.usr_id, 'day', date_time_now)[0]
     without_lunch = df[df['Status'] != "LUNCH"]
     final_df = without_lunch[without_lunch['Status'] != ""]
+    # TODO: if the schedule is empty, could the gp search?
     if final_df.index.values.size == 0:
         print("\nYour do not have any appointment today!")
         return display_next_menu(flow_end)
     print(final_df.to_markdown(tablefmt="grid", index=False))
-    # print("\n【Your All Attended Appointments】")
-    # print(Appointment.select_GP_attended(globals.usr_id))
 
     print("\nPlease enter patient id you want to search:")
     # input validation

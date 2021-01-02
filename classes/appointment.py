@@ -248,7 +248,7 @@ class Appointment:
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE b.gp_id =={} 
-                   AND booking_start_time >= '{}'""".format(gp_id, dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
+                   """.format(gp_id)
 
         df_object = u.db_read_query(pending_query)
         df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
@@ -567,8 +567,9 @@ class Appointment:
 
 if __name__ == "__main__":
     # Appointment.change_status_batch_future(1, 'rejected')
-    Appointment.change_status(51, 'booked')
+    # Appointment.change_status(51, 'booked')
     # Appointment.change_status(52, 'booked')
+    print(Appointment.select_GP_appt(16))
 
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
 
