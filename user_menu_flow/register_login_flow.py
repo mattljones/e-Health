@@ -41,7 +41,8 @@ def login_page(login_as):
     print("\n---------------------------------------------------- \n"
           "                    LOGIN\n"
           "\nPlease, enter your credentials"
-          "\nor enter '#' to go back to main page")
+          "\n\nEnter '#' to go back to main page"
+          "\nEnter 'R' to reset your password")
 
     # Login details
     login_credentials = ["Email address", "Password"]
@@ -53,8 +54,12 @@ def login_page(login_as):
         single_input = input("\n--> " + login_credentials[i] + ": ")
         
         # Go back to main registration page
-        if (single_input == '#'):
+        if single_input == '#':
             return utils.display(main_flow_register)
+
+        # If user want to reset his password
+        elif single_input in ('R','r'):
+            pass
 
         # Input validation for email
         elif (login_credentials[i] == "Email address") and (utils.validate(single_input)):
