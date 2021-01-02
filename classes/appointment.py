@@ -247,7 +247,8 @@ class Appointment:
                    booking_agenda AS 'Agenda',booking_type AS 'Type'
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
-                   WHERE b.gp_id =={}""".format(gp_id)
+                   WHERE b.gp_id =={} 
+                   AND booking_start_time >= '{}'""".format(gp_id, dt.datetime.today().strftime("%Y-%m-%d %H:%M"))
 
         df_object = u.db_read_query(pending_query)
         df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
@@ -340,7 +341,7 @@ class Appointment:
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE booking_status == 'booked' 
-                   AND b.booking_start_time < '{}' 
+                   AND b.booking_start_time > '{}' 
                    AND b.gp_id =={}""".format(dt.datetime.now().strftime("%Y-%m-%d %H:%M"), gp_id)
 
         df_object = u.db_read_query(pending_query)
