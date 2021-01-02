@@ -36,7 +36,7 @@ class Schedule:
 
             # Initialize query
             day_query = """
-                            Select
+                            SELECT
                                 b.booking_status AS 'Booking Status Old',
                                 strftime('%H:%M', b.booking_start_time) AS 'booking_hours',
                                 b.booking_agenda AS 'Agenda',
