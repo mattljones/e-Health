@@ -1411,6 +1411,21 @@ def records_main(next_dict):
     return utils.display(next_dict)
 
 
+def another_record_same_patient(next_dict):
+    '''
+    Allows viewing of another record for the same patient.
+    '''
+    return records_main(records_final_menu)
+
+
+
+def another_record_diff_patient(next_dict):
+    '''
+    Allows viewing of another record for the same patient.
+    '''
+    return records_main(records_final_menu)
+
+
 ############################ SEQUENTIAL STEPS MENUS ########################
 
 
@@ -1672,13 +1687,13 @@ manage_appointment_flow = {
     "2": ("Manage Upcoming Appointment", empty_method, view_cancel_appointment_flow)
 }
 
-###### VIEW APPOINTMENT SUMMARIES SUB-MENU ######
+###### VIEW APPOINTMENT RECORDS SUB-MENU ######
 
-appointment_summary_final_actions = {
+records_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View a Different Appointment", empty_method, empty_dict),
-    "2": ("View a Different Patient", records_main, empty_dict),
+    "1": ("View a Different Appointment", another_record_same_patient, empty_dict),
+    "2": ("View a Different Patient", another_record_diff_patient, empty_dict),
 }
 
 ###### MAIN MENU ####
@@ -1691,7 +1706,7 @@ main_flow_admin = {
     "3":("Manage GP-Patient Pairings", empty_method, gp_patient_pair_flow),
     "4":("Manage GP Schedules", choose_gp, view_schedule_flow),
     "5":("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
-    "6":("View Appointment Summaries", records_main, appointment_summary_final_actions)
+    "6":("View Appointment Summaries", records_main, records_final_menu)
 }
 
 
