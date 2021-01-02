@@ -267,13 +267,18 @@ def another_confirm_rej(next_dict):
                  "3":("Reject One", another_confirm_rej, next_dict)
                 }
 
-    print("\nPleas enter the id of appointment you want to reject")
+    print("\nPlease enter the id of appointment you want to reject")
     confirm_id = input("\n--> ")
     pending_id = Appointment.select_GP_pending(globals.usr_id)[0]['Apt. ID'].values
     while confirm_id not in str(pending_id):
-        print("The id does not exit in the pending list, try again!")
+        print("The id does not exist in the pending list, try again!")
         confirm_id = input("\n--> ")
-    Appointment.change_status(confirm_id, "rejected")
+    print("\nPleas give the reason of rejection")
+    reason = input("\n--> ")
+    while reason == "" or reason.isspace() == True:
+        print("Invalid input, please try again!")
+        reason = input("\n--> ")
+    Appointment.change_status(confirm_id, "rejected", reason)
     print("\nAppointment " + confirm_id + " has been successfully rejected!")
     # TODO: delete at the final version
     print(Appointment.select_GP_appt(globals.usr_id))
