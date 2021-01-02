@@ -216,8 +216,8 @@ def enter_appoint_id(next_dict):
     while appt_id == "" or appt_id.isspace() == True:
         print("\nInvalid input, please try again!")
         appt_id = input("\n--> ")
-    confirmed_id = Appointment.select_GP_confirmed(globals.usr_id)[1]['Apt. ID'].values
-    while appt_id not in str(confirmed_id):
+    confirmed_id = [str(i) for i in Appointment.select_GP_confirmed(globals.usr_id)[1]['Apt. ID'].values]
+    while appt_id not in confirmed_id:
         print("\nThe id does not exit in the confirmed list, try again!")
         appt_id = input("\n--> ")
     globals.appt_id = int(appt_id)
@@ -244,7 +244,7 @@ def display_confirmed_appt(next_dict):
     if no_confirmed_flag == 0:
         print("\nYour do not have any confirmed appointment before now!")
         return display_next_menu(flow_end)
-    print("\nYour confirmed appointments sorted by start time: ")
+    print("\n【Your confirmed appointments before now (sorted by start time)】")
     print(Appointment.select_GP_confirmed(globals.usr_id)[0])
     return display_next_menu(next_dict)
 
