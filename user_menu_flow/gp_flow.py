@@ -480,7 +480,8 @@ def view_records(next_dict):
     print("\n【Patient Table】")
     print(Record.select(patient_id)[2])
     if Record.select(patient_id)[3].index.values.size == 0:
-        print("\nThis patient does not has any attended appointment, so there is no 【Prescription Table】!")
+        print("\nThis patient does not has any attended appointment, so there is no 【Prescription Table】 and you cannot edit the notes!")
+        return display_next_menu(flow_end)
     else:
         print("\n【Appointment & Prescription Table】")
         print(Record.select(patient_id)[4])
