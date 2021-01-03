@@ -690,17 +690,12 @@ def send_mail_password_reset(user_email, random_string):
     '''
     # Establish Mail Server
     smtp_object = smtplib.SMTP('smtp.gmail.com', 587)
-    smtp_object.ehlo()
-
-    # Encryption
-    smtp_object.starttls()
 
     # Login to Gmail
     email = 'e.health.comp0066@gmail.com'
     # password to above mentioned gmail address (please do not share with 3rd parties)
     # normally this password would be protected and not be accessible to an user.
     password = "&/h'Jj'}c)Y6?T@%:^Y["
-    smtp_object.login(email, password)
 
     # Define Mail parameters
     from_address = 'e.health.comp0066@gmail.com'
@@ -709,8 +704,23 @@ def send_mail_password_reset(user_email, random_string):
     message['Subject'] = 'Password Reset for E-HEALTH'
     message['To'] = '{}'.format(user_email)
 
-    # Send Mail
-    smtp_object.sendmail(from_address, to_address, message.as_string())
+    # Error Handling
+    try:
+        # Establish Mail Server
+        smtp_object.ehlo()
+        # Encryption
+        smtp_object.starttls()
+        # Login to Gmail
+        smtp_object.login(email, password)
+        # Send Mail
+        smtp_object.sendmail(from_address, to_address, message.as_string())
+    except smtplib.SMTPRecipientsRefused:
+        print("Your email address seems to be invalid")
+    except:
+        print("An error occured while sending the mail from our Gmail Account")
+
+    # Close connection to Mail server
+    smtp_object.quit()
 
 def send_code_to_registered_user(user_type, user_email, random_string_password_reset):
     '''
@@ -742,8 +752,7 @@ def send_code_to_registered_user(user_type, user_email, random_string_password_r
     else:
         # send email to user
         send_mail_password_reset(user_email, random_string_password_reset)
-        message = '''The code to reset your password was sent to your email address: {}.
-        Please check your mail inbox and spam folder.'''.format(user_email)
+        message = '''The code to reset your password was sent to your email address: {}.\nPlease check your mail inbox and spam folder.'''.format(user_email)
         email_sent = True
 
     return email_sent, message
@@ -773,20 +782,19 @@ def password_reset_input():
     '''
     new_password_validation = False
     new_password_match = False
-    new_password = input('Please input your new password:')
     while new_password_validation == False:
-        if validate_password(new_password) == False:
-            new_password = input('Please input your new password:')
-        else:
-            new_password_validation = True
+        new_password = input('Please input your new password:')
+        new_password_validation = validate_password(new_password)
+
+        while new_password_validation == True and new_password_match == False:
             new_password_confirmation = input('Please confirm your new password:')
-            while new_password_match == False:
-                if new_password_confirmation != new_password:
-                    print("\U00002757 Password confirmation does not match original password")
-                    new_password_confirmation = input('Please confirm your new password:')
-                else:
-                    new_password_match = True
-                    return True, hash_salt(new_password)
+            if new_password_confirmation != new_password:
+                print("\U00002757 Password confirmation does not match original password. Please enter a new password.")
+                new_password_validation = False
+                break
+            else:
+                new_password_match = True
+                return new_password_match, hash_salt(new_password)
 
 def change_password(user_type, user_email, random_string_password_reset):
     '''
