@@ -528,7 +528,7 @@ class Appointment:
         :param end_date: end date (inclusive)
         :param gp_id: ID of GP that needs their bookings' statuses changed
         :param new_status: new status to change to, have to provide a reject reason as a last parameter for the function
-        :param reject_reason: Reason for why GP rejected the booking
+        :param reject_reason: Reason for why GP / Admin rejected the booking
         """
         start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
         end_date = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
@@ -543,6 +543,30 @@ class Appointment:
                    WHERE gp_id = {}
                    AND (date(booking_start_time) BETWEEN '{}' AND '{}')""".format(new_status, status_update_query,
                                                                                   gp_id, start_date, end_date)
+        u.db_execute(query)
+
+    @staticmethod
+    def change_status_batch_future_patient(start_date, end_date, patient_id, new_status, reject_reason=None):
+        """"
+        :param start_date: start date (inclusive)
+        :param end_date: end date (inclusive)
+        :param patient_id: ID of Patient that needs their bookings' statuses changed
+        :param new_status: new status to change to, have to provide a reject reason as a last parameter for the function
+        :param reject_reason: Reason for why GP / Admin rejected the booking
+        """
+        start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+        if new_status != 'rejected':
+            status_update_query = ""
+        else:
+            status_update_query = ", booking_agenda = '{}'".format(reject_reason)
+
+        query = """UPDATE booking
+                   SET booking_status = '{}'{}
+                   WHERE patient_id = {}
+                   AND (date(booking_start_time) BETWEEN '{}' AND '{}')""".format(new_status, status_update_query,
+                                                                                  patient_id, start_date, end_date)
         u.db_execute(query)
 
     # Confirm all of the appointments for a specific GP
