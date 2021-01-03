@@ -49,7 +49,7 @@ def view_edit_gp(next_dict):
 
     # Check if gp id already selected previously for reuse
     if 'gp_id_choice' not in globals():
-        choice = retrieve_gp_list('all')
+        choice = retrieve_gp('all')
     else:
         global gp_id_choice
         choice = gp_id_choice
@@ -95,7 +95,7 @@ def view_edit_gp(next_dict):
         return utils.display(next_dict)
 
 
-def retrieve_gp_list(type):
+def retrieve_gp(type):
     '''
     Shows the list of GPs and allows choice from that list.
     '''
@@ -206,7 +206,7 @@ def deactivate_gp(next_dict):
     Deactivates a GP.
     '''
     # List and prompt admin for a gp id
-    gp_id = retrieve_gp_list('active')
+    gp_id = retrieve_gp('active')
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
@@ -242,7 +242,7 @@ def delete_gp(next_dict):
     Deletes a GP.
     '''
     # List and prompt admin for a gp id
-    gp_id = retrieve_gp_list('all')
+    gp_id = retrieve_gp('all')
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
@@ -719,7 +719,7 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
 
 
 def choose_gp(next_dict):
-    # NOTE: This seems to be doing the same thing as retrieve_gp_list()
+    # NOTE: This seems to be doing the same thing as retrieve_gp()
     # Using similar code for now, substitute function name in dict later if needed
     '''
     Returns the numbered list of GPs to choose from
@@ -785,7 +785,7 @@ def appointments_shortcut(next_dict):
     Allows the viewing of appointments (in sub-menu 5) from the manage_availability_flow
     (in sub-menu 4). 
     '''
-    return utils.display(delete_appointment_by_gp)
+    return utils.display(view_appointment_by_gp)
 
 
 def view_time_off(next_dict):
@@ -1011,8 +1011,8 @@ def remove_time_off_custom(next_dict):
         timeoff_type = 'all time off'
 
     # Prompt user for time off range
-    start_date = utils.get_date()
-    end_date = utils.end_date(start_date)
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1426,7 +1426,7 @@ def add_another_appointment_same_patient(next_dict):
     return add_appointment(appointment_made_final_actions)
 
 
-def delete_appointment_by_patient(next_dict):
+def view_appointment_by_patient(next_dict):
     '''
     Find a patient's upcoming appointments.
     '''
@@ -1449,21 +1449,21 @@ def delete_appointment_by_patient(next_dict):
     return utils.display(next_dict)
 
 
-def delete_appointment_by_same_patient(next_dict):
+def view_appointment_by_same_patient(next_dict):
     '''
     Allows cycling back to allow deletion of more appointments for the same patient.
     '''
-    return delete_appointment_by_patient(appointment_deleted_patient_final_actions)
+    return view_appointment_by_patient(appointment_viewed_patient_final_actions)
 
 
-def delete_appointment_by_another_patient(next_dict):
+def view_appointment_by_another_patient(next_dict):
     '''
     Allows cycling back to allow deletion of more appointments for another patient.
     '''
-    return delete_appointment_by_patient(appointment_deleted_patient_final_actions)
+    return view_appointment_by_patient(appointment_viewed_patient_final_actions)
     
 
-def delete_appointment_by_gp(next_dict):
+def view_appointment_by_gp(next_dict):
     '''
     Find a GP's appointments after a certain date and display them in day/week view.
     '''
@@ -1508,25 +1508,52 @@ def delete_another_appointment_by_diff_gp(next_dict):
     '''
     Allows cycling back to delete another appointment of the same GP.
     '''
-    return delete_appointment_by_gp(appointment_deleted_gp_final_actions)
+    return view_appointment_by_gp(appointment_viewed_gp_final_actions)
 
 
 def delete_another_appointment_by_same_gp(next_dict):
     '''
     Allows cycling back to delete another appointment of the same GP.
     '''
-    return delete_appointment_by_gp(appointment_deleted_gp_final_actions)
+    return view_appointment_by_gp(appointment_viewed_gp_final_actions)
 
 
-# NOTE: delete_appointment could be done with day / week / custom
-# Appointment class method supports it already
-def delete_appointment_day(next_dict):
+def delete_appointment_gp(next_dict):
     '''
-    Allows deleting of all appointments for a specific GP in a specific day.
+    Allows deleting of appointments for a specific GP in a specified data range.
     '''
+
+    if 'gp_id_choice' not in globals():
+        gp_id = retrieve_gp('all')
+    else:
+        global gp_id_choice
+        gp_id = gp_id_choice
+
+    print("\n----------------------------------------------------\n"
+          "                ",'INSERT DATE RANGE', "\n")
+    print("Please insert date range for batch cancellation: \n--> ")    
+    print("[ 1 ] Day\n[ 2 ] Week\n[ 3 ] Custom")
+    date_range = int(input('\n--> '))
+
+    while date_range not in (1,2,3):
+        print("\n\U00002757 Invalid entry, please try again")
+        date_range = int(input('\n--> '))
 
     start = utils.get_start_date()
-    end = start
+
+    # Day
+    if date_range == 1:
+        end = start
+
+    # Week
+    elif date_range == 2:
+        s = datetime.strptime(start, "%Y-%m-%d")
+        e = s + timedelta(weeks=1) 
+        end = datetime.strftime(e, "%Y-%m-%d")   
+
+    # Custom
+    else:
+        end = utils.get_end_date()
 
     print("\n----------------------------------------------------\n"
           "                ",'INSERT REASON', "\n")
@@ -1534,29 +1561,59 @@ def delete_appointment_day(next_dict):
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
-    print("Do you want to reject all appointments on {} for GP with ID {}?\n".format(start, gp_id_choice))
+    print("Do you want to reject all appointments from {} to {} for GP with ID {}?\n".format(start, end, gp_id))
     print("[ 1 ] Yes\n[ 2 ] No")
-    y_n = input('\n--> ')
+    y_n = int(input('\n--> '))
 
-    while y_n not in ('1', '2'):
+    while y_n not in (1, 2):
         print("\n\U00002757 Invalid entry, please try again")
-        y_n = input('\n--> ')
+        y_n = int(input('\n--> '))
         
-    if y_n == '1':
-         Appointment.change_status_batch_future(start, end, gp_id_choice, "rejected", reason)
-         print("\U00002705 Appointments rejected.")
+    if y_n == 1:
+         Appointment.change_status_batch_future(start, end, gp_id, "rejected", reason)
+         print("\n\U00002705 Appointments deleted.")
          utils.display(next_dict)
 
-    elif y_n == '2':
-        utils.display(delete_gp_appointment_flow)
+    elif y_n == 2:
+        utils.display(appointment_deleted_gp_final_actions)
 
-def delete_appointment_week(next_dict):
+
+def delete_appointment_patient(next_dict):
     '''
-    Allows deleting of all appointments for a specific GP in a specific week.
+    Allows deleting of appointments for a specific Patient in a specified data range.
     '''
-    
+
+    if 'patient_id_choice' not in globals():
+        patient_id = retrieve_patient()
+    else:
+        global patient_id_choice
+        patient_id = patient_id_choice
+
+    print("\n----------------------------------------------------\n"
+          "                ",'INSERT DATE RANGE', "\n")
+    print("Please insert date range for batch cancellation: \n--> ")    
+    print("[ 1 ] Day\n[ 2 ] Week\n[ 3 ] Custom")
+    date_range = int(input('\n--> '))
+
+    while date_range not in (1,2,3):
+        print("\n\U00002757 Invalid entry, please try again")
+        date_range = int(input('\n--> '))
+
     start = utils.get_start_date()
-    end = start + timedelta(weeks=1) 
+
+    # Day
+    if date_range == 1:
+        end = start
+
+    # Week
+    elif date_range == 2:
+        s = datetime.strptime(start, "%Y-%m-%d")
+        e = s + timedelta(weeks=1) 
+        end = datetime.strftime(e, "%Y-%m-%d")   
+
+    # Custom
+    else:
+        end = utils.get_end_date()
 
     print("\n----------------------------------------------------\n"
           "                ",'INSERT REASON', "\n")
@@ -1564,23 +1621,21 @@ def delete_appointment_week(next_dict):
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
-    print("Do you want to reject all appointments from {} to {} for GP with ID {}?\n"
-    .format(start, end, gp_id_choice))
-
+    print("Do you want to reject all appointments from {} to {} for Patient with ID {}?\n".format(start, end, patient_id))
     print("[ 1 ] Yes\n[ 2 ] No")
-    y_n = input('\n--> ')
+    y_n = int(input('\n--> '))
 
-    while y_n not in ('1', '2'):
+    while y_n not in (1, 2):
         print("\n\U00002757 Invalid entry, please try again")
-        y_n = input('\n--> ')
+        y_n = int(input('\n--> '))
         
-    if y_n == '1':
-         Appointment.change_status_batch_future(start, end, gp_id_choice, "rejected", reason)
-         print("\U00002705 Appointments rejected.")
+    if y_n == 1:
+         Appointment.change_status_batch_future_patient(start, end, patient_id, "rejected", reason)
+         print("\n\U00002705 Appointments deleted.")
          utils.display(next_dict)
 
-    elif y_n == '2':
-        utils.display(delete_gp_appointment_flow)
+    elif y_n == 2:
+        utils.display(appointment_deleted_gp_final_actions)
 
 
 ###### RECORDS FUNCTIONS ######
@@ -1841,29 +1896,54 @@ view_schedule_flow = {
 
 ###### MANAGE UPCOMING APPOINTMENTS SUB-MENU ######
 
+# NOTE: Change to and create delete_appointment_another_gp
 appointment_deleted_gp_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Other Appointments For This GP", delete_another_appointment_by_same_gp, empty_dict),
-    "2": ("View Another Patient's Appointments", delete_appointment_by_another_patient, empty_dict),
-    "3": ("Search by GP/Date", delete_another_appointment_by_diff_gp, empty_dict),
-    "4": ("Section Menu", appointments_section_menu, empty_dict)
+    "1": ("Delete Another GP's Appointments", delete_appointment_gp, empty_dict),
+    "2": ("Search by Patient", view_appointment_by_patient, empty_dict),
+    "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
+# NOTE: Change to and create delete_appointment_another_patient
 appointment_deleted_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Other Appointments For This Patient", delete_appointment_by_same_patient, empty_dict),
-    "2": ("View Another Patient's Appointments", delete_appointment_by_another_patient, empty_dict),
-    "3": ("Search by GP/Date", delete_another_appointment_by_diff_gp, empty_dict),
+    "1": ("Delete Another Patient's Appointments", delete_appointment_patient, empty_dict),
+    "2": ("Search by GP", view_appointment_by_gp, empty_dict),
+    "3": ("Section Menu", appointments_section_menu, empty_dict)
+}
+
+appointment_viewed_gp_final_actions = {
+    "title": "NEXT ACTIONS",
+    "type": "sub",
+    "1": ("View Another GP's Appointments", view_appointment_by_gp, empty_dict),
+    "2": ("Delete This GP's Appointments", delete_appointment_gp, empty_dict),
+    "3": ("Search by Patient", view_appointment_by_patient, empty_dict),
     "4": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
-view_cancel_appointment_flow = {
-    "title": "VIEW OR CANCEL AN UPCOMING APPOINTMENT",
+appointment_viewed_patient_final_actions = {
+    "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Search By Patient", delete_appointment_by_patient, appointment_deleted_patient_final_actions),
-    "2": ("Search By GP", delete_appointment_by_gp, appointment_deleted_gp_final_actions)
+    "1": ("View Another Patient's Appointments", view_appointment_by_another_patient, empty_dict),
+    "2": ("Delete This Patient's Appointments", delete_appointment_patient, empty_dict),
+    "3": ("Search by GP", delete_another_appointment_by_diff_gp, empty_dict),
+    "4": ("Section Menu", appointments_section_menu, empty_dict)
+}
+
+delete_appointment_flow = {
+    "title": "DELETE UPCOMING APPOINTMENTS",
+    "type": "sub",
+    "1": ("Patient", delete_appointment_patient, appointment_deleted_patient_final_actions),
+    "2": ("GP", delete_appointment_gp, appointment_deleted_gp_final_actions)
+}
+
+view_appointment_flow = {
+    "title": "VIEW UPCOMING APPOINTMENTS",
+    "type": "sub",
+    "1": ("Search By Patient", view_appointment_by_patient, appointment_viewed_patient_final_actions),
+    "2": ("Search By GP", view_appointment_by_gp, appointment_viewed_gp_final_actions)
 }
 
 gp_availability_error_final_actions = {
@@ -1886,8 +1966,9 @@ appointment_made_final_actions = {
 manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
     "type": "sub",
-    "1": ("Add a New Appointment", add_appointment, appointment_made_final_actions),
-    "2": ("Manage Upcoming Appointment", empty_method, view_cancel_appointment_flow)
+    "1": ("View Appointments", empty_method, view_appointment_flow),
+    "2": ("Add a New Appointment", add_appointment, appointment_made_final_actions),
+    "3": ("Delete Upcoming Appointments", empty_method, delete_appointment_flow)
 }
 
 ###### VIEW APPOINTMENT RECORDS SUB-MENU ######
