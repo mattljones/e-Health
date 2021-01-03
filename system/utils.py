@@ -400,6 +400,52 @@ def get_end_date():
         if valid == False:
             end_date = input("\n--> ")
 
+# NOTE: To test
+def get_date():
+    print("\nPlease enter the start date (YYYY-MM-DD)\n"
+          "Enter 'T' short for today")
+    date = input("--> ")
+    valid = False
+    while valid == False:
+        if date in ("T","t"): 
+            valid = True
+            date = dt.date.today().isoformat()
+            return date
+        elif validate_date(date):
+            valid = True
+            return date
+        else:
+            print("\n\U00002757 Invalid entry, please try again and enter your choice.")
+        
+        if valid == False:
+            date = input("\n--> ")
+
+# NOTE: To test
+def end_date(start_date):
+    '''
+    Get a date that is equal or later than specified start_date.
+    '''
+    print("\nPlease enter the end date (YYYY-MM-DD)")
+    end_date = input("--> ")
+    valid = False
+    while valid == False:
+        if end_date in ("T","t"):
+            if  dt.date.fromisoformat(start_date) <= dt.date.today():
+                valid = True
+                end_date = dt.date.today().isoformat()
+                return end_date
+        elif validate_date(end_date):
+            if dt.date.fromisoformat(end_date) >= dt.date.fromisoformat(start_date):
+                valid = True
+                return end_date
+            else:
+                print("\n\U00002757 End date cannot be earlier than starting date {}.".format(start_date))
+        else:
+            print("\n\U00002757 Invalid entry, please try again and enter your choice.")
+        if valid == False:
+            end_date = input("\n--> ")
+
+
 def login(user_email, password, usr_type):
     """Check login credentials."""
 
