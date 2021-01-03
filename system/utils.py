@@ -254,6 +254,7 @@ def validate_email(user_input):
         - Must contain '@' symbol
         - Not unique email address
         - Does not contain "'" or '"' to avoid SQL injections
+        - There is at least 1 letter before and 3 letters after @ 
     """
 
     # Remove leading and trailing whitespaces
@@ -266,6 +267,10 @@ def validate_email(user_input):
         if user_input == '':
             raise EmptyError
         elif '@' not in user_input:
+            raise EmailFormatError
+        elif user_input.find('@') == 0:
+            raise EmailFormatError
+        elif len(user_input) - (user_input.find('@') + 1) < 3:
             raise EmailFormatError
         elif (emails['patient_email'] == user_input.lower()).any():
             raise DuplicateEmailError
