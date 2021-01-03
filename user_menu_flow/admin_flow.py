@@ -986,7 +986,7 @@ def remove_time_off(next_dict):
     '''
     return utils.display(remove_time_off_flow)
 
-
+# NOTE: Schedule func update is causing error - Discuss with Manuel
 def remove_time_off_custom(next_dict):
     '''
     Remove a custom amount of time off to a GP's schedule.
@@ -1011,8 +1011,8 @@ def remove_time_off_custom(next_dict):
         timeoff_type = 'all time off'
 
     # Prompt user for time off range
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
+    start_date = utils.get_date()
+    end_date = utils.end_date(start_date)
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1036,8 +1036,7 @@ def remove_time_off_custom(next_dict):
 
         # Remove timeoff of both types from db
         elif timeoff_type_input == '3':
-            Schedule.delete_timeoff(gp_id_choice, 'custom', 'sick leave', start_date, end_date)
-            Schedule.delete_timeoff(gp_id_choice, 'custom', 'time off', start_date, end_date)
+            Schedule.delete_timeoff(gp_id_choice, 'custom', start_date, end_date)
         
         # Proceed with next section
         return utils.display(next_dict)
@@ -1049,7 +1048,7 @@ def remove_time_off_custom(next_dict):
 
 def remove_time_off_all(next_dict):
     '''
-    Remove time off from a GP's schedule.
+    Remove time off from future GP's schedule.
     '''
     print("\n----------------------------------------------------\n"
           "                ",'REMOVE TIME OFF - ALL', "\n")
