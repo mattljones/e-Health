@@ -11,6 +11,7 @@ sys.path.insert(1, str(p))
 
 # Importing utility methods from the 'system' package
 from system import utils
+from system import password_reset as pw_reset
 
 # Importing menu paths for each user from the 'user_menu_flow' package
 from user_menu_flow import gp_flow, patient_flow, admin_flow
@@ -42,26 +43,31 @@ def reset_password(login_as):
           "                    RESET PASSWORD\n"
           "\nPlease, enter your email address"
           "\nor '#' to go back to main page")
+    
+    # user input for email address
+    user_email = input("\n--> Email address: ")
 
-    email = input("\n--> Email address: ")
-
+    # while user input has not been validated
     validate = False
     while validate != True:
 
-        if email == '#':
+        # If user want to go back to main menu
+        if user_email == '#':
             return utils.display(main_flow_register)
 
-        elif utils.validate(email):
+        # if user input for email is validated
+        elif utils.validate(user_email):
             validate = True
 
+        # if invalid entry
         else:
-             email = input("\n--> Email address: ")
+             user_email = input("\n--> Email address: ")
+    
+    # generate a random string 
+    random_string_password_reset = pw_reset.random_string(8)
 
-    ##################
-    # Reset password code
-
-
-    ###################
+    #pw_reset.send_code_to_registered_user(login_as, user_email, random_string_password_reset)
+    #pw_reset.change_password(login_as, user_email, new_password, random_string_password_reset)
     
     return utils.display(main_flow_register)
 
