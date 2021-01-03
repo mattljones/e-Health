@@ -711,7 +711,7 @@ def compare_random_string(random_string_password_reset):
     random_string_match = False
     available_tries = 3
     while random_string_match == False and available_tries > 0:
-        random_string_user_input = input("Please enter your string:")
+        random_string_user_input = input("\nPlease enter your string:")
         if random_string_user_input == random_string_password_reset:
             random_string_match = True
             print('Your code matched')
