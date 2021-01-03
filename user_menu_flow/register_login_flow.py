@@ -58,15 +58,22 @@ def reset_password(login_as):
         elif utils.validate(user_email):
             validate = True
 
+            # generate a random string 
+            random_string_password_reset = utils.random_string(8)
+
+            if utils.send_code_to_registered_user(login_as, user_email, random_string_password_reset) == False:
+                print("\n\U00002757 Invalid email address, please try again.")
+                validate = False
+
+            else:
+                print("\n\U00002705 Email sent confirmation message: ....... ")
+
         # if invalid entry
         else:
              user_email = input("\n--> Email address: ")
     
-    # generate a random string 
-    random_string_password_reset = utils.random_string(8)
-
-    utils.send_code_to_registered_user(login_as, user_email, random_string_password_reset)
-    utils.change_password(login_as, user_email, random_string_password_reset)
+    
+    print(utils.change_password(login_as, user_email, random_string_password_reset)[1])
     
     return utils.display(main_flow_register)
 
