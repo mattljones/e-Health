@@ -30,10 +30,45 @@ def empty_method(next_dict):
 
 ################################ INPUT MENU PAGES ###########################
 
+def reset_password(login_as):
+    '''
+    Method defining the 'Reset Password' page, called from login_page(), for users that have forgotten their password.
+
+    Parameter:
+        - login_as: user type the user is trying to login as selected on previous menu page.
+    '''
+
+    print("\n---------------------------------------------------- \n"
+          "                    RESET PASSWORD\n"
+          "\nPlease, enter your email address"
+          "\nor '#' to go back to main page")
+
+    email = input("\n--> Email address: ")
+
+    validate = False
+    while validate != True:
+
+        if email == '#':
+            return utils.display(main_flow_register)
+
+        elif utils.validate(email):
+            validate = True
+
+        else:
+             email = input("\n--> Email address: ")
+
+    ##################
+    # Reset password code
+
+
+    ###################
+    
+    return utils.display(main_flow_register)
+
+
 def login_page(login_as):
     '''
-    Function defining the user login page takes an empty 
-    dictionary as argument for utils.display function consistency.
+    Function defining the user login page.
 
     Parameter:
         - login_as: user type the user is trying to login as selected on previous menu page.
@@ -59,7 +94,7 @@ def login_page(login_as):
 
         # If user want to reset his password
         elif single_input in ('R','r'):
-            pass
+            reset_password(login_as)
 
         # Input validation for email
         elif (login_credentials[i] == "Email address") and (utils.validate(single_input)):
