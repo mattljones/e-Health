@@ -1487,19 +1487,6 @@ def view_appointment_by_gp(next_dict):
 
     return utils.display(next_dict)
 
-def delete_another_appointment_by_diff_gp(next_dict):
-    '''
-    Allows cycling back to delete another appointment of the same GP.
-    '''
-    return view_appointment_by_gp(appointment_viewed_gp_final_actions)
-
-
-def delete_another_appointment_by_same_gp(next_dict):
-    '''
-    Allows cycling back to delete another appointment of the same GP.
-    '''
-    return view_appointment_by_gp(appointment_viewed_gp_final_actions)
-
 
 def delete_appointment_gp(next_dict):
     '''
@@ -1619,6 +1606,24 @@ def delete_appointment_patient(next_dict):
 
     elif y_n == 2:
         utils.display(appointment_deleted_gp_final_actions)
+
+
+def delete_appointment_another_gp(next_dict):
+    '''
+    Allows cycling back to delete another appointment of the same GP.
+    '''
+    global gp_id_choice
+    del gp_id_choice
+    return delete_appointment_gp(next_dict)
+
+
+def delete_appointment_another_patient(next_dict):
+    '''
+    Allows cycling back to delete another appointment of the same GP.
+    '''
+    global patient_id_choice
+    del patient_id_choice
+    return delete_appointment_patient(next_dict)
 
 
 ###### RECORDS FUNCTIONS ######
@@ -1879,20 +1884,20 @@ view_schedule_flow = {
 
 ###### MANAGE UPCOMING APPOINTMENTS SUB-MENU ######
 
-# NOTE: Change to and create delete_appointment_another_gp
+
 appointment_deleted_gp_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another GP's Appointments", delete_appointment_gp, empty_dict),
+    "1": ("Delete Another GP's Appointments", delete_appointment_another_gp, empty_dict),
     "2": ("Search by Patient", view_appointment_by_patient, empty_dict),
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
-# NOTE: Change to and create delete_appointment_another_patient
+
 appointment_deleted_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another Patient's Appointments", delete_appointment_patient, empty_dict),
+    "1": ("Delete Another Patient's Appointments", delete_appointment_another_patient, empty_dict),
     "2": ("Search by GP", view_appointment_by_gp, empty_dict),
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
@@ -1909,9 +1914,9 @@ appointment_viewed_gp_final_actions = {
 appointment_viewed_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Another Patient's Appointments", view_appointment_by_another_patient, empty_dict),
+    "1": ("View Another Patient's Appointments", view_appointment_by_patient, empty_dict),
     "2": ("Delete This Patient's Appointments", delete_appointment_patient, empty_dict),
-    "3": ("Search by GP", delete_another_appointment_by_diff_gp, empty_dict),
+    "3": ("Search by GP", view_appointment_by_gp, empty_dict),
     "4": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
