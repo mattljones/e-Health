@@ -151,7 +151,7 @@ def add_gp(next_dict):
     working_days = input('\nPlease enter Working Days: \n'
     '--> ')
 
-    # TODO: LIST OUT DEPARTMENTS AND SPECIALISATIONS AND GIVE CHOICE.
+    # TODO: List out Depts and Specializations and allow choice
 
     # Default department and specialiations: 1
     department_id = 1
@@ -718,23 +718,6 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
 
-def choose_gp(next_dict):
-    # NOTE: This seems to be doing the same thing as retrieve_gp()
-    # Using similar code for now, substitute function name in dict later if needed
-    '''
-    Returns the numbered list of GPs to choose from
-    '''
-    df = GP.select_list('all')
-    df_show = df[1]
-    print("\n----------------------------------------------------\n"
-          "                ",'GP LIST', "\n")
-    print(df_show)
-    global gp_id_choice
-    gp_id_choice = int(input("\nPlease select a GP ID. \n--> "))
-    
-    return utils.display(next_dict)
-
-
 def schedules_section_menu(next_dict):
     '''
     Returns to the section menu.
@@ -777,7 +760,7 @@ def choose_another_gp(next_dict):
     '''
     Allows choice to change the GP viewed from the final_menu.
     '''
-    return choose_gp(view_schedule_flow)
+    return retrieve_gp(view_schedule_flow)
 
 
 def appointments_shortcut(next_dict):
@@ -986,7 +969,7 @@ def remove_time_off(next_dict):
     '''
     return utils.display(remove_time_off_flow)
 
-# NOTE: Schedule func update is causing error - Discuss with Manuel
+# TODO: Schedule func update is causing error - Discuss with Manuel
 def remove_time_off_custom(next_dict):
     '''
     Remove a custom amount of time off to a GP's schedule.
@@ -1988,7 +1971,7 @@ main_flow_admin = {
     "1":("Manage GP Accounts", empty_method, manage_gp_accounts_flow),
     "2":("Manage Patient Accounts", empty_method, manage_patient_accounts_flow ),
     "3":("Manage GP-Patient Pairings", empty_method, gp_patient_pair_flow),
-    "4":("Manage GP Schedules", choose_gp, view_schedule_flow),
+    "4":("Manage GP Schedules", retrieve_gp, view_schedule_flow),
     "5":("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
     "6":("View Appointment Summaries", records_main, records_final_menu)
 }
