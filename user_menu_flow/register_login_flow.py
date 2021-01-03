@@ -61,17 +61,19 @@ def reset_password(login_as):
             # generate a random string 
             random_string_password_reset = utils.random_string(8)
 
-            if utils.send_code_to_registered_user(login_as, user_email, random_string_password_reset) == False:
-                print("\n\U00002757 Invalid email address, please try again.")
+            email_sent, message = utils.send_code_to_registered_user(login_as, user_email, random_string_password_reset)
+
+            if email_sent == False:
+                print("\n\U00002757 " + message)
                 validate = False
+                user_email = input("\n--> Email address: ")
 
             else:
-                print("\n\U00002705 Email sent confirmation message: ....... ")
+                print("\n\U00002705 " + message)
 
         # if invalid entry
         else:
              user_email = input("\n--> Email address: ")
-    
     
     print(utils.change_password(login_as, user_email, random_string_password_reset)[1])
     
