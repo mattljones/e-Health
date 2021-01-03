@@ -482,6 +482,7 @@ if __name__ == "__main__":
 
 ## testing delete_timeoff custom
 # schedule.delete_timeoff(gp_id=16, type='custom', timeoff_type='time off', start_date='2021-12-27', end_date='2021-12-27')
+# schedule.delete_timeoff(gp_id=16, type='custom', timeoff_type='time off', start_date=u.get_start_date(), end_date=u.get_end_date())
 
 ## testing delete_timeoff all
 # schedule.delete_timeoff(gp_id=16, type='all')
