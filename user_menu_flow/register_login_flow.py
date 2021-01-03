@@ -30,10 +30,58 @@ def empty_method(next_dict):
 
 ################################ INPUT MENU PAGES ###########################
 
+def reset_password(login_as):
+    '''
+    Method defining the 'Reset Password' page, called from login_page(), for users that have forgotten their password.
+
+    Parameter:
+        - login_as: user type the user is trying to login as selected on previous menu page.
+    '''
+
+    print("\n---------------------------------------------------- \n"
+          "                    RESET PASSWORD\n"
+          "\nPlease, enter your email address"
+          "\nor '#' to go back to main page")
+    
+    # user input for email address
+    user_email = input("\n--> Email address: ")
+
+    # while user input has not been validated
+    validate = False
+    while validate != True:
+
+        # If user want to go back to main menu
+        if user_email == '#':
+            return utils.display(main_flow_register)
+
+        # if user input for email is validated
+        elif utils.validate(user_email):
+            validate = True
+
+            # generate a random string 
+            random_string_password_reset = utils.random_string(8)
+
+            email_sent, message = utils.send_code_to_registered_user(login_as, user_email, random_string_password_reset)
+
+            if email_sent == False:
+                print("\n\U00002757 " + message)
+                validate = False
+                user_email = input("\n--> Email address: ")
+
+            else:
+                print("\n\U00002705 " + message)
+
+        # if invalid entry
+        else:
+             user_email = input("\n--> Email address: ")
+    
+    print(utils.change_password(login_as, user_email, random_string_password_reset)[1])
+    
+    return utils.display(main_flow_register)
+
 def login_page(login_as):
     '''
-    Function defining the user login page takes an empty 
-    dictionary as argument for utils.display function consistency.
+    Function defining the user login page.
 
     Parameter:
         - login_as: user type the user is trying to login as selected on previous menu page.
@@ -59,7 +107,7 @@ def login_page(login_as):
 
         # If user want to reset his password
         elif single_input in ('R','r'):
-            pass
+            reset_password(login_as)
 
         # Input validation for email
         elif (login_credentials[i] == "Email address") and (utils.validate(single_input)):
