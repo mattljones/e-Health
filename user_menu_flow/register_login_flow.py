@@ -11,7 +11,6 @@ sys.path.insert(1, str(p))
 
 # Importing utility methods from the 'system' package
 from system import utils
-from system import password_reset as pw_reset
 
 # Importing menu paths for each user from the 'user_menu_flow' package
 from user_menu_flow import gp_flow, patient_flow, admin_flow
@@ -66,8 +65,8 @@ def reset_password(login_as):
     # generate a random string 
     random_string_password_reset = utils.random_string(8)
 
-    utils.send_code_to_registered_user(login_as, email, random_string_password_reset)
-    utils.change_password(login_as, email, random_string_password_reset)
+    utils.send_code_to_registered_user(login_as, user_email, random_string_password_reset)
+    utils.change_password(login_as, user_email, random_string_password_reset)
     
     return utils.display(main_flow_register)
 

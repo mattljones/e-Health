@@ -138,7 +138,7 @@ def password_reset_input():
                     new_password_match = True
                     return True, u.hash_salt(new_password)
 
-password_reset_input()
+#password_reset_input()
 
 # Call in User Flow
 def change_password(user_type, user_email, random_string_password_reset):
