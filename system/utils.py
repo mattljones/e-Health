@@ -773,20 +773,19 @@ def password_reset_input():
     '''
     new_password_validation = False
     new_password_match = False
-    new_password = input('Please input your new password:')
     while new_password_validation == False:
-        if validate_password(new_password) == False:
-            new_password = input('Please input your new password:')
-        else:
-            new_password_validation = True
+        new_password = input('Please input your new password:')
+        new_password_validation = validate_password(new_password)
+
+        while new_password_validation == True and new_password_match == False:
             new_password_confirmation = input('Please confirm your new password:')
-            while new_password_match == False:
-                if new_password_confirmation != new_password:
-                    print("\U00002757 Password confirmation does not match original password")
-                    new_password_confirmation = input('Please confirm your new password:')
-                else:
-                    new_password_match = True
-                    return True, hash_salt(new_password)
+            if new_password_confirmation != new_password:
+                print("\U00002757 Password confirmation does not match original password. Please enter a new password.")
+                new_password_validation = False
+                break
+            else:
+                new_password_match = True
+                return new_password_match, hash_salt(new_password)
 
 def change_password(user_type, user_email, random_string_password_reset):
     '''
