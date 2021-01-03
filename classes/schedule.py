@@ -7,11 +7,11 @@ import datetime
 
 # Switching path to master to get functions from utils folder
 # TODO get rid of pathlib once 'from system import utils as u' works
-# import sys
-# from pathlib import Path
-#
-# path_to_master_repo = Path(__file__).parents[1]
-# sys.path.insert(1, str(path_to_master_repo))
+import sys
+from pathlib import Path
+
+path_to_master_repo = Path(__file__).parents[1]
+sys.path.insert(1, str(path_to_master_repo))
 
 # Importing utility methods from the 'system' package
 from system import utils as u
@@ -226,7 +226,6 @@ class Schedule:
         return boolean, df_object, df_print
 
     @staticmethod  # INSERT insert_timeoff - STATIC
-    ## TODO: Exception handling is done for weekend, appointments (booked, confirmed)
     def insert_timeoff(gp_id, timeoff_type, start_date, end_date):
         '''
         Insert time off or sick leave into booking table for custom time period.
@@ -328,14 +327,14 @@ class Schedule:
             return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date, end_date=end_date)
 
     @staticmethod  # DELETE delete_timeoff - STATIC
-    ## TODO: only if requested by user flow team: make timeoff_type=None
-    def delete_timeoff(gp_id, type, start_date=None, end_date=None):
+    def delete_timeoff(gp_id, type, timeoff_type=None, start_date=None, end_date=None):
         '''
         Deletes timeoff from database (either all or for a custom date range.
         :param gp_id: gp_id that is stored in database/db_comp0066.db
         :param type: 'all' to delete all upcoming timeoffs or 'custom' to delete timeoffs during a certain time period
-        :param start_date: e.g. 2020-12-8
-        :param end_date: e.g. 2020-12-10
+        param timeoff_type: 'sick leave' OR 'time off', if None then 'sick leave' AND 'time off'
+        :param start_date: e.g. 2020-12-8, None for type=all
+        :param end_date: e.g. 2020-12-10, None for type=all
         :return: success string
         '''
 
@@ -363,37 +362,94 @@ class Schedule:
 
             # delete from database
             for i in range(0, len(new_timeoff_range)):
-                # Initialize query
-                delete_timeoff_days_query = '''
-                                            DELETE FROM
-                                                booking
-                                            WHERE
-                                                strftime('%Y-%m-%d %H:%M', booking_start_time) = '{}'
-                                            AND
-                                                booking_status IN ('sick leave', 'time off')
-                                            AND
-                                                gp_id = {};'''.format(new_timeoff_range[i], gp_id)
-                # Execute query
-                u.db_execute(delete_timeoff_days_query)
+                if timeoff_type == None:
+                    # Initialize query
+                    delete_timeoff_days_query = '''
+                                                DELETE FROM
+                                                    booking
+                                                WHERE
+                                                    strftime('%Y-%m-%d %H:%M', booking_start_time) = '{}'
+                                                AND
+                                                    booking_status IN ('sick leave', 'time off')
+                                                AND
+                                                    gp_id = {};'''.format(new_timeoff_range[i], gp_id)
+                    # Execute query
+                    u.db_execute(delete_timeoff_days_query)
+
+                elif timeoff_type == 'time off':
+                    # Initialize query
+                    delete_timeoff_days_query = '''
+                                                DELETE FROM
+                                                    booking
+                                                WHERE
+                                                    strftime('%Y-%m-%d %H:%M', booking_start_time) = '{}'
+                                                AND
+                                                    booking_status = '{}'
+                                                AND
+                                                    gp_id = {};'''.format(new_timeoff_range[i], timeoff_type, gp_id)
+                    # Execute query
+                    u.db_execute(delete_timeoff_days_query)
+
+                elif timeoff_type == 'sick leave':
+                    # Initialize query
+                    delete_timeoff_days_query = '''
+                                                DELETE FROM
+                                                    booking
+                                                WHERE
+                                                    strftime('%Y-%m-%d %H:%M', booking_start_time) = '{}'
+                                                AND
+                                                    booking_status = '{}'
+                                                AND
+                                                    gp_id = {};'''.format(new_timeoff_range[i], timeoff_type, gp_id)
+                    # Execute query
+                    u.db_execute(delete_timeoff_days_query)
 
             # return 'timeoffs were deleted for your indicated time period'
 
         # Delete all upcoming timeoffs
         elif type == 'all':
-            # Initialize query
-            delete_timeoff_all_query = '''
-                                        DELETE FROM
-                                            booking
-                                        WHERE
-                                            strftime('%Y-%m-%d %H:%M', booking_start_time) >= '{}'
-                                        AND
-                                            booking_status IN ('sick leave', 'time off')
-                                        AND
-                                            gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id)
-            # Execute query
-            u.db_execute(delete_timeoff_all_query)
 
-            # return 'all upcoming timeoffs were deleted'
+            if timeoff_type == None:
+                # Initialize query
+                delete_timeoff_all_query = '''
+                                            DELETE FROM
+                                                booking
+                                            WHERE
+                                                strftime('%Y-%m-%d %H:%M', booking_start_time) >= '{}'
+                                            AND
+                                                booking_status IN ('sick leave', 'time off')
+                                            AND
+                                                gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id)
+                # Execute query
+                u.db_execute(delete_timeoff_all_query)
+
+            elif timeoff_type == 'sick leave':
+                # Initialize query
+                delete_timeoff_all_query = '''
+                                            DELETE FROM
+                                                booking
+                                            WHERE
+                                                strftime('%Y-%m-%d %H:%M', booking_start_time) >= '{}'
+                                            AND
+                                                booking_status = '{}'
+                                            AND
+                                                gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), timeoff_type ,gp_id)
+                # Execute query
+                u.db_execute(delete_timeoff_all_query)
+
+            elif timeoff_type == 'time off':
+                # Initialize query
+                delete_timeoff_all_query = '''
+                                            DELETE FROM
+                                                booking
+                                            WHERE
+                                                strftime('%Y-%m-%d %H:%M', booking_start_time) >= '{}'
+                                            AND
+                                                booking_status = '{}'
+                                            AND
+                                                gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), timeoff_type ,gp_id)
+                # Execute query
+                u.db_execute(delete_timeoff_all_query)
 
 
 ### DEVELOPMENT ###
@@ -419,13 +475,13 @@ if __name__ == "__main__":
 # df = schedule.select_upcoming_timeoff(2)[1]
 
 ## testing insert_timeoff_custom --> check_timeoff_conflict False
-# schedule.insert_timeoff(16, 'sick leave', '2020-12-24', '2020-12-25')
+# schedule.insert_timeoff(16, 'time off', '2021-12-26', '2021-12-29')
 
 ## testing insert_timeoff_custom --> check_timeoff_conflict True
 # schedule.insert_timeoff(2, 'sick leave', '2020-12-1', '2021-12-23')
 
 ## testing delete_timeoff custom
-# schedule.delete_timeoff(gp_id=16, type='custom', start_date='2020-12-20', end_date='2020-12-25')
+# schedule.delete_timeoff(gp_id=16, type='custom', timeoff_type='time off', start_date='2021-12-27', end_date='2021-12-27')
 
 ## testing delete_timeoff all
 # schedule.delete_timeoff(gp_id=16, type='all')
