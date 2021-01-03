@@ -324,10 +324,6 @@ def validate_date(user_input):
         - Date must be in format YYYY-MM-DD
     """
 
-    year = int(user_input[:4])
-    month = int(user_input[5:7])
-    day = int(user_input[8:])
-
     try:
         if user_input == '':
             raise EmptyError
@@ -338,7 +334,10 @@ def validate_date(user_input):
               (user_input[7] != '-')):
             raise DateFormatError
 
-        # Checking that year, month and day are valid 
+        year = int(user_input[:4])
+        month = int(user_input[5:7])
+        day = int(user_input[8:])
+
         dt.date(year, month, day)
 
     except InvalidCharacterError:
