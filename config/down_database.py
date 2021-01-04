@@ -4,7 +4,6 @@
 # library imports
 import sqlite3
 from pathlib import Path
-from datetime import date
 import sys
 
 # Change python path for imports
@@ -22,7 +21,7 @@ c.execute("""DROP TABLE IF EXISTS admin;""")
 c.execute("""DROP TABLE IF EXISTS gp;""")
 c.execute("""DROP TABLE IF EXISTS patient;""")
 c.execute("""DROP TABLE IF EXISTS booking;""")
-c.execute("""DROP TABLE IF EXISTS availablity;""")
+c.execute("""DROP TABLE IF EXISTS booking;""")
 c.execute("""DROP TABLE IF EXISTS gp_department;""")
 c.execute("""DROP TABLE IF EXISTS gp_specialisation;""")
 c.execute("""DROP TABLE IF EXISTS drug;""")
