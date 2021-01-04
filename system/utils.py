@@ -20,7 +20,7 @@ sys.path.insert(1, str(p))
 # import register, patient, gp & admin main dictionaries
 from user_menu_flow.patient_flow import main_flow_patient
 from user_menu_flow.gp_flow import main_flow_gp
-from user_menu_flow.admin_flow import main_flow_admin
+from user_menu_flow import admin_flow 
 from user_menu_flow.register_login_flow import main_flow_register
 
 # import method to automatically allocate patient to gp with fewest patients
@@ -134,7 +134,13 @@ def display(my_dict):
             return display(main_flow_gp)
 
         elif globals.usr_type == "admin":
-            return display(main_flow_admin)
+
+            admin_flow.patient_id_choice = ''
+            del admin_flow.patient_id_choice
+            admin_flow.gp_id_choice = ''
+            del admin_flow.gp_id_choice
+
+            return display(admin_flow.main_flow_admin)
 
         else:
             return display(main_flow_register)

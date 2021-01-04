@@ -368,7 +368,7 @@ class Appointment:
         sign = {'previous': '<', 'upcoming': '>'}
 
         query = """SELECT booking_id AS 'Apt. ID',b.gp_id AS 'GP ID', printf('Dr. %s',b.gp_last_name) as GP,
-                   strftime('%Y-%m-%d %H:%M',booking_start_time) 'Date', 
+                   booking_start_time 'Date', 
                    booking_status AS 'Status',booking_type AS 'Type', 
                    booking_agenda AS 'Booking Agenda', booking_notes AS 'Notes'
                    FROM booking b

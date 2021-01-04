@@ -35,7 +35,7 @@
 35,2020-12-18 09:00,confirmed,2020-12-08 16:47:31,,online,,3,Weeks,31
 36,2020-12-18 09:10,confirmed,2020-12-08 16:47:31,,online,,4,Williams,4
 37,2020-12-19 10:00,confirmed,2020-12-08 16:47:31,,online,,6,Waller,2
-38,2020-12-19 10:10,confirmed,2020-12-08 16:47:31,,online,,2,Chambers,3
+38,2021-01-04 10:10,confirmed,2020-12-08 16:47:31,,online,,16,Pasteur,3
 39,2020-12-20 11:00,confirmed,2020-12-08 16:47:31,,online,,9,Hope,39
 40,2020-12-20 11:10,booked,2020-12-08 16:47:31,,online,,3,Weeks,30
 41,2020-12-21 12:00,booked,2020-12-08 16:47:31,,online,,1,Daniels,2
@@ -48,5 +48,78 @@
 48,2020-12-24 15:10,booked,2020-12-08 16:47:31,,offline,,10,Irvine,15
 49,2020-12-24 16:00,booked,2020-12-08 16:47:31,,online,,1,Daniels,2
 50,2020-12-24 16:10,rejected,2020-12-08 16:47:31,,online,,2,Chambers,49
-51,2021-01-14 09:00,booked,2020-12-26 16:49:31,test,online,gp note test,16,Pasteur,51
-52,2021-01-04 09:30,confirmed,2020-12-26 20:49:12,repetitive booking test,online,,16,Pasteur,52
+51,2020-12-04 09:00,attended,2020-01-08 16:47:31,Chest Pain,offline,"Gets worse when you breathe in and out, coughing up yellow or green mucus, high temperature. Most Likely chest infection or pneumonia",16,Pasteur,51
+52,2020-07-07 09:00,cancelled,2020-12-08 16:47:31,,online,,16,Pasteur,51
+53,2020-12-04 09:00,rejected,2020-03-08 16:47:31,Booking rejected by the GP due to COVID-19 pandemic outbreak,offline,,16,Pasteur,51
+54,2020-07-07 09:00,cancelled,2020-12-08 16:47:31,,online,,16,Pasteur,51
+55,2021-01-04 09:00,attended,2020-12-26 16:49:31,General Check Up,online,"Patient health looks great, no prescription is required. Vitamin D is lower than normal, advised to take some vitamin complex.",16,Pasteur,51
+56,2021-03-16 09:30,confirmed,2020-12-26 20:49:12,,online,,16,Pasteur,51
+57,2021-03-02 09:30,confirmed,2020-12-26 20:49:12,,offline,,16,Pasteur,51
+58,2021-07-15 09:30,cancelled,2020-12-26 20:49:12,,offline,,16,Pasteur,51
+59,2021-01-05 09:10,confirmed,2020-12-08 16:47:31,General Check Up,offline,,16,Pasteur,47
+60,2021-01-05 10:00,confirmed,2020-12-08 16:47:31,General Check Up,online,,16,Pasteur,49
+61,2021-01-05 11:00,confirmed,2020-12-26 16:49:31,General Check Up,online,"Patient health looks great, no prescription is required. Vitamin D is lower than normal, advised to take some vitamin complex.",16,Pasteur,34
+62,2021-01-05 11:10,confirmed,2020-12-26 16:49:31,,online,,16,Pasteur,31
+63,2021-01-05 14:20,confirmed,2020-12-26 20:49:12,General Check Up,online,,16,Pasteur,41
+64,2021-01-05 15:00,confirmed,2020-12-26 20:49:12,General Check Up,offline,,16,Pasteur,11
+65,2021-01-05 16:00,confirmed,2020-12-27 20:49:12,General Check Up,online,,16,Pasteur,45
+66,2021-01-05 15:40,confirmed,2020-12-28 20:49:12,General Check Up,offline,,16,Pasteur,9
+67,2021-01-05 15:10,confirmed,2020-12-29 20:49:12,General Check Up,online,,16,Pasteur,16
+68,2021-01-05 09:20,confirmed,2020-12-30 20:49:12,General Check Up,offline,,16,Pasteur,48
+69,2021-01-05 16:40,confirmed,2020-12-31 20:49:12,General Check Up,online,,16,Pasteur,2
+70,2021-01-05 16:30,confirmed,2021-01-01 20:49:12,General Check Up,offline,,16,Pasteur,23
+71,2021-01-06 09:00,confirmed,2021-01-02 20:49:12,General Check Up,online,,16,Pasteur,27
+72,2021-01-06 11:00,confirmed,2021-01-03 20:49:12,General Check Up,offline,,16,Pasteur,52
+73,2021-01-05 15:30,confirmed,2021-01-04 20:49:12,General Check Up,online,,16,Pasteur,20
+74,2021-01-05 10:40,confirmed,2021-01-05 20:49:12,General Check Up,offline,,16,Pasteur,39
+75,2021-01-06 11:40,confirmed,2021-01-06 20:49:12,General Check Up,online,,16,Pasteur,26
+76,2021-03-14 09:00,confirmed,2021-01-07 20:49:12,General Check Up,offline,,16,Pasteur,25
+77,2021-03-14 15:00,confirmed,2021-01-08 20:49:12,General Check Up,online,,16,Pasteur,53
+78,2021-03-14 14:20,confirmed,2021-01-09 20:49:12,General Check Up,offline,,16,Pasteur,23
+79,2021-03-14 16:50,confirmed,2021-01-10 20:49:12,General Check Up,online,,16,Pasteur,16
+80,2021-03-14 10:40,confirmed,2021-01-11 20:49:12,General Check Up,offline,,16,Pasteur,44
+81,2021-03-14 11:10,confirmed,2021-01-12 20:49:12,General Check Up,online,,16,Pasteur,28
+82,2021-03-14 14:10,confirmed,2021-01-13 20:49:12,General Check Up,offline,,16,Pasteur,34
+83,2021-03-15 13:10,confirmed,2021-01-14 20:49:12,General Check Up,online,,16,Pasteur,7
+84,2021-03-15 14:10,confirmed,2021-01-15 20:49:12,General Check Up,offline,,16,Pasteur,16
+85,2021-03-15 14:50,confirmed,2021-01-16 20:49:12,General Check Up,online,,16,Pasteur,35
+86,2021-03-15 14:20,confirmed,2021-01-17 20:49:12,General Check Up,offline,,16,Pasteur,15
+87,2021-03-15 11:30,confirmed,2021-01-18 20:49:12,General Check Up,online,,16,Pasteur,21
+88,2021-03-15 13:50,confirmed,2021-01-19 20:49:12,General Check Up,offline,,16,Pasteur,8
+89,2021-03-15 16:50,confirmed,2021-01-20 20:49:12,General Check Up,online,,16,Pasteur,52
+90,2021-03-16 14:40,booked,2021-01-21 20:49:12,General Check Up,online,,16,Pasteur,27
+91,2021-03-16 13:00,confirmed,2021-01-22 20:49:12,General Check Up,online,,16,Pasteur,28
+92,2021-03-16 10:50,confirmed,2021-01-23 20:49:12,General Check Up,online,,16,Pasteur,37
+93,2021-03-16 13:10,confirmed,2021-01-24 20:49:12,General Check Up,online,,16,Pasteur,52
+94,2021-03-16 14:00,confirmed,2021-01-25 20:49:12,General Check Up,online,,16,Pasteur,53
+95,2021-03-16 11:30,confirmed,2021-02-03 20:49:12,General Check Up,online,,16,Pasteur,29
+96,2021-03-16 10:10,confirmed,2021-02-04 20:49:12,General Check Up,online,,16,Pasteur,42
+97,2021-03-16 13:50,confirmed,2021-02-05 20:49:12,General Check Up,online,,16,Pasteur,8
+98,2021-03-16 11:40,confirmed,2021-02-06 20:49:12,General Check Up,online,,16,Pasteur,48
+99,2021-03-17 14:10,confirmed,2021-01-26 20:49:12,General Check Up,online,,16,Pasteur,19
+100,2021-03-17 13:20,confirmed,2021-01-27 20:49:12,General Check Up,online,,16,Pasteur,23
+101,2021-03-17 13:30,confirmed,2021-01-28 20:49:12,General Check Up,online,,16,Pasteur,21
+102,2021-03-17 13:50,confirmed,2021-01-29 20:49:12,General Check Up,online,,16,Pasteur,28
+103,2021-03-17 16:00,confirmed,2021-02-07 20:49:12,General Check Up,online,,16,Pasteur,5
+104,2021-03-17 13:10,booked,2021-02-08 20:49:12,General Check Up,online,,16,Pasteur,43
+105,2021-03-17 16:30,confirmed,2021-02-09 20:49:12,General Check Up,online,,16,Pasteur,14
+106,2021-03-17 10:20,confirmed,2021-02-10 20:49:12,General Check Up,online,,16,Pasteur,46
+107,2021-03-18 13:10,booked,2021-02-11 20:49:12,General Check Up,online,,16,Pasteur,34
+108,2021-03-18 14:50,confirmed,2021-02-12 20:49:12,General Check Up,online,,16,Pasteur,43
+109,2021-03-18 13:00,confirmed,2021-02-13 20:49:12,General Check Up,online,,16,Pasteur,52
+110,2021-03-18 10:00,confirmed,2021-02-14 20:49:12,General Check Up,online,,16,Pasteur,21
+111,2021-03-18 15:20,confirmed,2021-02-15 20:49:12,General Check Up,online,,16,Pasteur,45
+112,2021-03-18 08:30,confirmed,2021-02-16 20:49:12,General Check Up,online,,16,Pasteur,17
+113,2021-03-18 11:40,confirmed,2021-02-17 20:49:12,General Check Up,online,,16,Pasteur,46
+114,2021-03-18 11:30,confirmed,2021-02-18 20:49:12,General Check Up,online,,16,Pasteur,3
+115,2021-03-18 13:50,confirmed,2021-01-30 20:49:12,General Check Up,online,,16,Pasteur,4
+116,2021-03-18 14:30,confirmed,2021-01-31 20:49:12,General Check Up,online,,16,Pasteur,41
+117,2021-03-18 14:10,confirmed,2021-02-01 20:49:12,General Check Up,online,,16,Pasteur,48
+118,2021-03-18 11:20,confirmed,2021-02-02 20:49:12,General Check Up,online,,16,Pasteur,53
+119,2021-03-15 13:10,booked,2021-01-14 20:49:12,General Check Up,online,,6,Waller,6
+120,2021-03-15 14:10,confirmed,2021-01-15 20:49:12,General Check Up,offline,,6,Waller,16
+121,2021-03-15 14:20,confirmed,2021-01-16 20:49:12,General Check Up,online,,6,Waller,36
+122,2021-03-15 14:20,confirmed,2021-01-17 20:49:12,General Check Up,offline,,1,Daniels,10
+123,2021-03-15 11:30,confirmed,2021-01-18 20:49:12,General Check Up,online,,1,Daniels,22
+124,2021-03-15 13:50,confirmed,2021-01-19 20:49:12,General Check Up,offline,,1,Daniels,9
+125,2021-03-15 16:50,confirmed,2021-01-20 20:49:12,General Check Up,online,,10,Irvine,43
