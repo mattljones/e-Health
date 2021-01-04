@@ -34,33 +34,41 @@ from system import globals
 class Error(Exception):
     pass
 
+
 class EmptyError(Error):
     """Raised when input is empty."""
     pass
+
 
 class LenghtError(Error):
     """Raised when input is too long."""
     pass
 
+
 class LenghtShortError(Error):
     """Raised when input is too short."""
     pass
+
 
 class InvalidCharacterError(Error):
     """Raised when user inputs "'" or '"' to avoid SQL injections."""
     pass
 
+
 class EmailFormatError(Error):
     """Raised when incorrectly formatted email address."""
     pass
+
 
 class DuplicateEmailError(Error):
     """Raised when email has already been used in an account."""
     pass
 
+
 class DateFormatError(Error):
     """Raised when date (YYYY-MM-DD) is not correctly formatted."""
     pass
+
 
 class NonAlphabeticCharacterError(Error):
     """Raised when input non alphabetic character"""
@@ -90,7 +98,7 @@ def display(my_dict):
     '''
     line = '-' * 52
     print("\n" + line + "\n"
-          "                ", my_dict["title"], "\n")
+                        "                ", my_dict["title"], "\n")
 
     # automatically direct to next flow
     if my_dict["type"] == "auto":
@@ -156,12 +164,12 @@ def hash_salt(password):
     Hash and salt passwords.
     """
 
-    salt = os.urandom(32) 
+    salt = os.urandom(32)
 
     hash_key = hashlib.pbkdf2_hmac(
-        'sha256', 
-        password.encode('utf-8'), 
-        salt, 
+        'sha256',
+        password.encode('utf-8'),
+        salt,
         100000
     )
 
@@ -201,6 +209,7 @@ def validate(user_input):
         return False
     return True
 
+
 def validate_name(user_input):
     """
     Validate user input for names.  
@@ -219,7 +228,7 @@ def validate_name(user_input):
     try:
         if user_input == '':
             raise EmptyError
-        elif len(user_input) > 50 :
+        elif len(user_input) > 50:
             raise LenghtError
         elif len(user_input) < 2:
             raise LenghtShortError
@@ -261,7 +270,7 @@ def validate_email(user_input):
     user_input = user_input.strip()
 
     email_query = 'SELECT patient_email FROM patient'
-    emails = db_read_query(email_query)   
+    emails = db_read_query(email_query)
 
     try:
         if user_input == '':
@@ -364,13 +373,14 @@ def validate_date(user_input):
 
     return True
 
+
 def get_start_date():
     print("\nPlease enter the start date (YYYY-MM-DD)\n"
           "Enter 'T' short for today")
     start_date = input("--> ")
     valid = False
     while valid == False:
-        if start_date in ("T","t"): 
+        if start_date in ("T", "t"):
             valid = True
             start_date = dt.date.today().isoformat()
             return start_date
@@ -385,12 +395,13 @@ def get_start_date():
         if valid == False:
             start_date = input("\n--> ")
 
+
 def get_end_date():
     print("\nPlease enter the end date (YYYY-MM-DD)")
     end_date = input("--> ")
     valid = False
     while valid == False:
-        if end_date in ("T","t"): 
+        if end_date in ("T", "t"):
             valid = True
             end_date = dt.date.today().isoformat()
             return end_date
@@ -405,6 +416,7 @@ def get_end_date():
         if valid == False:
             end_date = input("\n--> ")
 
+
 # NOTE: To test
 def get_date():
     print("\nPlease enter the start date (YYYY-MM-DD)\n"
@@ -412,7 +424,7 @@ def get_date():
     date = input("--> ")
     valid = False
     while valid == False:
-        if date in ("T","t"): 
+        if date in ("T", "t"):
             valid = True
             date = dt.date.today().isoformat()
             return date
@@ -421,9 +433,10 @@ def get_date():
             return date
         else:
             print("\n\U00002757 Invalid entry, please try again and enter your choice.")
-        
+
         if valid == False:
             date = input("\n--> ")
+
 
 # NOTE: To test
 def end_date(start_date):
@@ -434,8 +447,8 @@ def end_date(start_date):
     end_date = input("--> ")
     valid = False
     while valid == False:
-        if end_date in ("T","t"):
-            if  dt.date.fromisoformat(start_date) <= dt.date.today():
+        if end_date in ("T", "t"):
+            if dt.date.fromisoformat(start_date) <= dt.date.today():
                 valid = True
                 end_date = dt.date.today().isoformat()
                 return end_date
@@ -459,12 +472,12 @@ def login(user_email, password, usr_type):
     c = conn.cursor()
 
     sql_hash_salt = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
-    
+
     sql_result_df = db_read_query(sql_hash_salt)
 
-    if sql_result_df.empty :
+    if sql_result_df.empty:
         return False, "confirmed"
-    
+
     c.execute(sql_hash_salt)
 
     # Get the full hash + salt from db
@@ -478,7 +491,7 @@ def login(user_email, password, usr_type):
     # Hash and salt password to check (using same parameters)
     hash_key_to_check = hashlib.pbkdf2_hmac(
         'sha256',
-        password.encode('utf-8'), 
+        password.encode('utf-8'),
         bytes.fromhex(salt),
         100000
     ).hex()
@@ -510,8 +523,8 @@ def login(user_email, password, usr_type):
         return False, "confirmed"
 
 
-def register(first_name, last_name, gender, birth_date, 
-            email, password, blood_donor, organ_donor):        
+def register(first_name, last_name, gender, birth_date,
+             email, password, blood_donor, organ_donor):
     """
     Register a new user by inserting user inputs / default values in database.
     
@@ -542,25 +555,25 @@ def register(first_name, last_name, gender, birth_date,
             VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
     conn = sqlite3.connect('database/db_comp0066.db')
     c = conn.cursor()
-    c.execute(query, 
-                    (gp_id_default,
-                    first_name,
-                    last_name,
-                    gender,
-                    birth_date,
-                    email,
-                    hash_salt_pw,
-                    reg_date,
-                    blood_donor,
-                    organ_donor,
-                    default_status))
+    c.execute(query,
+              (gp_id_default,
+               first_name,
+               last_name,
+               gender,
+               birth_date,
+               email,
+               hash_salt_pw,
+               reg_date,
+               blood_donor,
+               organ_donor,
+               default_status))
 
     # Assign GP using newly created patient_id
-    patient_id = c.lastrowid 
+    patient_id = c.lastrowid
     conn.commit()
     conn.close()
 
-    Patient.change_gp('auto', patient_id)    
+    Patient.change_gp('auto', patient_id)
 
     # Return boolean to use in user flow 
     return True
@@ -647,7 +660,8 @@ def week_empty_df(start_date, gp_id):
 
     return week_df
 
-def split_week_df(df_object,gp_id):
+
+def split_week_df(df_object, gp_id):
     if gp_id % 2 == 0:
         lunchtime_start = '11:50'
         lunchtime_end = '13:00'
@@ -657,7 +671,7 @@ def split_week_df(df_object,gp_id):
 
     df_print_morning = df_object.loc[:lunchtime_start].to_markdown(tablefmt="grid", index=True)
     df_print_afternoon = df_object.loc[lunchtime_end:].to_markdown(tablefmt="grid", index=True)
-    return df_print_morning ,df_print_afternoon
+    return df_print_morning, df_print_afternoon
 
 
 # This function accepts an SQL query as an input and then commits the changes into the DB
@@ -676,6 +690,7 @@ def db_read_query(query):
     conn.close()
     return result
 
+
 def random_string(length):
     '''
     Generate random key that is later sent to user via email to validate his/her identity
@@ -685,6 +700,7 @@ def random_string(length):
     letters = string.ascii_lowercase + string.digits
     random_string = ''.join(random.choice(letters) for i in range(length))
     return random_string
+
 
 def send_mail_password_reset(user_email, random_string):
     '''
@@ -727,6 +743,7 @@ def send_mail_password_reset(user_email, random_string):
     # Close connection to Mail server
     smtp_object.quit()
 
+
 def send_code_to_registered_user(user_type, user_email, random_string_password_reset):
     '''
     Send mail with random_string to registered user.
@@ -757,10 +774,12 @@ def send_code_to_registered_user(user_type, user_email, random_string_password_r
     else:
         # send email to user
         send_mail_password_reset(user_email, random_string_password_reset)
-        message = '''The code to reset your password was sent to your email address: {}.\nPlease check your mail inbox and spam folder.'''.format(user_email)
+        message = '''The code to reset your password was sent to your email address: {}.\nPlease check your mail inbox and spam folder.'''.format(
+            user_email)
         email_sent = True
 
     return email_sent, message
+
 
 def compare_random_string(random_string_password_reset):
     '''
@@ -778,6 +797,7 @@ def compare_random_string(random_string_password_reset):
             available_tries = available_tries - 1
             print('The code you entered did not match. You have {} more tries'.format(available_tries))
     return random_string_match
+
 
 def password_reset_input():
     '''
@@ -800,6 +820,7 @@ def password_reset_input():
             else:
                 new_password_match = True
                 return new_password_match, hash_salt(new_password)
+
 
 def change_password(user_type, user_email, random_string_password_reset):
     '''
@@ -826,4 +847,3 @@ def change_password(user_type, user_email, random_string_password_reset):
         message = 'Your password could not be changed because your code does not match'
 
     return True, message
-
