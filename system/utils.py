@@ -134,8 +134,12 @@ def display(my_dict):
             return display(main_flow_gp)
 
         elif globals.usr_type == "admin":
+
+            admin_flow.patient_id_choice = ''
             del admin_flow.patient_id_choice
+            admin_flow.gp_id_choice = ''
             del admin_flow.gp_id_choice
+
             return display(admin_flow.main_flow_admin)
 
         else:
