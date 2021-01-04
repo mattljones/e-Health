@@ -1,8 +1,8 @@
 # e_health_main.py
 
-# library imports 
+# library imports
 from pathlib import Path
-import sys 
+import sys
 
 # Importing utility methods from the 'system' package
 from system import globals
@@ -16,5 +16,5 @@ from user_menu_flow.register_login_flow import main_flow_register
 
 globals.init()
 print(asciiart.launch_art)
-      
+
 utils.display(main_flow_register)
