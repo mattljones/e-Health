@@ -321,13 +321,26 @@ def choose_patient(type, patient_last_name=None):
 def retrieve_patient():
     print("\n----------------------------------------------------\n"
     "                ",'ENTER LAST NAME', "\n")
-    last_name = input("Please enter the patient's last name:\n"
-    "--> ")
-    choose_patient('matching', patient_last_name=last_name)
-    global patient_id_choice
-    patient_id_choice = int(input('\nPlease choose a patient ID\n'
-    '--> '))
-    return patient_id_choice
+    valid = False
+
+    while valid == False :
+        last_name = input("\nPlease enter the patient's last name:\n--> ")
+        
+        choose_patient('matching', patient_last_name=last_name)
+
+        # Select ID of the patient of interest 
+        selected_patient_id = input('\nPlease choose a patient ID \nOr enter \'#\' to change the patient\'s last name \n--> ')
+
+        if selected_patient_id == '#':
+            valid = False
+
+        elif selected_patient_id.isnumeric() and utils.validate(selected_patient_id) :
+            valid = True
+
+        else:
+            print("\U00002757 Invalid entry, please try again and enter your choice.")
+
+    return selected_patient_id
 
 
 def view_edit_patient(next_dict):
@@ -1146,6 +1159,7 @@ def add_appointment(next_dict):
         edit_choice = int(input('\n--> '))
 
     if edit_choice == 2:
+        patient_id_choice = ''
         del patient_id_choice
         return add_appointment(next_dict)
 
@@ -1412,6 +1426,9 @@ def add_another_appointment_diff_patient(next_dict):
     '''
     Allows cycling back to the add_appointment function for a different patient choice.
     '''
+    global patient_id_choice
+    patient_id_choice = ''
+    del patient_id_choice
     return add_appointment(appointment_made_final_actions)
 
 
@@ -1419,8 +1436,6 @@ def add_another_appointment_same_patient(next_dict):
     '''
     Allows cycling back to the add_appointment function for the same patient.
     '''
-    global patient_id_choice
-    del patient_id_choice
     return add_appointment(appointment_made_final_actions)
 
 
@@ -1431,12 +1446,25 @@ def view_appointment_by_patient(next_dict):
     # Create a shortlist by last name
     print("\n----------------------------------------------------\n"
           "                ",'SELECT PATIENT', "\n")
-    last_name = input("Please enter the patient's last name:\n"
-    "--> ")
-    choose_patient('matching', patient_last_name=last_name)
 
-    # Select ID of the patient of interest 
-    selected_patient_id = input('\nPlease choose a patient ID\n--> ')
+    valid = False
+
+    while valid == False :
+        last_name = input("\nPlease enter the patient's last name:\n--> ")
+        
+        choose_patient('matching', patient_last_name=last_name)
+
+        # Select ID of the patient of interest 
+        selected_patient_id = input('\nPlease choose a patient ID \nOr enter \'#\' to change the patient\'s last name \n--> ')
+
+        if selected_patient_id == '#':
+            valid = False
+
+        elif selected_patient_id.isnumeric() and utils.validate(selected_patient_id) :
+            valid = True
+
+        else:
+            print("\U00002757 Invalid entry, please try again and enter your choice.")
     
     # Select all upcoming appointments for this patient ID
     appts = Appointment.select_patient('upcoming', selected_patient_id)
@@ -1471,8 +1499,20 @@ def view_appointment_by_gp(next_dict):
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
     print(df_show)
-    global gp_id_choice
-    gp_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    
+    valid = False
+
+    while valid == False :
+        global gp_id_choice
+        gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+
+        if gp_id_choice.isnumeric() and utils.validate(gp_id_choice):
+            valid = True
+            gp_id_choice = int(gp_id_choice)
+
+        else:
+            print("\U00002757 Invalid entry, please try again and enter your choice.")
+
     
     # Prompt user for starting date
     print("\n----------------------------------------------------\n"
@@ -1516,7 +1556,7 @@ def delete_appointment_gp(next_dict):
 
     print("\n----------------------------------------------------\n"
           "                ",'INSERT DATE RANGE', "\n")
-    print("Please insert date range for batch cancellation: \n--> ")    
+    print("Please insert date range for batch cancellation:")    
     print("[ 1 ] Day\n[ 2 ] Week\n[ 3 ] Custom")
     date_range = int(input('\n--> '))
 
@@ -1542,7 +1582,13 @@ def delete_appointment_gp(next_dict):
 
     print("\n----------------------------------------------------\n"
           "                ",'INSERT REASON', "\n")
-    reason = input("Please insert reason for batch rejection: \n--> ")    
+   
+    validate = False
+    while validate == False:
+        reason = input("Please insert reason for batch rejection: \n--> ")    
+
+        if utils.validate(reason):
+            validate = True
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
@@ -1576,7 +1622,7 @@ def delete_appointment_patient(next_dict):
 
     print("\n----------------------------------------------------\n"
           "                ",'INSERT DATE RANGE', "\n")
-    print("Please insert date range for batch cancellation: \n--> ")    
+    print("Please insert date range for batch cancellation: ")    
     print("[ 1 ] Day\n[ 2 ] Week\n[ 3 ] Custom")
     date_range = int(input('\n--> '))
 
@@ -1602,7 +1648,13 @@ def delete_appointment_patient(next_dict):
 
     print("\n----------------------------------------------------\n"
           "                ",'INSERT REASON', "\n")
-    reason = input("Please insert reason for batch rejection: \n--> ")    
+    
+    validate = False
+    while validate == False:
+        reason = input("Please insert reason for batch rejection: \n--> ")    
+
+        if utils.validate(reason):
+            validate = True
 
     print("\n----------------------------------------------------\n"
           "                ",'CONFIRM?', "\n")
@@ -1628,6 +1680,7 @@ def delete_appointment_another_gp(next_dict):
     Allows cycling back to delete another appointment of the same GP.
     '''
     global gp_id_choice
+    gp_id_choice = ''
     del gp_id_choice
     return delete_appointment_gp(next_dict)
 
@@ -1637,6 +1690,7 @@ def delete_appointment_another_patient(next_dict):
     Allows cycling back to delete another appointment of the same GP.
     '''
     global patient_id_choice
+    patient_id_choice = ''
     del patient_id_choice
     return delete_appointment_patient(next_dict)
 

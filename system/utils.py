@@ -134,7 +134,8 @@ def display(my_dict):
             return display(main_flow_gp)
 
         elif globals.usr_type == "admin":
-
+            
+            # deleting session 'cookies' from admin going back to main menu
             admin_flow.patient_id_choice = ''
             del admin_flow.patient_id_choice
             admin_flow.gp_id_choice = ''
