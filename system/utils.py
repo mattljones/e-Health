@@ -375,6 +375,10 @@ def validate_date(user_input):
 
 
 def get_start_date():
+    '''
+    Asks user to input a start date and checks that it is not earlier than today
+    :return: string
+    '''
     print("\nPlease enter the start date (YYYY-MM-DD)\n"
           "Enter 'T' short for today")
     start_date = input("--> ")
@@ -397,6 +401,10 @@ def get_start_date():
 
 
 def get_end_date():
+    '''
+    Asks user to input a end date and checks that it is not earlier than today
+    :return: string
+    '''
     print("\nPlease enter the end date (YYYY-MM-DD)")
     end_date = input("--> ")
     valid = False
@@ -419,6 +427,10 @@ def get_end_date():
 
 # NOTE: To test
 def get_date():
+    '''
+    Asks user to input a start date
+    :return: string
+    '''
     print("\nPlease enter the start date (YYYY-MM-DD)\n"
           "Enter 'T' short for today")
     date = input("--> ")
@@ -582,6 +594,7 @@ def register(first_name, last_name, gender, birth_date,
 def help():
     # TODO: Write user guide
     """ Help user understand and navigate the program."""
+    # NOTE: Advanced feature
     pass
 
 
