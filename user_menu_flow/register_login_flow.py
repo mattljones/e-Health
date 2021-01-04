@@ -11,6 +11,7 @@ sys.path.insert(1, str(p))
 
 # Importing utility methods from the 'system' package
 from system import utils
+from system import asciiart
 
 # Importing menu paths for each user from the 'user_menu_flow' package
 from user_menu_flow import gp_flow, patient_flow, admin_flow
@@ -295,7 +296,7 @@ flow_1 = {"title":"LOGIN AS ?",
 
 
 # login home page dictionary
-main_flow_register = {"title":"\U0001F3E5 WELCOME TO E-HEALTH! \n\n\U00002757 Open your terminal in full screen for a better user experience \U00002757",
+main_flow_register = {"title":"{}\n                     \U0001F3E5 WELCOME TO E-HEALTH! \n\n\U00002757 Open your terminal in full screen for a better user experience \U00002757".format(asciiart.launch_art),
                       "type":"main",
                       "1":("Login",empty_method,flow_1),
                       "2":("Register as a patient",register_page,empty_dict)}
