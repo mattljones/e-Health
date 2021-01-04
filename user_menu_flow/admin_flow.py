@@ -719,8 +719,6 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
 
 
 def choose_gp(next_dict):
-    # NOTE: This seems to be doing the same thing as retrieve_gp()
-    # Using similar code for now, substitute function name in dict later if needed
     '''
     Returns the numbered list of GPs to choose from
     '''

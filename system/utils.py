@@ -34,33 +34,41 @@ from system import globals
 class Error(Exception):
     pass
 
+
 class EmptyError(Error):
     """Raised when input is empty."""
     pass
+
 
 class LenghtError(Error):
     """Raised when input is too long."""
     pass
 
+
 class LenghtShortError(Error):
     """Raised when input is too short."""
     pass
+
 
 class InvalidCharacterError(Error):
     """Raised when user inputs "'" or '"' to avoid SQL injections."""
     pass
 
+
 class EmailFormatError(Error):
     """Raised when incorrectly formatted email address."""
     pass
+
 
 class DuplicateEmailError(Error):
     """Raised when email has already been used in an account."""
     pass
 
+
 class DateFormatError(Error):
     """Raised when date (YYYY-MM-DD) is not correctly formatted."""
     pass
+
 
 class NonAlphabeticCharacterError(Error):
     """Raised when input non alphabetic character"""
@@ -201,6 +209,7 @@ def validate(user_input):
         return False
     return True
 
+
 def validate_name(user_input):
     """
     Validate user input for names.  
@@ -219,7 +228,7 @@ def validate_name(user_input):
     try:
         if user_input == '':
             raise EmptyError
-        elif len(user_input) > 50 :
+        elif len(user_input) > 50:
             raise LenghtError
         elif len(user_input) < 2:
             raise LenghtShortError
@@ -363,13 +372,18 @@ def validate_date(user_input):
 
     return True
 
+
 def get_start_date():
+    '''
+    Asks user to input a start date and checks that it is not earlier than today
+    :return: string
+    '''
     print("\nPlease enter the start date (YYYY-MM-DD)\n"
           "Enter 'T' short for today")
     start_date = input("--> ")
     valid = False
     while valid == False:
-        if start_date in ("T","t"):
+        if start_date in ("T", "t"):
             valid = True
             start_date = dt.date.today().isoformat()
             return start_date
@@ -384,12 +398,17 @@ def get_start_date():
         if valid == False:
             start_date = input("\n--> ")
 
+
 def get_end_date():
+    '''
+    Asks user to input a end date and checks that it is not earlier than today
+    :return: string
+    '''
     print("\nPlease enter the end date (YYYY-MM-DD)")
     end_date = input("--> ")
     valid = False
     while valid == False:
-        if end_date in ("T","t"):
+        if end_date in ("T", "t"):
             valid = True
             end_date = dt.date.today().isoformat()
             return end_date
@@ -404,14 +423,19 @@ def get_end_date():
         if valid == False:
             end_date = input("\n--> ")
 
+
 # NOTE: To test
 def get_date():
+    '''
+    Asks user to input a start date
+    :return: string
+    '''
     print("\nPlease enter the start date (YYYY-MM-DD)\n"
           "Enter 'T' short for today")
     date = input("--> ")
     valid = False
     while valid == False:
-        if date in ("T","t"):
+        if date in ("T", "t"):
             valid = True
             date = dt.date.today().isoformat()
             return date
@@ -424,6 +448,7 @@ def get_date():
         if valid == False:
             date = input("\n--> ")
 
+
 # NOTE: To test
 def end_date(start_date):
     '''
@@ -433,8 +458,8 @@ def end_date(start_date):
     end_date = input("--> ")
     valid = False
     while valid == False:
-        if end_date in ("T","t"):
-            if  dt.date.fromisoformat(start_date) <= dt.date.today():
+        if end_date in ("T", "t"):
+            if dt.date.fromisoformat(start_date) <= dt.date.today():
                 valid = True
                 end_date = dt.date.today().isoformat()
                 return end_date
@@ -461,7 +486,7 @@ def login(user_email, password, usr_type):
 
     sql_result_df = db_read_query(sql_hash_salt)
 
-    if sql_result_df.empty :
+    if sql_result_df.empty:
         return False, "confirmed"
 
     c.execute(sql_hash_salt)
@@ -564,22 +589,9 @@ def register(first_name, last_name, gender, birth_date,
     return True
 
 
-def user_type(user_id):
-    """Print user type of a specified user."""
-    u = (user_id,)
-
-    conn = sqlite3.connect("database/db_comp0066.db")
-    c = conn.cursor()
-    c.execute('SELECT type FROM users WHERE user_id=?;', u)
-
-    print(c.fetchone())
-
-    conn.close()
-
-
 def help():
-    # TODO: Write user guide
     """ Help user understand and navigate the program."""
+    # NOTE: Advanced feature
     pass
 
 
@@ -590,6 +602,12 @@ def export():
 
 
 def day_empty_df(date, gp_id):
+    '''
+    Produces empty dataframe handling weekends and lunch time for a specific date and gp_id
+    :param date: date as string
+    :param gp_id: gp_id from database
+    :return: DataFrame
+    '''
     times = pd.date_range(start='08:00', periods=54, freq='10Min').strftime('%H:%M')
     date = pd.date_range(start=date, periods=1, freq='D')
     day_df = pd.DataFrame(index=times, columns=date.date)
@@ -619,6 +637,12 @@ def day_empty_df(date, gp_id):
 
 
 def week_empty_df(start_date, gp_id):
+    '''
+    Produces empty dataframe handling weekends and lunch time for a specific week and gp_id
+    :param start_date: data as string (starting day of week)
+    :param gp_id: gp_id from database
+    :return: DataFrame
+    '''
     days = pd.date_range(start=start_date, periods=7, freq='D')
     times = pd.date_range(start='08:00:00', periods=54, freq='10Min')  # .to_frame(name='Working Hours',index=False)
     week_df = pd.DataFrame(index=times.strftime('%H:%M'), columns=days.date)
@@ -645,7 +669,8 @@ def week_empty_df(start_date, gp_id):
 
     return week_df
 
-def split_week_df(df_object,gp_id):
+
+def split_week_df(df_object, gp_id):
     if gp_id % 2 == 0:
         lunchtime_start = '11:50'
         lunchtime_end = '13:00'
@@ -655,11 +680,15 @@ def split_week_df(df_object,gp_id):
 
     df_print_morning = df_object.loc[:lunchtime_start].to_markdown(tablefmt="grid", index=True)
     df_print_afternoon = df_object.loc[lunchtime_end:].to_markdown(tablefmt="grid", index=True)
-    return df_print_morning ,df_print_afternoon
+    return df_print_morning, df_print_afternoon
 
 
-# This function accepts an SQL query as an input and then commits the changes into the DB
 def db_execute(query):
+    '''
+    Executes sqlite queries
+    :param query: sqlite query
+    :return: query execution
+    '''
     conn = sqlite3.connect('database/db_comp0066.db')
     c = conn.cursor()
     c.execute(query)
@@ -667,12 +696,17 @@ def db_execute(query):
     conn.close()
 
 
-# This function accepts an SQL query as an input and then returns the DF produced by the DB
 def db_read_query(query):
+    '''
+    Executes sqlite queries (via DataFrame)
+    :param query: sqlite query
+    :return: query execution
+    '''
     conn = sqlite3.connect("database/db_comp0066.db")
     result = pd.read_sql_query(query, conn)
     conn.close()
     return result
+
 
 def random_string(length):
     '''
@@ -683,6 +717,7 @@ def random_string(length):
     letters = string.ascii_lowercase + string.digits
     random_string = ''.join(random.choice(letters) for i in range(length))
     return random_string
+
 
 def send_mail_password_reset(user_email, random_string):
     '''
@@ -725,6 +760,7 @@ def send_mail_password_reset(user_email, random_string):
     # Close connection to Mail server
     smtp_object.quit()
 
+
 def send_code_to_registered_user(user_type, user_email, random_string_password_reset):
     '''
     Send mail with random_string to registered user.
@@ -755,10 +791,12 @@ def send_code_to_registered_user(user_type, user_email, random_string_password_r
     else:
         # send email to user
         send_mail_password_reset(user_email, random_string_password_reset)
-        message = '''The code to reset your password was sent to your email address: {}.\nPlease check your mail inbox and spam folder.'''.format(user_email)
+        message = '''The code to reset your password was sent to your email address: {}.\nPlease check your mail inbox and spam folder.'''.format(
+            user_email)
         email_sent = True
 
     return email_sent, message
+
 
 def compare_random_string(random_string_password_reset):
     '''
@@ -776,6 +814,7 @@ def compare_random_string(random_string_password_reset):
             available_tries = available_tries - 1
             print('The code you entered did not match. You have {} more tries'.format(available_tries))
     return random_string_match
+
 
 def password_reset_input():
     '''
@@ -798,6 +837,7 @@ def password_reset_input():
             else:
                 new_password_match = True
                 return new_password_match, hash_salt(new_password)
+
 
 def change_password(user_type, user_email, random_string_password_reset):
     '''
