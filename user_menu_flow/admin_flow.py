@@ -1030,11 +1030,12 @@ def remove_time_off_custom(next_dict):
         # Remove timeoff of a specific type from db
         if timeoff_type_input in ('1', '2'):
             Schedule.delete_timeoff(gp_id_choice, 'custom', timeoff_type, start_date, end_date)
-            print("\n\U00002705 Time off successfully removed.")
+            print("\n\U00002705 Time off ({}) successfully removed.".format(timeoff_type))
 
         # Remove timeoff of both types from db
         elif timeoff_type_input == '3':
             Schedule.delete_timeoff(gp_id_choice, 'custom', start_date, end_date)
+            print("\n\U00002705 All time off successfully removed.")
         
         # Proceed with next section
         return utils.display(next_dict)
