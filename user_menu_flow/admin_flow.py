@@ -1728,14 +1728,6 @@ def records_main(next_dict):
     return utils.display(next_dict)
 
 
-def another_record_same_patient(next_dict):
-    '''
-    Allows viewing of another record for the same patient.
-    '''
-    return records_main(records_final_menu)
-
-
-
 def another_record_diff_patient(next_dict):
     '''
     Allows viewing of another record for the same patient.
@@ -2035,8 +2027,7 @@ manage_appointment_flow = {
 records_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View a Different Appointment", another_record_same_patient, empty_dict),
-    "2": ("View a Different Patient", another_record_diff_patient, empty_dict),
+    "1": ("View a Different Patient", another_record_diff_patient, empty_dict),
 }
 
 ###### MAIN MENU ####
