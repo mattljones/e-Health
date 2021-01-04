@@ -90,7 +90,7 @@ def display(my_dict):
     '''
     line = '-' * 52
     print("\n" + line + "\n"
-          "                ", my_dict["title"], "\n")
+                        "                ", my_dict["title"], "\n")
 
     # automatically direct to next flow
     if my_dict["type"] == "auto":
@@ -156,12 +156,12 @@ def hash_salt(password):
     Hash and salt passwords.
     """
 
-    salt = os.urandom(32) 
+    salt = os.urandom(32)
 
     hash_key = hashlib.pbkdf2_hmac(
-        'sha256', 
-        password.encode('utf-8'), 
-        salt, 
+        'sha256',
+        password.encode('utf-8'),
+        salt,
         100000
     )
 
@@ -261,7 +261,7 @@ def validate_email(user_input):
     user_input = user_input.strip()
 
     email_query = 'SELECT patient_email FROM patient'
-    emails = db_read_query(email_query)   
+    emails = db_read_query(email_query)
 
     try:
         if user_input == '':
@@ -294,7 +294,6 @@ def validate_email(user_input):
 def validate_password(user_input):
     """
     Validate user input for password.  
-
     Custom errors:
         - Empty field
         - Input too short (< 8 chars)
@@ -325,8 +324,8 @@ def validate_password(user_input):
 
 def validate_date(user_input):
     """
-    Validate user input for date such as DOB.  
-    
+    Validate user input for date such as DOB.
+
     Custom errors:
         - Empty field
         - Does not contain "'" or '"' to avoid SQL injections
@@ -370,7 +369,7 @@ def get_start_date():
     start_date = input("--> ")
     valid = False
     while valid == False:
-        if start_date in ("T","t"): 
+        if start_date in ("T","t"):
             valid = True
             start_date = dt.date.today().isoformat()
             return start_date
@@ -390,7 +389,7 @@ def get_end_date():
     end_date = input("--> ")
     valid = False
     while valid == False:
-        if end_date in ("T","t"): 
+        if end_date in ("T","t"):
             valid = True
             end_date = dt.date.today().isoformat()
             return end_date
@@ -412,7 +411,7 @@ def get_date():
     date = input("--> ")
     valid = False
     while valid == False:
-        if date in ("T","t"): 
+        if date in ("T","t"):
             valid = True
             date = dt.date.today().isoformat()
             return date
@@ -421,7 +420,7 @@ def get_date():
             return date
         else:
             print("\n\U00002757 Invalid entry, please try again and enter your choice.")
-        
+
         if valid == False:
             date = input("\n--> ")
 
@@ -459,12 +458,12 @@ def login(user_email, password, usr_type):
     c = conn.cursor()
 
     sql_hash_salt = 'SELECT ' + usr_type + '_password FROM ' + usr_type + ' WHERE ' + usr_type + '_email=' + "'" + user_email + "'"
-    
+
     sql_result_df = db_read_query(sql_hash_salt)
 
     if sql_result_df.empty :
         return False, "confirmed"
-    
+
     c.execute(sql_hash_salt)
 
     # Get the full hash + salt from db
@@ -478,7 +477,7 @@ def login(user_email, password, usr_type):
     # Hash and salt password to check (using same parameters)
     hash_key_to_check = hashlib.pbkdf2_hmac(
         'sha256',
-        password.encode('utf-8'), 
+        password.encode('utf-8'),
         bytes.fromhex(salt),
         100000
     ).hex()
@@ -510,26 +509,25 @@ def login(user_email, password, usr_type):
         return False, "confirmed"
 
 
-def register(first_name, last_name, gender, birth_date, 
-            email, password, blood_donor, organ_donor):        
+def register(first_name, last_name, gender, birth_date,
+             email, password, blood_donor, organ_donor):
     """
     Register a new user by inserting user inputs / default values in database.
-    
-    Assumes inputs already validated and sanitized.  
 
-    Values inserted: 
+    Assumes inputs already validated and sanitized.
+    Values inserted:
         - GP ID                     [Default: GP with fewest patients]
-        - First name                
-        - Last name                 
-        - Gender                    
-        - Birth date                
+        - First name
+        - Last name
+        - Gender
+        - Birth date
         - Email address
-        - Password                  
+        - Password
         - Registration date         [Default: now]
         - Blood donor status
-        - Organ donor status 
+        - Organ donor status
         - Patient status            [Default: pending]
-    
+
     """
 
     gp_id_default = '0'
@@ -542,27 +540,27 @@ def register(first_name, last_name, gender, birth_date,
             VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
     conn = sqlite3.connect('database/db_comp0066.db')
     c = conn.cursor()
-    c.execute(query, 
-                    (gp_id_default,
-                    first_name,
-                    last_name,
-                    gender,
-                    birth_date,
-                    email,
-                    hash_salt_pw,
-                    reg_date,
-                    blood_donor,
-                    organ_donor,
-                    default_status))
+    c.execute(query,
+              (gp_id_default,
+               first_name,
+               last_name,
+               gender,
+               birth_date,
+               email,
+               hash_salt_pw,
+               reg_date,
+               blood_donor,
+               organ_donor,
+               default_status))
 
     # Assign GP using newly created patient_id
-    patient_id = c.lastrowid 
+    patient_id = c.lastrowid
     conn.commit()
     conn.close()
 
-    Patient.change_gp('auto', patient_id)    
+    Patient.change_gp('auto', patient_id)
 
-    # Return boolean to use in user flow 
+    # Return boolean to use in user flow
     return True
 
 
@@ -826,4 +824,3 @@ def change_password(user_type, user_email, random_string_password_reset):
         message = 'Your password could not be changed because your code does not match'
 
     return True, message
-
