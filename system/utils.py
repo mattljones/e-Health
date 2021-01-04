@@ -305,7 +305,6 @@ def validate_email(user_input):
 def validate_password(user_input):
     """
     Validate user input for password.  
-
     Custom errors:
         - Empty field
         - Input too short (< 8 chars)
@@ -336,8 +335,8 @@ def validate_password(user_input):
 
 def validate_date(user_input):
     """
-    Validate user input for date such as DOB.  
-    
+    Validate user input for date such as DOB.
+
     Custom errors:
         - Empty field
         - Does not contain "'" or '"' to avoid SQL injections
@@ -541,22 +540,21 @@ def register(first_name, last_name, gender, birth_date,
              email, password, blood_donor, organ_donor):
     """
     Register a new user by inserting user inputs / default values in database.
-    
-    Assumes inputs already validated and sanitized.  
 
-    Values inserted: 
+    Assumes inputs already validated and sanitized.
+    Values inserted:
         - GP ID                     [Default: GP with fewest patients]
-        - First name                
-        - Last name                 
-        - Gender                    
-        - Birth date                
+        - First name
+        - Last name
+        - Gender
+        - Birth date
         - Email address
-        - Password                  
+        - Password
         - Registration date         [Default: now]
         - Blood donor status
-        - Organ donor status 
+        - Organ donor status
         - Patient status            [Default: pending]
-    
+
     """
 
     gp_id_default = '0'
@@ -589,12 +587,11 @@ def register(first_name, last_name, gender, birth_date,
 
     Patient.change_gp('auto', patient_id)
 
-    # Return boolean to use in user flow 
+    # Return boolean to use in user flow
     return True
 
 
 def help():
-    # TODO: Write user guide
     """ Help user understand and navigate the program."""
     # NOTE: Advanced feature
     pass
@@ -676,12 +673,6 @@ def week_empty_df(start_date, gp_id):
 
 
 def split_week_df(df_object, gp_id):
-    '''
-    Splits a DataFrame into a morning and afternoon version for a specific GP (due to lunchtime)
-    :param df_object: DataFrame
-    :param gp_id: gp_id from databse
-    :return: df_print_morning, df_print_afternoon
-    '''
     if gp_id % 2 == 0:
         lunchtime_start = '11:50'
         lunchtime_end = '13:00'
@@ -694,7 +685,6 @@ def split_week_df(df_object, gp_id):
     return df_print_morning, df_print_afternoon
 
 
-# This function accepts an SQL query as an input and then commits the changes into the DB
 def db_execute(query):
     '''
     Executes sqlite queries
@@ -708,7 +698,6 @@ def db_execute(query):
     conn.close()
 
 
-# This function accepts an SQL query as an input and then returns the DF produced by the DB
 def db_read_query(query):
     '''
     Executes sqlite queries (via DataFrame)
