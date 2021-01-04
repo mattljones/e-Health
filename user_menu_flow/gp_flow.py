@@ -363,9 +363,23 @@ def add_timeoff(next_dict):
         type_timeoff = input("--> ")
     else:
         if type_timeoff == "1":
-            Schedule.insert_timeoff(globals.usr_id, 'sick leave', start_date, end_date)
+            while Schedule.check_timeoff_conflict(globals.usr_id, start_date, end_date)[0] == True:
+                print("\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+                print("\n【Conflicts Table】")
+                print(Schedule.check_timeoff_conflict(globals.usr_id, start_date, end_date)[2])
+                start_date = utils.get_start_date()
+                end_date = utils.get_end_date()
+            else:
+                Schedule.insert_timeoff(globals.usr_id, 'sick leave', start_date, end_date)
         elif type_timeoff =="2":
-            Schedule.insert_timeoff(globals.usr_id, 'time off', start_date, end_date)
+            while Schedule.check_timeoff_conflict(globals.usr_id, start_date, end_date)[0] == True:
+                print("\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+                print("\n【Conflicts Table】")
+                print(Schedule.check_timeoff_conflict(globals.usr_id, start_date, end_date)[2])
+                start_date = utils.get_start_date()
+                end_date = utils.get_end_date()
+            else:
+                Schedule.insert_timeoff(globals.usr_id, 'time off', start_date, end_date)
     print("\n\U00002705The timeoff has been successfully added! Please be aware that timeoffs during weekends were not added")
     print("\n----------------------------------------------------\n"
           "                ", "Add or Remove more timeoff?", "\n")

@@ -461,7 +461,10 @@ class Schedule:
 ### DEVELOPMENT ###
 
 if __name__ == "__main__":
-    # Schedule.insert_timeoff(16, 'time off', '2020-12-23', '2020-12-25')
+    print(Schedule.insert_timeoff(16, 'time off', '2021-01-07', '2021-01-07')[0])
+    print(Schedule.insert_timeoff(16, 'time off', '2021-01-08', '2021-01-08')[0])
+    print(Schedule.insert_timeoff(16, 'time off', '2021-01-10', '2021-01-10')[0])
+    print(Schedule.insert_timeoff(16, 'time off', '2021-01-05', '2021-01-05')[0])
     pass
 
 ### TESTING ###
