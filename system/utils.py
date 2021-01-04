@@ -579,19 +579,6 @@ def register(first_name, last_name, gender, birth_date,
     return True
 
 
-def user_type(user_id):
-    """Print user type of a specified user."""
-    u = (user_id,)
-
-    conn = sqlite3.connect("database/db_comp0066.db")
-    c = conn.cursor()
-    c.execute('SELECT type FROM users WHERE user_id=?;', u)
-
-    print(c.fetchone())
-
-    conn.close()
-
-
 def help():
     # TODO: Write user guide
     """ Help user understand and navigate the program."""
@@ -605,6 +592,12 @@ def export():
 
 
 def day_empty_df(date, gp_id):
+    '''
+    Produces empty dataframe handling weekends and lunch time for a specific date and gp_id
+    :param date: date as string
+    :param gp_id: gp_id from database
+    :return: DataFrame
+    '''
     times = pd.date_range(start='08:00', periods=54, freq='10Min').strftime('%H:%M')
     date = pd.date_range(start=date, periods=1, freq='D')
     day_df = pd.DataFrame(index=times, columns=date.date)
@@ -634,6 +627,12 @@ def day_empty_df(date, gp_id):
 
 
 def week_empty_df(start_date, gp_id):
+    '''
+    Produces empty dataframe handling weekends and lunch time for a specific week and gp_id
+    :param start_date: data as string (starting day of week)
+    :param gp_id: gp_id from database
+    :return: DataFrame
+    '''
     days = pd.date_range(start=start_date, periods=7, freq='D')
     times = pd.date_range(start='08:00:00', periods=54, freq='10Min')  # .to_frame(name='Working Hours',index=False)
     week_df = pd.DataFrame(index=times.strftime('%H:%M'), columns=days.date)
@@ -662,6 +661,12 @@ def week_empty_df(start_date, gp_id):
 
 
 def split_week_df(df_object, gp_id):
+    '''
+    Splits a DataFrame into a morning and afternoon version for a specific GP (due to lunchtime)
+    :param df_object: DataFrame
+    :param gp_id: gp_id from databse
+    :return: df_print_morning, df_print_afternoon
+    '''
     if gp_id % 2 == 0:
         lunchtime_start = '11:50'
         lunchtime_end = '13:00'
@@ -676,6 +681,11 @@ def split_week_df(df_object, gp_id):
 
 # This function accepts an SQL query as an input and then commits the changes into the DB
 def db_execute(query):
+    '''
+    Executes sqlite queries
+    :param query: sqlite query
+    :return: query execution
+    '''
     conn = sqlite3.connect('database/db_comp0066.db')
     c = conn.cursor()
     c.execute(query)
@@ -685,6 +695,11 @@ def db_execute(query):
 
 # This function accepts an SQL query as an input and then returns the DF produced by the DB
 def db_read_query(query):
+    '''
+    Executes sqlite queries (via DataFrame)
+    :param query: sqlite query
+    :return: query execution
+    '''
     conn = sqlite3.connect("database/db_comp0066.db")
     result = pd.read_sql_query(query, conn)
     conn.close()
