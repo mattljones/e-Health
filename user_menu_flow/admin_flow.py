@@ -718,6 +718,21 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
 
+def choose_gp(next_dict):
+    '''
+    Returns the numbered list of GPs to choose from
+    '''
+    df = GP.select_list('all')
+    df_show = df[1]
+    print("\n----------------------------------------------------\n"
+          "                ",'GP LIST', "\n")
+    print(df_show)
+    global gp_id_choice
+    gp_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    
+    return utils.display(next_dict)
+
+
 def schedules_section_menu(next_dict):
     '''
     Returns to the section menu.
@@ -760,7 +775,7 @@ def choose_another_gp(next_dict):
     '''
     Allows choice to change the GP viewed from the final_menu.
     '''
-    return retrieve_gp(view_schedule_flow)
+    return choose_gp(view_schedule_flow)
 
 
 def appointments_shortcut(next_dict):
@@ -851,7 +866,7 @@ def add_time_off_day(next_dict):
     if user_confirmation == '1':
         # Add timeoff to db
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off successfully added.")
+        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
         return utils.display(next_dict)
         
     else:
@@ -905,7 +920,7 @@ def add_time_off_week(next_dict):
     if user_confirmation == '1':
         # Add timeoff to db
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off successfully added.")
+        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
         return utils.display(next_dict)
         
     else:
@@ -955,7 +970,7 @@ def add_time_off_custom(next_dict):
     if user_confirmation == '1':
         # Add timeoff to db
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off successfully added.")
+        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
         return utils.display(next_dict)
 
     else:
@@ -1015,11 +1030,12 @@ def remove_time_off_custom(next_dict):
         # Remove timeoff of a specific type from db
         if timeoff_type_input in ('1', '2'):
             Schedule.delete_timeoff(gp_id_choice, 'custom', timeoff_type, start_date, end_date)
-            print("\n\U00002705 Time off successfully removed.")
+            print("\n\U00002705 Time off ({}) successfully removed.".format(timeoff_type))
 
         # Remove timeoff of both types from db
         elif timeoff_type_input == '3':
             Schedule.delete_timeoff(gp_id_choice, 'custom', start_date, end_date)
+            print("\n\U00002705 All time off successfully removed.")
         
         # Proceed with next section
         return utils.display(next_dict)
@@ -1976,7 +1992,7 @@ main_flow_admin = {
     "1":("Manage GP Accounts", empty_method, manage_gp_accounts_flow),
     "2":("Manage Patient Accounts", empty_method, manage_patient_accounts_flow ),
     "3":("Manage GP-Patient Pairings", empty_method, gp_patient_pair_flow),
-    "4":("Manage GP Schedules", retrieve_gp, view_schedule_flow),
+    "4":("Manage GP Schedules", choose_gp, view_schedule_flow),
     "5":("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
     "6":("View Appointment Summaries", records_main, records_final_menu)
 }

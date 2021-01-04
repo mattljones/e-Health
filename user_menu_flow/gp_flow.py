@@ -80,6 +80,7 @@ def edit_cc(next_dict):
                 add_or_delete = input("--> ")
             if add_or_delete == '1':
                 print("\nPlase input the condition id you want to add (1-20)")
+                # TODO: input validation
                 cond_id = input("--> ")
                 while cond_id not in [str(i) for i in range(21)]:
                     print("\nInvalid input, please try again!")
@@ -124,8 +125,11 @@ def edit_cc(next_dict):
         if more_change_cc == '2':
             edit_cond_flag = False
     else:
-        print("\n【Patient Table】\n", Record.select(globals.patient_id)[2])
-        print("\n【Patient Table】\n", Record.select(globals.patient_id)[4])
+        print("\n【Patient Table】", Record.select(globals.patient_id)[2])
+        if Record.select(globals.patient_id)[3].index.values.size == 0:
+            pass
+        else:
+            print("\n【Patient Table】", Record.select(globals.patient_id)[4])
     return display_next_menu(next_dict)
 
 def final_confirm_prescribe(next_dict):
@@ -236,6 +240,13 @@ def correct_note_change(next_dict):
                  "2":("Notes", edit_notes, flow_confirm_change)
                 }
     return display_next_menu(flow_record_edit)
+
+def correct_cc_change(next_dict):
+    flow_cc_edit = {"title": "Edit Condition",
+                 "type": "auto",
+                 "next":(edit_cc, flow_only_cc_confirm)
+                }
+    return display_next_menu(flow_cc_edit)
 
 # TODO: booking id input validation
 
@@ -472,20 +483,23 @@ def view_records(next_dict):
     if final_df.index.values.size == 0:
         print("\nYour do not have any appointment today!")
         return display_next_menu(flow_end)
+    print("\n【Today's Appointments】\n")
     print(final_df.to_markdown(tablefmt="grid", index=False))
 
-    print("\nPlease enter patient id you want to search:")
+    print("\nPlease enter a patient id (today's patients above for reference)")
     # input validation
+    tmp = [str(i) for i in final_df['Patient (ID)'].values]
+    print(tmp)
     patient_id = input("--> ")
     while patient_id.isdigit() == False or patient_id == " " or patient_id.isspace()== True or Record.select(patient_id)[1].index.values.size == 0:
-        print("\nInvalid input or non-existent patient id, please try again!")
+        print("\nInvalid input or non-existent patient id above, please try again!")
         patient_id = input("--> ")
     globals.patient_id = patient_id
     print("\n【Patient Table】")
     print(Record.select(patient_id)[2])
     if Record.select(patient_id)[3].index.values.size == 0:
         print("\nThis patient does not has any attended appointment, so there is no 【Prescription Table】 and you cannot edit the notes!")
-        return display_next_menu(flow_end)
+        return display_next_menu(flow_only_cc_edit)
     else:
         print("\n【Appointment & Prescription Table】")
         print(Record.select(patient_id)[4])
@@ -578,6 +592,19 @@ flow_confirm_change = {"title": "Confirm edit",
                  "type": "sub",
                  "1":("Yes", display_next_menu, flow_end),
                  "2":("Change More / No", correct_note_change, flow_end)
+                }
+
+flow_only_cc_confirm = {"title": "Confirm edit",
+                 "type": "sub",
+                 "1":("Yes", display_next_menu, flow_end),
+                 "2":("Change More / No", correct_cc_change, flow_end)
+                }
+
+
+flow_only_cc_edit = {"title": "Do you want to edit the conditions of this patient?",
+                 "type": "sub",
+                 "1":("Yes", edit_cc, flow_only_cc_confirm),
+                 "2":("No", display_next_menu, flow_end)
                 }
 
 flow_record_edit = {"title": "Edit what part of the records?",
