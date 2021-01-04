@@ -97,12 +97,27 @@ def display(my_dict):
     functions corresponding to the user's choice.
     '''
     
-    line = '-' * 52
     title = my_dict["title"]
-    # length of main title (some titles also have a subtitle)
-    title_length = len(title[0:title.find("\n")])
+
+    # checking if title has a subtitle
+    break_loc = title.find("\n")
+    if break_loc == -1:
+        title_length = len(title)
+    else: 
+        title_length = len(title[0:break_loc])
+
+    # formatting 'main' menus differently from sub-menus
+    if my_dict["type"] == "main":
+        line_length = 65
+        char = "="
+    else:
+        line_length = 52
+        char = "-"
+    line = char * line_length
+
     # padding required to left of main title for it to be centered
-    left_padding = ' ' * ((52 - title_length) // 2)
+    left_padding = ' ' * ((line_length - title_length) // 2)
+
     print("\n" + line + "\n" + left_padding + title + "\n")
 
     # automatically direct to next flow
