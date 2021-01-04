@@ -16,6 +16,7 @@ sys.path.insert(1, str(path_to_master_repo))
 # Importing utility methods from the 'system' package
 from system import utils as u
 
+
 class Schedule:
     '''
     Class defining all 'schedule' related methods.
@@ -83,7 +84,6 @@ class Schedule:
             # Set index
             df_object = df_object.set_index(df_select_day_empty.index)
 
-
         if type == 'week':
 
             # Transforms start_date to datatime object
@@ -145,8 +145,8 @@ class Schedule:
                                     strftime('%Y-%m-%d', booking_start_time) >= '{}'
                                 AND
                                     booking_status IN ('time off', 'sick leave');'''.format(gp_id,
-                                                                                              datetime.datetime.now().strftime(
-                                                                                                  "%Y-%m-%d"))
+                                                                                            datetime.datetime.now().strftime(
+                                                                                                "%Y-%m-%d"))
 
         # Execute query
         df_object = u.db_read_query(upcoming_timeoff_query)
@@ -205,7 +205,8 @@ class Schedule:
                         AND
                             gp_id = ?
                         AND
-                            booking_status IN ('confirmed', 'booked', 'sick leave', 'time off');""", (new_timeoff_range[i], gp_id))
+                            booking_status IN ('confirmed', 'booked', 'sick leave', 'time off');""",
+                      (new_timeoff_range[i], gp_id))
             # Appending to empty DataFrame
             df_object = df_object.append(c.fetchall(), ignore_index=True)
 
@@ -312,11 +313,13 @@ class Schedule:
                                             patient_id)
                                         VALUES
                                             (NULL, '{}', '{}', '{}', NULL, NULL, NULL, {}, '{}', NULL);'''.format(
-                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id, gp_last_name_from_db)
+                    new_timeoff_range[i], timeoff_type, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id,
+                    gp_last_name_from_db)
                 # Execute query
                 u.db_execute(insert_timeoff_query)
 
-            return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date_check_timeoff_conflict, end_date=end_date_check_timeoff_conflict)
+            return schedule.check_timeoff_conflict(gp_id=gp_id, start_date=start_date_check_timeoff_conflict,
+                                                   end_date=end_date_check_timeoff_conflict)
 
 
         # If there are already booked or confirmed appointments during start_date to end_date
@@ -419,7 +422,8 @@ class Schedule:
                                             AND
                                                 booking_status IN ('sick leave', 'time off')
                                             AND
-                                                gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id)
+                                                gp_id = {};'''.format(
+                    datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), gp_id)
                 # Execute query
                 u.db_execute(delete_timeoff_all_query)
 
@@ -433,7 +437,8 @@ class Schedule:
                                             AND
                                                 booking_status = '{}'
                                             AND
-                                                gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), timeoff_type ,gp_id)
+                                                gp_id = {};'''.format(
+                    datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), timeoff_type, gp_id)
                 # Execute query
                 u.db_execute(delete_timeoff_all_query)
 
@@ -447,7 +452,8 @@ class Schedule:
                                             AND
                                                 booking_status = '{}'
                                             AND
-                                                gp_id = {};'''.format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), timeoff_type ,gp_id)
+                                                gp_id = {};'''.format(
+                    datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), timeoff_type, gp_id)
                 # Execute query
                 u.db_execute(delete_timeoff_all_query)
 
