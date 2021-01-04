@@ -866,7 +866,7 @@ def add_time_off_day(next_dict):
     if user_confirmation == '1':
         # Add timeoff to db
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off successfully added.")
+        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
         return utils.display(next_dict)
         
     else:
@@ -920,7 +920,7 @@ def add_time_off_week(next_dict):
     if user_confirmation == '1':
         # Add timeoff to db
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off successfully added.")
+        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
         return utils.display(next_dict)
         
     else:
@@ -970,7 +970,7 @@ def add_time_off_custom(next_dict):
     if user_confirmation == '1':
         # Add timeoff to db
         Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off successfully added.")
+        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
         return utils.display(next_dict)
 
     else:
