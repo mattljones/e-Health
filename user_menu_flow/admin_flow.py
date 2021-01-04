@@ -748,6 +748,7 @@ def view_schedule_day(next_dict):
     sched = Schedule.select(gp_id_choice, 'day', start_date)
     print("\n----------------------------------------------------\n"
           "                ",'DAILY SCHEDULE', "\n")
+    print("\n【", start_date, "】")
     print(sched[1])
     return utils.display(next_dict)
 
