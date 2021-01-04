@@ -351,12 +351,13 @@ def add_timeoff(next_dict):
                  "1":("Add", add_timeoff, next_dict),
                  "2":("Remove", remove_timeoff, next_dict)
                 }
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
+
     print("\nWhat is the type of timeoff?")
     print("[ 1 ] sick leave")
     print("[ 2 ] time off")
     type_timeoff = input("--> ")
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
     while type_timeoff not in ["1", "2"]:
         print("Invalid input, try again!")
         type_timeoff = input("--> ")

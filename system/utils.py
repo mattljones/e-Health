@@ -96,9 +96,14 @@ def display(my_dict):
     Display function called to display menu and run the 
     functions corresponding to the user's choice.
     '''
+    
     line = '-' * 52
-    print("\n" + line + "\n"
-                        "                ", my_dict["title"], "\n")
+    title = my_dict["title"]
+    # length of main title (some titles also have a subtitle)
+    title_length = len(title[0:title.find("\n")])
+    # padding required to left of main title for it to be centered
+    left_padding = ' ' * ((52 - title_length) // 2)
+    print("\n" + line + "\n" + left_padding + title + "\n")
 
     # automatically direct to next flow
     if my_dict["type"] == "auto":
