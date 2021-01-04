@@ -134,7 +134,7 @@ def final_confirm_prescribe(next_dict):
 
 def no_attend(next_dict):
     Appointment.change_status(globals.appt_id, "cancelled")
-    print("\nAppointment " + globals.appt_id + " has been successfully cancelled!")
+    print("\nAppointment " + str(globals.appt_id) + " has been successfully cancelled!\n")
     # TODO: delete at the final version
     print(Appointment.select_GP_appt(globals.usr_id))
     return display_next_menu(next_dict)

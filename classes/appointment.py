@@ -591,8 +591,8 @@ class Appointment:
 
 if __name__ == "__main__":
     # Appointment.change_status_batch_future(1, 'rejected')
-    # Appointment.change_status(51, 'booked')
-    # Appointment.change_status(52, 'booked')
+    Appointment.change_status(51, 'booked')
+    Appointment.change_status(52, 'booked')
     print(Appointment.select_GP_appt(16))
 
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
