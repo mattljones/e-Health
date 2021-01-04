@@ -1,7 +1,7 @@
 # admin_flow.py
 
 # library imports 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from pathlib import Path
 import sys 
 
@@ -1203,10 +1203,10 @@ def add_appointment(next_dict):
         
         if start_date in ("T","t"): 
             valid = True
-            start_date = datetime.today().isoformat()
+            start_date = date.today().isoformat()
         
         elif utils.validate_date(start_date):
-            if datetime.fromisoformat(start_date) >= datetime.today():
+            if date.fromisoformat(start_date) >= date.today():
                 valid = True
             
             else:
