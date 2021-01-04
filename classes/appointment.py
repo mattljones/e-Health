@@ -368,7 +368,7 @@ class Appointment:
         sign = {'previous': '<', 'upcoming': '>'}
 
         query = """SELECT booking_id AS 'Apt. ID',b.gp_id AS 'GP ID', printf('Dr. %s',b.gp_last_name) as GP,
-                   strftime('%Y-%m-%d %H:%M',booking_start_time) 'Date', 
+                   booking_start_time 'Date', 
                    booking_status AS 'Status',booking_type AS 'Type', 
                    booking_agenda AS 'Booking Agenda', booking_notes AS 'Notes'
                    FROM booking b
@@ -591,9 +591,9 @@ class Appointment:
 
 if __name__ == "__main__":
     # Appointment.change_status_batch_future(1, 'rejected')
-    Appointment.change_status(51, 'booked')
-    Appointment.change_status(52, 'booked')
-    print(Appointment.select_GP_appt(16))
+    # Appointment.change_status(51, 'booked')
+    Appointment.change_status(52, 'confirmed')
+    # print(Appointment.select_GP_appt(16))
 
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
 

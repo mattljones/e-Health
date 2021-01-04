@@ -96,9 +96,29 @@ def display(my_dict):
     Display function called to display menu and run the 
     functions corresponding to the user's choice.
     '''
-    line = '-' * 52
-    print("\n" + line + "\n"
-                        "                ", my_dict["title"], "\n")
+    
+    title = my_dict["title"]
+
+    # checking if title has a subtitle
+    break_loc = title.find("\n")
+    if break_loc == -1:
+        title_length = len(title)
+    else: 
+        title_length = len(title[0:break_loc])
+
+    # formatting 'main' menus differently from sub-menus
+    if my_dict["type"] == "main":
+        line_length = 65
+        char = "="
+    else:
+        line_length = 52
+        char = "-"
+    line = char * line_length
+
+    # padding required to left of main title for it to be centered
+    left_padding = ' ' * ((line_length - title_length) // 2)
+
+    print("\n" + line + "\n" + left_padding + title + "\n")
 
     # automatically direct to next flow
     if my_dict["type"] == "auto":
@@ -411,7 +431,9 @@ def get_end_date():
     Asks user to input a end date and checks that it is not earlier than today
     :return: string
     '''
-    print("\nPlease enter the end date (YYYY-MM-DD)")
+    print("\nPlease enter the end date (YYYY-MM-DD)\n"
+          "Enter 'T' short for today")
+    
     end_date = input("--> ")
     valid = False
     while valid == False:
@@ -420,7 +442,7 @@ def get_end_date():
             end_date = dt.date.today().isoformat()
             return end_date
         elif validate_date(end_date):
-            if dt.date.fromisoformat(end_date) > dt.date.today():
+            if dt.date.fromisoformat(end_date) >= dt.date.today():
                 valid = True
                 return end_date
             else:
