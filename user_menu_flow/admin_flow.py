@@ -95,11 +95,11 @@ def view_edit_gp(next_dict):
         return utils.display(next_dict)
 
 
-def retrieve_gp(type):
+def retrieve_gp(gp_type):
     '''
     Shows the list of GPs and allows choice from that list.
     '''
-    df = GP.select_list(type)
+    df = GP.select_list(gp_type)
     df_show = df[1]
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
