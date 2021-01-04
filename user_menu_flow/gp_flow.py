@@ -366,7 +366,7 @@ def add_timeoff(next_dict):
             Schedule.insert_timeoff(globals.usr_id, 'sick leave', start_date, end_date)
         elif type_timeoff =="2":
             Schedule.insert_timeoff(globals.usr_id, 'time off', start_date, end_date)
-    print("\nThe timeoff has been successfully added!")
+    print("\n\U00002705The timeoff has been successfully added! Please be aware that timeoffs during weekends were not added")
     print("\n----------------------------------------------------\n"
           "                ", "Add or Remove more timeoff?", "\n")
     print("[ 1 ] Yes")
