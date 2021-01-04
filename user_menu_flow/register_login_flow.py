@@ -137,7 +137,7 @@ def login_page(login_as):
     
     # Valid login credentials
     else:
-        print("\n\U00002705 Successful login !")
+        print("\n\U00002705 Successful login!")
 
         # Redirects to patient main page 
         if (globals.usr_type == 'patient'):

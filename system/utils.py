@@ -430,7 +430,9 @@ def get_end_date():
     Asks user to input a end date and checks that it is not earlier than today
     :return: string
     '''
-    print("\nPlease enter the end date (YYYY-MM-DD)")
+    print("\nPlease enter the end date (YYYY-MM-DD)\n"
+          "Enter 'T' short for today")
+    
     end_date = input("--> ")
     valid = False
     while valid == False:
@@ -439,7 +441,7 @@ def get_end_date():
             end_date = dt.date.today().isoformat()
             return end_date
         elif validate_date(end_date):
-            if dt.date.fromisoformat(end_date) > dt.date.today():
+            if dt.date.fromisoformat(end_date) >= dt.date.today():
                 valid = True
                 return end_date
             else:
