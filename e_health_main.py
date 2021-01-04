@@ -15,6 +15,6 @@ from user_menu_flow.register_login_flow import main_flow_register
 ############################# MAIN CODE ###############################
 
 globals.init()
-print(asciiart.launch_art)
+# print(asciiart.launch_art)
 
 utils.display(main_flow_register)
