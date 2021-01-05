@@ -39,8 +39,9 @@ def reset_password(login_as):
     '''
 
     print("\n---------------------------------------------------- \n"
-          "                    RESET PASSWORD\n"
-          "\nPlease, enter your email address"
+          "                   RESET PASSWORD\n"
+          "\nPlease, enter your email address so that"
+          "\nwe can send you a key to reset your password"
           "\nor '#' to go back to main page")
     
     # user input for email address
@@ -69,7 +70,7 @@ def reset_password(login_as):
                 user_email = input("\n--> Email address: ")
 
             else:
-                print("\n\U00002705 " + message)
+                print(message)
 
         # if invalid entry
         else:
@@ -87,7 +88,7 @@ def login_page(login_as):
         - login_as: user type the user is trying to login as selected on previous menu page.
     '''
     print("\n---------------------------------------------------- \n"
-          "                    LOGIN\n"
+          "                       LOGIN\n"
           "\nPlease, enter your credentials"
           "\n\nEnter '#' to go back to main page"
           "\nEnter 'R' to reset your password")
@@ -137,7 +138,7 @@ def login_page(login_as):
     
     # Valid login credentials
     else:
-        print("\n\U00002705 Successful login !")
+        print("\n\U00002705 Successful login!")
 
         # Redirects to patient main page 
         if (globals.usr_type == 'patient'):
@@ -158,7 +159,7 @@ def register_page(next_dict):
     dictionary as argument for utils.display function consistency.
     '''
     print("\n---------------------------------------------------- \n"
-        "                   REGISTER\n"
+        "                     REGISTER\n"
         "\nPlease, fill in the following form"
         "\nor enter '#' to go back to main page")
 
