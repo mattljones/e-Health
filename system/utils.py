@@ -172,7 +172,8 @@ def display(my_dict):
         return display(main_flow_register)
 
     # If user selected one of the options
-    elif usr_choice in my_dict:
+    elif usr_choice.upper() in my_dict:
+        usr_choice = usr_choice.upper()
         return my_dict[usr_choice][1](my_dict[usr_choice][2])
 
     elif usr_choice in ('E', 'e'):
