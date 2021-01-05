@@ -489,9 +489,11 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             Patient.confirm('all')
+            print("\n\U00002705 All patients successfully confirmed.")
             return utils.display(next_dict)
         
         elif y_n == 2:
+            print("\nPatients not confirmed.")
             return utils.display(next_dict)
         
     elif choice == 2:
@@ -509,11 +511,13 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             for id in ids:
+                print("\n\U00002705 Patients successfully confirmed.")
                 Patient.confirm('single', patient_id = int(id))
 
             return utils.display(next_dict)
         
         elif y_n == 2:
+            print("\nPatients not confirmed.")
             return utils.display(next_dict)
 
 
@@ -1243,7 +1247,7 @@ def add_appointment(next_dict):
     "                ","EDIT THIS PATIENT'S APPOINTMENTS?", "\n")
     print('[ 1 ] Yes')
     print('[ 2 ] Choose Another Patient')
-    print('[ S ] Back to Patient Accounts Menu')
+    print('[ S ] Back to Manage Appointments Menu')
 
     edit_choice = input('\n--> ')
 
@@ -1258,7 +1262,7 @@ def add_appointment(next_dict):
 
     elif edit_choice in ('s', 'S'):
         del patient_id_choice
-        return utils.display(manage_patient_accounts_flow)
+        return utils.display(manage_appointment_flow)
 
     print("\n----------------------------------------------------\n"
             "             BOOK WITH REGISTERED GP ? \n")
@@ -1899,7 +1903,7 @@ delete_patient_account_final_menu = {
 add_new_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Another Patient", confirm_another_patient, empty_dict),
+    "1": ("Confirm Another Patient", confirm_another_patient, empty_dict),
     "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
