@@ -384,6 +384,7 @@ class GP(User):
 
         else:
             # convert to string to allow concatenation in .groupby() method
+            pd.set_option('mode.chained_assignment', None)
             df_other_gp_upcoming['Apt. ID'] = df_other_gp_upcoming['Apt. ID'].apply(str)
             df_other_gp_upcoming['GP ID'] = df_other_gp_upcoming['GP ID'].apply(str)
             # df with lists of *other* GPs with appointments at same time as 
@@ -396,7 +397,7 @@ class GP(User):
                                     df_other_gp_grouped['GP ID'].tolist()))
             # simple list of other GPs
             other_gp_list = df_active_gp['GP ID'].tolist()
-            other_gp_list.remove(gp_id)
+            if gp_id in other_gp_list: other_gp_list.remove(gp_id)
             # simple list of *this* GPs upcoming appointment times (for reallocation)
             app_times = list(other_gp_clashes)
 

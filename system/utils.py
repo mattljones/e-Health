@@ -96,9 +96,29 @@ def display(my_dict):
     Display function called to display menu and run the 
     functions corresponding to the user's choice.
     '''
-    line = '-' * 52
-    print("\n" + line + "\n"
-                        "                ", my_dict["title"], "\n")
+
+    title = my_dict["title"]
+    
+    # checking if title has a subtitle
+    break_loc = title.find("\n")
+    if break_loc == -1:
+        title_length = len(title)
+    else: 
+        title_length = len(title[0:break_loc])
+
+    # formatting 'main' menus differently from sub-menus
+    if my_dict["type"] == "main":
+        line_length = 65
+        char = "="
+    else:
+        line_length = 52
+        char = "-"
+    line = char * line_length
+
+    # padding required to left of main title for it to be centered
+    left_padding = ' ' * ((line_length - title_length) // 2)
+
+    print("\n" + line + "\n" + left_padding + title + "\n")
 
     # automatically direct to next flow
     if my_dict["type"] == "auto":

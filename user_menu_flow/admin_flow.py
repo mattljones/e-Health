@@ -59,29 +59,127 @@ def view_edit_gp(next_dict):
     doctor_df = GP.select(choice)
 
     print("\n----------------------------------------------------\n"
-          "                ",'GP DETAILS', "\n")
+          "                    ",'GP DETAILS', "\n")
     print(doctor_df[2])
-    key = int(input("Choose a value to edit. \n--> "))
 
-    if key not in range(1,len(profile)+1):
-        print("\n\U00002757 Input not valid.")
-        key = int(input("Choose a value to edit. \n--> "))
+    # User choice of field to edit
+    key = input("\nEnter the index [X] of the field you want to edit. \n--> ")
+    while not key.isnumeric() or int(key) not in range(1, len(profile) + 1):
+        print("\n\U00002757 Input not valid. "
+              "Please enter a number between 1 and {}.".format(len(profile)))
+        key = input("\nEnter the index [X] of the field you want to edit. \n--> ")
+    key = int(key)
 
-    new_value = input("\nChoose a new value to input. \n--> ") 
+    # Creating a dictionary of field indexes (keys) and names (values)
+    key_name_dict = dict(zip(doctor_df[1].index.str[1].tolist(),\
+                             doctor_df[1].index.str[4:].tolist()))
+    key_name = key_name_dict[str(key)] 
+
+    # Input validation w/ utils
+    if key in (1, 2, 4, 5):
+        if key in (1, 2):
+            new_value = input("\nEnter a new value for 【{}】. " 
+                              "\n--> ".format(key_name))
+            while not utils.validate_name(new_value):
+                new_value = input("\nEnter a new value for 【{}】. "
+                                  "\n--> ".format(key_name))
+        elif key == 4:
+            new_value = input("\nEnter a new value for 【{}】 (YYYY-MM-DD). "
+                              "\n--> ".format(key_name))
+            date_valid_format = utils.validate_date(new_value)
+            while not date_valid_format or datetime.strptime(new_value, "%Y-%m-%d") > datetime.now():
+                if date_valid_format and datetime.strptime(new_value, "%Y-%m-%d") > datetime.now(): 
+                    print("\U00002757 Birth date cannot be in the future!") 
+                new_value = input("\nEnter a new value for 【{}】 (YYYY-MM-DD). "
+                                  "\n--> ".format(key_name))
+                date_valid_format = utils.validate_date(new_value)
+        else:
+            new_value = input("\nEnter a new value for 【{}】. "
+                              "\n--> ".format(key_name)) 
+            while not utils.validate_email(new_value):
+                new_value = input("\nEnter a new value for 【{}】. "
+                                  "\n--> ".format(key_name))
+        new_value_display = new_value
+
+    # Input validation w/ hard-coded list
+    elif key == 3:
+        genders = {'1': 'male',
+                   '2': 'female',
+                   '3': 'non binary',
+                   '4': 'prefer not to say'}
+        usr_choice = input("\nEnter the index [X] of the new value for 【{}】.\n" 
+                           "  [ 1 ] male\n"
+                           "  [ 2 ] female\n"
+                           "  [ 3 ] non binary\n"
+                           "  [ 4 ] prefer not to say\n\n"
+                           "--> ".format(key_name))
+        while not usr_choice.isnumeric() or int(usr_choice) not in range(1, len(genders) + 1):
+            print("\U00002757 Please enter a number between 1 and {}".format(len(genders)))
+            usr_choice = input("\nEnter the index [X] of the new value for 【{}】. "
+                               "\n--> ".format(key_name))
+        new_value = new_value_display = genders[usr_choice]
+
+    # Input validation w/ hard-coded list
+    elif key == 6:
+        new_value = input("\nEnter the index [X] of the new value for 【{}】.\n" 
+                           "  [ 0 ] Monday to Friday\n"
+                           "  [ 1 ] Tuesday to Saturday\n"
+                           "  [ 2 ] Wednesday to Sunday\n"
+                           "  [ 3 ] Thursday to Monday\n"
+                           "  [ 4 ] Friday to Tuesday\n"
+                           "  [ 5 ] Saturday to Wednesday\n"
+                           "  [ 6 ] Sunday to Thursday\n\n"
+                           "--> ".format(key_name))
+        while not new_value.isnumeric() or int(new_value) not in range(0, 7):
+            print("\U00002757 Please enter a number between 0 and 6")
+            new_value = input("\nEnter the index [X] of the new value for 【{}】. "
+                              "\n--> ".format(key_name))
+        new_value_display = new_value
+
+    # Input validation w/ dataframe
+    elif key in (7, 8):
+        ref_table = GP.select_table('department') if key == 7 else GP.select_table('specialisation')
+        print("\n" + ref_table[1])
+        new_value = input("\nEnter the ID of the new value for 【{}】. "
+                          "\n--> ".format(key_name))
+        while not new_value.isnumeric() or int(new_value) not in ref_table[0].iloc[:,0].tolist():
+            print("\U00002757 Please enter an ID from the table above.")
+            new_value = input("\nEnter the index [X] of the new value for 【{}】. "
+                              "\n--> ".format(key_name))
+        new_value_display = ref_table[0].iloc[int(new_value) - 1, 1]
+
+    # Input validation w/ hard-coded list
+    elif key == 9:
+        if doctor_df[1].loc['[9] Status'].tolist()[0] == 'active':
+            print("\U00002757 To deactivate a GP, please use the option on the section menu.")
+            return utils.display(next_dict)
+        else:
+            statuses = {'1': 'active',
+                        '2': 'inactive'}
+            usr_choice = input("\nEnter the index [X] of the new value for 【{}】.\n" 
+                            "  [ 1 ] active\n"
+                            "  [ 2 ] inactive\n\n"
+                            "--> ".format(key_name))
+            while not usr_choice.isnumeric() or int(usr_choice) not in range(1, len(statuses) + 1):
+                print("\U00002757 Please enter a number between 1 and {}".format(len(statuses)))
+                usr_choice = input("\nEnter the index [X] of the new value for 【{}】. "
+                                "\n--> ".format(key_name))
+            new_value = new_value_display = statuses[usr_choice]
+
 
     print("\n----------------------------------------------------\n"
-          "                ",'CONFIRM?', "\n")
-    print("Do you want to edit field [{}] with the new value '{}'?".format(key, new_value))
+          "                     ",'CONFIRM?', "\n")
+    print("Do you want to give field 【{}】 the new value '{}'?".format(key_name, new_value_display))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    y_n = int(input("\n--> "))
+    y_n = input("\n--> ")
 
-    while y_n not in (1,2):
+    while not y_n.isnumeric() or y_n not in ('1', '2'):
         print("\n\U00002757 Input not valid.")
-        y_n = int(input("\n--> "))
+        y_n = input("\n--> ")
     
-    if y_n == 1:
+    if y_n == '1':
         # Get raw df to edit
         df = doctor_df[0]
 
@@ -93,7 +191,7 @@ def view_edit_gp(next_dict):
         print("\n\U00002705 GP profile successfully updated.")
         return utils.display(next_dict)
         
-    elif y_n == 2:
+    elif y_n == '2':
         return utils.display(next_dict)
 
 
@@ -105,7 +203,7 @@ def retrieve_gp(type):
     df = GP.select_list(type)
     df_show = df[1]
     print("\n----------------------------------------------------\n"
-          "                ",'GP LIST', "\n")
+          "                     ",'GP LIST', "\n")
     print(df_show)
 
     choice = input("\nPlease select a GP ID. \n--> ")
@@ -157,29 +255,83 @@ def add_gp(next_dict):
     Adds a new GP.
     '''
     print("\n----------------------------------------------------\n"
-          "                ",'ENTER GP DETAILS', "\n")
+          "               ",'ENTER NEW GP DETAILS', "\n")
 
-    # TODO: Input validation (see patient registration in register_login_flow)
-    first_name = input('Please enter First Name: \n'
-    '--> ')
-    last_name = input('\nPlease enter Last Name: \n'
-    '--> ')
-    gender = input('\nPlease enter Gender: \n'
-    '--> ')
-    birth_date = input('\nPlease enter Birth Date: \n'
-    '--> ')
-    email = input('\nPlease enter Email: \n'
-    '--> ')
-    password_raw = input('\nPlease enter Password: \n'
-    '--> ')
-    working_days = input('\nPlease enter Working Days: \n'
-    '--> ')
+    # Input validation w/ utils
+    first_name = input('Please enter the GP\'s first name: \n--> ')
+    while not utils.validate_name(first_name):
+        first_name = input('\nPlease enter the GP\'s first name: \n--> ')
+    
+    # Input validation w/ utils
+    last_name = input('\nPlease enter the GP\'s last name: \n--> ')
+    while not utils.validate_name(last_name):
+        last_name = input('\nPlease enter the GP\'s last name: \n--> ')
 
-    # TODO: List out Depts and Specializations and allow choice
+    # Input validation w/ hard-coded list
+    genders = {'1': 'male',
+               '2': 'female',
+               '3': 'non binary',
+               '4': 'prefer not to say'}
+    usr_choice = input("\nPlease enter the index [X] of the GP's gender:\n" 
+                        "  [ 1 ] male\n"
+                        "  [ 2 ] female\n"
+                        "  [ 3 ] non binary\n"
+                        "  [ 4 ] prefer not to say\n\n"
+                        "--> ")
+    while not usr_choice.isnumeric() or int(usr_choice) not in range(1, len(genders) + 1):
+        print("\U00002757 Please enter a number between 1 and {}".format(len(genders)))
+        usr_choice = input("\nPlease enter the index [X] of the GP's gender: \n-->")
+    gender = genders[usr_choice]
 
-    # Default department and specialiations: 1
-    department_id = 1
-    specialisation_id = 1
+    # Input validation w/ utils
+    birth_date = input("\nPlease enter the GP's birth date (YYYY-MM-DD). \n--> ")
+    date_valid_format = utils.validate_date(birth_date)
+    while not date_valid_format or datetime.strptime(birth_date, "%Y-%m-%d") > datetime.now():
+        if date_valid_format and datetime.strptime(birth_date, "%Y-%m-%d") > datetime.now(): 
+            print("\U00002757 Birth date cannot be in the future!") 
+        birth_date = input("\nPlease enter the GP's birth date (YYYY-MM-DD). \n--> ")
+        date_valid_format = utils.validate_date(birth_date)
+
+    # Input validation w/ utils
+    email = input("\nPlease enter the GP\'s email: \n--> ")
+    while not utils.validate_email(email):
+        email = input("\nPlease enter the GP\'s email: \n--> ")
+
+    # Input validation w/ utils
+    password_raw = input("\nPlease enter the GP\'s password: \n--> ")
+    while not utils.validate_password(password_raw):
+        password_raw = input("\nPlease enter the GP\'s password: \n--> ")
+
+    # Input validation w/ hard-coded list
+    working_days = input("\nPlease enter the index [X] of the GP\'s working days.\n" 
+                         "  [ 0 ] Monday to Friday\n"
+                         "  [ 1 ] Tuesday to Saturday\n"
+                         "  [ 2 ] Wednesday to Sunday\n"
+                         "  [ 3 ] Thursday to Monday\n"
+                         "  [ 4 ] Friday to Tuesday\n"
+                         "  [ 5 ] Saturday to Wednesday\n"
+                         "  [ 6 ] Sunday to Thursday\n\n"
+                         "--> ")    
+    while not working_days.isnumeric() or int(working_days) not in range(0, 7):
+        print("\U00002757 Please enter a number between 0 and 6")
+        working_days = input("\nPlease enter the index [X] of the GP\'s working days."
+                             "\n--> ")
+
+    # Input validation w/ dataframe
+    ref_table = GP.select_table('department')
+    print("\n" + ref_table[1])
+    department_id = input("\nPlease enter the ID of the GP\'s department. \n--> ")
+    while not department_id.isnumeric() or int(department_id) not in ref_table[0].iloc[:,0].tolist():
+        print("\U00002757 Please enter an ID from the table above.")
+        department_id = input("\nPlease enter the ID of GP\'s department. \n--> ")
+
+    # Input validation w/ dataframe
+    ref_table = GP.select_table('specialisation')
+    print("\n" + ref_table[1])
+    specialisation_id = input("\nPlease enter the ID of the GP\'s department. \n--> ")
+    while not specialisation_id.isnumeric() or int(specialisation_id) not in ref_table[0].iloc[:,0].tolist():
+        print("\U00002757 Please enter an ID from the table above.")
+        specialisation_id = input("\nPlease enter the ID of GP\'s department. \n--> ")
 
     # Default status: active 
     status = 'active'
@@ -197,24 +349,24 @@ def add_gp(next_dict):
                 status=status)
 
     print("\n----------------------------------------------------\n"
-          "                ",'CONFIRM?', "\n")
+          "                     ",'CONFIRM?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    y_n = int(input("\n--> "))
+    y_n = input("\n--> ")
+
+    while not y_n.isnumeric() or y_n not in ('1', '2'):
+        print("\n\U00002757 Input not valid.")
+        y_n = input("\n--> ")
     
-    if y_n == 1:
+    if y_n == '1':
         # Insert new GP in db
         GP.insert(new_gp)
         print("\n\U00002705 Dr. {} has been registered.".format(last_name))
         return utils.display(next_dict)
         
-    elif y_n == 2:
+    elif y_n == '2':
         print("\n\U00002757 GP not added.")
-        return utils.display(next_dict)
-
-    else:
-        print("\n\U00002757 Input not valid.")
         return utils.display(next_dict)
 
 
@@ -233,24 +385,52 @@ def deactivate_gp(next_dict):
     gp_id = retrieve_gp('active')
 
     print("\n----------------------------------------------------\n"
-          "                ",'CONFIRM?', "\n")
-    print("Do you want to deactive GP with ID: {}?\n".format(gp_id))
+          "                     ",'CONFIRM?', "\n")
+    print("Do you want to deactivate GP with ID 【{}】?\n".format(gp_id))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    y_n = int(input("\n--> "))
+    y_n = input("\n--> ")
 
-    if y_n == 1:
-        GP.change_status(gp_id, 'inactive')
-        print("\n\U00002705 GP with ID [{}] has been deactivated.".format(gp_id))
+    while not y_n.isnumeric() or y_n not in ('1', '2'):
+        print("\n\U00002757 Input not valid.")
+        y_n = input("\n--> ")
+
+    if y_n == '1':
+
+        deactivate_status = GP.change_status(gp_id, 'inactive')
+
+        # Patients and appointments reallocated
+        if deactivate_status[0]: 
+            print("""\n\U00002705 GP with ID 【{}】 has been deactivated.
+   \U00002705 Patients reallocated successfully.
+   \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id))
+
+        # Patients reallocated | Appointments *not* reallocated
+        elif deactivate_status[1] == 'apps':
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated. 
+   \U00002705 Patients reallocated successfully.
+   \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
+                    .format(gp_id, deactivate_status[4]))
+
+        # Appointments reallocated | Patients *not* reallocated
+        elif deactivate_status[1] == 'patients':
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated. 
+   \U00002705 Upcoming appointments reallocated successfully.
+   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
+                    .format(gp_id, deactivate_status[2]))
+
+        # Patients and appointments *not* reallocated
+        elif deactivate_status[1] == 'both':
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated. 
+   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.
+   \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
+                    .format(gp_id, deactivate_status[2], deactivate_status[4]))
+
         return utils.display(next_dict)
 
-    elif y_n == 2:
+    elif y_n == '2':
         print("\n\U00002757 Deactivation cancelled.")
-        return utils.display(next_dict)
-
-    else:
-        print(("\n\U00002757 Input not valid."))
         return utils.display(next_dict)
 
 
@@ -269,49 +449,52 @@ def delete_gp(next_dict):
     gp_id = retrieve_gp('all')
 
     print("\n----------------------------------------------------\n"
-          "                ",'CONFIRM?', "\n")
-    print("Do you want to delete GP with ID: {}?\n".format(gp_id))
+          "                     ",'CONFIRM?', "\n")
+    print("Do you want to delete GP with ID 【{}】?\n".format(gp_id))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
-    y_n = int(input("\n--> "))
+    y_n = input("\n--> ")
 
-    while y_n not in (1, 2):
-        print(("\n\U00002757 Input not valid."))
-        y_n = int(input("\n--> "))
+    while not y_n.isnumeric() or y_n not in ('1', '2'):
+        print("\n\U00002757 Input not valid.")
+        y_n = input("\n--> ")
 
-    if y_n == 1:
+    if y_n == '1':
+
+        delete_status = GP.delete(gp_id)
+
         # Patients and appointments reallocated
-        if GP.delete(gp_id)[0]: 
-            print("""\n\U00002705 GP with ID {} has been deleted.
+        if delete_status[0]: 
+            print("""\n\U00002705 GP with ID 【{}】 has been deleted.
 \U00002705 Patients reallocated successfully.
-\U00002705 Appointments reallocated successfully.""".format(gp_id))
+   \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id))
 
-        # Patients reallocated | Appointment *not* reallocated
-        elif GP.delete(gp_id)[1] == 'apps':
-            print("""\n\U00002705 GP with ID {} has been deleted. 
+        # Patients reallocated | Appointments *not* reallocated
+        elif delete_status[1] == 'apps':
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
 \U00002705 Patients reallocated successfully.
-\U00002757 Appointments *NOT* reallocated due to conflict in the following appointments: {}"""
-                    .format(gp_id, GP.delete(gp_id)[4]))
+   \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
+                    .format(gp_id, delete_status[4]))
 
         # Appointments reallocated | Patients *not* reallocated
-        elif GP.delete(gp_id)[1] == 'patients':
-            print("""\n\U00002705 GP with ID {} has been deleted. 
-\U00002705 Appointments reallocated successfully.
+        elif delete_status[1] == 'patients':
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
+   \U00002705 Upcoming appointments reallocated successfully.
 \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
-                    .format(gp_id, GP.delete(gp_id)[2]))
+                    .format(gp_id, delete_status[2]))
 
-        # Patients and appointment *not* reallocated
-        elif GP.delete(gp_id)[1] == 'both':
-            print("""\n\U00002705 GP with ID {} has been deleted. 
+        # Patients and appointments *not* reallocated
+        elif delete_status[1] == 'both':
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
 \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.
-\U00002757 Appointments *NOT* reallocated due to conflict in the following appointments: {}"""
-                    .format(gp_id, GP.delete(gp_id)[2], GP.delete(gp_id)[4]))
+   \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
+                    .format(gp_id, delete_status[2], delete_status[4]))
 
         return utils.display(next_dict)
 
-    elif y_n == 2:
-        print("\n\U00002757 Action cancelled.")
+    elif y_n == '2':
+        print("\n\U00002757 Deletion cancelled.")
         return utils.display(next_dict)
 
 
