@@ -180,7 +180,7 @@ class Patient(User):
                            patient_last_name AS 'Last Name',  
                            patient_birth_date AS 'Birth Date'
                     FROM patient, gp
-                    WHERE patient_last_name = '{}'
+                    WHERE UPPER(patient_last_name) = UPPER('{}')
                     AND patient.gp_id = gp.gp_id
                     AND patient_status = 'confirmed'
                     ORDER BY "First Name" ASC
