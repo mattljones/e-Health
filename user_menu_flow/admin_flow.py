@@ -909,79 +909,63 @@ def pairing_gp(next_dict):
             except No_Patient_With_ID:
                 print("There is no patient with patient ID: {}, please input ID(s) of Patient(s) again".format(
                     patient_id))
-
-        print("You wish to update the GP for the following patients:\n"
-              "{}".format(patient_ids))
-        print("\n----------------------------------------------------\n"
-        "                ",'CONFIRM?', "\n")
-
-        while True:
-            try:
-                print("[ 1 ] Yes")
-                print("[ 2 ] No")
-                y_n = int(input("\n--> "))
-                break
-            except ValueError:
-                print('\nPlease input either 1 or 2!')
-
-        if y_n == 1:
-
-            for i in patient_ids:
-                new_gp_assign = Patient.change_gp('specific', i, int(new_gp_id_change))
-
-                if new_gp_assign[0]:
-                    print("\n\U00002705 Patient with ID {} has been allocated to {}.".format(i, gp_last_name))
-
-                else:
-                    print("\n\U00002757 This GP is full.")
-            return utils.display(next_dict)
-
-        elif y_n == 2:
-            print("\n\U00002757 Action cancelled.")
-            return utils.display(next_dict)
-
-        else:
-            print("\n\U00002757 Input not valid.")
-            return utils.display(next_dict)
     
     elif choice == 2:
 
         print("\n----------------------------------------------------\n"
           "                ",'ENTER LAST NAME', "\n")
-        last_name = input("Please enter the patient's last name:\n"
-        "--> ")
-        choose_patient('matching', patient_last_name=last_name)
-        patient_id = int(input('\nPlease choose a patient ID\n'
+        patient_last_name = str(input("Please enter the patient's last name:\n"
+        "--> "))
+        df = Patient.select_list('matching', patient_last_name)
+
+        if df[0].empty:
+            print("Patient with the surname '{}' doesn't exist!".format(patient_last_name))
+            return utils.display(next_dict)
+
+        print(df[1])
+
+        patient_ids = int(input('\nPlease choose a patient ID\n'
         '--> '))
 
-        print("\n----------------------------------------------------\n"
-        "                ",'CONFIRM?', "\n")
-        print("[ 1 ] Yes")
-        print("[ 2 ] No")
-        y_n = int(input("\n--> "))
+        patient_ids_from_df = df[0]['Patient ID'].tolist()
 
-        if y_n == 1:
-            new_gp = Patient.change_gp('specific', patient_id, new_gp_id=new_gp_id)
+        while patient_ids not in patient_ids_from_df:
+            print("Patient ID: {} is not a valid input, "
+                  "please input a patient ID from the list above".format(patient_ids))
+            patient_ids = int(input('\nPlease choose a patient ID\n'
+                                   '--> '))
+        patient_ids = list(map(int, str(patient_ids)))
+    print("You wish to update the GP for the following patient(s):\n"
+          "{}".format(patient_ids))
+    print("\n----------------------------------------------------\n"
+          "                ", 'CONFIRM?', "\n")
 
-            if new_gp[0]:
-                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
-                return utils.display(next_dict)
+    while True:
+        try:
+            print("[ 1 ] Yes")
+            print("[ 2 ] No")
+            y_n = int(input("\n--> "))
+            break
+        except ValueError:
+            print('\nPlease input either 1 or 2!')
+
+    if y_n == 1:
+
+        for i in patient_ids:
+            new_gp_assign = Patient.change_gp('specific', i, int(new_gp_id_change))
+
+            if new_gp_assign[0]:
+                print("\n\U00002705 Patient with ID {} has been allocated to {}.".format(i, gp_last_name))
 
             else:
                 print("\n\U00002757 This GP is full.")
-                return utils.display(next_dict)
-        
-        elif y_n == 2:
-            print("\n\U00002757 Action cancelled.")
-            return utils.display(next_dict)
 
-        else:
-            print("\n\U00002757 Input not valid.")
-            return utils.display(next_dict)
+    elif y_n == 2:
+        print("\n\U00002757 Action cancelled.")
 
     else:
         print("\n\U00002757 Input not valid.")
-        return utils.display(next_dict)
+    return utils.display(next_dict)
 
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
