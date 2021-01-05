@@ -1247,7 +1247,7 @@ def add_appointment(next_dict):
     "                ","EDIT THIS PATIENT'S APPOINTMENTS?", "\n")
     print('[ 1 ] Yes')
     print('[ 2 ] Choose Another Patient')
-    print('[ S ] Back to Patient Accounts Menu')
+    print('[ S ] Back to Manage Appointments Menu')
 
     edit_choice = input('\n--> ')
 
@@ -1262,7 +1262,7 @@ def add_appointment(next_dict):
 
     elif edit_choice in ('s', 'S'):
         del patient_id_choice
-        return utils.display(manage_patient_accounts_flow)
+        return utils.display(manage_appointment_flow)
 
     print("\n----------------------------------------------------\n"
             "             BOOK WITH REGISTERED GP ? \n")
