@@ -49,7 +49,7 @@ def view_edit_gp(next_dict):
 
     # Check if gp id already selected previously for reuse
     if 'gp_id_choice' not in globals():
-        choice = re_gp('all')
+        choice = retrieve_gp('all')
     else:
         global gp_id_choice
         choice = gp_id_choice
@@ -399,19 +399,24 @@ def view_edit_patient(next_dict):
     "                ",'EDIT THIS PATIENT?', "\n")
     print('[ 1 ] Yes')
     print('[ 2 ] Choose Another Patient')
-    edit_choice = int(input('--> '))
+    print('[ S ] Back to Patient Accounts Menu')
 
-    while edit_choice not in (1, 2):
+    edit_choice = input('\n--> ')
+
+    while edit_choice not in ('1', '2', 's', 'S'):
         print("\n\U00002757 Invalid entry, please try again")
-        edit_choice = int(input('\n--> '))
+        edit_choice = input('\n--> ')
 
-    if edit_choice == 2:
-
+    if edit_choice == '2':
         del patient_id_choice
         return view_edit_patient(next_dict)
 
+    elif edit_choice in ('s', 'S'):
+        del patient_id_choice
+        return utils.display(manage_patient_accounts_flow)
+
     else:
-        key = int(input("Choose a value to edit. \n--> "))
+        key = int(input("\nChoose a value to edit. \n--> "))
         new_value = input("\nChoose a new value to input. \n--> ") 
 
         print("\n----------------------------------------------------\n"
@@ -720,9 +725,15 @@ def pairing_gp(next_dict):
               "{}".format(patient_ids))
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
-        print("[ 1 ] Yes")
-        print("[ 2 ] No")
-        y_n = int(input("\n--> "))
+
+        while True:
+            try:
+                print("[ 1 ] Yes")
+                print("[ 2 ] No")
+                y_n = int(input("\n--> "))
+                break
+            except ValueError:
+                print('\nPlease input either 1 or 2!')
 
         if y_n == 1:
 
@@ -1230,16 +1241,22 @@ def add_appointment(next_dict):
     "                ","EDIT THIS PATIENT'S APPOINTMENTS?", "\n")
     print('[ 1 ] Yes')
     print('[ 2 ] Choose Another Patient')
-    edit_choice = int(input('--> '))
+    print('[ S ] Back to Patient Accounts Menu')
 
-    while edit_choice not in (1, 2):
+    edit_choice = input('\n--> ')
+
+    while edit_choice not in ('1', '2', 's', 'S'):
         print("\n\U00002757 Invalid entry, please try again")
-        edit_choice = int(input('\n--> '))
+        edit_choice = input('\n--> ')
 
-    if edit_choice == 2:
+    if edit_choice == '2':
         patient_id_choice = ''
         del patient_id_choice
         return add_appointment(next_dict)
+
+    elif edit_choice in ('s', 'S'):
+        del patient_id_choice
+        return utils.display(manage_patient_accounts_flow)
 
     print("\n----------------------------------------------------\n"
             "             BOOK WITH REGISTERED GP ? \n")
@@ -2083,7 +2100,7 @@ main_flow_admin = {
     "title": "ADMIN MAIN MENU",
     "type":"main",
     "1":("Manage GP Accounts", empty_method, manage_gp_accounts_flow),
-    "2":("Manage Patient Accounts", empty_method, manage_patient_accounts_flow ),
+    "2":("Manage Patient Accounts", empty_method, manage_patient_accounts_flow),
     "3":("Manage GP-Patient Pairings", empty_method, gp_patient_pair_flow),
     "4":("Manage GP Schedules", choose_gp, view_schedule_flow),
     "5":("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
