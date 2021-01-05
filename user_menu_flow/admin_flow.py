@@ -1045,7 +1045,7 @@ def remove_time_off_custom(next_dict):
     elif timeoff_type_input == '2':
         timeoff_type = 'time off'
     elif timeoff_type_input == '3':
-        timeoff_type = 'all time off'
+        timeoff_type = 'all time off (sick leave and time off)'
 
     # Prompt user for time off range
     start_date = utils.get_start_date()
@@ -1069,12 +1069,12 @@ def remove_time_off_custom(next_dict):
         # Remove timeoff of a specific type from db
         if timeoff_type_input in ('1', '2'):
             Schedule.delete_timeoff(gp_id_choice, 'custom', timeoff_type, start_date, end_date)
-            print("\n\U00002705 Time off ({}) successfully removed.".format(timeoff_type))
+            print("\n\U00002705 Time off ({}) successfully removed from {} to {}".format(timeoff_type, start_date, end_date))
 
         # Remove timeoff of both types from db
         elif timeoff_type_input == '3':
-            Schedule.delete_timeoff(gp_id_choice, 'custom', start_date, end_date)
-            print("\n\U00002705 All time off successfully removed.")
+            Schedule.delete_timeoff(gp_id=gp_id_choice, type='custom', timeoff_type=None, start_date=start_date, end_date=end_date)
+            print("\n\U00002705 All time off successfully removed from {} to {}.".format(start_date, end_date))
         
         # Proceed with next section
         return utils.display(next_dict)
@@ -1105,7 +1105,7 @@ def remove_time_off_all(next_dict):
     elif timeoff_type_input == '2':
         timeoff_type = 'time off'
     elif timeoff_type_input == '3':
-        timeoff_type = 'all time off'
+        timeoff_type = 'all time off (sick leave and time off)'
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1125,12 +1125,13 @@ def remove_time_off_all(next_dict):
         # Remove timeoff of a specific type from db
         if timeoff_type_input in ('1', '2'):
             Schedule.delete_timeoff(gp_id_choice, 'all', timeoff_type)
-            print("\n\U00002705 Time off successfully removed.")
+            print("\n\U00002705 Time off ({}) successfully removed.".format(timeoff_type))
 
         # Remove timeoff of both types from db
         elif timeoff_type_input == '3':
-            Schedule.delete_timeoff(gp_id_choice, 'all', 'sick leave')
-            Schedule.delete_timeoff(gp_id_choice, 'all', 'time off')
+            Schedule.delete_timeoff(gp_id_choice, 'all')
+            print("\n\U00002705 All time off successfully removed.")
+
         
         # Proceed with next section
         return utils.display(next_dict)
@@ -1891,8 +1892,8 @@ remove_time_off_final_actions = {
 remove_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
-    "1": ("All", remove_time_off_all, remove_time_off_final_actions),
-    "2": ("Custom", remove_time_off_custom, remove_time_off_final_actions)
+    "1": ("All (only in the future)", remove_time_off_all, remove_time_off_final_actions),
+    "2": ("Custom (future and past)", remove_time_off_custom, remove_time_off_final_actions)
 }
 
 appointment_conflict_final_actions = {
@@ -1917,9 +1918,9 @@ add_time_off_final_actions = {
 add_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
-    "1": ("Day", add_time_off_day, add_time_off_final_actions),
-    "2": ("Week", add_time_off_week, add_time_off_final_actions),
-    "3": ("Custom", add_time_off_custom, add_time_off_final_actions),
+    "1": ("Day (only in the future)", add_time_off_day, add_time_off_final_actions),
+    "2": ("Week (only in the future)", add_time_off_week, add_time_off_final_actions),
+    "3": ("Custom (future and past)", add_time_off_custom, add_time_off_final_actions),
 }
 
 view_time_off_final_actions = {
