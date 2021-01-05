@@ -7,11 +7,11 @@ import datetime
 
 # Switching path to master to get functions from utils folder
 # TODO get rid of pathlib once 'from system import utils as u' works
-# import sys
-# from pathlib import Path
-#
-# path_to_master_repo = Path(__file__).parents[1]
-# sys.path.insert(1, str(path_to_master_repo))
+import sys
+from pathlib import Path
+
+path_to_master_repo = Path(__file__).parents[1]
+sys.path.insert(1, str(path_to_master_repo))
 
 # Importing utility methods from the 'system' package
 from system import utils as u
