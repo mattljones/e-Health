@@ -159,7 +159,7 @@ def register_page(next_dict):
     dictionary as argument for utils.display function consistency.
     '''
     print("\n---------------------------------------------------- \n"
-        "                     REGISTER\n"
+        "                      REGISTER\n"
         "\nPlease, fill in the following form"
         "\nor enter '#' to go back to main page")
 
