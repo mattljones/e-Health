@@ -1899,7 +1899,7 @@ delete_patient_account_final_menu = {
 add_new_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Another Patient", confirm_another_patient, empty_dict),
+    "1": ("Confirm Another Patient", confirm_another_patient, empty_dict),
     "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
