@@ -99,30 +99,36 @@ def retrieve_gp(type):
     '''
     Shows the list of GPs and allows choice from that list.
     '''
+    # Prompt user for GP
     df = GP.select_list(type)
     df_show = df[1]
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
     print(df_show)
-
-    global gp_id_choice
-    gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+    
+    choice = input("\nPlease select a GP ID. \n--> ")
 
     valid = False
     while valid == False:
-        selected_gp = df[0].where(df[0]== gp_id_choice).dropna(how='all').dropna(axis=1)
 
-        if len(selected_gp.index) != 1 or gp_id_choice.isnumeric() == False:
+        if utils.validate(choice) == False or choice.isnumeric() == False:
             valid = False
             print("\U00002757 Invalid entry, please try again and enter your choice.")
-            gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+            choice = input("\nPlease select a GP ID. \n--> ")
 
-        else:
-            gp_id_choice = int(gp_id_choice)
-            valid = True
+        else :
+            selected_gp = df[0].loc[df[0]['GP ID'] == int(choice)]
 
-    return gp_id_choice
+            if len(selected_gp.index) != 1 :
+                valid = False
+                print("\U00002757 Invalid entry, please try again and enter your choice.")
+                choice = input("\nPlease select a GP ID. \n--> ")
 
+            else:
+                choice = int(choice)
+                valid = True
+
+    return choice
 
 
 def view_same_gp(next_dict):
@@ -376,9 +382,11 @@ def view_edit_patient(next_dict):
     }
 
     if 'patient_id_choice' not in globals():
-        choice = retrieve_patient()
-    else:
         global patient_id_choice
+        patient_id_choice = retrieve_patient()
+        choice = patient_id_choice
+    
+    else:
         choice = patient_id_choice
         
     selected_patient = Patient.select(choice)
@@ -1178,9 +1186,11 @@ def add_appointment(next_dict):
     Choose the appointment from a day of available slots.
     '''
     if 'patient_id_choice' not in globals():
-        choice = retrieve_patient()
-    else:
         global patient_id_choice
+        patient_id_choice = retrieve_patient()
+        choice = patient_id_choice
+    
+    else:
         choice = patient_id_choice
     
     selected_patient = Patient.select(choice)
@@ -1486,31 +1496,17 @@ def view_appointment_by_patient(next_dict):
     '''
     Find a patient's upcoming appointments.
     '''
-    # Create a shortlist by last name
-    print("\n----------------------------------------------------\n"
-          "                ",'SELECT PATIENT', "\n")
 
-    valid = False
-
-    while valid == False :
-        last_name = input("\nPlease enter the patient's last name:\n--> ")
-        
-        choose_patient('matching', patient_last_name=last_name)
-
-        # Select ID of the patient of interest 
-        selected_patient_id = input('\nPlease choose a patient ID \nOr enter \'#\' to change the patient\'s last name \n--> ')
-
-        if selected_patient_id == '#':
-            valid = False
-
-        elif selected_patient_id.isnumeric() and utils.validate(selected_patient_id) :
-            valid = True
-
-        else:
-            print("\U00002757 Invalid entry, please try again and enter your choice.")
+    if 'patient_id_choice' not in globals():
+        global patient_id_choice
+        patient_id_choice = retrieve_patient()
+        choice = patient_id_choice
+    
+    else:
+        choice = patient_id_choice
     
     # Select all upcoming appointments for this patient ID
-    appts = Appointment.select_patient('upcoming', selected_patient_id)
+    appts = Appointment.select_patient('upcoming', choice)
 
     # Print the appointments information
     print(appts[1])
@@ -1529,6 +1525,9 @@ def view_appointment_by_another_patient(next_dict):
     '''
     Allows cycling back to allow deletion of more appointments for another patient.
     '''
+    global patient_id_choice
+    patient_id_choice = ''
+    del patient_id_choice
     return view_appointment_by_patient(appointment_viewed_patient_final_actions)
     
 
@@ -1536,37 +1535,11 @@ def view_appointment_by_gp(next_dict):
     '''
     Find a GP's appointments after a certain date and display them in day/week view.
     '''
-    # Prompt user for GP
-    df = GP.select_list('all')
-    df_show = df[1]
-    print("\n----------------------------------------------------\n"
-          "                ",'GP LIST', "\n")
-    print(df_show)
-    
-    global gp_id_choice
-    gp_id_choice = input("\nPlease select a GP ID. \n--> ")
 
-    valid = False
-    while valid == False:
+    if 'gp_id_choice' not in globals():
+        global gp_id_choice
+        gp_id_choice = retrieve_gp('all')
 
-        if utils.validate(gp_id_choice) == False or gp_id_choice.isnumeric() == False:
-            valid = False
-            print("\U00002757 Invalid entry, please try again and enter your choice.")
-            gp_id_choice = input("\nPlease select a GP ID. \n--> ")
-
-        else :
-            selected_gp = df[0].loc[df[0]['GP ID'] == int(gp_id_choice)]
-
-            if len(selected_gp.index) != 1 :
-                valid = False
-                print("\U00002757 Invalid entry, please try again and enter your choice.")
-                gp_id_choice = input("\nPlease select a GP ID. \n--> ")
-
-            else:
-                gp_id_choice = int(gp_id_choice)
-                valid = True
-
-    
     # Prompt user for starting date
     print("\n----------------------------------------------------\n"
       "                ",'SELECT DATE', "\n")
@@ -1596,15 +1569,34 @@ def view_appointment_by_gp(next_dict):
     return utils.display(next_dict)
 
 
+def view_appointment_by_same_gp(next_dict):
+    '''
+    Allows cycling back to allow deletion of more appointments for the same gp.
+    '''
+    return view_appointment_by_gp(appointment_viewed_gp_final_actions)
+
+
+def view_appointment_by_another_gp(next_dict):
+    '''
+    Allows cycling back to allow deletion of more appointments for another gp.
+    '''
+    global gp_id_choice
+    gp_id_choice = ''
+    del gp_id_choice
+    return view_appointment_by_gp(appointment_viewed_gp_final_actions)
+
+
 def delete_appointment_gp(next_dict):
     '''
     Allows deleting of appointments for a specific GP in a specified data range.
     '''
 
     if 'gp_id_choice' not in globals():
-        gp_id = retrieve_gp('all')
-    else:
         global gp_id_choice
+        gp_id_choice = retrieve_gp('all')
+        gp_id = gp_id_choice
+        
+    else:
         gp_id = gp_id_choice
 
     print("\n----------------------------------------------------\n"
@@ -1668,9 +1660,11 @@ def delete_appointment_patient(next_dict):
     '''
 
     if 'patient_id_choice' not in globals():
-        patient_id = retrieve_patient()
-    else:
         global patient_id_choice
+        patient_id_choice = retrieve_patient()
+        patient_id = patient_id_choice
+    
+    else:
         patient_id = patient_id_choice
 
     print("\n----------------------------------------------------\n"
@@ -2003,7 +1997,7 @@ appointment_deleted_gp_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Delete Another GP's Appointments", delete_appointment_another_gp, empty_dict),
-    "2": ("Search by Patient", view_appointment_by_patient, empty_dict),
+    "2": ("Search by Patient", view_appointment_by_another_patient, empty_dict),
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
@@ -2012,40 +2006,40 @@ appointment_deleted_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Delete Another Patient's Appointments", delete_appointment_another_patient, empty_dict),
-    "2": ("Search by GP", view_appointment_by_gp, empty_dict),
+    "2": ("Search by GP", view_appointment_by_another_gp, empty_dict),
     "3": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 appointment_viewed_gp_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Another GP's Appointments", view_appointment_by_gp, empty_dict),
+    "1": ("View Another GP's Appointments", view_appointment_by_another_gp, empty_dict),
     "2": ("Delete This GP's Appointments", delete_appointment_gp, empty_dict),
-    "3": ("Search by Patient", view_appointment_by_patient, empty_dict),
+    "3": ("Search by Patient", view_appointment_by_another_patient, empty_dict),
     "4": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 appointment_viewed_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Another Patient's Appointments", view_appointment_by_patient, empty_dict),
+    "1": ("View Another Patient's Appointments", view_appointment_by_another_patient, empty_dict),
     "2": ("Delete This Patient's Appointments", delete_appointment_patient, empty_dict),
-    "3": ("Search by GP", view_appointment_by_gp, empty_dict),
+    "3": ("Search by GP", view_appointment_by_another_gp, empty_dict),
     "4": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 delete_appointment_flow = {
     "title": "DELETE UPCOMING APPOINTMENTS",
     "type": "sub",
-    "1": ("Patient", delete_appointment_patient, appointment_deleted_patient_final_actions),
-    "2": ("GP", delete_appointment_gp, appointment_deleted_gp_final_actions)
+    "1": ("Patient", delete_appointment_another_patient, appointment_deleted_patient_final_actions),
+    "2": ("GP", delete_appointment_another_gp, appointment_deleted_gp_final_actions)
 }
 
 view_appointment_flow = {
     "title": "VIEW UPCOMING APPOINTMENTS",
     "type": "sub",
-    "1": ("Search By Patient", view_appointment_by_patient, appointment_viewed_patient_final_actions),
-    "2": ("Search By GP", view_appointment_by_gp, appointment_viewed_gp_final_actions)
+    "1": ("Search By Patient", view_appointment_by_another_patient, appointment_viewed_patient_final_actions),
+    "2": ("Search By GP", view_appointment_by_another_gp, appointment_viewed_gp_final_actions)
 }
 
 gp_availability_error_final_actions = {
@@ -2069,7 +2063,7 @@ manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
     "type": "sub",
     "1": ("View Appointments", empty_method, view_appointment_flow),
-    "2": ("Add a New Appointment", add_appointment, appointment_made_final_actions),
+    "2": ("Add a New Appointment", add_another_appointment_diff_patient, appointment_made_final_actions),
     "3": ("Delete Upcoming Appointments", empty_method, delete_appointment_flow)
 }
 
