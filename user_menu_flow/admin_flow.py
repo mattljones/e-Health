@@ -49,7 +49,7 @@ def view_edit_gp(next_dict):
 
     # Check if gp id already selected previously for reuse
     if 'gp_id_choice' not in globals():
-        choice = retrieve_gp('all')
+        choice = re_gp('all')
     else:
         global gp_id_choice
         choice = gp_id_choice
@@ -104,8 +104,23 @@ def retrieve_gp(type):
     print("\n----------------------------------------------------\n"
           "                ",'GP LIST', "\n")
     print(df_show)
+
     global gp_id_choice
-    gp_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+
+    valid = False
+    while valid == False:
+        selected_gp = df[0].where(df[0]== gp_id_choice).dropna(how='all').dropna(axis=1)
+
+        if len(selected_gp.index) != 1 or gp_id_choice.isnumeric() == False:
+            valid = False
+            print("\U00002757 Invalid entry, please try again and enter your choice.")
+            gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+
+        else:
+            gp_id_choice = int(gp_id_choice)
+            valid = True
+
     return gp_id_choice
 
 
@@ -124,6 +139,7 @@ def view_another_gp(next_dict):
     deleting the global variable so a different GP can be viewed.
     '''
     global gp_id_choice
+    gp_id_choice = ''
     del gp_id_choice
     return view_edit_gp(view_edit_gp_accounts_final_menu)
 
@@ -1502,18 +1518,28 @@ def view_appointment_by_gp(next_dict):
           "                ",'GP LIST', "\n")
     print(df_show)
     
+    global gp_id_choice
+    gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+
     valid = False
+    while valid == False:
 
-    while valid == False :
-        global gp_id_choice
-        gp_id_choice = input("\nPlease select a GP ID. \n--> ")
-
-        if gp_id_choice.isnumeric() and utils.validate(gp_id_choice):
-            valid = True
-            gp_id_choice = int(gp_id_choice)
-
-        else:
+        if utils.validate(gp_id_choice) == False or gp_id_choice.isnumeric() == False:
+            valid = False
             print("\U00002757 Invalid entry, please try again and enter your choice.")
+            gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+
+        else :
+            selected_gp = df[0].loc[df[0]['GP ID'] == int(gp_id_choice)]
+
+            if len(selected_gp.index) != 1 :
+                valid = False
+                print("\U00002757 Invalid entry, please try again and enter your choice.")
+                gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+
+            else:
+                gp_id_choice = int(gp_id_choice)
+                valid = True
 
     
     # Prompt user for starting date
