@@ -7,7 +7,7 @@ launch_art = '''
 |   ██╔══╝╚════╝██╔══██║██╔══╝  ██╔══██║██║     ██║   ██╔══██║  |
 |   ███████╗    ██║  ██║███████╗██║  ██║███████╗██║   ██║  ██║  |
 |   ╚══════╝    ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝  ╚═╝  |
-|          This COMP0066 project was created with \u2764\ufe0f by          |
+|          This COMP0066 project was created with \u2764\ufe0f by         |
 |       Aleksei Sukhov, Giuseppe Baldini, Matthew Jones,        |
 |    Théo Reignier, Thomas Smith, Zongyue Hou & Manuel Buri     |
 |                                                               |
