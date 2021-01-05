@@ -860,8 +860,7 @@ def add_time_off_day(next_dict):
 
     # Add one day to start date
     s = datetime.strptime(start_date, "%Y-%m-%d")
-    e = s + timedelta(days=1) 
-    end_date = datetime.strftime(e, "%Y-%m-%d")  
+    end_date = datetime.strftime(s, "%Y-%m-%d")
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -878,10 +877,19 @@ def add_time_off_day(next_dict):
             user_confirmation = input("\n--> ")
 
     if user_confirmation == '1':
-        # Add timeoff to db
-        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
-        return utils.display(next_dict)
+        # Add timeoff to db only if there is no conflict with an existing booking
+        while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
+            print(
+                "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+            print("\n【Conflicts Table】")
+            print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
+            start_date = utils.get_start_date()
+            s = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date = datetime.strftime(s, "%Y-%m-%d")
+        else:
+            Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+            print("\n\U00002705 Time off ({}) successfully added on {}.".format(timeoff_type, start_date))
+            return utils.display(next_dict)
         
     else:
         # Return to main add time off menu
@@ -914,7 +922,7 @@ def add_time_off_week(next_dict):
 
     # Add one day to start date
     s = datetime.strptime(start_date, "%Y-%m-%d")
-    e = s + timedelta(weeks=1) 
+    e = s + timedelta(days=6)
     end_date = datetime.strftime(e, "%Y-%m-%d")  
 
     # Confirmation step
@@ -932,11 +940,20 @@ def add_time_off_week(next_dict):
             user_confirmation = input("\n--> ")
 
     if user_confirmation == '1':
-        # Add timeoff to db
-        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
-        return utils.display(next_dict)
-        
+        # Add timeoff to db only if there is no conflict with an existing booking
+        while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
+            print(
+                "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+            print("\n【Conflicts Table】")
+            print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
+            start_date = utils.get_start_date()
+            e = s + timedelta(days=6)
+            end_date = datetime.strftime(e, "%Y-%m-%d")
+        else:
+            Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+            print("\n\U00002705 Time off ({}) successfully added for one week starting on {}.".format(timeoff_type, start_date))
+            return utils.display(next_dict)
+
     else:
         # Return to main add time off menu
         return add_time_off(next_dict)
@@ -982,10 +999,18 @@ def add_time_off_custom(next_dict):
             user_confirmation = input("\n--> ")
 
     if user_confirmation == '1':
-        # Add timeoff to db
-        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
-        return utils.display(next_dict)
+        # Add timeoff to db only if there is no conflict with an existing booking
+        while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
+            print(
+                "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+            print("\n【Conflicts Table】")
+            print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
+            start_date = utils.get_start_date()
+            end_date = utils.get_end_date()
+        else:
+            Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+            print("\n\U00002705 Time off ({}) successfully added from {} to {}.".format(timeoff_type, start_date, end_date))
+            return utils.display(next_dict)
 
     else:
         # Return to main add time off menu
