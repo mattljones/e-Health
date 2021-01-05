@@ -720,9 +720,15 @@ def pairing_gp(next_dict):
               "{}".format(patient_ids))
         print("\n----------------------------------------------------\n"
         "                ",'CONFIRM?', "\n")
-        print("[ 1 ] Yes")
-        print("[ 2 ] No")
-        y_n = int(input("\n--> "))
+
+        while True:
+            try:
+                print("[ 1 ] Yes")
+                print("[ 2 ] No")
+                y_n = int(input("\n--> "))
+                break
+            except ValueError:
+                print('\nPlease input either 1 or 2!')
 
         if y_n == 1:
 
