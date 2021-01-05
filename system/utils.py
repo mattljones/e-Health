@@ -453,7 +453,6 @@ def get_end_date():
             end_date = input("\n--> ")
 
 
-# NOTE: To test
 def get_date():
     '''
     Asks user to input a start date
@@ -478,7 +477,6 @@ def get_date():
             date = input("\n--> ")
 
 
-# NOTE: To test
 def end_date(start_date):
     '''
     Get a date that is equal or later than specified start_date.

@@ -781,7 +781,7 @@ def view_schedule_day(next_dict):
     '''
     View a GP's current schedule for a day.
     '''    
-    start_date = utils.get_start_date()
+    start_date = utils.get_date()
     sched = Schedule.select(gp_id_choice, 'day', start_date)
     print("\n----------------------------------------------------\n"
           "                ",'DAILY SCHEDULE', "\n")
@@ -794,7 +794,7 @@ def view_schedule_week(next_dict):
     '''
     View a GP's current schedule for a week.
     '''    
-    start_date = utils.get_start_date()
+    start_date = utils.get_date()
     sched = Schedule.select(gp_id_choice, 'week', start_date)
     print("\n----------------------------------------------------\n"
           "                ",'WEEKLY SCHEDULE', "\n")
@@ -1005,8 +1005,8 @@ def add_time_off_custom(next_dict):
         timeoff_type = 'time off'
 
     # Prompt user for time off range
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
+    start_date = utils.get_date()
+    end_date = utils.end_date(start_date)
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1029,8 +1029,8 @@ def add_time_off_custom(next_dict):
                 "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
             print("\n【Conflicts Table】")
             print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
-            start_date = utils.get_start_date()
-            end_date = utils.get_end_date()
+            start_date = utils.get_date()
+            end_date = utils.end_date(start_date)
         else:
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
             print("\n\U00002705 Time off ({}) successfully added from {} to {}.".format(timeoff_type, start_date, end_date))
@@ -1815,21 +1815,21 @@ delete_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Delete Another GP", delete_another_gp, empty_dict),
-    "2": ("Section Menu", gp_account_section_menu, empty_dict)
+    "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 deactivate_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Deactivate Another GP", deactivate_another_gp, empty_dict),
-    "2": ("Section Menu", gp_account_section_menu, empty_dict)
+    "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 add_new_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Add Another GP", add_another_gp, empty_dict),
-    "2": ("Section Menu", gp_account_section_menu, empty_dict)
+    "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 view_edit_gp_accounts_final_menu = {
@@ -1837,7 +1837,7 @@ view_edit_gp_accounts_final_menu = {
     "type": "sub",
     "1": ("View/Modify Same GP", view_same_gp, empty_dict),
     "2": ("View/Modify Another GP", view_another_gp, empty_dict),
-    "3": ("Section Menu", gp_account_section_menu, empty_dict)
+    "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 manage_gp_accounts_flow = {
@@ -1855,14 +1855,14 @@ delete_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Delete Another Patient", delete_another_patient, empty_dict),
-    "2": ("Section Menu", patient_account_section_menu, empty_dict)
+    "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 add_new_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Add Another Patient", confirm_another_patient, empty_dict),
-    "2": ("Section Menu", patient_account_section_menu, empty_dict)
+    "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 view_edit_patient_accounts_final_menu = {
@@ -1870,7 +1870,7 @@ view_edit_patient_accounts_final_menu = {
     "type": "sub",
     "1": ("View/Modify Same Patient", view_same_patient, empty_dict),
     "2": ("Patient Search Page", view_another_patient, empty_dict),
-    "3": ("Section Menu", patient_account_section_menu, empty_dict)
+    "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 manage_patient_accounts_flow = {
@@ -1905,14 +1905,14 @@ remove_time_off_final_actions = {
     "2": ("Manage Upcoming Time Off", manage_more_time_off, empty_dict),
     "3": ("Manage GP Availability", manage_more_availability, empty_dict),
     "4": ("Choose a different GP", choose_another_gp, empty_dict),
-    "5": ("Section Menu", schedules_section_menu, empty_dict)
+    "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
 remove_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
-    "1": ("All (only in the future)", remove_time_off_all, remove_time_off_final_actions),
-    "2": ("Custom (future and past)", remove_time_off_custom, remove_time_off_final_actions)
+    "1": ("All (future)", remove_time_off_all, remove_time_off_final_actions),
+    "2": ("Custom (past and future)", remove_time_off_custom, remove_time_off_final_actions)
 }
 
 appointment_conflict_final_actions = {
@@ -1922,7 +1922,7 @@ appointment_conflict_final_actions = {
     "2": ("Manage Upcoming Time Off", manage_more_time_off, empty_dict),
     "3": ("Manage GP Availability", manage_more_availability, empty_dict),
     "4": ("Choose a different GP", choose_another_gp, empty_dict),
-    "5": ("Section Menu", schedules_section_menu, empty_dict)
+    "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
 add_time_off_final_actions = {
@@ -1931,15 +1931,15 @@ add_time_off_final_actions = {
     "1": ("Add More Time Off", add_time_off, empty_dict),
     "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
     "3": ("Choose a different GP", choose_another_gp, empty_dict),
-    "4": ("Section Menu", schedules_section_menu, empty_dict)
+    "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
 add_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
-    "1": ("Day (only in the future)", add_time_off_day, add_time_off_final_actions),
-    "2": ("Week (only in the future)", add_time_off_week, add_time_off_final_actions),
-    "3": ("Custom (future and past)", add_time_off_custom, add_time_off_final_actions),
+    "1": ("Day (future)", add_time_off_day, add_time_off_final_actions),
+    "2": ("Week (future)", add_time_off_week, add_time_off_final_actions),
+    "3": ("Custom (past and future)", add_time_off_custom, add_time_off_final_actions),
 }
 
 view_time_off_final_actions = {
@@ -1949,7 +1949,7 @@ view_time_off_final_actions = {
     "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
     "3": ("Manage GP Availability", manage_more_availability, empty_dict),
     "4": ("Choose a different GP", choose_another_gp, empty_dict),
-    "5": ("Section Menu", schedules_section_menu, empty_dict)
+    "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
 manage_time_off_flow = {
@@ -1973,7 +1973,7 @@ view_schedule_final_actions = {
     "1": ("Modify GP Availability", empty_method, manage_availability_flow),
     "2": ("View a Different Time Period", view_another_schedule, empty_dict),
     "3": ("Choose a different GP", choose_another_gp, empty_dict),
-    "4": ("Section Menu", schedules_section_menu, empty_dict)
+    "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
 schedule_length_flow = {
@@ -2047,7 +2047,7 @@ gp_availability_error_final_actions = {
     "type": "sub",
     "1": ("Try Again For the Same Patient", add_another_appointment_same_patient, empty_dict),
     "2": ("Add Another Appointment for a Different Patient", add_another_appointment_diff_patient, empty_dict),
-    "3": ("Section Menu", appointments_section_menu, empty_dict)
+    "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 appointment_made_final_actions = {
@@ -2055,7 +2055,7 @@ appointment_made_final_actions = {
     "type": "sub",
     "1": ("Add Another Appointment For This Patient", add_another_appointment_same_patient, empty_dict),
     "2": ("Add Appointment For Another Patient", add_another_appointment_diff_patient, empty_dict),
-    "3": ("Section Menu", appointments_section_menu, empty_dict)
+    "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 
