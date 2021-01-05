@@ -1883,7 +1883,7 @@ manage_patient_accounts_flow = {
     "title": "MANAGE PATIENT ACCOUNTS",
     "type": "sub",
     "1":("View/Edit Patient Details", view_edit_patient, view_edit_patient_accounts_final_menu),
-    "2":("Add New Patient Account", confirm_patient, add_new_patient_account_final_menu),
+    "2":("Confirm Patient Accounts", confirm_patient, add_new_patient_account_final_menu),
     "3":("Delete Patient Account", delete_patient, delete_patient_account_final_menu)
 }
 
