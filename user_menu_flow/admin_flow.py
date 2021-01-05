@@ -1047,8 +1047,8 @@ def remove_time_off_custom(next_dict):
         timeoff_type = 'all time off (sick leave and time off)'
 
     # Prompt user for time off range
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
+    start_date = utils.get_date()
+    end_date = utils.end_date(start_date)
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
