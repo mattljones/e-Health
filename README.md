@@ -1,7 +1,7 @@
 # COMP0066_Coursework
 
 - [COMP0066_Coursework](#comp0066_coursework)
-  - [Documentaion](#documentaion)
+  - [Documentation](#documentation)
  
 
 By using this project, run `python e_health_main.py`.
@@ -19,8 +19,8 @@ SUM:                            34           1276           1918           2899
 -------------------------------------------------------------------------------
 ```
 
-## Documentaion
+## Documentation
 
-- [Developing Guidence](/docs/developing.md)
+- [Developing Guidance](/docs/developing.md)
 - [Testing accounts' data](/docs/test_data.md)
 - [Class Document](/docs/classes.md)
