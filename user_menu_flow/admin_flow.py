@@ -678,7 +678,6 @@ def pairing_gp(next_dict):
             or gp_list[0][gp_list[0]['GP ID'] == int(new_gp_id_change)].empty == True:
         print("\nInvalid input or non-existent GP id above, please try again!")
         new_gp_id_change = input("--> ")
-
     gp_last_name = gp_list[0].iat[gp_list[0][gp_list[0]['GP ID'] == int(new_gp_id_change)].index.tolist()[0], 1]
 
     while True:
