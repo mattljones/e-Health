@@ -1998,7 +1998,7 @@ appointment_deleted_gp_final_actions = {
     "type": "sub",
     "1": ("Delete Another GP's Appointments", delete_appointment_another_gp, empty_dict),
     "2": ("Search by Patient", view_appointment_by_another_patient, empty_dict),
-    "3": ("Section Menu", appointments_section_menu, empty_dict)
+    "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 
@@ -2007,7 +2007,7 @@ appointment_deleted_patient_final_actions = {
     "type": "sub",
     "1": ("Delete Another Patient's Appointments", delete_appointment_another_patient, empty_dict),
     "2": ("Search by GP", view_appointment_by_another_gp, empty_dict),
-    "3": ("Section Menu", appointments_section_menu, empty_dict)
+    "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 appointment_viewed_gp_final_actions = {
@@ -2016,7 +2016,7 @@ appointment_viewed_gp_final_actions = {
     "1": ("View Another GP's Appointments", view_appointment_by_another_gp, empty_dict),
     "2": ("Delete This GP's Appointments", delete_appointment_gp, empty_dict),
     "3": ("Search by Patient", view_appointment_by_another_patient, empty_dict),
-    "4": ("Section Menu", appointments_section_menu, empty_dict)
+    "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 appointment_viewed_patient_final_actions = {
@@ -2025,7 +2025,7 @@ appointment_viewed_patient_final_actions = {
     "1": ("View Another Patient's Appointments", view_appointment_by_another_patient, empty_dict),
     "2": ("Delete This Patient's Appointments", delete_appointment_patient, empty_dict),
     "3": ("Search by GP", view_appointment_by_another_gp, empty_dict),
-    "4": ("Section Menu", appointments_section_menu, empty_dict)
+    "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 delete_appointment_flow = {
