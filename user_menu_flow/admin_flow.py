@@ -848,14 +848,6 @@ def choose_another_gp(next_dict):
     return choose_gp(view_schedule_flow)
 
 
-def appointments_shortcut(next_dict):
-    '''
-    Allows the viewing of appointments (in sub-menu 5) from the manage_availability_flow
-    (in sub-menu 4). 
-    '''
-    return utils.display(view_appointment_by_gp)
-
-
 def view_time_off(next_dict):
     '''
     View a GP's current time off.
@@ -1078,6 +1070,7 @@ def remove_time_off(next_dict):
     Returns menu to remove a custom amount of time off to a GP's schedule.
     '''
     return utils.display(remove_time_off_flow)
+
 
 def remove_time_off_custom(next_dict):
     '''
@@ -1546,13 +1539,6 @@ def view_appointment_by_patient(next_dict):
     return utils.display(next_dict)
 
 
-def view_appointment_by_same_patient(next_dict):
-    '''
-    Allows cycling back to allow deletion of more appointments for the same patient.
-    '''
-    return view_appointment_by_patient(appointment_viewed_patient_final_actions)
-
-
 def view_appointment_by_another_patient(next_dict):
     '''
     Allows cycling back to allow deletion of more appointments for another patient.
@@ -1650,7 +1636,7 @@ def delete_appointment_gp(next_dict):
     # Week
     elif date_range == 2:
         s = datetime.strptime(start, "%Y-%m-%d")
-        e = s + timedelta(weeks=1) 
+        e = s + timedelta(days=6)
         end = datetime.strftime(e, "%Y-%m-%d")   
 
     # Custom
@@ -1718,7 +1704,7 @@ def delete_appointment_patient(next_dict):
     # Week
     elif date_range == 2:
         s = datetime.strptime(start, "%Y-%m-%d")
-        e = s + timedelta(weeks=1) 
+        e = s + timedelta(days=6)
         end = datetime.strftime(e, "%Y-%m-%d")   
 
     # Custom
@@ -1762,6 +1748,7 @@ def delete_appointment_another_gp(next_dict):
     gp_id_choice = ''
     del gp_id_choice
     return delete_appointment_gp(next_dict)
+
 
 
 def delete_appointment_another_patient(next_dict):
@@ -1947,16 +1934,6 @@ remove_time_off_flow = {
     "2": ("Custom (past and future)", remove_time_off_custom, remove_time_off_final_actions)
 }
 
-appointment_conflict_final_actions = {
-    "title": "NEXT ACTIONS",
-    "type": "sub",
-    "1": ("Try Adding Again", add_time_off, empty_dict),
-    "2": ("Manage Upcoming Time Off", manage_more_time_off, empty_dict),
-    "3": ("Manage GP Availability", manage_more_availability, empty_dict),
-    "4": ("Choose a different GP", choose_another_gp, empty_dict),
-    "S": ("Section Menu", schedules_section_menu, empty_dict)
-}
-
 add_time_off_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
@@ -1995,14 +1972,14 @@ manage_time_off_flow = {
 manage_availability_flow = {
     "title": "VIEW AND MANAGE AVAILABILITY",
     "type": "sub",
-    "1": ("View Upcoming Appointments", appointments_shortcut, empty_dict),
+    "1": ("View Upcoming Appointments", view_appointment_by_same_gp, empty_dict),
     "2": ("Manage Upcoming Time Off", empty_method, manage_time_off_flow)
 }
 
 view_schedule_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Modify GP Availability", empty_method, manage_availability_flow),
+    "1": ("Modify GP Availability", empty_method, manage_time_off_flow),
     "2": ("View a Different Time Period", view_another_schedule, empty_dict),
     "3": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
@@ -2046,7 +2023,7 @@ appointment_viewed_gp_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("View Another GP's Appointments", view_appointment_by_another_gp, empty_dict),
-    "2": ("Delete This GP's Appointments", delete_appointment_gp, empty_dict),
+    "2": ("Delete This GP's Appointments", delete_appointment_gp, appointment_deleted_gp_final_actions),
     "3": ("Search by Patient", view_appointment_by_another_patient, empty_dict),
     "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
@@ -2055,8 +2032,8 @@ appointment_viewed_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("View Another Patient's Appointments", view_appointment_by_another_patient, empty_dict),
-    "2": ("Delete This Patient's Appointments", delete_appointment_patient, empty_dict),
-    "3": ("Search by GP", view_appointment_by_another_gp, empty_dict),
+    "2": ("Delete This Patient's Appointments", delete_appointment_patient, appointment_deleted_patient_final_actions),
+    "3": ("Search by GP", view_appointment_by_gp, appointment_viewed_gp_final_actions),
     "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
@@ -2074,13 +2051,6 @@ view_appointment_flow = {
     "2": ("Search By GP", view_appointment_by_another_gp, appointment_viewed_gp_final_actions)
 }
 
-gp_availability_error_final_actions = {
-    "title": "NEXT ACTIONS",
-    "type": "sub",
-    "1": ("Try Again For the Same Patient", add_another_appointment_same_patient, empty_dict),
-    "2": ("Add Another Appointment for a Different Patient", add_another_appointment_diff_patient, empty_dict),
-    "S": ("Section Menu", appointments_section_menu, empty_dict)
-}
 
 appointment_made_final_actions = {
     "title": "NEXT ACTIONS",
