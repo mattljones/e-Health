@@ -1873,8 +1873,8 @@ add_new_gp_account_final_menu = {
 view_edit_gp_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View and Mdify Same GP", view_same_gp, empty_dict),
-    "2": ("View and Mdify Another GP", view_another_gp, empty_dict),
+    "1": ("View and Modify Same GP", view_same_gp, empty_dict),
+    "2": ("View and Modify Another GP", view_another_gp, empty_dict),
     "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
@@ -1906,7 +1906,7 @@ add_new_patient_account_final_menu = {
 view_edit_patient_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View and Mdify Same Patient", view_same_patient, empty_dict),
+    "1": ("View and Modify Same Patient", view_same_patient, empty_dict),
     "2": ("Patient Search Page", view_another_patient, empty_dict),
     "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
