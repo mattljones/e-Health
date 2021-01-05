@@ -203,7 +203,7 @@ def retrieve_gp(type):
     df = GP.select_list(type)
     df_show = df[1]
     print("\n----------------------------------------------------\n"
-          "                ",'GP LIST', "\n")
+          "                     ",'GP LIST', "\n")
     print(df_show)
 
     choice = input("\nPlease select a GP ID. \n--> ")
