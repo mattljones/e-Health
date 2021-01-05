@@ -734,7 +734,7 @@ def pairing_gp(next_dict):
 
                 else:
                     print("\n\U00002757 This GP is full.")
-                    return utils.display(next_dict)
+            return utils.display(next_dict)
 
         elif y_n == 2:
             print("\n\U00002757 Action cancelled.")
