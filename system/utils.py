@@ -806,7 +806,7 @@ def send_code_to_registered_user(user_type, user_email, random_string_password_r
     else:
         # send email to user
         send_mail_password_reset(user_email, random_string_password_reset)
-        message = "\n\U00002705The key to reset your password was sent\nto your email address: {}.\nPlease check your mail inbox and spam folder.".format(
+        message = "\n\U00002705The key to reset your password was sent\nto your email address: {}.\n\nPlease check your mail inbox and spam folder.".format(
             user_email)
         email_sent = True
 
@@ -821,7 +821,7 @@ def compare_random_string(random_string_password_reset):
     random_string_match = False
     available_tries = 3
     while random_string_match == False and available_tries > 0:
-        random_string_user_input = input("\nPlease enter your password reset key:")
+        random_string_user_input = input("\nPlease enter your password reset key:\n--> ")
         if random_string_user_input == random_string_password_reset:
             random_string_match = True
             print('\n\U00002705 Your key matched')
@@ -840,11 +840,11 @@ def password_reset_input():
     new_password_validation = False
     new_password_match = False
     while new_password_validation == False:
-        new_password = input('\nPlease input your new password:')
+        new_password = input('\nPlease input your new password: \n--> ')
         new_password_validation = validate_password(new_password)
 
         while new_password_validation == True and new_password_match == False:
-            new_password_confirmation = input('\nPlease confirm your new password:')
+            new_password_confirmation = input('\nPlease confirm your new password: \n--> ')
             if new_password_confirmation != new_password:
                 print("\n\U00002757 Password confirmation does not match original password. Please enter a new password.")
                 new_password_validation = False
