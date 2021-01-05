@@ -816,14 +816,6 @@ def choose_another_gp(next_dict):
     return choose_gp(view_schedule_flow)
 
 
-def appointments_shortcut(next_dict):
-    '''
-    Allows the viewing of appointments (in sub-menu 5) from the manage_availability_flow
-    (in sub-menu 4). 
-    '''
-    return utils.display(view_appointment_by_gp)
-
-
 def view_time_off(next_dict):
     '''
     View a GP's current time off.
@@ -1963,14 +1955,14 @@ manage_time_off_flow = {
 manage_availability_flow = {
     "title": "VIEW AND MANAGE AVAILABILITY",
     "type": "sub",
-    "1": ("View Upcoming Appointments", appointments_shortcut, empty_dict),
+    "1": ("View Upcoming Appointments", view_appointment_by_gp, view_time_off_final_actions),
     "2": ("Manage Upcoming Time Off", empty_method, manage_time_off_flow)
 }
 
 view_schedule_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Modify GP Availability", empty_method, manage_availability_flow),
+    "1": ("Modify GP Availability", empty_method, manage_time_off_flow),
     "2": ("View a Different Time Period", view_another_schedule, empty_dict),
     "3": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
