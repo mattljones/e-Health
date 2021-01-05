@@ -489,9 +489,11 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             Patient.confirm('all')
+            print("\n\U00002705 All patients successfully confirmed.")
             return utils.display(next_dict)
         
         elif y_n == 2:
+            print("\nPatients not confirmed.")
             return utils.display(next_dict)
         
     elif choice == 2:
@@ -509,11 +511,13 @@ def confirm_patient(next_dict):
 
         if y_n == 1:
             for id in ids:
+                print("\n\U00002705 Patients successfully confirmed.")
                 Patient.confirm('single', patient_id = int(id))
 
             return utils.display(next_dict)
         
         elif y_n == 2:
+            print("\nPatients not confirmed.")
             return utils.display(next_dict)
 
 
