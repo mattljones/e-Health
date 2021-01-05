@@ -717,11 +717,14 @@ def db_execute(query):
     :param query: sqlite query
     :return: query execution
     '''
-    conn = sqlite3.connect('database/db_comp0066.db')
-    c = conn.cursor()
-    c.execute(query)
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect('database/db_comp0066.db')
+        c = conn.cursor()
+        c.execute(query)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        print("\n\U00002757 An error occurred:", e.args[0])
 
 
 def db_read_query(query):
@@ -730,10 +733,15 @@ def db_read_query(query):
     :param query: sqlite query
     :return: query execution
     '''
-    conn = sqlite3.connect("database/db_comp0066.db")
-    result = pd.read_sql_query(query, conn)
-    conn.close()
-    return result
+    try:
+        conn = sqlite3.connect("database/db_comp0066.db")
+        result = pd.read_sql_query(query, conn)
+        conn.close()
+        return result
+    except sqlite3.Error as e:
+        print("\n\U00002757 An error occurred:", e.args[0])
+    except:
+        print("\n\U00002757 An error occurred.")
 
 
 def random_string(length):
@@ -766,7 +774,7 @@ def send_mail_password_reset(user_email, random_string):
     # Define Mail parameters
     from_address = 'e.health.comp0066@gmail.com'
     to_address = '{}'.format(user_email)
-    message = MIMEText("""Hi, your code to reset your password is:\n{}""".format(random_string))
+    message = MIMEText("""Hi, your code to reset your password is:\n\n{}\n\n Please insert this code in the user flow.\n\nBest wishes,\nCOMP0066 E-HEALTH TEAM""".format(random_string))
     message['Subject'] = 'Password Reset for E-HEALTH'
     message['To'] = '{}'.format(user_email)
 
@@ -781,9 +789,9 @@ def send_mail_password_reset(user_email, random_string):
         # Send Mail
         smtp_object.sendmail(from_address, to_address, message.as_string())
     except smtplib.SMTPRecipientsRefused:
-        print("Your email address seems to be invalid")
+        print("\n\U00002757 Your email address seems to be invalid")
     except:
-        print("An error occured while sending the mail from our Gmail Account")
+        print("\n\U00002757 An error occurred while sending the mail from our Gmail Account")
 
     # Close connection to Mail server
     smtp_object.quit()
@@ -813,13 +821,13 @@ def send_code_to_registered_user(user_type, user_email, random_string_password_r
     if user_email_df.empty:
         # there is no patient registered with this email address --> redirect to patient registration or
         # tell the user to go back with #
-        message = 'There is no {} registered with this email address.'.format(user_type)
+        message = '\n\U00002757 There is no {} registered with this email address.'.format(user_type)
         email_sent = False
 
     else:
         # send email to user
         send_mail_password_reset(user_email, random_string_password_reset)
-        message = '''The code to reset your password was sent to your email address: {}.\nPlease check your mail inbox and spam folder.'''.format(
+        message = "\n\U00002705The key to reset your password was sent\nto your email address: {}.\nPlease check your mail inbox and spam folder.".format(
             user_email)
         email_sent = True
 
@@ -834,13 +842,13 @@ def compare_random_string(random_string_password_reset):
     random_string_match = False
     available_tries = 3
     while random_string_match == False and available_tries > 0:
-        random_string_user_input = input("\nPlease enter your string:")
+        random_string_user_input = input("\nPlease enter your password reset key:")
         if random_string_user_input == random_string_password_reset:
             random_string_match = True
-            print('Your code matched')
+            print('\n\U00002705 Your key matched')
         else:
             available_tries = available_tries - 1
-            print('The code you entered did not match. You have {} more tries'.format(available_tries))
+            print('\n\U00002757 The key you entered did not match.\nYou have {} more tries'.format(available_tries))
     return random_string_match
 
 
@@ -853,13 +861,13 @@ def password_reset_input():
     new_password_validation = False
     new_password_match = False
     while new_password_validation == False:
-        new_password = input('Please input your new password:')
+        new_password = input('\nPlease input your new password:')
         new_password_validation = validate_password(new_password)
 
         while new_password_validation == True and new_password_match == False:
-            new_password_confirmation = input('Please confirm your new password:')
+            new_password_confirmation = input('\nPlease confirm your new password:')
             if new_password_confirmation != new_password:
-                print("\U00002757 Password confirmation does not match original password. Please enter a new password.")
+                print("\n\U00002757 Password confirmation does not match original password. Please enter a new password.")
                 new_password_validation = False
                 break
             else:
@@ -886,9 +894,9 @@ def change_password(user_type, user_email, random_string_password_reset):
                 {}_email = '{}';""".format(user_type, user_type, new_password, user_type, user_email)
 
         db_execute(update_password_query)
-        message = 'Your password has been successfully changed'
+        message = '\n\U00002705 Your password has been successfully changed.\nYou can login using your new password.'
 
     else:
-        message = 'Your password could not be changed because your code does not match'
+        message = '\n\U00002757 Your password could not be changed\nbecause your key did not match.\nPlease start resetting your password again.'
 
     return True, message
