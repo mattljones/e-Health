@@ -39,4 +39,6 @@ try:
     # Close db
     conn.close()
 except sqlite3.Error as e:
-    print("An error occurred while sending taking down the database:", e.args[0])
+    print("An error occurred while taking down the database:", e.args[0])
+except:
+    print("An error occurred while taking down the database.")
