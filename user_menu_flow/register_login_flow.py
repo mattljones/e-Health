@@ -65,7 +65,7 @@ def reset_password(login_as):
             email_sent, message = utils.send_code_to_registered_user(login_as, user_email, random_string_password_reset)
 
             if email_sent == False:
-                print("\n\U00002757 " + message)
+                print(message)
                 validate = False
                 user_email = input("\n--> Email address: ")
 
