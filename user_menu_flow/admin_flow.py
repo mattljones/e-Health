@@ -1023,7 +1023,6 @@ def remove_time_off(next_dict):
     '''
     return utils.display(remove_time_off_flow)
 
-# TODO: Schedule func update is causing error - Discuss with Manuel
 def remove_time_off_custom(next_dict):
     '''
     Remove a custom amount of time off to a GP's schedule.
