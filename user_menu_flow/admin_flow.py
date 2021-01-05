@@ -876,8 +876,7 @@ def add_time_off_day(next_dict):
 
     # Add one day to start date
     s = datetime.strptime(start_date, "%Y-%m-%d")
-    e = s + timedelta(days=1) 
-    end_date = datetime.strftime(e, "%Y-%m-%d")  
+    end_date = datetime.strftime(s, "%Y-%m-%d")
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -894,10 +893,19 @@ def add_time_off_day(next_dict):
             user_confirmation = input("\n--> ")
 
     if user_confirmation == '1':
-        # Add timeoff to db
-        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
-        return utils.display(next_dict)
+        # Add timeoff to db only if there is no conflict with an existing booking
+        while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
+            print(
+                "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+            print("\n【Conflicts Table】")
+            print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
+            start_date = utils.get_start_date()
+            s = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date = datetime.strftime(s, "%Y-%m-%d")
+        else:
+            Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+            print("\n\U00002705 Time off ({}) successfully added on {}.".format(timeoff_type, start_date))
+            return utils.display(next_dict)
         
     else:
         # Return to main add time off menu
@@ -930,7 +938,7 @@ def add_time_off_week(next_dict):
 
     # Add one day to start date
     s = datetime.strptime(start_date, "%Y-%m-%d")
-    e = s + timedelta(weeks=1) 
+    e = s + timedelta(days=6)
     end_date = datetime.strftime(e, "%Y-%m-%d")  
 
     # Confirmation step
@@ -948,11 +956,20 @@ def add_time_off_week(next_dict):
             user_confirmation = input("\n--> ")
 
     if user_confirmation == '1':
-        # Add timeoff to db
-        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
-        return utils.display(next_dict)
-        
+        # Add timeoff to db only if there is no conflict with an existing booking
+        while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
+            print(
+                "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+            print("\n【Conflicts Table】")
+            print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
+            start_date = utils.get_start_date()
+            e = s + timedelta(days=6)
+            end_date = datetime.strftime(e, "%Y-%m-%d")
+        else:
+            Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+            print("\n\U00002705 Time off ({}) successfully added for one week starting on {}.".format(timeoff_type, start_date))
+            return utils.display(next_dict)
+
     else:
         # Return to main add time off menu
         return add_time_off(next_dict)
@@ -998,10 +1015,18 @@ def add_time_off_custom(next_dict):
             user_confirmation = input("\n--> ")
 
     if user_confirmation == '1':
-        # Add timeoff to db
-        Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-        print("\n\U00002705 Time off ({}) successfully added.".format(timeoff_type))
-        return utils.display(next_dict)
+        # Add timeoff to db only if there is no conflict with an existing booking
+        while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
+            print(
+                "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+            print("\n【Conflicts Table】")
+            print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
+            start_date = utils.get_start_date()
+            end_date = utils.get_end_date()
+        else:
+            Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
+            print("\n\U00002705 Time off ({}) successfully added from {} to {}.".format(timeoff_type, start_date, end_date))
+            return utils.display(next_dict)
 
     else:
         # Return to main add time off menu
@@ -1014,7 +1039,6 @@ def remove_time_off(next_dict):
     '''
     return utils.display(remove_time_off_flow)
 
-# TODO: Schedule func update is causing error - Discuss with Manuel
 def remove_time_off_custom(next_dict):
     '''
     Remove a custom amount of time off to a GP's schedule.
@@ -1036,11 +1060,11 @@ def remove_time_off_custom(next_dict):
     elif timeoff_type_input == '2':
         timeoff_type = 'time off'
     elif timeoff_type_input == '3':
-        timeoff_type = 'all time off'
+        timeoff_type = 'all time off (sick leave and time off)'
 
     # Prompt user for time off range
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
+    start_date = utils.get_date()
+    end_date = utils.end_date(start_date)
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1060,12 +1084,12 @@ def remove_time_off_custom(next_dict):
         # Remove timeoff of a specific type from db
         if timeoff_type_input in ('1', '2'):
             Schedule.delete_timeoff(gp_id_choice, 'custom', timeoff_type, start_date, end_date)
-            print("\n\U00002705 Time off ({}) successfully removed.".format(timeoff_type))
+            print("\n\U00002705 Time off ({}) successfully removed from {} to {}".format(timeoff_type, start_date, end_date))
 
         # Remove timeoff of both types from db
         elif timeoff_type_input == '3':
-            Schedule.delete_timeoff(gp_id_choice, 'custom', start_date, end_date)
-            print("\n\U00002705 All time off successfully removed.")
+            Schedule.delete_timeoff(gp_id=gp_id_choice, type='custom', timeoff_type=None, start_date=start_date, end_date=end_date)
+            print("\n\U00002705 All time off successfully removed from {} to {}.".format(start_date, end_date))
         
         # Proceed with next section
         return utils.display(next_dict)
@@ -1096,7 +1120,7 @@ def remove_time_off_all(next_dict):
     elif timeoff_type_input == '2':
         timeoff_type = 'time off'
     elif timeoff_type_input == '3':
-        timeoff_type = 'all time off'
+        timeoff_type = 'all time off (sick leave and time off)'
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1116,12 +1140,13 @@ def remove_time_off_all(next_dict):
         # Remove timeoff of a specific type from db
         if timeoff_type_input in ('1', '2'):
             Schedule.delete_timeoff(gp_id_choice, 'all', timeoff_type)
-            print("\n\U00002705 Time off successfully removed.")
+            print("\n\U00002705 Time off ({}) successfully removed.".format(timeoff_type))
 
         # Remove timeoff of both types from db
         elif timeoff_type_input == '3':
-            Schedule.delete_timeoff(gp_id_choice, 'all', 'sick leave')
-            Schedule.delete_timeoff(gp_id_choice, 'all', 'time off')
+            Schedule.delete_timeoff(gp_id_choice, 'all')
+            print("\n\U00002705 All time off successfully removed.")
+
         
         # Proceed with next section
         return utils.display(next_dict)
@@ -1754,14 +1779,6 @@ def records_main(next_dict):
     return utils.display(next_dict)
 
 
-def another_record_same_patient(next_dict):
-    '''
-    Allows viewing of another record for the same patient.
-    '''
-    return records_main(records_final_menu)
-
-
-
 def another_record_diff_patient(next_dict):
     '''
     Allows viewing of another record for the same patient.
@@ -1900,8 +1917,8 @@ remove_time_off_final_actions = {
 remove_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
-    "1": ("All", remove_time_off_all, remove_time_off_final_actions),
-    "2": ("Custom", remove_time_off_custom, remove_time_off_final_actions)
+    "1": ("All (only in the future)", remove_time_off_all, remove_time_off_final_actions),
+    "2": ("Custom (future and past)", remove_time_off_custom, remove_time_off_final_actions)
 }
 
 appointment_conflict_final_actions = {
@@ -1926,9 +1943,9 @@ add_time_off_final_actions = {
 add_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
-    "1": ("Day", add_time_off_day, add_time_off_final_actions),
-    "2": ("Week", add_time_off_week, add_time_off_final_actions),
-    "3": ("Custom", add_time_off_custom, add_time_off_final_actions),
+    "1": ("Day (only in the future)", add_time_off_day, add_time_off_final_actions),
+    "2": ("Week (only in the future)", add_time_off_week, add_time_off_final_actions),
+    "3": ("Custom (future and past)", add_time_off_custom, add_time_off_final_actions),
 }
 
 view_time_off_final_actions = {
@@ -2061,8 +2078,7 @@ manage_appointment_flow = {
 records_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View a Different Appointment", another_record_same_patient, empty_dict),
-    "2": ("View a Different Patient", another_record_diff_patient, empty_dict),
+    "1": ("View a Different Patient", another_record_diff_patient, empty_dict),
 }
 
 ###### MAIN MENU ####
