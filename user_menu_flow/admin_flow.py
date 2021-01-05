@@ -757,7 +757,7 @@ def view_schedule_day(next_dict):
     '''
     View a GP's current schedule for a day.
     '''    
-    start_date = utils.get_start_date()
+    start_date = utils.get_date()
     sched = Schedule.select(gp_id_choice, 'day', start_date)
     print("\n----------------------------------------------------\n"
           "                ",'DAILY SCHEDULE', "\n")
@@ -770,7 +770,7 @@ def view_schedule_week(next_dict):
     '''
     View a GP's current schedule for a week.
     '''    
-    start_date = utils.get_start_date()
+    start_date = utils.get_date()
     sched = Schedule.select(gp_id_choice, 'week', start_date)
     print("\n----------------------------------------------------\n"
           "                ",'WEEKLY SCHEDULE', "\n")
