@@ -45,7 +45,7 @@ def edit_notes(next_dict):
     return display_next_menu(next_dict)
 
 def simple_note(next_dict):
-    flow_submit_note = {"title": "Submit Notes?",
+    flow_submit_note = {"title": "SUBMIT NOTES ?",
                  "type": "sub",
                  "1":("Yes", display_next_menu, flow_prescription),
                  "2":("No", simple_note, flow_prescription)
@@ -163,7 +163,7 @@ def enter_note(next_dict):
     return display_next_menu(next_dict)
 
 def enter_prescription(next_dict):
-    flow_drug = {"title": "ADD ANOTHER PRESCRIPTION?",
+    flow_drug = {"title": "ADD ANOTHER PRESCRIPTION ?",
                  "type": "sub",
                  "1":("Yes", enter_prescription, flow_end),
                  "2":("No", final_confirm_prescribe, flow_end)
@@ -216,7 +216,7 @@ def enter_appoint_id(next_dict):
 ############################ SEQUENTIAL STEPS MENUS ########################
 
 def correct_note_change(next_dict):
-    flow_record_edit = {"title": "Edit what part of the records?",
+    flow_record_edit = {"title": "EDIT WHAT PART OF THE RECORDS ?",
                  "type": "sub",
                  "1":("Chronic conditions", edit_cc, flow_confirm_change),
                  "2":("Notes", edit_notes, flow_confirm_change)
@@ -224,7 +224,7 @@ def correct_note_change(next_dict):
     return display_next_menu(flow_record_edit)
 
 def correct_cc_change(next_dict):
-    flow_cc_edit = {"title": "Edit Condition",
+    flow_cc_edit = {"title": "EDIT CONDITION",
                  "type": "auto",
                  "next":(edit_cc, flow_only_cc_confirm)
                 }
@@ -253,7 +253,7 @@ def display_pending_appt(next_dict):
         return display_next_menu(next_dict)
 
 def another_confirm_rej(next_dict):
-    flow_confirm_appoint = {"title": "Confirm Appointments",
+    flow_confirm_appoint = {"title": "CONFIRM APPOINTMENTS",
                  "type": "sub",
                  "1":("Confirm all", another_confirm_all, next_dict),
                  "2":("Confirm one", another_confirm_one, next_dict),
@@ -287,7 +287,7 @@ def another_confirm_rej(next_dict):
         return display_next_menu(next_dict)
 
 def another_confirm_one(next_dict):
-    flow_confirm_appoint = {"title": "Confirm Appointments",
+    flow_confirm_appoint = {"title": "CONFIRM APPOINTMENTS",
                  "type": "sub",
                  "1":("Confirm all", another_confirm_all, next_dict),
                  "2":("Confirm one", another_confirm_one, next_dict),
@@ -322,7 +322,7 @@ def another_confirm_all(next_dict):
     return display_next_menu(next_dict)
 
 def remove_timeoff(next_dict):
-    flow_timeoff = {"title": "Manage timeoff",
+    flow_timeoff = {"title": "MANAGE TIMEOFF",
                  "type": "sub",
                  "1":("Add", add_timeoff, next_dict),
                  "2":("Remove", remove_timeoff, next_dict)
@@ -346,13 +346,11 @@ def remove_timeoff(next_dict):
             return display_next_menu(next_dict)
 
 def add_timeoff(next_dict):
-    flow_timeoff = {"title": "View schedule",
+    flow_timeoff = {"title": "VIEW SCHEDULE",
                  "type": "sub",
                  "1":("Add", add_timeoff, next_dict),
                  "2":("Remove", remove_timeoff, next_dict)
                 }
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
     print("\nWhat is the type of timeoff?")
     print("[ 1 ] sick leave")
     print("[ 2 ] time off")
@@ -360,10 +358,45 @@ def add_timeoff(next_dict):
     while type_timeoff not in ["1", "2"]:
         print("Invalid input, try again!")
         type_timeoff = input("--> ")
-    else:
-        if type_timeoff == "1":
+    start_date = utils.get_start_date()
+    end_date = utils.get_end_date()
+    if type_timeoff == "1":
+        while Schedule.check_timeoff_conflict(globals.usr_id, start_date, end_date)[0] == True:
+            print("\n\U00002757 You have appointments during the period and cannot add timeoff!")
+            print("\n【Conflicts Table】")
+            print(Schedule.check_timeoff_conflict(globals.usr_id, start_date, end_date)[2])
+            print("\nDo yo still want to add timeoff?")
+            print("[ 1 ] Yes")
+            print("[ 2 ] No")
+            yes_or_no = input("--> ")
+            while yes_or_no not in ["1", "2"]:
+                print("\n\U00002757 Invalid entry, please try again and enter your choice.")
+                yes_or_no = input("\n--> ")
+            if yes_or_no == "1":
+                start_date = utils.get_start_date()
+                end_date = utils.get_end_date()
+            elif yes_or_no == "2":
+                return display_next_menu(main_flow_gp)
+        else:
             Schedule.insert_timeoff(globals.usr_id, 'sick leave', start_date, end_date)
-        elif type_timeoff =="2":
+    elif type_timeoff =="2":
+        while Schedule.check_timeoff_conflict(globals.usr_id, start_date, end_date)[0] == True:
+            print("\n\U00002757 You have appointments during the period and cannot add timeoff!")
+            print("\n【Conflicts Table】")
+            print(Schedule.check_timeoff_conflict(globals.usr_id, start_date, end_date)[2])
+            print("\nDo yo still want to add timeoff?")
+            print("[ 1 ] Yes")
+            print("[ 2 ] No")
+            yes_or_no = input("\n--> ")
+            while yes_or_no not in ["1", "2"]:
+                print("\n\U00002757 Invalid entry, please try again and enter your choice.")
+                yes_or_no = input("--> ")
+            if yes_or_no == "1":
+                start_date = utils.get_start_date()
+                end_date = utils.get_end_date()
+            elif yes_or_no == "2":
+                return display_next_menu(main_flow_gp)
+        else:
             Schedule.insert_timeoff(globals.usr_id, 'time off', start_date, end_date)
     print("\nThe timeoff has been successfully added!")
     print("\n----------------------------------------------------\n"
@@ -381,7 +414,7 @@ def add_timeoff(next_dict):
             return display_next_menu(next_dict)
 
 def view_another_day(next_dict):
-    flow_schedule = {"title": "View schedule",
+    flow_schedule = {"title": "VIEW SCHEDULE",
                  "type": "sub",
                  "1":("Day", view_another_day, next_dict),
                  "2":("Week", view_another_week, next_dict)
@@ -419,7 +452,7 @@ def view_another_day(next_dict):
                 return display_next_menu(main_flow_gp)
 
 def view_another_week(next_dict):
-    flow_schedule = {"title": "View schedule",
+    flow_schedule = {"title": "VIEW SCHEDULE",
                  "type": "sub",
                  "1":("Day", view_another_day, next_dict),
                  "2":("Week", view_another_week, next_dict)
@@ -495,41 +528,41 @@ flow_end = {"title": "CONTINUE E-HEALTH OR LOGOUT ?",
               "type":"sub"}
 
 # add drugs flow
-flow_drug = {"title": "ADD ANOTHER PRESCRIPTION?",
+flow_drug = {"title": "ADD ANOTHER PRESCRIPTION ?",
                  "type": "sub",
                  "1":("Yes", enter_prescription, flow_end),
                  "2":("No", final_confirm_prescribe, flow_end)
             }
 
 # prescription flow
-flow_prescription = {"title": "ADD A Prescription?",
+flow_prescription = {"title": "ADD A PRESCRIPTION ?",
                  "type": "sub",
                  "1":("Yes", enter_prescription, flow_drug),
                  "2":("No", display_next_menu, flow_end)
                  }
 
 # submit note flow
-flow_submit_note = {"title": "Submit Notes?",
+flow_submit_note = {"title": "SUBMIT CHANGES ?",
                  "type": "sub",
                  "1":("Yes", display_next_menu, flow_prescription),
                  "2":("No", simple_note, flow_end)
                  }
 
 # confirm patient attendance flow
-flow_confirm_attendance = {"title": "Confirm Patient Attendance?",
+flow_confirm_attendance = {"title": "CONFIRM PATIENT ATTENDANCE ?",
                  "type": "sub",
                  "1":("Yes", enter_note, flow_submit_note),
                  "2":("No", no_attend, flow_end)
                 }
 
 # notes flow
-flow_notes = {"title": "Post-appointment steps",
+flow_notes = {"title": "POST-APPOINTMENT STEPS",
               "type": "auto",
               "next":(enter_appoint_id, flow_confirm_attendance)
             }
 
 # confirm appointment flow
-flow_confirm_appoint = {"title": "Confirm Appointments",
+flow_confirm_appoint = {"title": "CONFIRM APPOINTMENTS",
                 "type": "sub",
                 "1":("Confirm all", another_confirm_all, flow_end),
                 "2":("Confirm one", another_confirm_one, flow_end),
@@ -537,59 +570,59 @@ flow_confirm_appoint = {"title": "Confirm Appointments",
                 }
 
 # timeoff flow
-flow_timeoff = {"title": "Manage timeoff",
+flow_timeoff = {"title": "MANAGE TIMEOFF",
                  "type": "sub",
                  "1":("Add", add_timeoff, flow_end),
                  "2":("Remove", remove_timeoff, flow_end)
                 }
 # schedule flow
-flow_schedule = {"title": "View schedule",
+flow_schedule = {"title": "VIEW SCHEDULE",
                 "type": "sub",
                 "1":("Day", view_another_day, flow_timeoff),
                 "2":("Week", view_another_week, flow_timeoff)
                 }
 
 # appointment flow
-flow_appointments = {"title": "Appointments",
+flow_appointments = {"title": "APPOINTMENTS",
                  "type": "sub",
                  "1":("Confirm", display_pending_appt, flow_confirm_appoint),
                  "2":("Notes", display_confirmed_appt, flow_notes)
                 }
 
-flow_confirm_change = {"title": "SUBMIT CHANGES",
+flow_confirm_change = {"title": "SUBMIT CHANGES ?",
                  "type": "sub",
                  "1":("Yes", display_next_menu, flow_end),
                  "2":("No (edit this patient's records further)", correct_note_change, flow_end)
                 }
 
-flow_only_cc_confirm = {"title": "SUBMIT CHANGES",
+flow_only_cc_confirm = {"title": "SUBMIT CHANGES ?",
                  "type": "sub",
                  "1":("Yes", display_next_menu, flow_end),
                  "2":("No (edit this patient's condition further)", correct_cc_change, flow_end)
                 }
 
 
-flow_only_cc_edit = {"title": "Do you want to edit the conditions of this patient?",
+flow_only_cc_edit = {"title": "DO YOU WANT TO EDIT THE CONDITIONS OF THIS PATIENT ?",
                  "type": "sub",
                  "1":("Yes", edit_cc, flow_only_cc_confirm),
                  "2":("No", display_next_menu, flow_end)
                 }
 
-flow_record_edit = {"title": "Edit what part of the records?",
+flow_record_edit = {"title": "EDIT WHAT PART OF THE RECORDS ?",
                  "type": "sub",
                  "1":("Chronic conditions", edit_cc, flow_confirm_change),
                  "2":("Notes", edit_notes, flow_confirm_change)
                 }
 
 # flow of decision on editing records of a patient
-flow_record_choose = {"title": "Edit Records of this patient?",
+flow_record_choose = {"title": "EDIT RECORDS OF THIS PATIENT ?",
                  "type": "sub",
                  "1":("Yes", display_next_menu, flow_record_edit),
                  "2":("No", display_next_menu, flow_end)
                 }
 
 # records flow
-flow_records = {"title": "Records",
+flow_records = {"title": "RECORDS",
                  "type": "sub",
                  "1":("Search patient records", view_records, flow_record_choose)
                 }
