@@ -40,7 +40,8 @@ def reset_password(login_as):
 
     print("\n---------------------------------------------------- \n"
           "                   RESET PASSWORD\n"
-          "\nPlease, enter your email address"
+          "\nPlease, enter your email address so that"
+          "\nwe can send you a key to reset your password"
           "\nor '#' to go back to main page")
     
     # user input for email address
@@ -69,7 +70,7 @@ def reset_password(login_as):
                 user_email = input("\n--> Email address: ")
 
             else:
-                print("\n\U00002705 " + message)
+                print(message)
 
         # if invalid entry
         else:
