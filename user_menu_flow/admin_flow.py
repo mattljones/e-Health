@@ -1636,7 +1636,7 @@ def delete_appointment_gp(next_dict):
     # Week
     elif date_range == 2:
         s = datetime.strptime(start, "%Y-%m-%d")
-        e = s + timedelta(weeks=1) 
+        e = s + timedelta(days=6)
         end = datetime.strftime(e, "%Y-%m-%d")   
 
     # Custom
@@ -1704,7 +1704,7 @@ def delete_appointment_patient(next_dict):
     # Week
     elif date_range == 2:
         s = datetime.strptime(start, "%Y-%m-%d")
-        e = s + timedelta(weeks=1) 
+        e = s + timedelta(days=6)
         end = datetime.strftime(e, "%Y-%m-%d")   
 
     # Custom
