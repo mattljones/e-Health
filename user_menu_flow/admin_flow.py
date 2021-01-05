@@ -981,8 +981,8 @@ def add_time_off_custom(next_dict):
         timeoff_type = 'time off'
 
     # Prompt user for time off range
-    start_date = utils.get_start_date()
-    end_date = utils.get_end_date()
+    start_date = utils.get_date()
+    end_date = utils.end_date(start_date)
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1005,8 +1005,8 @@ def add_time_off_custom(next_dict):
                 "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
             print("\n【Conflicts Table】")
             print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
-            start_date = utils.get_start_date()
-            end_date = utils.get_end_date()
+            start_date = utils.get_date()
+            end_date = utils.end_date(start_date)
         else:
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
             print("\n\U00002705 Time off ({}) successfully added from {} to {}.".format(timeoff_type, start_date, end_date))
