@@ -2185,6 +2185,7 @@ def delete_appointment_gp(next_dict):
         utils.display(next_dict)
 
     elif y_n == '2':
+        print("\n\U00002757 Action cancelled.")
         utils.display(appointment_deleted_gp_final_actions)
 
 
@@ -2254,6 +2255,7 @@ def delete_appointment_patient(next_dict):
         utils.display(next_dict)
 
     elif y_n == '2':
+        print("\n\U00002757 Action cancelled.")
         utils.display(appointment_deleted_patient_final_actions)
 
 
