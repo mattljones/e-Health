@@ -827,7 +827,7 @@ def send_code_to_registered_user(user_type, user_email, random_string_password_r
     else:
         # send email to user
         send_mail_password_reset(user_email, random_string_password_reset)
-        message = "\n\U00002705The key to reset your password was sent\nto your email address: {}.\n\nPlease check your mail inbox and spam folder.".format(
+        message = "\n\U00002705 The key to reset your password was sent\nto your email address: {}.\n\nPlease check your mail inbox and spam folder.".format(
             user_email)
         email_sent = True
 
