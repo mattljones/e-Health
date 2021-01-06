@@ -1827,8 +1827,12 @@ def view_appointment_by_patient(next_dict):
     # Select all upcoming appointments for this patient ID
     appts = Appointment.select_patient('upcoming', choice)
 
-    # Print the appointments information
-    print(appts[1])
+    if len(appts[0].index) > 0:
+        # Print the appointments information
+        print("\n" + appts[1])
+
+    else:
+        print("\nThe selected patient doesn't have any booked appointments.")
 
     return utils.display(next_dict)
 
