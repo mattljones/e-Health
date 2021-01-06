@@ -423,7 +423,7 @@ def view_another_day(next_dict):
     print("\n----------------------------------------------------\n"
         "              Schedule View by Day\n")
     start_date = utils.get_start_date()
-    print("\n【", start_date, "Morning】")
+    print("\n【"+ start_date + " Morning】")
     print(Schedule.select(globals.usr_id, 'day', start_date)[2])
     print("\nDo you want to view the schedule for the afternoon?")
     print("[ 1 ] Yes")
@@ -433,7 +433,7 @@ def view_another_day(next_dict):
         halfday_choice = input("--> ")
     else:
         if halfday_choice == "1":
-            print("\n【", start_date, "Afternoon】")
+            print("\n【" + start_date + " Afternoon】")
             print(Schedule.select(globals.usr_id, 'day', start_date)[3])
         print("\n" + "-" * 52 + "\n" + " " * 16 + "View schedule\n")
         print("[ 1 ] View schedule main page")
