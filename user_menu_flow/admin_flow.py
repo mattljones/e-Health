@@ -1121,19 +1121,10 @@ def choose_gp(next_dict):
     '''
     Returns the numbered list of GPs to choose from
     '''
-    df = GP.select_list('all')
-    df_show = df[1]
-    print("\n----------------------------------------------------\n"
-          "                ", 'GP LIST', "\n")
-    print(df_show)
+    # TODO: Restructure flow so that we only need retrieve_gp()
+    
     global gp_id_choice
-    gp_id_choice = input("\nPlease select a GP ID. \n--> ")
-
-    while gp_id_choice.isnumeric() == False:
-        print("\n\U00002757 Invalid entry, please try again")
-        gp_id_choice = input("\nPlease select a GP ID. \n--> ")
-
-    gp_id_choice = int(gp_id_choice)
+    gp_id_choice = retrieve_gp('all')
 
     return utils.display(next_dict)
 
@@ -1161,6 +1152,10 @@ def view_schedule_day(next_dict):
     print("[ 2 ] No")
     halfday_choice = input("--> ")
     while halfday_choice not in ["1", "2"]:
+        print("\n\U00002757 Invalid entry, please try again")
+        print("\nDo you want to view the schedule for the afternoon?")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
         halfday_choice = input("--> ")
     else:
         if halfday_choice == "1":
@@ -1186,6 +1181,10 @@ def view_schedule_week(next_dict):
     print("[ 2 ] No")
     halfday_choice = input("--> ")
     while halfday_choice not in ["1", "2"]:
+        print("\n\U00002757 Invalid entry, please try again")
+        print("\nDo you want to view the schedule for the afternoon?")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
         halfday_choice = input("--> ")
     else:
         if halfday_choice == "1":
