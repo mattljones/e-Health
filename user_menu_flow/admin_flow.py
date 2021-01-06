@@ -1622,6 +1622,7 @@ def remove_time_off_custom(next_dict):
 
     else:
         # Return to main remove time off menu
+        print("\n\U00002757 Action cancelled.")
         return remove_time_off(next_dict)
 
 
@@ -1674,6 +1675,7 @@ def remove_time_off_all(next_dict):
             print("\n\U00002705 All time off successfully removed.")
 
         # Proceed with next section
+        print("\n\U00002757 Action cancelled.")
         return utils.display(next_dict)
 
     else:
