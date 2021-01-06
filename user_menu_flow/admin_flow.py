@@ -2050,11 +2050,11 @@ def delete_appointment_patient(next_dict):
     start = utils.get_start_date()
 
     # Day
-    if date_range == 1:
+    if date_range == '1':
         end = start
 
     # Week
-    elif date_range == 2:
+    elif date_range == '2':
         s = datetime.strptime(start, "%Y-%m-%d")
         e = s + timedelta(days=6)
         end = datetime.strftime(e, "%Y-%m-%d")
@@ -2090,7 +2090,7 @@ def delete_appointment_patient(next_dict):
         utils.display(next_dict)
 
     elif y_n == '2':
-        utils.display(appointment_deleted_gp_final_actions)
+        utils.display(appointment_deleted_patient_final_actions)
 
 
 def delete_appointment_another_gp(next_dict):
