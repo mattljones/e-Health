@@ -113,6 +113,7 @@ class Patient(User):
         conn = sql.connect("database/db_comp0066.db")
         df = pd.read_sql_query(query, conn)
         conn.close()
+        pd.set_option('mode.chained_assignment', None)
         # ignoring GP name in patient instance (id stored instead)
         patient_instance = cls(*df.values[0][:2], *df.values[0][3:]) 
         # collecting GP information 
