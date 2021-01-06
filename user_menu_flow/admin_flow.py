@@ -62,6 +62,8 @@ def view_edit_gp(next_dict):
     print("\n----------------------------------------------------\n"
           "                    ", 'GP DETAILS', "\n")
     print(doctor_df[2])
+    print('\nYou are viewing the details of Dr {} (ID: {}).'.format(doctor_df[0].last_name,
+                                                                    doctor_df[0].id))
 
     # User choice of field to edit
     key = input("\nEnter the index [X] of the field you want to edit,"
@@ -192,13 +194,13 @@ def view_edit_gp(next_dict):
 
     if y_n == '1':
         # Get raw df to edit
-        df = doctor_df[0]
+        gp_instance = doctor_df[0]
 
         # Update the selected section to the new value 
-        df.__dict__[profile[key]] = new_value
+        gp_instance.__dict__[profile[key]] = new_value
 
         # Update in the database
-        df.update()
+        gp_instance.update()
         print("\n\U00002705 GP profile successfully updated.")
         return utils.display(next_dict)
 
@@ -561,7 +563,7 @@ def choose_patient(type, patient_last_name=None):
     df = Patient.select_list(type, patient_last_name)
 
     if df[0].empty:
-        print("\U00002757 No matching patients!")
+        print("\n\U00002757 No matching patients!")
         return False, None
 
     else:
@@ -635,31 +637,61 @@ def view_edit_patient(next_dict):
 
     selected_patient = Patient.select(choice)
     print("\n----------------------------------------------------\n"
-          "                ", 'PATIENT DETAILS', "\n")
+          "                 ", 'PATIENT DETAILS', "\n")
     print(selected_patient[2])
     print('\nYou are viewing the details of {} {} (ID: {}).'.format(selected_patient[0].first_name,
-                                                                    selected_patient[0].last_name, choice))
+                                                                    selected_patient[0].last_name,
+                                                                    selected_patient[0].id))
 
-    print("\n----------------------------------------------------\n"
-          "                ", 'EDIT THIS PATIENT?', "\n")
-    print('[ 1 ] Yes')
-    print('[ 2 ] Choose another patient')
-    print('[ S ] Back to patient accounts menu')
+    # User choice of field to edit
+    key = input("\nEnter the index [X] of the field you want to edit,"
+                "\nor press '#' to cancel."
+                "\n\n--> ")
 
-    edit_choice = input('\n--> ')
+    if key == '#':
+        return utils.display(next_dict)
 
-    while edit_choice not in ('1', '2', 's', 'S'):
-        print("\n\U00002757 Invalid entry, please try again")
-        edit_choice = input('\n--> ')
+    else:
+        while not key.isnumeric() or int(key) not in range(1, len(profile) + 1):
+            print("\n\U00002757 Input not valid. "
+                  "Please enter a number between 1 and {}.".format(len(profile)))
+            key = input("\nEnter the index [X] of the field you want to edit,"
+                        "\nor press '#' to cancel."
+                        "\n\n--> ")
+        key = int(key)
 
-    if edit_choice == '2':
-        del patient_id_choice
-        return view_edit_patient(next_dict)
+    # Creating a dictionary of field indexes (keys) and names (values)
+    key_name_dict = dict(zip(selected_patient[1].index.str[1].tolist(), \
+                             selected_patient[1].index.str[4:].tolist()))
+    key_name = key_name_dict[str(key)]
 
-    elif edit_choice in ('s', 'S'):
-        del patient_id_choice
-        return utils.display(manage_patient_accounts_flow)
+    # FIRST NAME, LAST NAME, DOB, EMAIL: Input validation w/ utils functions
+    if key in (1, 2, 4, 5):
+        if key in (1, 2):
+            new_value = input("\nEnter a new value for 【{}】. "
+                              "\n--> ".format(key_name))
+            while not utils.validate_name(new_value):
+                new_value = input("\nEnter a new value for 【{}】. "
+                                  "\n--> ".format(key_name))
+        elif key == 4:
+            new_value = input("\nEnter a new value for 【{}】 (YYYY-MM-DD). "
+                              "\n--> ".format(key_name))
+            date_valid_format = utils.validate_date(new_value)
+            while not date_valid_format or datetime.strptime(new_value, "%Y-%m-%d") > datetime.now():
+                if date_valid_format and datetime.strptime(new_value, "%Y-%m-%d") > datetime.now():
+                    print("\U00002757 Birth date cannot be in the future!")
+                new_value = input("\nEnter a new value for 【{}】 (YYYY-MM-DD). "
+                                  "\n--> ".format(key_name))
+                date_valid_format = utils.validate_date(new_value)
+        else:
+            new_value = input("\nEnter a new value for 【{}】. "
+                              "\n--> ".format(key_name))
+            while not utils.validate_email(new_value):
+                new_value = input("\nEnter a new value for 【{}】. "
+                                  "\n--> ".format(key_name))
+        new_value_display = new_value
 
+<<<<<<< Updated upstream
     else:
         key = input("\nChoose a value to edit. \n--> ")
 
@@ -669,32 +701,76 @@ def view_edit_patient(next_dict):
 
         key = int(key)
         new_value = input("\nChoose a new value to input. \n--> ")
+=======
+    # GENDER: Input validation w/ hard-coded list
+    elif key == 3:
+        genders = {'1': 'male',
+                   '2': 'female',
+                   '3': 'non binary',
+                   '4': 'prefer not to say'}
+        usr_choice = input("\nEnter the index [X] of the new value for 【{}】.\n"
+                           "  [ 1 ] male\n"
+                           "  [ 2 ] female\n"
+                           "  [ 3 ] non binary\n"
+                           "  [ 4 ] prefer not to say\n\n"
+                           "--> ".format(key_name))
+        while not usr_choice.isnumeric() or int(usr_choice) not in range(1, len(genders) + 1):
+            print("\U00002757 Please enter a number between 1 and {}".format(len(genders)))
+            usr_choice = input("\nEnter the index [X] of the new value for 【{}】. "
+                               "\n--> ".format(key_name))
+        new_value = new_value_display = genders[usr_choice]    
+>>>>>>> Stashed changes
 
-        print("\n----------------------------------------------------\n"
-              "                ", 'CONFIRM?', "\n")
-        print("Do you want to edit field [{}] with the new value '{}'?".format(key, new_value))
-        print("[ 1 ] Yes")
-        print("[ 2 ] No")
+    # BLOOD DONOR/ORGAN DONOR: Input validation w/ hard-coded list
+    elif key in (6, 7):
+        choices = {'1': 'yes',
+                   '2': 'no'}
+        usr_choice = input("\nEnter the index [X] of the new value for 【{}】.\n"
+                           "  [ 1 ] yes\n"
+                           "  [ 2 ] no\n\n"
+                           "--> ".format(key_name))
+        while not usr_choice.isnumeric() or int(usr_choice) not in (1, 2):
+            print("\U00002757 Please enter either 1 or 2.")
+            usr_choice = input("\nEnter the index [X] of the new value for 【{}】. "
+                               "\n--> ".format(key_name))
+        new_value = new_value_display = choices[usr_choice]
 
+<<<<<<< Updated upstream
     y_n = input("\n--> ")
 
     while y_n not in ('1', '2'):
+=======
+    # STATUS: Do not allow modification in this flow >> redirect to section menu
+    elif key == 8:
+        print("\U00002757 To confirm or delete a patient, use the options on the section menu.")
+        return utils.display(next_dict)
+
+    print("\n----------------------------------------------------\n"
+          "                     ", 'CONFIRM?', "\n")
+    print("Do you want to give field 【{}】 the new value '{}'?".format(key_name, new_value_display))
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+
+    y_n = input("\n--> ")
+
+    while not y_n.isnumeric() or y_n not in ('1', '2'):
+>>>>>>> Stashed changes
         print("\n\U00002757 Input not valid.")
         y_n = input("\n--> ")
 
-    if y_n == 1:
+    if y_n == '1':
         # Get raw df to edit
-        df = selected_patient[0]
+        patient_instance = selected_patient[0]
 
-        # Update the selected section to the new value 
-        df.__dict__[profile[key]] = new_value
+        # Update the selected section to the new value
+        patient_instance.__dict__[profile[key]] = new_value
 
         # Update in the database
-        df.update()
+        patient_instance.update()
         print("\n\U00002705 Patient profile successfully updated.")
         return utils.display(next_dict)
 
-    elif y_n == 2:
+    elif y_n == '2':
         return utils.display(next_dict)
 
 
@@ -720,11 +796,16 @@ def confirm_patient(next_dict):
     '''
     Confirm pending patient registrations.
     '''
-    choose_patient('pending')
+    non_empty, id_list = choose_patient('pending')
+
+    if non_empty == False: 
+        return patient_account_section_menu(next_dict) 
+
     print("\n----------------------------------------------------\n"
-          "                ", 'CONFIRM ALL NEW PATIENTS?', "\n")
+          "          ", 'CONFIRM ALL PENDING PATIENTS?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] Enter individual ID(s)")
+<<<<<<< Updated upstream
     choice = input('\nPlease enter your choice:\n'
                        '--> ')
 
@@ -733,16 +814,41 @@ def confirm_patient(next_dict):
         choice = input('\nPlease enter your choice:\n--> ')
 
     if choice == '1':
+=======
+    print("[ S ] Section Menu")
+
+    choice = input('\nPlease enter your choice:\n'
+                       '--> ')
+
+    while choice not in ('1', '2', 'S', 's'):
+        print("\n\U00002757 Invalid input, please try again!")
+        choice = input('\nPlease enter your choice:\n'
+                        '--> ')        
+
+    if choice in ('S', 's'):
+        return patient_account_section_menu(next_dict)
+    
+    elif choice == '1':
+>>>>>>> Stashed changes
 
         print("\n----------------------------------------------------\n"
-              "                ", 'CONFIRM?', "\n")
-        print("[ 1 ] Yes")
+              "                     ", 'CONFIRM?', "\n")
+        print("[ 1 ] Yes - confirm all pending patients")
         print("[ 2 ] No")
+<<<<<<< Updated upstream
         y_n = input("\n--> ")
 
         while y_n not in ('1','2'):
             print("\n\U00002757 Input not valid.")
             choice = input('\nPlease enter your choice:\n--> ')
+=======
+
+        y_n = input("\n--> ")
+
+        while y_n not in ('1', '2'):
+            print("\n\U00002757 Invalid input, please try again!")
+            y_n = input('\n--> ')
+>>>>>>> Stashed changes
 
         if y_n == '1':
             Patient.confirm('all')
@@ -756,14 +862,40 @@ def confirm_patient(next_dict):
     elif choice == '2':
 
         print("\n----------------------------------------------------\n"
-              "                ", 'ENTER PATIENT ID(S) TO CONFIRM', "\n")
-        ids = input('Please enter ID(s) here, comma-separated.\n'
-                    '--> ').split()
+              "          ", 'ENTER PATIENT ID(s) TO CONFIRM')
 
+        input_list = []
+        cont = True
+        while cont:
+            if len(input_list) == 0:
+                print("\nEnter a patient ID, or press '#' to cancel.")
+                usr_input = input("--> ")
+                if usr_input == '#':
+                    return utils.display(next_dict)
+            else:
+                print("\nEnter a patient ID, or press '#' to stop adding IDs.")
+                print("Selected so far:【", end="")
+                print(*input_list, sep=", ", end="")
+                print("】")
+                usr_input = input("--> ")
+            if usr_input == '#':
+                cont = False
+            elif usr_input.isnumeric() and int(usr_input) in id_list:
+                input_list.append(int(usr_input))
+                id_list.remove(int(usr_input))
+            else:
+                print("\n\U00002757 Please enter an ID from the table above!")
+            
         print("\n----------------------------------------------------\n"
-              "                ", 'CONFIRM?', "\n")
+              "                     ", 'CONFIRM?', "\n")
+
+        print("Patient(s) with the below ID(s) will be confirmed:\n\n【", end="")
+        print(*input_list, sep=", ", end="")
+        print("】\n")
+
         print("[ 1 ] Yes")
         print("[ 2 ] No")
+<<<<<<< Updated upstream
         y_n = input("\n--> ")
 
         while y_n not in ('1','2'):
@@ -774,11 +906,27 @@ def confirm_patient(next_dict):
             for id in ids:
                 print("\n\U00002705 Patients successfully confirmed.")
                 Patient.confirm('single', patient_id=int(id))
+=======
 
+        y_n = input("\n--> ")
+>>>>>>> Stashed changes
+
+        while not y_n.isnumeric() or y_n not in ('1', '2'):
+            print("\n\U00002757 Input not valid.")
+            y_n = input("\n--> ")
+
+        if y_n == '1':
+            for id in input_list:
+                Patient.confirm('single', patient_id=id)
+                print("\n\U00002705 Patient (ID: {}) successfully confirmed.".format(id))
             return utils.display(next_dict)
 
         elif y_n == '2':
+<<<<<<< Updated upstream
             print("\nPatients not confirmed.")
+=======
+            print("\nAction cancelled.")
+>>>>>>> Stashed changes
             return utils.display(next_dict)
 
 
@@ -793,23 +941,58 @@ def delete_patient(next_dict):
     '''
     Delete a patient account
     '''
-    print("\n----------------------------------------------------\n"
-          "                ", 'ENTER LAST NAME', "\n")
-
-    last_name = input("Please enter the patient's last name:\n"
-                      "--> ")
-
-    choose_patient('matching', patient_last_name=last_name)
-    choice = input('''
-Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n'''
-                   '--> ')
-    # Eliminating whitespace from string and splitting it into single IDs
-    patient_ids = choice.replace(' ', '').split(',')
 
     print("\n----------------------------------------------------\n"
-          "                ", 'CONFIRM?', "\n")
-    print("[ 1 ] Yes")
+          "                ", 'ENTER LAST NAME')
+
+    cont = True
+    while cont:
+        last_name = input("\nPlease enter the patient's last name:\n"
+                          "--> ")
+        if not utils.validate_name(last_name):
+            cont = True
+        else: 
+            non_empty, id_list = choose_patient('matching', patient_last_name=last_name)
+            if non_empty == False:
+                cont = True
+            else: 
+                cont = False
+
+    print("\n----------------------------------------------------\n"
+            "          ", 'ENTER PATIENT ID(s) TO DELETE')
+
+    input_list = []
+    cont = True
+    while cont:
+        if len(input_list) == 0:
+            print("\nEnter a patient ID, or press '#' to cancel.")
+            usr_input = input("--> ")
+            if usr_input == '#':
+                return patient_account_section_menu(next_dict)
+        else:
+            print("\nEnter a patient ID, or press '#' to stop adding IDs.")
+            print("Selected so far:【", end="")
+            print(*input_list, sep=", ", end="")
+            print("】")
+            usr_input = input("--> ")
+        if usr_input == '#':
+            cont = False
+        elif usr_input.isnumeric() and int(usr_input) in id_list:
+            input_list.append(int(usr_input))
+            id_list.remove(int(usr_input))
+        else:
+            print("\n\U00002757 Please enter an ID from the table above!")
+        
+    print("\n----------------------------------------------------\n"
+            "                     ", 'CONFIRM?', "\n")
+
+    print("Patient(s) with the below ID(s) will be *DELETED*:\n\n【", end="")
+    print(*input_list, sep=", ", end="")
+    print("】\n")
+
+    print("[ 1 ] Yes - *DELETE* these patient accounts")
     print("[ 2 ] No")
+<<<<<<< Updated upstream
     y_n = input("\n--> ")
 
     while y_n not in ('1','2'):
@@ -826,6 +1009,25 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
         print("\n\U00002757 Action cancelled.")
         return utils.display(next_dict)
 
+=======
+
+    y_n = input("\n--> ")
+
+    while not y_n.isnumeric() or y_n not in ('1', '2'):
+        print("\n\U00002757 Input not valid.")
+        y_n = input("\n--> ")
+
+    if y_n == '1':
+        for id in input_list:
+            Patient.delete(id)
+            print("\n\U00002705 Patient (ID: {}) successfully deleted.".format(id))
+        return utils.display(next_dict)
+
+    elif y_n == '2':
+        print("\nAction cancelled.")
+        return utils.display(next_dict)
+    
+>>>>>>> Stashed changes
 
 def delete_another_patient(next_dict):
     '''
@@ -2271,7 +2473,7 @@ delete_patient_account_final_menu = {
 add_new_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Confirm another patient", confirm_another_patient, empty_dict),
+    "1": ("Confirm more patients", confirm_another_patient, empty_dict),
     "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
@@ -2287,8 +2489,8 @@ manage_patient_accounts_flow = {
     "title": "MANAGE PATIENT ACCOUNTS",
     "type": "sub",
     "1": ("View/edit patient details", view_edit_patient, view_edit_patient_accounts_final_menu),
-    "2": ("Confirm patient accounts", confirm_patient, add_new_patient_account_final_menu),
-    "3": ("Delete patient account", delete_patient, delete_patient_account_final_menu)
+    "2": ("Confirm pending patient accounts", confirm_patient, add_new_patient_account_final_menu),
+    "3": ("Delete patient accounts", delete_patient, delete_patient_account_final_menu)
 }
 
 ###### MANAGE GP-PATIENT PAIRINGS SUB-MENU ######
