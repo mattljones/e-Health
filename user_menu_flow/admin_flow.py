@@ -64,18 +64,18 @@ def view_edit_gp(next_dict):
     print(doctor_df[2])
 
     # User choice of field to edit
-    key = input("\nEnter the index [X] of the field you want to edit," 
+    key = input("\nEnter the index [X] of the field you want to edit,"
                 "\nor press '#' to cancel."
                 "\n\n--> ")
-    
+
     if key == '#':
         return utils.display(next_dict)
-    
+
     else:
         while not key.isnumeric() or int(key) not in range(1, len(profile) + 1):
             print("\n\U00002757 Input not valid. "
-                    "Please enter a number between 1 and {}.".format(len(profile)))
-            key = input("\nEnter the index [X] of the field you want to edit," 
+                  "Please enter a number between 1 and {}.".format(len(profile)))
+            key = input("\nEnter the index [X] of the field you want to edit,"
                         "\nor press '#' to cancel."
                         "\n\n--> ")
         key = int(key)
@@ -348,7 +348,7 @@ def add_gp(next_dict):
         while not working_days.isnumeric() or int(working_days) not in range(0, 7):
             print("\U00002757 Please enter a number between 0 and 6")
             working_days = input("\nPlease enter the index [X] of the GP\'s working days."
-                                "\n--> ")
+                                 "\n--> ")
 
     # DEPARTMENT: Input validation w/ class dataframe contents
     ref_table = GP.select_table('department')
@@ -811,29 +811,27 @@ def pairing_patient(next_dict):
     Search for a patient and pair them up with a GP.
     '''
 
-    print("\n----------------------------------------------------\n"
-          , 'ENTER LAST NAME', "\n")
+    print("\n----------------------------------------------------\n",
+          '                ', 'ENTER LAST NAME', "\n")
     last_name = input("Please enter the patient's last name:\n"
                       "--> ")
     df = Patient.select_list('matching', last_name)
 
     while df[0].empty:
-        print("Patient with the surname '{}' doesn't exist!".format(last_name))
-        while True:
-            try:
-                print('\nWould you like to search for the patient again?')
-                print("[ 1 ] Yes")
-                print("[ 2 ] No")
-                y_n = int(input("\n--> "))
-                if y_n == 2:
-                    return utils.display(next_dict)
-                elif y_n == 1:
-                    last_name = input("Please enter the patient's last name:\n"
-                                      "--> ")
-                    df = Patient.select_list('matching', last_name)
-                break
-            except ValueError:
-                print("Invalid input, please try again!")
+        print("\n\U00002757Patient with the surname '{}' doesn't exist!".format(last_name))
+        try:
+            print('\nWould you like to search for the patient again?')
+            print("[ 1 ] Yes")
+            print("[ 2 ] No")
+            y_n = int(input("\n--> "))
+            if y_n == 2:
+                return utils.display(next_dict)
+            elif y_n == 1:
+                last_name = input("\nPlease enter the patient's last name:\n"
+                                  "--> ")
+                df = Patient.select_list('matching', last_name)
+        except ValueError:
+            print("Invalid input, please try again!")
 
     print(df[1])
 
@@ -843,16 +841,15 @@ def pairing_patient(next_dict):
     patient_ids_from_df = list(map(str, df[0]['Patient ID'].tolist()))
 
     while patient_id not in patient_ids_from_df:
-        print("'{}' is not a valid input, "
+        print("\n\U00002757'{}' is not a valid input, "
               "please input a patient ID from the list above".format(patient_id))
         patient_id = input('\nPlease choose a patient ID\n'
                            '--> ')
 
-    selected_patient = Patient.select(patient_id)
-    gp_id = selected_patient[0].gp_id
+    gp_id = Patient.select(patient_id)[0].gp_id
     gp_lastname = GP.select(gp_id)[0].last_name
 
-    print('Patient {} is currently registered with Dr {}.'.format(patient_id, gp_lastname))
+    print('\nPatient {} is currently registered with Dr {}.'.format(patient_id, gp_lastname))
     print("\n----------------------------------------------------\n"
           "                ", 'CHANGE DEFAULT GP', "\n")
     while True:
@@ -860,85 +857,77 @@ def pairing_patient(next_dict):
             print('[ 1 ] Auto-reallocate')
             print('[ 2 ] Select GP from list')
             choice = int(input('\n--> '))
+            if choice not in [1, 2]:
+                raise ValueError
             break
-
         except ValueError:
-            print("Invalid input, please try again!")
+            print("\n\U00002757 Invalid entry, please try again!\n")
 
     if choice == 1:
-        new_gp = Patient.change_gp('auto', patient_id)
 
-        if new_gp[0]:
-            print("\n----------------------------------------------------\n"
-                  "                ", 'CONFIRM AUTO RELOCATION?', "\n")
-            while True:
-                try:
-                    print("[ 1 ] Yes")
-                    print("[ 2 ] No")
-                    y_n = int(input("\n--> "))
-                    break
+        print("\n----------------------------------------------------\n"
+              "                ", 'CONFIRM AUTO RELOCATION?', "\n")
+        while True:
+            try:
+                print("[ 1 ] Yes")
+                print("[ 2 ] No")
+                y_n = int(input("\n--> "))
+                if y_n not in [1, 2]:
+                    raise ValueError
+                break
+            except ValueError:
+                print("\n\U00002757 Invalid entry, please try again!\n")
 
-                except ValueError:
-                    print("Invalid input, please try again!")
-
-            if y_n == 1:
+        if y_n == 1:
+            new_gp = Patient.change_gp('auto', patient_id)
+            if new_gp[0]:
                 print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
-
-            elif y_n == 2:
-                print("\n\U00002757 Action cancelled.")
-
             else:
-                print("\n\U00002757 Input not valid.")
-            return utils.display(next_dict)
-        else:
-            print("\n\U00002757 All GPs are full.")
+                print("\n\U00002757 All GPs are full.")
+
+        elif y_n == 2:
+            print("\n\U00002757 Action cancelled.")
         return utils.display(next_dict)
 
 
     elif choice == 2:
-        gp_list = GP.select_list('not_full')
+
         print("\n----------------------------------------------------\n"
               "                ", 'NON-FULL GP LIST', "\n")
+        gp_list = GP.select_list('not_full')
         print(gp_list[1])
-        new_gp_id = input('\nPlease choose a GP to allocate the patient to.\n'
+        new_gp_id = input('\nPlease choose a GP to allocate the patient to\n'
                           '--> ')
         while new_gp_id.isdigit() == False or new_gp_id == " " or new_gp_id.isspace() == True \
                 or gp_list[0][gp_list[0]['GP ID'] == int(new_gp_id)].empty == True:
-            print("\nInvalid input or non-existent GP id above, please try again!")
+            print("\n\U00002757 Invalid input or non-existent GP id above, please try again!")
             new_gp_id = input("--> ")
 
-        new_gp = Patient.change_gp('specific', int(patient_id), int(new_gp_id))
         gp_last_name = gp_list[0].iat[gp_list[0][gp_list[0]['GP ID'] == int(new_gp_id)].index.tolist()[0], 1]
 
-        if new_gp[0]:
-            print("\n----------------------------------------------------\n"
-                  "                ", 'CONFIRM?', "\n")
-            while True:
-                try:
-                    print("[ 1 ] Yes")
-                    print("[ 2 ] No")
-                    y_n = int(input("\n--> "))
-                    break
+        print("\n----------------------------------------------------\n"
+              "                ", 'CONFIRM?', "\n")
+        while True:
+            try:
+                print("[ 1 ] Yes")
+                print("[ 2 ] No")
+                y_n = int(input("\n--> "))
+                if y_n not in [1, 2]:
+                    raise ValueError
+                break
+            except ValueError:
+                print("\n\U00002757 Invalid entry, please try again")
 
-                except ValueError:
-                    print("Invalid input, please try again!")
-
-            if y_n == 1:
+        if y_n == 1:
+            new_gp = Patient.change_gp('specific', int(patient_id), int(new_gp_id))
+            if new_gp[0]:
                 print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, gp_last_name))
-
-            elif y_n == 2:
-                print("\n\U00002757 Action cancelled.")
-
             else:
-                print("\n\U00002757 Input not valid.")
+                print("\n\U00002757 All GPs are full.")
 
-        else:
-            print("\n\U00002757 All GPs are full.")
-        return utils.display(next_dict)
+        elif y_n == 2:
+            print("\n\U00002757 Action cancelled.")
 
-
-    else:
-        print("\n\U00002757 Input not valid.")
         return utils.display(next_dict)
 
 
@@ -951,29 +940,31 @@ def pairing_gp(next_dict):
     '''
     Select a GP and pair patients to them if they are not full.
     '''
-    gp_list = GP.select_list('not_full')
     print("\n----------------------------------------------------\n"
           "                ", 'NON-FULL GP LIST', "\n")
+    gp_list = GP.select_list('not_full')
     print(gp_list[1])
     new_gp_id_change = input('\nPlease choose a GP to allocate patients to.\n'
                              '--> ')
     while new_gp_id_change.isdigit() == False or new_gp_id_change == " " or new_gp_id_change.isspace() == True \
             or gp_list[0][gp_list[0]['GP ID'] == int(new_gp_id_change)].empty == True:
-        print("\nInvalid input or non-existent GP id above, please try again!")
+        print("\n\U00002757 Invalid input or non-existent GP id above, please try again!")
         new_gp_id_change = input("--> ")
 
     gp_last_name = gp_list[0].iat[gp_list[0][gp_list[0]['GP ID'] == int(new_gp_id_change)].index.tolist()[0], 1]
 
+    print("\n----------------------------------------------------\n"
+          "                ", 'ADD PATIENTS', "\n")
     while True:
         try:
-            print("\n----------------------------------------------------\n"
-                  "                ", 'ADD PATIENTS', "\n")
             print('[ 1 ] By IDs')
             print('[ 2 ] Search by last name')
             choice = int(input('\n--> '))
+            if choice not in [1, 2]:
+                raise ValueError
             break
         except ValueError:
-            print("\n\U00002757 Invalid entry, please try again")
+            print("\n\U00002757 Invalid entry, please try again!\n")
 
     if choice == 1:
         print("\n----------------------------------------------------\n"
@@ -991,7 +982,6 @@ def pairing_gp(next_dict):
                 for patient_id in patient_ids:
                     if Record.select(patient_id)[1].empty:
                         raise No_Patient_With_ID
-
                 break
             except ValueError:
                 print('Please make sure that all of the values in the input are integers!')
@@ -1005,26 +995,43 @@ def pairing_gp(next_dict):
               "                ", 'ENTER LAST NAME', "\n")
         patient_last_name = str(input("Please enter the patient's last name:\n"
                                       "--> "))
-        df = Patient.select_list('matching', patient_last_name)
 
-        if df[0].empty:
-            print("Patient with the surname '{}' doesn't exist!".format(patient_last_name))
-            return utils.display(next_dict)
+        df = Patient.select_list('matching', patient_last_name)
+        while df[0].empty:
+            print("\nPatient with the surname '{}' doesn't exist!".format(patient_last_name))
+            try:
+                print('\nWould you like to search for the patient again?')
+                print("[ 1 ] Yes")
+                print("[ 2 ] No")
+                y_n = int(input("\n--> "))
+                if y_n == 2:
+                    return utils.display(next_dict)
+                elif y_n == 1:
+                    patient_last_name = input("Please enter the patient's last name:\n"
+                                              "--> ")
+                    df = Patient.select_list('matching', patient_last_name)
+                else:
+                    print("\n\U00002757 Invalid entry, please try again!\n")
+                    continue
+            except ValueError:
+                print("\n\U00002757Invalid input, please try again!")
+
 
         print(df[1])
 
-        patient_ids = int(input('\nPlease choose a patient ID\n'
-                                '--> '))
+        patient_ids = input('\nPlease choose a patient ID\n'
+                            '--> ')
 
-        patient_ids_from_df = df[0]['Patient ID'].tolist()
+        patient_ids_from_df = list(map(str, df[0]['Patient ID'].tolist()))
 
-        while patient_ids not in patient_ids_from_df:
-            print("Patient ID: {} is not a valid input, "
+        while str(patient_ids) not in patient_ids_from_df:
+            print("'{}' is not a valid input, "
                   "please input a patient ID from the list above".format(patient_ids))
-            patient_ids = int(input('\nPlease choose a patient ID\n'
-                                    '--> '))
-        patient_ids = list(map(int, str(patient_ids)))
-    print("You wish to update the GP for the following patient(s):\n"
+            patient_ids = input('\nPlease choose a patient ID\n'
+                                '--> ')
+        patient_ids = [int(patient_ids)]
+
+    print("\nYou wish to update the GP for the following patient(s):\n"
           "{}".format(patient_ids))
     print("\n----------------------------------------------------\n"
           "                ", 'CONFIRM?', "\n")
@@ -1041,19 +1048,16 @@ def pairing_gp(next_dict):
     if y_n == 1:
 
         for i in patient_ids:
-            new_gp_assign = Patient.change_gp('specific', i, int(new_gp_id_change))
 
+            new_gp_assign = Patient.change_gp('specific', i, int(new_gp_id_change))
             if new_gp_assign[0]:
                 print("\n\U00002705 Patient with ID {} has been allocated to {}.".format(i, gp_last_name))
-
             else:
                 print("\n\U00002757 This GP is full.")
 
     elif y_n == 2:
         print("\n\U00002757 Action cancelled.")
 
-    else:
-        print("\n\U00002757 Input not valid.")
     return utils.display(next_dict)
 
 
