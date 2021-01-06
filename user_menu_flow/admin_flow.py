@@ -691,6 +691,17 @@ def view_edit_patient(next_dict):
                                   "\n--> ".format(key_name))
         new_value_display = new_value
 
+<<<<<<< Updated upstream
+    else:
+        key = input("\nChoose a value to edit. \n--> ")
+
+        while key.isnumeric() == False:
+            print("\n\U00002757 Invalid entry, please try again")
+            key = input("\nChoose a value to edit. \n--> ")
+
+        key = int(key)
+        new_value = input("\nChoose a new value to input. \n--> ")
+=======
     # GENDER: Input validation w/ hard-coded list
     elif key == 3:
         genders = {'1': 'male',
@@ -708,6 +719,7 @@ def view_edit_patient(next_dict):
             usr_choice = input("\nEnter the index [X] of the new value for 【{}】. "
                                "\n--> ".format(key_name))
         new_value = new_value_display = genders[usr_choice]    
+>>>>>>> Stashed changes
 
     # BLOOD DONOR/ORGAN DONOR: Input validation w/ hard-coded list
     elif key in (6, 7):
@@ -723,6 +735,11 @@ def view_edit_patient(next_dict):
                                "\n--> ".format(key_name))
         new_value = new_value_display = choices[usr_choice]
 
+<<<<<<< Updated upstream
+    y_n = input("\n--> ")
+
+    while y_n not in ('1', '2'):
+=======
     # STATUS: Do not allow modification in this flow >> redirect to section menu
     elif key == 8:
         print("\U00002757 To confirm or delete a patient, use the options on the section menu.")
@@ -737,6 +754,7 @@ def view_edit_patient(next_dict):
     y_n = input("\n--> ")
 
     while not y_n.isnumeric() or y_n not in ('1', '2'):
+>>>>>>> Stashed changes
         print("\n\U00002757 Input not valid.")
         y_n = input("\n--> ")
 
@@ -787,6 +805,16 @@ def confirm_patient(next_dict):
           "          ", 'CONFIRM ALL PENDING PATIENTS?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] Enter individual ID(s)")
+<<<<<<< Updated upstream
+    choice = input('\nPlease enter your choice:\n'
+                       '--> ')
+
+    while choice not in ('1','2'):
+        print("\n\U00002757 Input not valid.")
+        choice = input('\nPlease enter your choice:\n--> ')
+
+    if choice == '1':
+=======
     print("[ S ] Section Menu")
 
     choice = input('\nPlease enter your choice:\n'
@@ -801,17 +829,26 @@ def confirm_patient(next_dict):
         return patient_account_section_menu(next_dict)
     
     elif choice == '1':
+>>>>>>> Stashed changes
 
         print("\n----------------------------------------------------\n"
               "                     ", 'CONFIRM?', "\n")
         print("[ 1 ] Yes - confirm all pending patients")
         print("[ 2 ] No")
+<<<<<<< Updated upstream
+        y_n = input("\n--> ")
+
+        while y_n not in ('1','2'):
+            print("\n\U00002757 Input not valid.")
+            choice = input('\nPlease enter your choice:\n--> ')
+=======
 
         y_n = input("\n--> ")
 
         while y_n not in ('1', '2'):
             print("\n\U00002757 Invalid input, please try again!")
             y_n = input('\n--> ')
+>>>>>>> Stashed changes
 
         if y_n == '1':
             Patient.confirm('all')
@@ -858,8 +895,21 @@ def confirm_patient(next_dict):
 
         print("[ 1 ] Yes")
         print("[ 2 ] No")
+<<<<<<< Updated upstream
+        y_n = input("\n--> ")
+
+        while y_n not in ('1','2'):
+            print("\n\U00002757 Input not valid.")
+            choice = input('\nPlease enter your choice:\n--> ')
+
+        if y_n == '1':
+            for id in ids:
+                print("\n\U00002705 Patients successfully confirmed.")
+                Patient.confirm('single', patient_id=int(id))
+=======
 
         y_n = input("\n--> ")
+>>>>>>> Stashed changes
 
         while not y_n.isnumeric() or y_n not in ('1', '2'):
             print("\n\U00002757 Input not valid.")
@@ -872,7 +922,11 @@ def confirm_patient(next_dict):
             return utils.display(next_dict)
 
         elif y_n == '2':
+<<<<<<< Updated upstream
+            print("\nPatients not confirmed.")
+=======
             print("\nAction cancelled.")
+>>>>>>> Stashed changes
             return utils.display(next_dict)
 
 
@@ -938,6 +992,24 @@ def delete_patient(next_dict):
 
     print("[ 1 ] Yes - *DELETE* these patient accounts")
     print("[ 2 ] No")
+<<<<<<< Updated upstream
+    y_n = input("\n--> ")
+
+    while y_n not in ('1','2'):
+        print("\n\U00002757 Input not valid.")
+        choice = input('\nPlease enter your choice:\n--> ')
+
+    if y_n == '1':
+        for id in patient_ids:
+            Patient.delete(id)
+            print("\n\U00002705 Patient with ID {} has been deleted.".format(id))
+        return utils.display(next_dict)
+
+    elif y_n == '2':
+        print("\n\U00002757 Action cancelled.")
+        return utils.display(next_dict)
+
+=======
 
     y_n = input("\n--> ")
 
@@ -955,6 +1027,7 @@ def delete_patient(next_dict):
         print("\nAction cancelled.")
         return utils.display(next_dict)
     
+>>>>>>> Stashed changes
 
 def delete_another_patient(next_dict):
     '''
