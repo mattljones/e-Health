@@ -2095,7 +2095,11 @@ def records_main(next_dict):
     # Filter by last name
     last_name = input("Please enter the patient's last name:\n"
                       "--> ")
-    choose_patient('matching', patient_last_name=last_name)
+    non_empty = choose_patient('matching', patient_last_name=last_name)[0]
+    while non_empty == False:
+        last_name = input("\nPlease enter the patient's last name:\n"
+                      "--> ")
+        non_empty = choose_patient('matching', patient_last_name=last_name)[0]
 
     # Select the ID of the patient whose records we want to access    
     patient_id_input = input('\nPlease choose a patient ID \n--> ')
