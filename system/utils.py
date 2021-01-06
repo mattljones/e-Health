@@ -431,7 +431,7 @@ def get_end_date():
     Asks user to input a end date and checks that it is not earlier than today
     :return: string
     '''
-    print("\nPlease enter the start date (YYYY-MM-DD)\n"
+    print("\nPlease enter the end date (YYYY-MM-DD)\n"
           "Enter 'T' short for today")
     end_date = input("--> ")
     valid = False
