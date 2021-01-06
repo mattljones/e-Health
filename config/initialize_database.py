@@ -4,12 +4,6 @@
 # library imports 
 import sqlite3
 import csv
-from pathlib import Path
-import sys
-
-# Change python path for imports
-package_dir = Path(__file__).parents[1]
-sys.path.insert(0, str(package_dir))
 
 try:
     # Create a database
