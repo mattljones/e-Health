@@ -865,7 +865,7 @@ def pairing_patient(next_dict):
 
             while y_n not in ('1','2'):
                 print("\n\U00002757 Input not valid.")
-                choice = input('\nPlease enter your choice:\n--> ')
+                y_n = input('\nPlease enter your choice:\n--> ')
 
             if y_n == '2':
                 return utils.display(next_dict)
