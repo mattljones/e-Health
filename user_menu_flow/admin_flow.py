@@ -1049,7 +1049,7 @@ def pairing_gp(next_dict):
         while df[0].empty:
             print("\nPatient with the surname '{}' doesn't exist!".format(patient_last_name))
             try:
-                print('\nWould you like to search for the patient again?')
+                print('\nWould you like to search for a patient again?')
                 print("[ 1 ] Yes")
                 print("[ 2 ] No")
                 y_n = int(input("\n--> "))
@@ -1084,17 +1084,21 @@ def pairing_gp(next_dict):
           "{}".format(patient_ids))
     print("\n----------------------------------------------------\n"
           "                ", 'CONFIRM?', "\n")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    y_n = input("--> ")
 
-    while True:
-        try:
-            print("[ 1 ] Yes")
-            print("[ 2 ] No")
-            y_n = int(input("\n--> "))
-            break
-        except ValueError:
-            print('\nPlease input either 1 or 2!')
+    while y_n not in ["1", "2"]:
+        print("\n\U00002757 Invalid entry, please try again!")
+        print("\nYou wish to update the GP for the following patient(s):\n"
+          "{}".format(patient_ids))
+        print("\n----------------------------------------------------\n"
+          "                ", 'CONFIRM?', "\n")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        y_n = input("--> ")
 
-    if y_n == 1:
+    if y_n == '1':
 
         for i in patient_ids:
 
@@ -1104,7 +1108,7 @@ def pairing_gp(next_dict):
             else:
                 print("\n\U00002757 This GP is full.")
 
-    elif y_n == 2:
+    elif y_n == '2':
         print("\n\U00002757 Action cancelled.")
 
     return utils.display(next_dict)
