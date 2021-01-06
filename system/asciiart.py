@@ -11,7 +11,9 @@ launch_art = '''
 |       Aleksei Sukhov, Giuseppe Baldini, Matthew Jones,        |
 |    Théo Reignier, Thomas Smith, Zongyue Hou & Manuel Buri     |
 |                                                               |
-+---------------------------------------------------------------+ '''
++---------------------------------------------------------------+ 
+
+\U00002757 Open your terminal in full screen for a better user experience \U00002757'''
 
 exit_art = '''
                            ___________
