@@ -16,6 +16,9 @@ from classes.user import User
 # import GP class for use of GP.check_not_full() in Patient.change_GP()
 from classes.gp import GP
 
+# import utils for use of DB query functions
+from system import utils as u
+
 
 class Patient(User):
     """
@@ -68,11 +71,8 @@ class Patient(User):
                            self.NHS_organ_donor, 
                            self.status,
                            self.id)
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
-        conn.close()
+
+        u.db_execute(query)
 
 
     @classmethod
@@ -110,9 +110,7 @@ class Patient(User):
                 WHERE patient_id = '{}'
                 AND patient.gp_id = gp.gp_id
                 """.format(patient_id)
-        conn = sql.connect("database/db_comp0066.db")
-        df = pd.read_sql_query(query, conn)
-        conn.close()
+        df = u.db_read_query(query)
         pd.set_option('mode.chained_assignment', None)
         # ignoring GP name in patient instance (id stored instead)
         patient_instance = cls(*df.values[0][:2], *df.values[0][3:]) 
@@ -168,9 +166,7 @@ class Patient(User):
                     WHERE patient_status = 'pending'
                     ORDER BY "Registration Date" ASC
                     """
-            conn = sql.connect("database/db_comp0066.db")
-            df_object = pd.read_sql_query(query, conn)
-            conn.close()
+            df_object = u.db_read_query(query)
 
         elif type == 'matching':
             query = """
@@ -186,16 +182,15 @@ class Patient(User):
                     AND patient_status = 'confirmed'
                     ORDER BY "First Name" ASC
                     """.format(patient_last_name)
-
-            conn = sql.connect("database/db_comp0066.db")
-            df = pd.read_sql_query(query, conn)
-            conn.close()
+            df = u.db_read_query(query)
             # collecting GP information
             df['Default GP'] = 'Dr. ' + df['Default GP'].astype(str) \
                                + ' (ID: ' + df['gp_id'].astype(str) + ')'
             # removing GP ID as it has been combined with GP name (above)
             df_object = df.drop(columns = ['gp_id']) 
+
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
+
         return df_object, df_print
 
     
@@ -219,11 +214,11 @@ class Patient(User):
                 WHERE patient_id = '{}'
                 AND patient.gp_id = gp.gp_id
                 """.format(patient_id)
-        conn = sql.connect("database/db_comp0066.db")
-        df = pd.read_sql_query(query, conn)
-        conn.close()
+
+        df = u.db_read_query(query)
         gp_id, gp_name = df.values.tolist()[0]
         gp_name = 'Dr. ' + gp_name
+        
         return gp_id, gp_name
 
 
@@ -266,11 +261,7 @@ class Patient(User):
                     SET gp_id = '{}'
                     WHERE patient_id = '{}'
                     """.format(new_gp_id, patient_id)
-            conn = sql.connect("database/db_comp0066.db")
-            c = conn.cursor()
-            c.execute(query)
-            conn.commit()
-            conn.close()
+            u.db_execute(query)
             
             new_gp_name = df_not_full['Name'].\
                           where(df_not_full['GP ID'] == new_gp_id)[0]
@@ -304,11 +295,7 @@ class Patient(User):
                     WHERE patient_id = '{}'
                     """.format(patient_id)
 
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
-        conn.close()
+        u.db_execute(query)
 
 
     @staticmethod
@@ -325,11 +312,8 @@ class Patient(User):
                 DELETE FROM patient
                 WHERE patient_id = '{}'
                 """.format(patient_id)
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
-        conn.close()
+
+        u.db_execute(query)
 
 
 
@@ -337,9 +321,9 @@ class Patient(User):
 if __name__ == "__main__":
 
     ## update()
-    #test_patient = Patient.select(4)[0]
-    #test_patient.first_name = "updated_name2"
-    #test_patient.update()
+    # test_patient = Patient.select(4)[0]
+    # test_patient.first_name = "updated_name2"
+    # test_patient.update()
 
     ## Patient.select()
     # patient_instance, df_obj1, df_print1, df_obj2, df_print2 = Patient.select(4)
@@ -350,7 +334,7 @@ if __name__ == "__main__":
     # print(df_print2)
 
     ## Patient.select_list()
-    # df_obj, df_print = Patient.select_list('matching', 'Moon')
+    # df_obj, df_print = Patient.select_list('pending')
     # print(df_obj)
     # print(df_print)
 
