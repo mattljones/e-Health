@@ -85,7 +85,7 @@ def view_edit_gp(next_dict):
                              doctor_df[1].index.str[4:].tolist()))
     key_name = key_name_dict[str(key)]
 
-    # Input validation w/ utils
+    # FIRST NAME, LAST NAME, DOB, EMAIL: Input validation w/ utils functions
     if key in (1, 2, 4, 5):
         if key in (1, 2):
             new_value = input("\nEnter a new value for 【{}】. "
@@ -111,7 +111,7 @@ def view_edit_gp(next_dict):
                                   "\n--> ".format(key_name))
         new_value_display = new_value
 
-    # Input validation w/ hard-coded list
+    # GENDER: Input validation w/ hard-coded list
     elif key == 3:
         genders = {'1': 'male',
                    '2': 'female',
@@ -129,7 +129,7 @@ def view_edit_gp(next_dict):
                                "\n--> ".format(key_name))
         new_value = new_value_display = genders[usr_choice]
 
-    # Input validation w/ hard-coded list
+    # WORKING DAYS: Input validation w/ hard-coded list
     elif key == 6:
         new_value = input("\nEnter the index [X] of the new value for 【{}】.\n"
                           "  [ 0 ] Monday to Friday\n"
@@ -146,7 +146,7 @@ def view_edit_gp(next_dict):
                               "\n--> ".format(key_name))
         new_value_display = new_value
 
-    # Input validation w/ dataframe
+    # DEPARTMENT, SPECIALISATION: Input validation w/ class dataframe contents
     elif key in (7, 8):
         ref_table = GP.select_table('department') if key == 7 else GP.select_table('specialisation')
         print("\n" + ref_table[1])
@@ -158,7 +158,9 @@ def view_edit_gp(next_dict):
                               "\n--> ".format(key_name))
         new_value_display = ref_table[0].iloc[int(new_value) - 1, 1]
 
-    # Input validation w/ hard-coded list
+    # STATUS: Input validation w/ hard-coded list
+    # Only allow deactivation in its dedicated section of user flow: complex logic
+    # for patient and appointment reallocation success/failure + error messages
     elif key == 9:
         if doctor_df[1].loc['[9] Status'].tolist()[0] == 'active':
             print("\U00002757 To deactivate a GP, please use the option on the section menu.")
@@ -267,7 +269,7 @@ def add_gp(next_dict):
           "                ENTER NEW GP DETAILS\n\n"
           "{Press '#' to cancel at any time}\n")
 
-    # Input validation w/ utils
+    # FIRST NAME: Input validation w/ utils function
     first_name = input('Please enter the GP\'s first name: \n--> ')
     if first_name == '#':
         return utils.display(next_dict)
@@ -275,7 +277,7 @@ def add_gp(next_dict):
         while not utils.validate_name(first_name):
             first_name = input('\nPlease enter the GP\'s first name: \n--> ')
 
-    # Input validation w/ utils
+    # LAST NAME: Input validation w/ utils function
     last_name = input('\nPlease enter the GP\'s last name: \n--> ')
     if last_name == '#':
         return utils.display(next_dict)
@@ -283,7 +285,7 @@ def add_gp(next_dict):
         while not utils.validate_name(last_name):
             last_name = input('\nPlease enter the GP\'s last name: \n--> ')
 
-    # Input validation w/ hard-coded list
+    # GENDER: Input validation w/ hard-coded list
     genders = {'1': 'male',
                '2': 'female',
                '3': 'non binary',
@@ -302,7 +304,7 @@ def add_gp(next_dict):
             usr_choice = input("\nPlease enter the index [X] of the GP's gender: \n-->")
         gender = genders[usr_choice]
 
-    # Input validation w/ utils
+    # DOB: Input validation w/ utils function
     birth_date = input("\nPlease enter the GP's birth date (YYYY-MM-DD). \n--> ")
     if birth_date == '#':
         return utils.display(next_dict)
@@ -314,7 +316,7 @@ def add_gp(next_dict):
             birth_date = input("\nPlease enter the GP's birth date (YYYY-MM-DD). \n--> ")
             date_valid_format = utils.validate_date(birth_date)
 
-    # Input validation w/ utils
+    # EMAIL: Input validation w/ utils function
     email = input("\nPlease enter the GP\'s email: \n--> ")
     if email == '#':
         return utils.display(next_dict)
@@ -322,7 +324,7 @@ def add_gp(next_dict):
         while not utils.validate_email(email):
             email = input("\nPlease enter the GP\'s email: \n--> ")
 
-    # Input validation w/ utils
+    # PASSWORD: Input validation w/ utils function
     password_raw = input("\nPlease enter the GP\'s password: \n--> ")
     if password_raw == '#':
         return utils.display(next_dict)
@@ -330,7 +332,7 @@ def add_gp(next_dict):
         while not utils.validate_password(password_raw):
             password_raw = input("\nPlease enter the GP\'s password: \n--> ")
 
-    # Input validation w/ hard-coded list
+    # WORKING DAYS: Input validation w/ hard-coded list
     working_days = input("\nPlease enter the index [X] of the GP\'s working days.\n"
                          "  [ 0 ] Monday to Friday\n"
                          "  [ 1 ] Tuesday to Saturday\n"
@@ -348,7 +350,7 @@ def add_gp(next_dict):
             working_days = input("\nPlease enter the index [X] of the GP\'s working days."
                                 "\n--> ")
 
-    # Input validation w/ dataframe
+    # DEPARTMENT: Input validation w/ class dataframe contents
     ref_table = GP.select_table('department')
     print("\n" + ref_table[1])
     department_id = input("\nPlease enter the ID of the GP\'s department. \n--> ")
@@ -359,7 +361,7 @@ def add_gp(next_dict):
             print("\U00002757 Please enter an ID from the table above.")
             department_id = input("\nPlease enter the ID of GP\'s department. \n--> ")
 
-    # Input validation w/ dataframe
+    # SPECIALISATION: Input validation w/ dataframe
     ref_table = GP.select_table('specialisation')
     print("\n" + ref_table[1])
     specialisation_id = input("\nPlease enter the ID of the GP\'s department. \n--> ")
@@ -370,7 +372,7 @@ def add_gp(next_dict):
             print("\U00002757 Please enter an ID from the table above.")
             specialisation_id = input("\nPlease enter the ID of GP\'s department. \n--> ")
 
-    # Default status: active 
+    # STATUS: active by default 
     status = 'active'
 
     new_gp = GP(id_=None,
