@@ -14,6 +14,9 @@ sys.path.insert(1, str(path_to_master_repo))
 from classes.appointment import Appointment    
 from classes.prescription import Prescription
 
+# import utils for use of DB query functions
+from system import utils as u
+
 
 class Record:
     """
@@ -46,36 +49,24 @@ class Record:
                                   DELETE FROM patient_medical_condition
                                   WHERE patient_id = '{}'
                                   """.format(self.patient_id)
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query_conditions_delete)
-        conn.commit()
-        conn.close()
+        u.db_execute(query_conditions_delete)
 
         # Medical conditions - inserting updated list of medical conditions
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
         for condition in self.conditions:
-            c.execute("""
-                      INSERT INTO patient_medical_condition 
-                      VALUES ('{}', '{}')
-                      """.format(self.patient_id, 
-                                 condition))
-        conn.commit()
-        conn.close()
+            u.db_execute("""
+                         INSERT INTO patient_medical_condition 
+                         VALUES ('{}', '{}')
+                         """.format(self.patient_id, 
+                                    condition))
         
         # Appointment notes - update to new values from instance dictionary
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
         for booking_id in self.appointment_notes:
-            c.execute("""
-                      UPDATE booking 
-                      SET booking_notes = '{}' 
-                      WHERE booking_id = '{}'
-                      """.format(self.appointment_notes[booking_id], 
-                                 booking_id))
-        conn.commit()
-        conn.close()     
+             u.db_execute("""
+                          UPDATE booking 
+                          SET booking_notes = '{}' 
+                          WHERE booking_id = '{}'
+                          """.format(self.appointment_notes[booking_id], 
+                                     booking_id))   
 
     
     @classmethod
@@ -116,10 +107,8 @@ class Record:
                            WHERE pmc.patient_id = '{}'
                            AND pmc.patient_medical_condition_type_id = pmct.patient_medical_condition_type_id
                            """.format(patient_id)
-        conn = sql.connect("database/db_comp0066.db")
-        df_atts = pd.read_sql_query(query_attributes, conn)
-        df_conds = pd.read_sql_query(query_conditions, conn)
-        conn.close()
+        df_atts = u.db_read_query(query_attributes)
+        df_conds = u.db_read_query(query_conditions)
         # joining regular patient attributes with medical conditions
         df_patient_merge = pd.merge(df_atts, df_conds, how='left', on='ID')
         # replacing nulls with blank strings
@@ -132,7 +121,6 @@ class Record:
         df_patient_print = df_patient_breaks.to_markdown(tablefmt="grid", index=False)
 
         # 2 - GENERATING 'APPOINTMENT' DATAFRAMES
-        # TODO: attended appointments
         df_apps = Appointment.select_patient('previous', patient_id, 'attended')[0]
         df_prescs = Prescription.select_patient(patient_id)[0]
         # joining appointments with corresponding prescriptions
@@ -177,10 +165,9 @@ class Record:
                        patient_medical_condition_type_name AS 'Condition'
                 FROM patient_medical_condition_type
                 """
-        conn = sql.connect("database/db_comp0066.db")
-        df_object = pd.read_sql_query(query, conn)
-        conn.close()
+        df_object = u.db_read_query(query)
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
+
         return df_object, df_print
 
 

@@ -15,8 +15,8 @@ sys.path.insert(1, str(path_to_master_repo))
 # import User class for inheritance
 from classes.user import User
 
-# import utils for password hashing in insert() method
-from system import utils
+# import utils for password hashing & DB query functions
+from system import utils as u
 
 
 class GP(User):
@@ -55,7 +55,8 @@ class GP(User):
         """ 
 
         self.registration_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        password_hash_salt = utils.hash_salt(self.password_raw)
+        password_hash_salt = u.hash_salt(self.password_raw)
+
         query = """
                 INSERT INTO gp 
                 VALUES (NULL, '{}', '{}', '{}', '{}', '{}', 
@@ -71,11 +72,8 @@ class GP(User):
                            self.department_id, 
                            self.specialisation_id, 
                            self.status)
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
-        conn.close()
+
+        u.db_execute(query)
 
 
     def update(self):
@@ -105,11 +103,8 @@ class GP(User):
                            self.specialisation_id, 
                            self.status,
                            self.id)
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
-        conn.close()
+
+        u.db_execute(query)
 
 
     @classmethod
@@ -147,9 +142,7 @@ class GP(User):
                 AND gp.gp_department_id = gpd.gp_department_id
                 AND gp.gp_specialisation_id = gps.gp_specialisation_id
                 """.format(gp_id)
-        conn = sql.connect("database/db_comp0066.db")
-        df = pd.read_sql_query(query, conn)
-        conn.close()
+        df = u.db_read_query(query)
         # ignoring password, dept. name and spec. name
         gp_instance = cls(*df.values[0][:6], None, *df.values[0][6:10], df.values[0][12])  
         # removing IDs as not displayed initially to the user
@@ -157,6 +150,7 @@ class GP(User):
         # transposing for better readability
         df_object = df_display.transpose().rename(columns={0:"Value"})                     
         df_print = df_object.to_markdown(tablefmt="grid", index=True)
+
         return gp_instance, df_object, df_print
 
 
@@ -209,12 +203,11 @@ class GP(User):
                     ORDER BY "No. Patients" ASC
                     """.format(GP.max_capacity)
 
-        conn = sql.connect("database/db_comp0066.db")
-        df_object = pd.read_sql_query(query, conn)
-        conn.close()
+        df_object = u.db_read_query(query)
         # Adding 'Dr.' prefix to GP last name
         df_object['Name'] = 'Dr. ' + df_object['Name'].astype(str) 
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
+
         return df_object, df_print
 
 
@@ -245,10 +238,9 @@ class GP(User):
                     FROM gp_specialisation
                     """
                     
-        conn = sql.connect("database/db_comp0066.db")
-        df_object = pd.read_sql_query(query, conn)
-        conn.close()
+        df_object = u.db_read_query(query)
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
+
         return df_object, df_print
 
     
@@ -363,9 +355,7 @@ class GP(User):
                                 FROM booking
                                 WHERE booking_start_time IN ({})
                                 """.format(query_this_gp_start_times)
-        conn = sql.connect("database/db_comp0066.db")
-        df_all_gp_upcoming = pd.read_sql_query(query_all_gp_upcoming, conn)
-        conn.close()
+        df_all_gp_upcoming = u.db_read_query(query_all_gp_upcoming)
         # sub-sets of df_all_gp_upcoming: this GP, and all other GPs
         df_this_gp_upcoming = df_all_gp_upcoming[df_all_gp_upcoming['GP ID'] == gp_id]
         df_other_gp_upcoming = df_all_gp_upcoming[df_all_gp_upcoming['GP ID'] != gp_id]
@@ -419,13 +409,14 @@ class GP(User):
             conn = sql.connect("database/db_comp0066.db")
             c = conn.cursor()
             c.executemany("""
-                            UPDATE booking
-                            SET gp_id = ?
-                            WHERE gp_id = ?
-                            AND booking_start_time = ?
-                            """, allocations)
+                          UPDATE booking
+                          SET gp_id = ?
+                          WHERE gp_id = ?
+                          AND booking_start_time = ?
+                          """, allocations)
             conn.commit()
             conn.close()
+
             return True, None, None
 
 
@@ -465,11 +456,9 @@ class GP(User):
                 SET gp_status = '{}'
                 WHERE gp_id = '{}'
                 """.format(new_status, gp_id)
-        conn = sql.connect("database/db_comp0066.db")
-        c = conn.cursor()
-        c.execute(query)
-        conn.commit()
-        conn.close()
+        
+        u.db_execute(query)
+
         return True, None, None, None, None 
 
 
@@ -498,11 +487,7 @@ class GP(User):
                     DELETE FROM gp
                     WHERE gp_id = '{}'
                     """.format(gp_id)
-            conn = sql.connect("database/db_comp0066.db")
-            c = conn.cursor()
-            c.execute(query)
-            conn.commit()
-            conn.close()
+            u.db_execute(query)
             return True, None, None, None, None
 
         elif patient_success and (not apps_success):
@@ -531,7 +516,7 @@ if __name__ == "__main__":
     #              specialisation_id=1, 
     #              status="active")
     # test_GP.insert()
-    # print(utils.login('test@gmail.com', 'password', 'gp'))
+    # print(u.login('test@gmail.com', 'password', 'gp'))
 
     ## update()
     # test_GP_2 = GP.select(3)[0]
