@@ -1850,8 +1850,12 @@ def view_appointment_by_patient(next_dict):
     # Select all upcoming appointments for this patient ID
     appts = Appointment.select_patient('upcoming', choice)
 
-    # Print the appointments information
-    print(appts[1])
+    if len(appts[0].index) > 0:
+        # Print the appointments information
+        print("\n" + appts[1])
+
+    else:
+        print("\nThe selected patient doesn't have any booked appointments.")
 
     return utils.display(next_dict)
 
@@ -2095,10 +2099,17 @@ def records_main(next_dict):
     # Filter by last name
     last_name = input("Please enter the patient's last name:\n"
                       "--> ")
-    choose_patient('matching', patient_last_name=last_name)
+    non_empty = choose_patient('matching', patient_last_name=last_name)[0]
+    while non_empty == False:
+        last_name = input("\nPlease enter the patient's last name:\n"
+                      "--> ")
+        non_empty = choose_patient('matching', patient_last_name=last_name)[0]
 
     # Select the ID of the patient whose records we want to access    
     patient_id_input = input('\nPlease choose a patient ID \n--> ')
+    while patient_id_input.isnumeric() != True or Record.select(patient_id_input)[1].index.values.size == 0:
+        print("\n\U00002757 Invalid input or non-existent patient id, please try again!")
+        patient_id_input = input('\nPlease choose a patient ID \n--> ')
 
     # Retrieve patient records
     record = Record.select(patient_id_input)

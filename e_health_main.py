@@ -1,9 +1,5 @@
 # e_health_main.py
 
-# library imports
-from pathlib import Path
-import sys
-
 # Importing utility methods from the 'system' package
 from system import globals
 from system import utils

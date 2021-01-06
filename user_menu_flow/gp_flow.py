@@ -62,7 +62,7 @@ def simple_note(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     while usr_choice not in ["1", "2"]:
-        print("\nInvalid input, please try again!")
+        print("\n\U00002757 Invalid input, please try again!")
         usr_choice = input("\n--> ")
     if usr_choice == '1':
         return display_next_menu(flow_prescription)
@@ -81,14 +81,14 @@ def edit_cc(next_dict):
                 "[ 2 ] Remove condition\n")
             add_or_delete = input("--> ")
             while add_or_delete not in ["1", "2"]:
-                print("\nInvalid input, please try again!")
+                print("\n\U00002757 Invalid input, please try again!")
                 add_or_delete = input("--> ")
             if add_or_delete == '1':
                 print("\nPlease enter the id of the condition you want to add")
                 # TODO: input validation
                 cond_id = input("--> ")
                 while cond_id not in [str(i) for i in range(21)]:
-                    print("\nInvalid input, please try again!")
+                    print("\n\U00002757 Invalid input, please try again!")
                     cond_id = input("--> ")
                 else:
                     record.conditions.append(cond_id)
@@ -97,7 +97,7 @@ def edit_cc(next_dict):
                 print("\nPlease enter the id of the condition you want to remove")
                 cond_id = input("--> ")
                 while cond_id not in [str(i) for i in range(21)]:
-                    print("\nInvalid input, please try again!")
+                    print("\n\U00002757 Invalid input, please try again!")
                     cond_id = input("--> ")
                 else:
                     record.conditions.remove(cond_id)
@@ -107,13 +107,13 @@ def edit_cc(next_dict):
                 "[ 2 ] End (Patient currently has no conditions to remove)\n")
             add_or_delete = input("--> ")
             while add_or_delete not in ["1", "2"]:
-                print("\nInvalid input, please try again!")
+                print("\n\U00002757 Invalid input, please try again!")
                 add_or_delete = input("--> ")
             if add_or_delete == '1':
                 print("\nPlease enter the id of the condition you want to add")
                 cond_id = input("--> ")
                 while cond_id not in [str(i) for i in range(21)]:
-                    print("\nInvalid input, please try again!")
+                    print("\n\U00002757 Invalid input, please try again!")
                     cond_id = input("--> ")
                 else:
                     record.conditions.append(cond_id)
@@ -125,7 +125,7 @@ def edit_cc(next_dict):
             "[ 2 ] No\n")
         more_change_cc = input("--> ")
         while more_change_cc not in ["1", "2"]:
-            print("\nInvalid input, please try again!")
+            print("\n\U00002757 Invalid input, please try again!")
             more_change_cc = input("--> ")
         if more_change_cc == '2':
             edit_cond_flag = False
@@ -176,7 +176,7 @@ def enter_prescription(next_dict):
     print("\nPlease enter the drug id")
     prescription.drug_id = input("--> ")
     while prescription.drug_id not in [str(i) for i in range(1, 21)]:
-        print("Invalid input, please try again!")
+        print("\U00002757 Invalid input, please try again!")
         print("\nPlease enter the drug id")
         prescription.drug_id = input("--> ")
     
@@ -200,7 +200,7 @@ def enter_appoint_id(next_dict):
     print("\nPlease enter an appointment ID")
     appt_id = input("\n--> ")
     while appt_id == "" or appt_id.isspace() == True:
-        print("\nInvalid input, please try again!")
+        print("\n\U00002757 Invalid input, please try again!")
         appt_id = input("\n--> ")
     confirmed_id = [str(i) for i in Appointment.select_GP_confirmed(globals.usr_id)[1]['Apt. ID'].values]
     while appt_id not in confirmed_id:
@@ -269,7 +269,7 @@ def another_confirm_rej(next_dict):
     print("\nPleas give the reason of rejection")
     reason = input("\n--> ")
     while reason == "" or reason.isspace() == True:
-        print("Invalid input, please try again!")
+        print("\U00002757 Invalid input, please try again!")
         reason = input("\n--> ")
     Appointment.change_status(confirm_id, "rejected", reason)
     print("\nAppointment " + confirm_id + " has been successfully rejected!")
@@ -337,7 +337,7 @@ def remove_timeoff(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     while usr_choice not in ["1", "2"]:
-        print("Invalid input, please try again!")
+        print("\U00002757 Invalid input, please try again!")
         usr_choice = input("\n--> ")
     else:
         if usr_choice == '1':
@@ -356,7 +356,7 @@ def add_timeoff(next_dict):
     print("[ 2 ] time off")
     type_timeoff = input("--> ")
     while type_timeoff not in ["1", "2"]:
-        print("Invalid input, try again!")
+        print("\U00002757 Invalid input, try again!")
         type_timeoff = input("--> ")
     start_date = utils.get_start_date()
     end_date = utils.get_end_date()
@@ -405,7 +405,7 @@ def add_timeoff(next_dict):
     print("[ 2 ] No")
     usr_choice = input("\n--> ")
     while usr_choice not in ["1", "2"]:
-        print("Invalid input, please try again!")
+        print("\U00002757 Invalid input, please try again!")
         usr_choice = input("\n--> ")
     else:
         if usr_choice == '1':
@@ -441,7 +441,7 @@ def view_another_day(next_dict):
         print("[ # ] Go back to main page")
         usr_choice = input("\n--> ")
         while usr_choice not in ["1", "2", "#"]:
-            print("Invalid input, please try again!")
+            print("\U00002757 Invalid input, please try again!")
             usr_choice = input("\n--> ")
         else:
             if usr_choice == '1':
@@ -480,7 +480,7 @@ def view_another_week(next_dict):
         print("[ # ] Go back to main page")
         usr_choice = input("\n--> ")
         while usr_choice not in ["1", "2", "#"]:
-            print("Invalid input, please try again!")
+            print("\U00002757 Invalid input, please try again!")
             usr_choice = input("\n--> ")
         else:
             if usr_choice == '1':
@@ -507,7 +507,7 @@ def view_records(next_dict):
     # input validation
     patient_id = input("--> ")
     while patient_id.isdigit() == False or patient_id == " " or patient_id.isspace()== True or Record.select(patient_id)[1].index.values.size == 0:
-        print("\nInvalid input or non-existent patient id above, please try again!")
+        print("\n\U00002757 Invalid input or non-existent patient id above, please try again!")
         patient_id = input("--> ")
     globals.patient_id = patient_id
     print("\n【Patient Table】")
