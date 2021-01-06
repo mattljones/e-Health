@@ -443,28 +443,28 @@ def deactivate_gp(next_dict):
 
         # Patients and appointments reallocated
         if deactivate_status[0]:
-            print("""\n\U00002705 GP with ID 【{}】 has been deactivated.
-   \U00002705 Patients reallocated successfully.
+            print("""\n\U00002705 GP with ID 【{}】 has been deactivated.\n
+   \U00002705 Patients reallocated successfully.\n
    \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id))
 
         # Patients reallocated | Appointments *not* reallocated
         elif deactivate_status[1] == 'apps':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated. 
-   \U00002705 Patients reallocated successfully.
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
+   \U00002705 Patients reallocated successfully.\n
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
                   .format(gp_id, deactivate_status[4]))
 
         # Appointments reallocated | Patients *not* reallocated
         elif deactivate_status[1] == 'patients':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated. 
-   \U00002705 Upcoming appointments reallocated successfully.
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
+   \U00002705 Upcoming appointments reallocated successfully.\n
    \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
                   .format(gp_id, deactivate_status[2]))
 
         # Patients and appointments *not* reallocated
         elif deactivate_status[1] == 'both':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated. 
-   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
+   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.\n
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
                   .format(gp_id, deactivate_status[2], deactivate_status[4]))
 
@@ -507,28 +507,28 @@ def delete_gp(next_dict):
 
         # Patients and appointments reallocated
         if delete_status[0]:
-            print("""\n\U00002705 GP with ID 【{}】 has been deleted.
-   \U00002705 Patients reallocated successfully.
+            print("""\n\U00002705 GP with ID 【{}】 has been deleted.\n
+   \U00002705 Patients reallocated successfully.\n
    \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id))
 
         # Patients reallocated | Appointments *not* reallocated
         elif delete_status[1] == 'apps':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
-   \U00002705 Patients reallocated successfully.
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted.\n 
+   \U00002705 Patients reallocated successfully.\n
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
                   .format(gp_id, delete_status[4]))
 
         # Appointments reallocated | Patients *not* reallocated
         elif delete_status[1] == 'patients':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
-   \U00002705 Upcoming appointments reallocated successfully.
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted.\n
+   \U00002705 Upcoming appointments reallocated successfully.\n
    \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
                   .format(gp_id, delete_status[2]))
 
         # Patients and appointments *not* reallocated
         elif delete_status[1] == 'both':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
-   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted.\n 
+   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.\n
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
                   .format(gp_id, delete_status[2], delete_status[4]))
 
