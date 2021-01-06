@@ -858,14 +858,17 @@ def pairing_patient(next_dict):
     while df[0].empty:
         print("\n\U00002757Patient with the surname '{}' doesn't exist!".format(last_name))
         try:
-            print('\nWould you like to search for the patient again?')
+            print('\nWould you like to search for a patient again?')
             print("[ 1 ] Yes")
             print("[ 2 ] No")
             y_n = input("\n--> ")
 
             while y_n not in ('1','2'):
                 print("\n\U00002757 Input not valid.")
-                y_n = input('\nPlease enter your choice:\n--> ')
+                print('\nWould you like to search for a patient again?')
+                print("[ 1 ] Yes")
+                print("[ 2 ] No")
+                y_n = input("\n--> ")
 
             if y_n == '2':
                 return utils.display(next_dict)
@@ -893,7 +896,7 @@ def pairing_patient(next_dict):
     gp_id = Patient.select(patient_id)[0].gp_id
     gp_lastname = GP.select(gp_id)[0].last_name
 
-    print('\nPatient {} is currently registered with Dr {}.'.format(patient_id, gp_lastname))
+    print('\nPatient 【{}】 is currently registered with Dr {}.'.format(patient_id, gp_lastname))
     print("\n----------------------------------------------------\n"
           "                ", 'CHANGE DEFAULT GP', "\n")
     while True:
@@ -913,6 +916,8 @@ def pairing_patient(next_dict):
               "                ", 'CONFIRM AUTO RELOCATION?', "\n")
         while True:
             try:
+                # Repeated question for clarity in case of wrong input
+                print("Would you like to automatically assign a new GP?")
                 print("[ 1 ] Yes")
                 print("[ 2 ] No")
                 y_n = int(input("\n--> "))
