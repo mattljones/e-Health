@@ -64,12 +64,21 @@ def view_edit_gp(next_dict):
     print(doctor_df[2])
 
     # User choice of field to edit
-    key = input("\nEnter the index [X] of the field you want to edit. \n--> ")
-    while not key.isnumeric() or int(key) not in range(1, len(profile) + 1):
-        print("\n\U00002757 Input not valid. "
-              "Please enter a number between 1 and {}.".format(len(profile)))
-        key = input("\nEnter the index [X] of the field you want to edit. \n--> ")
-    key = int(key)
+    key = input("\nEnter the index [X] of the field you want to edit," 
+                "\nor press '#' to cancel."
+                "\n\n--> ")
+    
+    if key == '#':
+        return utils.display(next_dict)
+    
+    else:
+        while not key.isnumeric() or int(key) not in range(1, len(profile) + 1):
+            print("\n\U00002757 Input not valid. "
+                    "Please enter a number between 1 and {}.".format(len(profile)))
+            key = input("\nEnter the index [X] of the field you want to edit," 
+                        "\nor press '#' to cancel."
+                        "\n\n--> ")
+        key = int(key)
 
     # Creating a dictionary of field indexes (keys) and names (values)
     key_name_dict = dict(zip(doctor_df[1].index.str[1].tolist(), \
@@ -255,17 +264,24 @@ def add_gp(next_dict):
     Adds a new GP.
     '''
     print("\n----------------------------------------------------\n"
-          "               ", 'ENTER NEW GP DETAILS', "\n")
+          "                ENTER NEW GP DETAILS\n\n"
+          "{Press '#' to cancel at any time}\n")
 
     # Input validation w/ utils
     first_name = input('Please enter the GP\'s first name: \n--> ')
-    while not utils.validate_name(first_name):
-        first_name = input('\nPlease enter the GP\'s first name: \n--> ')
+    if first_name == '#':
+        return utils.display(next_dict)
+    else:
+        while not utils.validate_name(first_name):
+            first_name = input('\nPlease enter the GP\'s first name: \n--> ')
 
     # Input validation w/ utils
     last_name = input('\nPlease enter the GP\'s last name: \n--> ')
-    while not utils.validate_name(last_name):
-        last_name = input('\nPlease enter the GP\'s last name: \n--> ')
+    if last_name == '#':
+        return utils.display(next_dict)
+    else:
+        while not utils.validate_name(last_name):
+            last_name = input('\nPlease enter the GP\'s last name: \n--> ')
 
     # Input validation w/ hard-coded list
     genders = {'1': 'male',
@@ -278,29 +294,41 @@ def add_gp(next_dict):
                        "  [ 3 ] non binary\n"
                        "  [ 4 ] prefer not to say\n\n"
                        "--> ")
-    while not usr_choice.isnumeric() or int(usr_choice) not in range(1, len(genders) + 1):
-        print("\U00002757 Please enter a number between 1 and {}".format(len(genders)))
-        usr_choice = input("\nPlease enter the index [X] of the GP's gender: \n-->")
-    gender = genders[usr_choice]
+    if usr_choice == '#':
+        return utils.display(next_dict)
+    else:
+        while not usr_choice.isnumeric() or int(usr_choice) not in range(1, len(genders) + 1):
+            print("\U00002757 Please enter a number between 1 and {}".format(len(genders)))
+            usr_choice = input("\nPlease enter the index [X] of the GP's gender: \n-->")
+        gender = genders[usr_choice]
 
     # Input validation w/ utils
     birth_date = input("\nPlease enter the GP's birth date (YYYY-MM-DD). \n--> ")
-    date_valid_format = utils.validate_date(birth_date)
-    while not date_valid_format or datetime.strptime(birth_date, "%Y-%m-%d") > datetime.now():
-        if date_valid_format and datetime.strptime(birth_date, "%Y-%m-%d") > datetime.now():
-            print("\U00002757 Birth date cannot be in the future!")
-        birth_date = input("\nPlease enter the GP's birth date (YYYY-MM-DD). \n--> ")
+    if birth_date == '#':
+        return utils.display(next_dict)
+    else:
         date_valid_format = utils.validate_date(birth_date)
+        while not date_valid_format or datetime.strptime(birth_date, "%Y-%m-%d") > datetime.now():
+            if date_valid_format and datetime.strptime(birth_date, "%Y-%m-%d") > datetime.now():
+                print("\U00002757 Birth date cannot be in the future!")
+            birth_date = input("\nPlease enter the GP's birth date (YYYY-MM-DD). \n--> ")
+            date_valid_format = utils.validate_date(birth_date)
 
     # Input validation w/ utils
     email = input("\nPlease enter the GP\'s email: \n--> ")
-    while not utils.validate_email(email):
-        email = input("\nPlease enter the GP\'s email: \n--> ")
+    if email == '#':
+        return utils.display(next_dict)
+    else:
+        while not utils.validate_email(email):
+            email = input("\nPlease enter the GP\'s email: \n--> ")
 
     # Input validation w/ utils
     password_raw = input("\nPlease enter the GP\'s password: \n--> ")
-    while not utils.validate_password(password_raw):
-        password_raw = input("\nPlease enter the GP\'s password: \n--> ")
+    if password_raw == '#':
+        return utils.display(next_dict)
+    else:
+        while not utils.validate_password(password_raw):
+            password_raw = input("\nPlease enter the GP\'s password: \n--> ")
 
     # Input validation w/ hard-coded list
     working_days = input("\nPlease enter the index [X] of the GP\'s working days.\n"
@@ -312,26 +340,35 @@ def add_gp(next_dict):
                          "  [ 5 ] Saturday to Wednesday\n"
                          "  [ 6 ] Sunday to Thursday\n\n"
                          "--> ")
-    while not working_days.isnumeric() or int(working_days) not in range(0, 7):
-        print("\U00002757 Please enter a number between 0 and 6")
-        working_days = input("\nPlease enter the index [X] of the GP\'s working days."
-                             "\n--> ")
+    if working_days == '#':
+        return utils.display(next_dict)
+    else:
+        while not working_days.isnumeric() or int(working_days) not in range(0, 7):
+            print("\U00002757 Please enter a number between 0 and 6")
+            working_days = input("\nPlease enter the index [X] of the GP\'s working days."
+                                "\n--> ")
 
     # Input validation w/ dataframe
     ref_table = GP.select_table('department')
     print("\n" + ref_table[1])
     department_id = input("\nPlease enter the ID of the GP\'s department. \n--> ")
-    while not department_id.isnumeric() or int(department_id) not in ref_table[0].iloc[:, 0].tolist():
-        print("\U00002757 Please enter an ID from the table above.")
-        department_id = input("\nPlease enter the ID of GP\'s department. \n--> ")
+    if department_id == '#':
+        return utils.display(next_dict)
+    else:
+        while not department_id.isnumeric() or int(department_id) not in ref_table[0].iloc[:, 0].tolist():
+            print("\U00002757 Please enter an ID from the table above.")
+            department_id = input("\nPlease enter the ID of GP\'s department. \n--> ")
 
     # Input validation w/ dataframe
     ref_table = GP.select_table('specialisation')
     print("\n" + ref_table[1])
     specialisation_id = input("\nPlease enter the ID of the GP\'s department. \n--> ")
-    while not specialisation_id.isnumeric() or int(specialisation_id) not in ref_table[0].iloc[:, 0].tolist():
-        print("\U00002757 Please enter an ID from the table above.")
-        specialisation_id = input("\nPlease enter the ID of GP\'s department. \n--> ")
+    if specialisation_id == '#':
+        return utils.display(next_dict)
+    else:
+        while not specialisation_id.isnumeric() or int(specialisation_id) not in ref_table[0].iloc[:, 0].tolist():
+            print("\U00002757 Please enter an ID from the table above.")
+            specialisation_id = input("\nPlease enter the ID of GP\'s department. \n--> ")
 
     # Default status: active 
     status = 'active'
@@ -467,13 +504,13 @@ def delete_gp(next_dict):
         # Patients and appointments reallocated
         if delete_status[0]:
             print("""\n\U00002705 GP with ID 【{}】 has been deleted.
-\U00002705 Patients reallocated successfully.
+   \U00002705 Patients reallocated successfully.
    \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id))
 
         # Patients reallocated | Appointments *not* reallocated
         elif delete_status[1] == 'apps':
             print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
-\U00002705 Patients reallocated successfully.
+   \U00002705 Patients reallocated successfully.
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
                   .format(gp_id, delete_status[4]))
 
@@ -481,13 +518,13 @@ def delete_gp(next_dict):
         elif delete_status[1] == 'patients':
             print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
    \U00002705 Upcoming appointments reallocated successfully.
-\U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
+   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
                   .format(gp_id, delete_status[2]))
 
         # Patients and appointments *not* reallocated
         elif delete_status[1] == 'both':
             print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted. 
-\U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.
+   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
                   .format(gp_id, delete_status[2], delete_status[4]))
 
