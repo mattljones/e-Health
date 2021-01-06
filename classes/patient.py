@@ -94,17 +94,17 @@ class Patient(User):
         """
 
         query = """
-                SELECT patient_id AS 'Patient ID', 
+                SELECT patient_id AS '[ ] Patient ID', 
                        patient.gp_id,
-                       gp.gp_last_name AS 'Default GP',
+                       gp.gp_last_name AS '[ ] Default GP',
                        patient_first_name AS '[1] First Name', 
                        patient_last_name AS '[2] Last Name', 
                        patient_gender AS '[3] Gender',
                        patient_birth_date AS '[4] Birth Date', 
                        patient_email AS '[5] Email', 
-                       patient_registration_date AS 'Registration Date', 
+                       patient_registration_date AS '[ ] Registration Date', 
                        patient_NHS_blood_donor AS '[6] Blood donor',
-                       patient_NHS_blood_donor AS '[7] Organ donor',
+                       patient_NHS_organ_donor AS '[7] Organ donor',
                        patient_status AS '[8] Status'
                 FROM patient, gp
                 WHERE patient_id = '{}'
@@ -115,8 +115,8 @@ class Patient(User):
         # ignoring GP name in patient instance (id stored instead)
         patient_instance = cls(*df.values[0][:2], *df.values[0][3:]) 
         # collecting GP information 
-        df['Default GP'] = 'Dr. ' + df['Default GP'].astype(str) \
-                                  + ' (ID: ' + df['gp_id'].astype(str) + ')' 
+        df['[ ] Default GP'] = 'Dr. ' + df['[ ] Default GP'].astype(str) \
+                               + ' (ID: ' + df['gp_id'].astype(str) + ')' 
         # removing GP ID as this has been combined with the GP's name (above)
         df_display = df.drop(columns = ['gp_id'])  
         # generating admin flow dataframes
@@ -177,7 +177,7 @@ class Patient(User):
                            patient_last_name AS 'Last Name',  
                            patient_birth_date AS 'Birth Date'
                     FROM patient, gp
-                    WHERE UPPER(patient_last_name) = UPPER('{}')
+                    WHERE UPPER(patient_last_name) LIKE UPPER('%{}%')
                     AND patient.gp_id = gp.gp_id
                     AND patient_status = 'confirmed'
                     ORDER BY "First Name" ASC
