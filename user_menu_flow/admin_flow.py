@@ -661,7 +661,13 @@ def view_edit_patient(next_dict):
         return utils.display(manage_patient_accounts_flow)
 
     else:
-        key = int(input("\nChoose a value to edit. \n--> "))
+        key = input("\nChoose a value to edit. \n--> ")
+
+        while key.isnumeric() == False:
+            print("\n\U00002757 Invalid entry, please try again")
+            key = input("\nChoose a value to edit. \n--> ")
+
+        key = int(key)
         new_value = input("\nChoose a new value to input. \n--> ")
 
         print("\n----------------------------------------------------\n"
@@ -670,11 +676,11 @@ def view_edit_patient(next_dict):
         print("[ 1 ] Yes")
         print("[ 2 ] No")
 
-    y_n = int(input("\n--> "))
+    y_n = input("\n--> ")
 
-    while y_n not in (1, 2):
+    while y_n not in ('1', '2'):
         print("\n\U00002757 Input not valid.")
-        y_n = int(input("\n--> "))
+        y_n = input("\n--> ")
 
     if y_n == 1:
         # Get raw df to edit
@@ -719,27 +725,35 @@ def confirm_patient(next_dict):
           "                ", 'CONFIRM ALL NEW PATIENTS?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] Enter individual ID(s)")
-    choice = int(input('Please enter your choice:\n'
-                       '--> '))
+    choice = input('\nPlease enter your choice:\n'
+                       '--> ')
 
-    if choice == 1:
+    while choice not in ('1','2'):
+        print("\n\U00002757 Input not valid.")
+        choice = input('\nPlease enter your choice:\n--> ')
+
+    if choice == '1':
 
         print("\n----------------------------------------------------\n"
               "                ", 'CONFIRM?', "\n")
         print("[ 1 ] Yes")
         print("[ 2 ] No")
-        y_n = int(input("\n--> "))
+        y_n = input("\n--> ")
 
-        if y_n == 1:
+        while y_n not in ('1','2'):
+            print("\n\U00002757 Input not valid.")
+            choice = input('\nPlease enter your choice:\n--> ')
+
+        if y_n == '1':
             Patient.confirm('all')
             print("\n\U00002705 All patients successfully confirmed.")
             return utils.display(next_dict)
 
-        elif y_n == 2:
+        elif y_n == '2':
             print("\nPatients not confirmed.")
             return utils.display(next_dict)
 
-    elif choice == 2:
+    elif choice == '2':
 
         print("\n----------------------------------------------------\n"
               "                ", 'ENTER PATIENT ID(S) TO CONFIRM', "\n")
@@ -750,16 +764,20 @@ def confirm_patient(next_dict):
               "                ", 'CONFIRM?', "\n")
         print("[ 1 ] Yes")
         print("[ 2 ] No")
-        y_n = int(input("\n--> "))
+        y_n = input("\n--> ")
 
-        if y_n == 1:
+        while y_n not in ('1','2'):
+            print("\n\U00002757 Input not valid.")
+            choice = input('\nPlease enter your choice:\n--> ')
+
+        if y_n == '1':
             for id in ids:
                 print("\n\U00002705 Patients successfully confirmed.")
                 Patient.confirm('single', patient_id=int(id))
 
             return utils.display(next_dict)
 
-        elif y_n == 2:
+        elif y_n == '2':
             print("\nPatients not confirmed.")
             return utils.display(next_dict)
 
@@ -792,19 +810,20 @@ Please input a patient ID or a list of IDs separated by commas (e.g. 42,66,82)\n
           "                ", 'CONFIRM?', "\n")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
-    y_n = int(input("\n--> "))
-    if y_n == 1:
+    y_n = input("\n--> ")
+
+    while y_n not in ('1','2'):
+        print("\n\U00002757 Input not valid.")
+        choice = input('\nPlease enter your choice:\n--> ')
+
+    if y_n == '1':
         for id in patient_ids:
             Patient.delete(id)
             print("\n\U00002705 Patient with ID {} has been deleted.".format(id))
         return utils.display(next_dict)
 
-    elif y_n == 2:
+    elif y_n == '2':
         print("\n\U00002757 Action cancelled.")
-        return utils.display(next_dict)
-
-    else:
-        print("\n\U00002757 Input not valid.")
         return utils.display(next_dict)
 
 
@@ -842,13 +861,19 @@ def pairing_patient(next_dict):
             print('\nWould you like to search for the patient again?')
             print("[ 1 ] Yes")
             print("[ 2 ] No")
-            y_n = int(input("\n--> "))
-            if y_n == 2:
+            y_n = input("\n--> ")
+
+            while y_n not in ('1','2'):
+                print("\n\U00002757 Input not valid.")
+                choice = input('\nPlease enter your choice:\n--> ')
+
+            if y_n == '2':
                 return utils.display(next_dict)
-            elif y_n == 1:
+            elif y_n == '1':
                 last_name = input("\nPlease enter the patient's last name:\n"
                                   "--> ")
                 df = Patient.select_list('matching', last_name)
+            
         except ValueError:
             print("Invalid input, please try again!")
 
@@ -1093,7 +1118,13 @@ def choose_gp(next_dict):
           "                ", 'GP LIST', "\n")
     print(df_show)
     global gp_id_choice
-    gp_id_choice = int(input("\nPlease select a GP ID. \n--> "))
+    gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+
+    while gp_id_choice.isnumeric() == False:
+        print("\n\U00002757 Invalid entry, please try again")
+        gp_id_choice = input("\nPlease select a GP ID. \n--> ")
+
+    gp_id_choice = int(gp_id_choice)
 
     return utils.display(next_dict)
 
@@ -1942,20 +1973,20 @@ def delete_appointment_gp(next_dict):
           "                ", 'INSERT DATE RANGE', "\n")
     print("Please insert date range for batch cancellation:")
     print("[ 1 ] Day\n[ 2 ] Week\n[ 3 ] Custom")
-    date_range = int(input('\n--> '))
+    date_range = input('\n--> ')
 
-    while date_range not in (1, 2, 3):
+    while date_range not in ('1', '2', '3'):
         print("\n\U00002757 Invalid entry, please try again")
-        date_range = int(input('\n--> '))
+        date_range = input('\n--> ')
 
     start = utils.get_start_date()
 
     # Day
-    if date_range == 1:
+    if date_range == '1':
         end = start
 
     # Week
-    elif date_range == 2:
+    elif date_range == '2':
         s = datetime.strptime(start, "%Y-%m-%d")
         e = s + timedelta(days=6)
         end = datetime.strftime(e, "%Y-%m-%d")
@@ -1978,18 +2009,18 @@ def delete_appointment_gp(next_dict):
           "                ", 'CONFIRM?', "\n")
     print("Do you want to reject all appointments from {} to {} for GP with ID {}?\n".format(start, end, gp_id))
     print("[ 1 ] Yes\n[ 2 ] No")
-    y_n = int(input('\n--> '))
+    y_n = input('\n--> ')
 
-    while y_n not in (1, 2):
+    while y_n not in ('1', '2'):
         print("\n\U00002757 Invalid entry, please try again")
-        y_n = int(input('\n--> '))
+        y_n = input('\n--> ')
 
-    if y_n == 1:
+    if y_n == '1':
         Appointment.change_status_batch_future(start, end, gp_id, "rejected", reason)
         print("\n\U00002705 Appointments deleted.")
         utils.display(next_dict)
 
-    elif y_n == 2:
+    elif y_n == '2':
         utils.display(appointment_deleted_gp_final_actions)
 
 
@@ -2010,11 +2041,11 @@ def delete_appointment_patient(next_dict):
           "                ", 'INSERT DATE RANGE', "\n")
     print("Please insert date range for batch cancellation: ")
     print("[ 1 ] Day\n[ 2 ] Week\n[ 3 ] Custom")
-    date_range = int(input('\n--> '))
+    date_range = input('\n--> ')
 
-    while date_range not in (1, 2, 3):
+    while date_range not in ('1', '2', '3'):
         print("\n\U00002757 Invalid entry, please try again")
-        date_range = int(input('\n--> '))
+        date_range = input('\n--> ')
 
     start = utils.get_start_date()
 
@@ -2047,18 +2078,18 @@ def delete_appointment_patient(next_dict):
     print(
         "Do you want to reject all appointments from {} to {} for Patient with ID {}?\n".format(start, end, patient_id))
     print("[ 1 ] Yes\n[ 2 ] No")
-    y_n = int(input('\n--> '))
+    y_n = input('\n--> ')
 
-    while y_n not in (1, 2):
+    while y_n not in ('1', '2'):
         print("\n\U00002757 Invalid entry, please try again")
-        y_n = int(input('\n--> '))
+        y_n = input('\n--> ')
 
-    if y_n == 1:
+    if y_n == '1':
         Appointment.change_status_batch_future_patient(start, end, patient_id, "rejected", reason)
         print("\n\U00002705 Appointments deleted.")
         utils.display(next_dict)
 
-    elif y_n == 2:
+    elif y_n == '2':
         utils.display(appointment_deleted_gp_final_actions)
 
 
