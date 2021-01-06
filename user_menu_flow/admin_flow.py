@@ -2450,7 +2450,8 @@ remove_time_off_flow = {
     "title": "SELECT TIME OFF LENGTH",
     "type": "sub",
     "1": ("All (future)", remove_time_off_all, remove_time_off_final_actions),
-    "2": ("Custom (past and future)", remove_time_off_custom, remove_time_off_final_actions)
+    "2": ("Custom (past and future)", remove_time_off_custom, remove_time_off_final_actions),
+    "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
 add_time_off_final_actions = {
@@ -2468,6 +2469,7 @@ add_time_off_flow = {
     "1": ("Day (future)", add_time_off_day, add_time_off_final_actions),
     "2": ("Week (future)", add_time_off_week, add_time_off_final_actions),
     "3": ("Custom (past and future)", add_time_off_custom, add_time_off_final_actions),
+    "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
 view_time_off_final_actions = {
@@ -2485,7 +2487,8 @@ manage_time_off_flow = {
     "type": "sub",
     "1": ("View", view_time_off, view_time_off_final_actions),
     "2": ("Add", add_time_off, add_time_off_flow),
-    "3": ("Remove", remove_time_off, remove_time_off_flow)
+    "3": ("Remove", remove_time_off, remove_time_off_flow),
+    "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
 manage_availability_flow = {
