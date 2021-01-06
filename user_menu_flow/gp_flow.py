@@ -247,7 +247,6 @@ def display_pending_appt(next_dict):
         print("\nYour do not have any pending appointment!")
         return display_next_menu(flow_end)
     else:
-        print(no_pending_flag)
         print("\n【Your pending appointments】")
         print(Appointment.select_GP_pending(globals.usr_id)[1])
         return display_next_menu(next_dict)
