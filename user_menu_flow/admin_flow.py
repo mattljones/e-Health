@@ -622,8 +622,8 @@ def view_edit_patient(next_dict):
     print("\n----------------------------------------------------\n"
           "                ", 'EDIT THIS PATIENT?', "\n")
     print('[ 1 ] Yes')
-    print('[ 2 ] Choose Another Patient')
-    print('[ S ] Back to Patient Accounts Menu')
+    print('[ 2 ] Choose another patient')
+    print('[ S ] Back to patient accounts menu')
 
     edit_choice = input('\n--> ')
 
@@ -697,7 +697,7 @@ def confirm_patient(next_dict):
     print("\n----------------------------------------------------\n"
           "                ", 'CONFIRM ALL NEW PATIENTS?', "\n")
     print("[ 1 ] Yes")
-    print("[ 2 ] Enter Individual ID(s)")
+    print("[ 2 ] Enter individual ID(s)")
     choice = int(input('Please enter your choice:\n'
                        '--> '))
 
@@ -855,8 +855,8 @@ def pairing_patient(next_dict):
           "                ", 'CHANGE DEFAULT GP', "\n")
     while True:
         try:
-            print('[ 1 ] Auto-Reallocate')
-            print('[ 2 ] Select GP From List')
+            print('[ 1 ] Auto-reallocate')
+            print('[ 2 ] Select GP from list')
             choice = int(input('\n--> '))
             break
 
@@ -1503,8 +1503,8 @@ def add_appointment(next_dict):
     print("\n----------------------------------------------------\n"
           "                ", "EDIT THIS PATIENT'S APPOINTMENTS?", "\n")
     print('[ 1 ] Yes')
-    print('[ 2 ] Choose Another Patient')
-    print('[ S ] Back to Manage Appointments Menu')
+    print('[ 2 ] Choose another patient')
+    print('[ S ] Back to manage appointments menu')
 
     edit_choice = input('\n--> ')
 
@@ -2123,39 +2123,39 @@ yes_no_flow = {
 delete_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another GP", delete_another_gp, empty_dict),
+    "1": ("Delete another GP", delete_another_gp, empty_dict),
     "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 deactivate_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Deactivate Another GP", deactivate_another_gp, empty_dict),
+    "1": ("Deactivate another GP", deactivate_another_gp, empty_dict),
     "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 add_new_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Another GP", add_another_gp, empty_dict),
+    "1": ("Add another GP", add_another_gp, empty_dict),
     "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 view_edit_gp_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View and Modify Same GP", view_same_gp, empty_dict),
-    "2": ("View and Modify Another GP", view_another_gp, empty_dict),
+    "1": ("View and modify same GP", view_same_gp, empty_dict),
+    "2": ("View and modify another GP", view_another_gp, empty_dict),
     "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 manage_gp_accounts_flow = {
     "title": "MANAGE GP ACCOUNTS",
     "type": "sub",
-    "1": ("View/Edit GP Details", view_edit_gp, view_edit_gp_accounts_final_menu),
-    "2": ("Add New GP Account", add_gp, add_new_gp_account_final_menu),
-    "3": ("Deactivate GP Account", deactivate_gp, deactivate_gp_account_final_menu),
-    "4": ("Delete GP Account", delete_gp, delete_gp_account_final_menu)
+    "1": ("View/edit GP details", view_edit_gp, view_edit_gp_accounts_final_menu),
+    "2": ("Add new GP account", add_gp, add_new_gp_account_final_menu),
+    "3": ("Deactivate GP account", deactivate_gp, deactivate_gp_account_final_menu),
+    "4": ("Delete GP account", delete_gp, delete_gp_account_final_menu)
 }
 
 ###### MANAGE PATIENT ACCOUNTS SUB-MENU ######
@@ -2163,31 +2163,31 @@ manage_gp_accounts_flow = {
 delete_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another Patient", delete_another_patient, empty_dict),
+    "1": ("Delete another patient", delete_another_patient, empty_dict),
     "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 add_new_patient_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Confirm Another Patient", confirm_another_patient, empty_dict),
+    "1": ("Confirm another patient", confirm_another_patient, empty_dict),
     "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 view_edit_patient_accounts_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View and Modify Same Patient", view_same_patient, empty_dict),
-    "2": ("Patient Search Page", view_another_patient, empty_dict),
+    "1": ("View and modify same patient", view_same_patient, empty_dict),
+    "2": ("Patient search page", view_another_patient, empty_dict),
     "S": ("Section Menu", patient_account_section_menu, empty_dict)
 }
 
 manage_patient_accounts_flow = {
     "title": "MANAGE PATIENT ACCOUNTS",
     "type": "sub",
-    "1": ("View/Edit Patient Details", view_edit_patient, view_edit_patient_accounts_final_menu),
-    "2": ("Confirm Patient Accounts", confirm_patient, add_new_patient_account_final_menu),
-    "3": ("Delete Patient Account", delete_patient, delete_patient_account_final_menu)
+    "1": ("View/edit patient details", view_edit_patient, view_edit_patient_accounts_final_menu),
+    "2": ("Confirm patient accounts", confirm_patient, add_new_patient_account_final_menu),
+    "3": ("Delete patient account", delete_patient, delete_patient_account_final_menu)
 }
 
 ###### MANAGE GP-PATIENT PAIRINGS SUB-MENU ######
@@ -2195,14 +2195,14 @@ manage_patient_accounts_flow = {
 gp_patient_pairing_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View/Edit More Pairings", pairings_section_menu, empty_dict),
+    "1": ("View/Edit more pairings", pairings_section_menu, empty_dict),
 }
 
 gp_patient_pair_flow = {
     "title": "SEARCH FOR A GP OR PATIENT",
     "type": "sub",
-    "1": ("Search By Patient", pairing_patient, gp_patient_pairing_final_menu),
-    "2": ("Search By GP", pairing_gp, gp_patient_pairing_final_menu),
+    "1": ("Search by patient", pairing_patient, gp_patient_pairing_final_menu),
+    "2": ("Search by GP", pairing_gp, gp_patient_pairing_final_menu),
 }
 
 ###### MANAGE GP SCHEDULES SUB-MENU ######
@@ -2210,9 +2210,9 @@ gp_patient_pair_flow = {
 remove_time_off_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Remove More Time Off", remove_more_time_off, empty_dict),
-    "2": ("Manage Upcoming Time Off", manage_more_time_off, empty_dict),
-    "3": ("Manage GP Availability", manage_more_availability, empty_dict),
+    "1": ("Remove more time off", remove_more_time_off, empty_dict),
+    "2": ("Manage upcoming time off", manage_more_time_off, empty_dict),
+    "3": ("Manage GP availability", manage_more_availability, empty_dict),
     "4": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
@@ -2227,8 +2227,8 @@ remove_time_off_flow = {
 add_time_off_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add More Time Off", add_time_off, empty_dict),
-    "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
+    "1": ("Add More time Off", add_time_off, empty_dict),
+    "2": ("Remove time Off", remove_time_off, remove_time_off_flow),
     "3": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
@@ -2244,9 +2244,9 @@ add_time_off_flow = {
 view_time_off_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Time Off", add_time_off, add_time_off_flow),
-    "2": ("Remove Time Off", remove_time_off, remove_time_off_flow),
-    "3": ("Manage GP Availability", manage_more_availability, empty_dict),
+    "1": ("Add time off", add_time_off, add_time_off_flow),
+    "2": ("Remove time off", remove_time_off, remove_time_off_flow),
+    "3": ("Manage GP availability", manage_more_availability, empty_dict),
     "4": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
@@ -2262,15 +2262,15 @@ manage_time_off_flow = {
 manage_availability_flow = {
     "title": "VIEW AND MANAGE AVAILABILITY",
     "type": "sub",
-    "1": ("View Upcoming Appointments", view_appointment_by_same_gp, empty_dict),
-    "2": ("Manage Upcoming Time Off", empty_method, manage_time_off_flow)
+    "1": ("View upcoming appointments", view_appointment_by_same_gp, empty_dict),
+    "2": ("Manage upcoming time off", empty_method, manage_time_off_flow)
 }
 
 view_schedule_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Modify GP Availability", empty_method, manage_time_off_flow),
-    "2": ("View a Different Time Period", view_another_schedule, empty_dict),
+    "1": ("Modify GP availability", empty_method, manage_time_off_flow),
+    "2": ("View a different time period", view_another_schedule, empty_dict),
     "3": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
@@ -2285,8 +2285,8 @@ schedule_length_flow = {
 view_schedule_flow = {
     "title": "VIEW AND MANAGE SCHEDULE",
     "type": "sub",
-    "1": ("View GP Schedule", empty_method, schedule_length_flow),
-    "2": ("Manage GP Availability", empty_method, manage_availability_flow)
+    "1": ("View GP schedule", empty_method, schedule_length_flow),
+    "2": ("Manage GP availability", empty_method, manage_availability_flow)
 }
 
 ###### MANAGE UPCOMING APPOINTMENTS SUB-MENU ######
@@ -2295,15 +2295,15 @@ view_schedule_flow = {
 appointment_deleted_gp_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another GP's Appointments", delete_appointment_another_gp, empty_dict),
-    "2": ("Search by Patient", view_appointment_by_another_patient, empty_dict),
+    "1": ("Delete another GP's appointments", delete_appointment_another_gp, empty_dict),
+    "2": ("Search by patient", view_appointment_by_another_patient, empty_dict),
     "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 appointment_deleted_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete Another Patient's Appointments", delete_appointment_another_patient, empty_dict),
+    "1": ("Delete another patient's appointments", delete_appointment_another_patient, empty_dict),
     "2": ("Search by GP", view_appointment_by_another_gp, empty_dict),
     "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
@@ -2311,17 +2311,17 @@ appointment_deleted_patient_final_actions = {
 appointment_viewed_gp_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Another GP's Appointments", view_appointment_by_another_gp, empty_dict),
-    "2": ("Delete This GP's Appointments", delete_appointment_gp, appointment_deleted_gp_final_actions),
-    "3": ("Search by Patient", view_appointment_by_another_patient, empty_dict),
+    "1": ("View another GP's appointments", view_appointment_by_another_gp, empty_dict),
+    "2": ("Delete this GP's appointments", delete_appointment_gp, appointment_deleted_gp_final_actions),
+    "3": ("Search by patient", view_appointment_by_another_patient, empty_dict),
     "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 appointment_viewed_patient_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View Another Patient's Appointments", view_appointment_by_another_patient, empty_dict),
-    "2": ("Delete This Patient's Appointments", delete_appointment_patient, appointment_deleted_patient_final_actions),
+    "1": ("View another patient's appointments", view_appointment_by_another_patient, empty_dict),
+    "2": ("Delete this patient's appointments", delete_appointment_patient, appointment_deleted_patient_final_actions),
     "3": ("Search by GP", view_appointment_by_gp, appointment_viewed_gp_final_actions),
     "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
@@ -2336,24 +2336,24 @@ delete_appointment_flow = {
 view_appointment_flow = {
     "title": "VIEW UPCOMING APPOINTMENTS",
     "type": "sub",
-    "1": ("Search By Patient", view_appointment_by_another_patient, appointment_viewed_patient_final_actions),
-    "2": ("Search By GP", view_appointment_by_another_gp, appointment_viewed_gp_final_actions)
+    "1": ("Search by patient", view_appointment_by_another_patient, appointment_viewed_patient_final_actions),
+    "2": ("Search by GP", view_appointment_by_another_gp, appointment_viewed_gp_final_actions)
 }
 
 appointment_made_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add Another Appointment For This Patient", add_another_appointment_same_patient, empty_dict),
-    "2": ("Add Appointment For Another Patient", add_another_appointment_diff_patient, empty_dict),
+    "1": ("Add another appointment for this patient", add_another_appointment_same_patient, empty_dict),
+    "2": ("Add appointment for another patient", add_another_appointment_diff_patient, empty_dict),
     "S": ("Section Menu", appointments_section_menu, empty_dict)
 }
 
 manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
     "type": "sub",
-    "1": ("View Appointments", empty_method, view_appointment_flow),
-    "2": ("Add a New Appointment", add_another_appointment_diff_patient, appointment_made_final_actions),
-    "3": ("Delete Upcoming Appointments", empty_method, delete_appointment_flow)
+    "1": ("View appointments", empty_method, view_appointment_flow),
+    "2": ("Add a new appointment", add_another_appointment_diff_patient, appointment_made_final_actions),
+    "3": ("Delete upcoming appointments", empty_method, delete_appointment_flow)
 }
 
 ###### VIEW APPOINTMENT RECORDS SUB-MENU ######
@@ -2361,7 +2361,7 @@ manage_appointment_flow = {
 records_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("View a Different Patient", another_record_diff_patient, empty_dict),
+    "1": ("View a different patient", another_record_diff_patient, empty_dict),
 }
 
 ###### MAIN MENU ####
@@ -2369,12 +2369,12 @@ records_final_menu = {
 main_flow_admin = {
     "title": "ADMIN MAIN MENU",
     "type": "main",
-    "1": ("Manage GP Accounts", empty_method, manage_gp_accounts_flow),
-    "2": ("Manage Patient Accounts", empty_method, manage_patient_accounts_flow),
-    "3": ("Manage GP-Patient Pairings", empty_method, gp_patient_pair_flow),
-    "4": ("Manage GP Schedules", choose_gp, view_schedule_flow),
-    "5": ("Manage Upcoming Appointments", empty_method, manage_appointment_flow),
-    "6": ("View Appointment Summaries", records_main, records_final_menu)
+    "1": ("Manage GP accounts", empty_method, manage_gp_accounts_flow),
+    "2": ("Manage patient accounts", empty_method, manage_patient_accounts_flow),
+    "3": ("Manage GP-patient pairings", empty_method, gp_patient_pair_flow),
+    "4": ("Manage GP schedules", choose_gp, view_schedule_flow),
+    "5": ("Manage upcoming appointments", empty_method, manage_appointment_flow),
+    "6": ("View appointment summaries", records_main, records_final_menu)
 }
 
 ############################# TESTING ###############################
