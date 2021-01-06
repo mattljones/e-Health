@@ -559,33 +559,52 @@ def choose_patient(type, patient_last_name=None):
     Choose patient account.
     '''
     df = Patient.select_list(type, patient_last_name)
-    print("\n----------------------------------------------------\n"
-          "                ", 'SELECT PATIENT', "\n")
-    print(df[1])
+
+    if df[0].empty:
+        print("\U00002757 No matching patients!")
+        return False, None
+
+    else:
+        print("\n----------------------------------------------------\n"
+            "                 ", 'SELECT PATIENT', "\n")
+        print(df[1])
+        id_list = df[0]['Patient ID'].tolist()
+        return True, id_list
 
 
 def retrieve_patient():
     print("\n----------------------------------------------------\n"
-          "                ", 'ENTER LAST NAME', "\n")
-    valid = False
+          "                ", 'ENTER LAST NAME')
+    
+    # LAST NAME (SEARCH TERM) INPUT & VALIDATION
+    valid_name = False
 
-    while valid == False:
+    while valid_name == False:
         last_name = input("\nPlease enter the patient's last name:\n--> ")
 
-        choose_patient('matching', patient_last_name=last_name)
+        if not utils.validate_name(last_name):
+            valid_name = False
 
-        # Select ID of the patient of interest
-        selected_patient_id = input(
-            '\nPlease choose a patient ID \nOr enter \'#\' to change the patient\'s last name \n--> ')
-
-        if selected_patient_id == '#':
-            valid = False
-
-        elif selected_patient_id.isnumeric() and utils.validate(selected_patient_id):
-            valid = True
-
-        else:
-            print("\U00002757 Invalid entry, please try again and enter your choice.")
+        else: 
+            non_empty, id_list = choose_patient('matching', patient_last_name=last_name)
+            if not non_empty:
+                valid_name = False
+            else:
+                valid_name = True 
+                # ID (FROM TABLE) INPUT & VALIDATION
+                valid_id = False
+                while valid_id == False:
+                    selected_patient_id = input(
+                        '\nPlease select a patient ID,'
+                        '\nor enter \'#\' to search for a different patient. \n--> ')
+                    if selected_patient_id == '#':
+                        valid_id = True
+                        valid_name = False
+                    elif not selected_patient_id.isnumeric() or int(selected_patient_id) not in id_list:
+                        print("\U00002757 Please enter an ID from the table above!")
+                        valid_id = False 
+                    else:
+                        valid_id = True
 
     return selected_patient_id
 
