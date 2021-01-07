@@ -45,14 +45,14 @@ def cancel_appointment(next_dict):
 
     # If do not want to cancel appointment, redirects to empty dictionary
     if booking_id == "#" :
-        return utils.display(next_dict)
+        utils.display(next_dict)
 
     # If want to cancel appointment, work out apt ID, delete it and
     # redicrect to empty dictionary
     else:
         Appointment.change_status(booking_id, "cancelled")
         print("\n\U00002705 Appointment successfully cancelled !")
-        return utils.display(next_dict)
+        utils.display(next_dict)
 
 
 def book_appointment(next_dict):
@@ -77,7 +77,7 @@ def book_appointment(next_dict):
         i = input("\n--> ")
     
     # If user want to stop apppointment booking process
-    if i == "#": return utils.display(next_dict)
+    if i == "#": utils.display(next_dict)
 
     # Availability day view
     elif i == "1": personal_gp = True
@@ -102,7 +102,7 @@ def book_appointment(next_dict):
         i = input("\n--> ")
     
     # If user want to stop apppointment booking process
-    if i == "#": return utils.display(next_dict)
+    if i == "#": utils.display(next_dict)
 
     # Availability day view
     elif i == "1": view = 'day'
@@ -288,7 +288,7 @@ def book_appointment(next_dict):
 
     # cancel appointment booking
     if i == "#":
-        return utils.display(next_dict)
+        utils.display(next_dict)
 
     # online appointment
     elif i == "1":
@@ -314,7 +314,7 @@ def book_appointment(next_dict):
 
     if success:
         print("\n\U00002705 Appointment successfully booked with " + gp_name + " at " + str(booking_time) + " on the " + str(booking_date) + ".")
-        return utils.display(next_dict)
+        utils.display(next_dict)
 
     else:
         print("\n\U00002757 " + reason)
@@ -371,7 +371,7 @@ def change_account_details(next_dict):
     # If user want to stop updating account
     if i == "#": 
         print("\n\U00002705 Changes were not saved.")
-        return utils.display(next_dict)
+        utils.display(next_dict)
 
     # If user want to update email
     elif i == "1": 
@@ -427,7 +427,7 @@ def change_account_details(next_dict):
 
     print("\n\U00002705 Account successfully updated and changes saved.")
 
-    return utils.display(next_dict)
+    utils.display(next_dict)
 
 
 ############################ SEQUENTIAL STEPS MENUS ########################
@@ -437,7 +437,7 @@ def empty_method(next_dict):
     Empty method to be stored in the tuple of the dictionary of the user 
     choice doesn't require any specific steps and just redirects.
     '''
-    return utils.display(next_dict)
+    utils.display(next_dict)
 
 
 def manage_appointment(next_dict):
@@ -477,14 +477,14 @@ def manage_appointment(next_dict):
         records = Record.select(globals.usr_id)
         
         if len(records[3].index) == 0:
-            return utils.display(next_dict["has"])
+            utils.display(next_dict["has"])
             
         else:  
-            return utils.display(next_dict["both"])
+            utils.display(next_dict["both"])
 
     # If patient has upcoming appointemnts only
     elif has_appointment :
-        return utils.display(next_dict["has"])
+        utils.display(next_dict["has"])
 
     # If patient has past appointemnts only
     elif had_appointment:
@@ -493,14 +493,14 @@ def manage_appointment(next_dict):
         records = Record.select(globals.usr_id)
         
         if len(records[3].index) == 0:
-            return utils.display(next_dict["neither"])
+            utils.display(next_dict["neither"])
 
         else: 
-            return utils.display(next_dict["had"])
+            utils.display(next_dict["had"])
 
     # If patient has not booked appointments yet
     else:
-        return utils.display(next_dict["neither"])
+        utils.display(next_dict["neither"])
 
 
 def access_prescription(next_dict):
@@ -515,7 +515,7 @@ def access_prescription(next_dict):
     records = Record.select(globals.usr_id)
     print(records[4])
     
-    return utils.display(next_dict)
+    utils.display(next_dict)
 
 
 def display_default_GP(next_dict):
@@ -527,7 +527,7 @@ def display_default_GP(next_dict):
             "                REGISTERED GP \n")
 
     print("You are registered with " + Patient.select_gp_details(globals.usr_id)[1] + ".\n")
-    return utils.display(next_dict)
+    utils.display(next_dict)
 
 
 def change_GP_pair(next_dict):
@@ -548,7 +548,7 @@ def change_GP_pair(next_dict):
         print("\n\U00002757 Unknown error encountered while changing registered GP."
               "\nPlease try again.")
 
-    return utils.display(next_dict)
+    utils.display(next_dict)
 
 
 def display_account_details(next_dict):
@@ -562,7 +562,7 @@ def display_account_details(next_dict):
     patient_details = Patient.select(globals.usr_id)
     print(patient_details[4] + "\n")
 
-    return utils.display(next_dict)
+    utils.display(next_dict)
 
 
 ######################### MENU NAVIGATION DICTIONARIES ######################
