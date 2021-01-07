@@ -153,14 +153,14 @@ def no_attend(next_dict):
     Appointment.change_status(globals.appt_id, "cancelled")
     print("\nAppointment " + str(globals.appt_id) + " has been successfully cancelled!\n")
     # TODO: delete at the final version
-    # print(Appointment.select_GP_appt(globals.usr_id))
+    # print(Appointment.select_GP_appt(globals.usr_id)[1])
     return display_next_menu(next_dict)
 
 def enter_note(next_dict):
     # confirm the attendance before entering note, VALUE constraint
     Appointment.change_status(globals.appt_id, "attended")
     # TODO: delet in the final version
-    # print(Appointment.select_GP_appt(globals.usr_id))
+    # print(Appointment.select_GP_appt(globals.usr_id)[1])
     print("\nPlease enter your notes on the appointment")
     gp_note = input("--> ")
     Appointment(booking_id=globals.appt_id, booking_notes=gp_note).update()
@@ -279,7 +279,7 @@ def another_confirm_rej(next_dict):
     Appointment.change_status(confirm_id, "rejected", reason)
     print("\nAppointment " + confirm_id + " has been successfully rejected!")
     # TODO: delete at the final version
-    # print(Appointment.select_GP_appt(globals.usr_id))
+    # print(Appointment.select_GP_appt(globals.usr_id)[1])
 
     print("\n----------------------------------------------------\n"
           "                ", "Confrim another appointment?", "\n")
@@ -308,7 +308,7 @@ def another_confirm_one(next_dict):
     Appointment.change_status(confirm_id, "confirmed")
     print("\nAppointment " + confirm_id + " has been successfully confirmed!")
     # TODO: delete at the final version
-    # print(Appointment.select_GP_appt(globals.usr_id))
+    # print(Appointment.select_GP_appt(globals.usr_id)[1])
 
     print("\n----------------------------------------------------\n"
           "                ", "Confrim another appointment?", "\n")
@@ -323,7 +323,7 @@ def another_confirm_one(next_dict):
 def another_confirm_all(next_dict):
     Appointment.confirm_all_GP_pending(globals.usr_id)
     # TODO: delete at the final version
-    # print(Appointment.select_GP_appt(globals.usr_id))
+    # print(Appointment.select_GP_appt(globals.usr_id)[1])
     return display_next_menu(next_dict)
 
 def remove_timeoff(next_dict):
