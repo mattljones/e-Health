@@ -2303,23 +2303,26 @@ def records_main(next_dict):
     # Filter by last name
     last_name = input("Please enter the patient's last name:\n"
                       "--> ")
-    non_empty = choose_patient('matching', patient_last_name=last_name)[0]
+    non_empty, id_list = choose_patient('matching', patient_last_name=last_name)
     while non_empty == False:
         last_name = input("\nPlease enter the patient's last name:\n"
                       "--> ")
-        non_empty = choose_patient('matching', patient_last_name=last_name)[0]
+        non_empty, id_list = choose_patient('matching', patient_last_name=last_name)
 
-    # Select the ID of the patient whose records we want to access    
+    # Select the ID of the patient whose records we want to access
     patient_id_input = input('\nPlease choose a patient ID \n--> ')
-    while patient_id_input.isnumeric() != True or Record.select(patient_id_input)[1].index.values.size == 0:
-        print("\n\U00002757 Invalid input or non-existent patient id, please try again!")
+
+    # Validate the input id
+    while patient_id_input == "" or \
+        patient_id_input.isnumeric() != True or \
+        patient_id_input.isspace() == True or \
+        int(patient_id_input) not in id_list or \
+        Record.select(patient_id_input)[1].index.values.size == 0:
+        print("\n\U00002757 Invalid input or non-existent patient id in the table, please try again!")
         patient_id_input = input('\nPlease choose a patient ID \n--> ')
 
-    # Retrieve patient records
-    record = Record.select(patient_id_input)
-
     # Display patient records
-    print(record[2])
+    print(Record.select(patient_id_input)[2])
 
     return utils.display(next_dict)
 
