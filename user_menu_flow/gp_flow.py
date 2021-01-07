@@ -433,8 +433,9 @@ def view_another_day(next_dict):
     print("\nDo you want to view the schedule for the afternoon?")
     print("[ 1 ] Yes")
     print("[ 2 ] No")
-    halfday_choice = input("--> ")
+    halfday_choice = input("\n--> ")
     while halfday_choice not in ["1", "2"]:
+        print("\U00002757 Invalid input, please try again!")
         halfday_choice = input("--> ")
     else:
         if halfday_choice == "1":
