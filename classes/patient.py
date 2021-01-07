@@ -258,7 +258,7 @@ class Patient(User):
             # admin user flow - specifying a specific GP for a patient
             # GP might have become full since GP.select_list('not full')
             # was called earler in the admin user flow
-            elif type =='specific' and new_gp_id not in df_not_full['GP ID']:
+            elif type =='specific' and new_gp_id not in df_not_full['GP ID'].tolist():
                 return False, None
 
             query = """
