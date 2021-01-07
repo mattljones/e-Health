@@ -73,7 +73,6 @@ def edit_cc(next_dict):
     record = Record.select(globals.patient_id)[0]
     print("\n【Condition List】")
     print(Record.select_conditions()[1])
-    # TODO: UNIQUE Constraint Exception
     edit_cond_flag = True
     while edit_cond_flag:
         if record.conditions:
@@ -85,41 +84,48 @@ def edit_cc(next_dict):
                 add_or_delete = input("--> ")
             if add_or_delete == '1':
                 print("\nPlease enter the id of the condition you want to add")
-                # TODO: input validation
                 cond_id = input("--> ")
-                while cond_id not in [str(i) for i in range(21)]:
-                    print("\n\U00002757 Invalid input, please try again!")
+                # input validation
+                while cond_id not in [str(i) for i in range(21)] or cond_id in record.conditions:
+                    print("\n\U00002757 Invalid input or duplicated id, please try again!")
                     cond_id = input("--> ")
                 else:
                     record.conditions.append(cond_id)
                     record.update()
+                    print("The condition (id=" + cond_id + ") has been successfully added!")
             elif add_or_delete == '2':
                 print("\nPlease enter the id of the condition you want to remove")
                 cond_id = input("--> ")
-                while cond_id not in [str(i) for i in range(21)]:
+                while cond_id not in [str(i) for i in range(21)] or cond_id not in record.conditions:
                     print("\n\U00002757 Invalid input, please try again!")
                     cond_id = input("--> ")
                 else:
                     record.conditions.remove(cond_id)
                     record.update()
+                    print("The condition (id=" + cond_id + ") has been successfully removed!\n")
+        
+        # if the condition cell is empty
         else:
             print("[ 1 ] Add condition\n"
                 "[ 2 ] End (Patient currently has no conditions to remove)\n")
-            add_or_delete = input("--> ")
-            while add_or_delete not in ["1", "2"]:
+            add_or_end = input("--> ")
+            while add_or_end not in ["1", "2"]:
                 print("\n\U00002757 Invalid input, please try again!")
-                add_or_delete = input("--> ")
-            if add_or_delete == '1':
+                add_or_end = input("--> ")
+            if add_or_end == '1':
                 print("\nPlease enter the id of the condition you want to add")
                 cond_id = input("--> ")
-                while cond_id not in [str(i) for i in range(21)]:
-                    print("\n\U00002757 Invalid input, please try again!")
+                while cond_id not in [str(i) for i in range(21)] or cond_id in record.conditions:
+                    print("\n\U00002757 Invalid input or duplicated id, please try again!")
                     cond_id = input("--> ")
                 else:
                     record.conditions.append(cond_id)
                     record.update()
-            elif add_or_delete == '2':
+                    print("The condition (id=" + cond_id + ") has been successfully added!")
+            elif add_or_end == '2':
                 edit_cond_flag = False
+                continue
+        
         print("\nAdd or remove another condition?")
         print("[ 1 ] Yes\n"
             "[ 2 ] No\n")
