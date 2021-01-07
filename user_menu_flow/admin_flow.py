@@ -2160,6 +2160,12 @@ def delete_appointment_gp(next_dict):
     else:
         gp_id = gp_id_choice
 
+    upcoming = Appointment.select_GP_appt(gp_id)
+
+    if len(upcoming[0].index) == 0:
+        print("\n\U00002757 This GP does not have any upcoming appointment to cancel.")
+        utils.display(next_dict)
+
     print("\n----------------------------------------------------\n"
           "                ", 'INSERT DATE RANGE', "\n")
     print("Please insert date range for batch rejection:")
@@ -2229,61 +2235,35 @@ def delete_appointment_patient(next_dict):
     else:
         patient_id = patient_id_choice
 
-    print("\n----------------------------------------------------\n"
-          "                ", 'INSERT DATE RANGE', "\n")
-    print("Please insert date range for batch rejection: ")
-    print("[ 1 ] Day\n[ 2 ] Week\n[ 3 ] Custom")
-    date_range = input('\n--> ')
+    upcoming = Appointment.select_patient('upcoming', patient_id)
 
-    while date_range not in ('1', '2', '3'):
-        print("\n\U00002757 Invalid entry, please try again")
-        date_range = input('\n--> ')
-
-    start = utils.get_start_date()
-
-    # Day
-    if date_range == '1':
-        end = start
-
-    # Week
-    elif date_range == '2':
-        s = datetime.strptime(start, "%Y-%m-%d")
-        e = s + timedelta(days=6)
-        end = datetime.strftime(e, "%Y-%m-%d")
-
-        # Custom
-    else:
-        end = utils.get_end_date()
-
-    print("\n----------------------------------------------------\n"
-          "                ", 'INSERT REASON', "\n")
-
-    validate = False
-    while validate == False:
-        reason = input("Please insert reason for batch rejection: \n--> ")
-
-        if utils.validate(reason):
-            validate = True
-
-    print("\n----------------------------------------------------\n"
-          "                ", 'CONFIRM?', "\n")
-    print(
-        "Do you want to reject all appointments from {} to {} for Patient with ID {}?\n".format(start, end, patient_id))
-    print("[ 1 ] Yes\n[ 2 ] No")
-    y_n = input('\n--> ')
-
-    while y_n not in ('1', '2'):
-        print("\n\U00002757 Invalid entry, please try again")
-        y_n = input('\n--> ')
-
-    if y_n == '1':
-        Appointment.change_status_batch_future_patient(start, end, patient_id, "rejected", reason)
-        print("\n\U00002705 Appointments rejected.")
+    if len(upcoming[0].index) == 0:
+        print("\n\U00002757 This patient does not have any upcoming appointment to cancel.")
         utils.display(next_dict)
 
-    elif y_n == '2':
-        print("\n\U00002757 Action cancelled.")
-        utils.display(appointment_deleted_patient_final_actions)
+    else:
+        print("\n-- upcoming appointments -- \n" + upcoming[1])
+
+    print("\nEnter ID of appointment to cancel \nor '#' to not cancel any of them")
+
+    # Require user choice
+    booking_id = input("\n--> ")
+    
+    # If user entry is invalid, ask for input again
+    while booking_id not in str(upcoming[0]['Apt. ID'].tolist()) and booking_id != '#':
+        print("\n\U00002757 Invalid entry, please try again and enter a valid booking ID.")
+        booking_id = input("\n--> ")
+
+    # If do not want to cancel appointment, redirects to empty dictionary
+    if booking_id == "#" :
+        utils.display(next_dict)
+
+    # If want to cancel appointment, work out apt ID, delete it and
+    # redicrect to empty dictionary
+    else:
+        Appointment.change_status(booking_id, "cancelled")
+        print("\n\U00002705 Appointment successfully cancelled !")
+        utils.display(next_dict)
 
 
 def delete_appointment_another_gp(next_dict):
