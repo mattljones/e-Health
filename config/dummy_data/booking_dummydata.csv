@@ -123,4 +123,22 @@
 123,2021-03-15 11:30,confirmed,2021-01-18 20:49:12,General Check Up,online,,1,Daniels,22
 124,2021-03-15 13:50,confirmed,2021-01-19 20:49:12,General Check Up,offline,,1,Daniels,9
 125,2021-03-15 16:50,confirmed,2021-01-20 20:49:12,General Check Up,online,,10,Irvine,43
-126,2021-01-07 13:50,confirmed,2021-01-06 20:49:12,demo,online,,16,Pasteur,51
+126,2021-01-10 14:00,booked,2021-01-06 18:55:23,Demonstration,offline,NULL,16,Pasteur,51
+127,2021-01-07 13:50,booked,2021-01-06 20:49:12,demo,online,,16,Pasteur,52
+128,2021-01-07 15:50,confirmed,2021-01-06 21:44:12,demo,online,,16,Pasteur,53
+129,2021-01-07 10:00,attended,2021-01-08 21:46:12,General Check Up,offline,,16,Pasteur,21
+130,2021-01-07 10:50,attended,2021-01-08 21:47:12,General Check Up,online,,16,Pasteur,16
+131,2021-01-07 11:00,attended,2021-01-08 21:48:12,General Check Up,online,,16,Pasteur,28
+132,2021-01-07 11:20,attended,2021-01-08 21:49:02,General Check Up,online,,16,Pasteur,44
+133,2021-01-07 09:00,attended,2021-01-07 22:49:12,General Check Up,online,,16,Pasteur,23
+134,2021-01-07 16:00,confirmed,2021-01-06 22:49:12,demo,online,,16,Pasteur,51
+135,2021-01-12 08:00,booked,2021-01-08 22:49:12,demo,online,,16,Pasteur,11
+136,2021-01-12 08:30,confirmed,2021-01-08 23:49:12,demo,online,,16,Pasteur,45
+137,2021-01-12 09:00,confirmed,2021-01-08 23:49:20,demo,online,,16,Pasteur,9
+138,2021-01-12 10:00,booked,2021-01-08 23:59:12,demo,offline,,16,Pasteur,16
+139,2021-01-12 10:40,confirmed,2021-01-11 02:49:12,demo,online,,16,Pasteur,48
+140,2021-01-10 08:30,booked,2021-01-11 12:49:12,demo,offline,,16,Pasteur,2
+141,2021-01-10 08:40,confirmed,2021-01-11 22:46:12,demo,online,,16,Pasteur,23
+142,2021-01-10 08:50,booked,2021-01-11 22:49:12,demo,online,,16,Pasteur,27
+143,2021-01-10 09:30,confirmed,2021-01-11 23:30:12,demo,offline,,16,Pasteur,52
+144,2021-01-10 10:20,confirmed,2021-01-11 23:49:12,demo,online,,16,Pasteur,20
