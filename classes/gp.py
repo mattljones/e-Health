@@ -208,8 +208,8 @@ class GP(User):
                            gp_last_name AS 'Name',
                            gp_birth_date AS 'Birth Date', 
                            COUNT(patient_id) AS "No. Patients"
-                    FROM gp, patient
-                    WHERE gp.gp_id = patient.gp_id
+                    FROM gp
+                    LEFT JOIN patient ON gp.gp_id = patient.gp_id
                     AND gp_status = 'active'
                     GROUP BY gp.gp_id
                     HAVING COUNT(patient_id) < '{}'
@@ -543,7 +543,7 @@ if __name__ == "__main__":
     # print(df_print)
 
     ## GP.select_list()
-    # df_obj, df_print = GP.select_list('active')
+    # df_obj, df_print = GP.select_list('not_full')
     # print(df_obj)
     # print(df_print)
 
