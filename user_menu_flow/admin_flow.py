@@ -1620,7 +1620,7 @@ def remove_time_off_custom(next_dict):
         # Proceed with next section
         return utils.display(next_dict)
 
-    else:
+    elif user_confirmation == '2':
         # Return to main remove time off menu
         print("\n\U00002757 Action cancelled.")
         return remove_time_off(next_dict)
@@ -1675,11 +1675,12 @@ def remove_time_off_all(next_dict):
             print("\n\U00002705 All time off successfully removed.")
 
         # Proceed with next section
-        print("\n\U00002757 Action cancelled.")
+
         return utils.display(next_dict)
 
-    else:
+    elif user_confirmation == '2':
         # Return to main remove time off menu
+        print("\n\U00002757 Action cancelled.")
         return remove_time_off(next_dict)
 
 
@@ -2487,7 +2488,7 @@ view_time_off_final_actions = {
 }
 
 manage_time_off_flow = {
-    "title": "MANAGE TIME OFF",
+    "title": "MANAGE TIME OFF \n     time off is not added on a gp's weekend",
     "type": "sub",
     "1": ("View", view_time_off, view_time_off_final_actions),
     "2": ("Add", add_time_off, add_time_off_flow),
