@@ -124,19 +124,19 @@ class GP(User):
         """    
 
         query = """
-                SELECT gp_id AS '[ ] GP ID', 
-                       gp_first_name AS '[1] First Name', 
-                       gp_last_name AS '[2] Last Name', 
-                       gp_gender AS '[3] Gender',
-                       gp_birth_date AS '[4] Birth Date', 
-                       gp_email AS '[5] Email', 
-                       gp_registration_date AS '[ ] Registration Date', 
-                       gp_working_days AS '[6] Working Days', 
+                SELECT gp_id AS 'GP ID', 
+                       gp_first_name AS 'First Name', 
+                       gp_last_name AS 'Last Name', 
+                       gp_gender AS 'Gender',
+                       gp_birth_date AS 'Birth Date', 
+                       gp_email AS 'Email', 
+                       gp_registration_date AS 'Registration Date', 
+                       gp_working_days AS 'Working Days', 
                        gp.gp_department_id,
                        gp.gp_specialisation_id,
-                       gpd.gp_department AS '[7] Department', 
-                       gps.gp_specialisation_name AS '[8] Specialisation',
-                       gp_status AS '[9] Status'
+                       gpd.gp_department AS 'Department', 
+                       gps.gp_specialisation_name AS 'Specialisation',
+                       gp_status AS 'Status'
                 FROM gp, gp_department gpd, gp_specialisation gps
                 WHERE gp_id = '{}'
                 AND gp.gp_department_id = gpd.gp_department_id
@@ -146,7 +146,20 @@ class GP(User):
         # ignoring password, dept. name and spec. name
         gp_instance = cls(*df.values[0][:6], None, *df.values[0][6:10], df.values[0][12])  
         # removing IDs as not displayed initially to the user
-        df_display = df.drop(columns = ['gp_department_id', 'gp_specialisation_id'])       
+        df_display = df.drop(columns = ['gp_department_id', 'gp_specialisation_id'])
+        # adding in [X] indices to column names (not done in query as some
+        # (older) versions of sqlite3 don't support square brackets in queries)
+        df_display.rename(columns={"GP ID" : "[ ] GP ID",
+                                   "First Name" : "[1] First Name",
+                                   "Last Name" : "[2] Last Name",
+                                   "Gender" : "[3] Gender",
+                                   "Birth Date" : "[4] Birth Date",
+                                   "Email" : "[5] Email",
+                                   "Registration Date" : "[ ] Registration Date",
+                                   "Working Days" : "[6] Working Days",
+                                   "Department" : "[7] Department",
+                                   "Specialisation" : "[8] Specialisation", 
+                                   "Status" : "[9] Status"}, inplace=True)
         # transposing for better readability
         df_object = df_display.transpose().rename(columns={0:"Value"})                     
         df_print = df_object.to_markdown(tablefmt="grid", index=True)

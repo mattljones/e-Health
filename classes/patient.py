@@ -94,18 +94,18 @@ class Patient(User):
         """
 
         query = """
-                SELECT patient_id AS '[ ] Patient ID', 
+                SELECT patient_id AS 'Patient ID', 
                        patient.gp_id,
-                       gp.gp_last_name AS '[ ] Default GP',
-                       patient_first_name AS '[1] First Name', 
-                       patient_last_name AS '[2] Last Name', 
-                       patient_gender AS '[3] Gender',
-                       patient_birth_date AS '[4] Birth Date', 
-                       patient_email AS '[5] Email', 
-                       patient_registration_date AS '[ ] Registration Date', 
-                       patient_NHS_blood_donor AS '[6] Blood donor',
-                       patient_NHS_organ_donor AS '[7] Organ donor',
-                       patient_status AS '[8] Status'
+                       gp.gp_last_name AS 'Default GP',
+                       patient_first_name AS 'First Name', 
+                       patient_last_name AS 'Last Name', 
+                       patient_gender AS 'Gender',
+                       patient_birth_date AS 'Birth Date', 
+                       patient_email AS 'Email', 
+                       patient_registration_date AS 'Registration Date', 
+                       patient_NHS_blood_donor AS 'Blood donor',
+                       patient_NHS_organ_donor AS 'Organ donor',
+                       patient_status AS 'Status'
                 FROM patient, gp
                 WHERE patient_id = '{}'
                 AND patient.gp_id = gp.gp_id
@@ -115,24 +115,29 @@ class Patient(User):
         # ignoring GP name in patient instance (id stored instead)
         patient_instance = cls(*df.values[0][:2], *df.values[0][3:]) 
         # collecting GP information 
-        df['[ ] Default GP'] = 'Dr. ' + df['[ ] Default GP'].astype(str) \
+        df['Default GP'] = 'Dr. ' + df['Default GP'].astype(str) \
                                + ' (ID: ' + df['gp_id'].astype(str) + ')' 
         # removing GP ID as this has been combined with the GP's name (above)
-        df_display = df.drop(columns = ['gp_id'])  
+        df_display = df.drop(columns = ['gp_id'])
+        # generating patient flow dataframes (indexes not needed)
+        df_object_patient = df_display.transpose().rename(columns={0:"Value"})
+        df_print_patient = df_object_patient.to_markdown(tablefmt="grid", index=True)
+        # adding in [X] indices to column names (not done in query as some
+        # (older) versions of sqlite3 don't support square brackets in queries) 
+        df_display.rename(columns={"Patient ID" : "[ ] Patient ID",
+                                   "Default GP" : "[ ] Default GP",
+                                   "First Name" : "[1] First Name",
+                                   "Last Name" : "[2] Last Name",
+                                   "Gender" : "[3] Gender",
+                                   "Birth Date" : "[4] Birth Date",
+                                   "Email" : "[5] Email",
+                                   "Registration Date" : "[ ] Registration Date",
+                                   "Blood donor" : "[6] Blood donor",
+                                   "Organ donor" : "[7] Organ donor",
+                                   "Status" : "[8] Status"}, inplace=True)   
         # generating admin flow dataframes
         df_object_admin = df_display.transpose().rename(columns={0:"Value"}) 
-        df_print_admin = df_object_admin.to_markdown(tablefmt="grid", index=True)
-        # generating patient flow dataframes (indexes not needed)
-        df_display.rename(columns={"[1] First Name" : "First Name",
-                                   "[2] Last Name" : "Last Name",
-                                   "[3] Gender" : "Gender",
-                                   "[4] Birth Date" : "Birth Date",
-                                   "[5] Email" : "Email",
-                                   "[6] Blood donor" : "Blood donor",
-                                   "[7] Organ donor" : "Organ donor",
-                                   "[8] Status" : "Status"}, inplace=True)
-        df_object_patient = df_display.transpose().rename(columns={0:"Value"})
-        df_print_patient = df_object_patient.to_markdown(tablefmt="grid", index=True) 
+        df_print_admin = df_object_admin.to_markdown(tablefmt="grid", index=True) 
 
         return patient_instance, df_object_admin, df_print_admin, df_object_patient, df_print_patient
 
