@@ -248,7 +248,7 @@ class Appointment:
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE b.gp_id =={} 
-                   """.format(gp_id)
+                   AND b.booking_start_time >= '{}'""".format(gp_id,dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
         df_object = u.db_read_query(pending_query)
         df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
@@ -261,7 +261,7 @@ class Appointment:
         df_object['Agenda'] = df_object['Agenda'].str.wrap(30)
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
 
-        return df_print
+        return df_object, df_print
 
     # Displays the DF of all attended appointment for a specific GP
     @staticmethod
