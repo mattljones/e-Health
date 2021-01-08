@@ -47,7 +47,7 @@ By using this project, run `python e_health_main.py` in your terminal.
 
 ### Test accounts
 
-
+[Testing accounts' data](/docs/test_data.md)
 
 ### SQLite database
 When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. 
@@ -257,7 +257,7 @@ please run [down_db.py](config/down_db.py)
 ## Individual Documentation
 
 - [Developing Guidance](/docs/developing.md)
-- [Testing accounts' data](/docs/test_data.md)
+- 
 - [Class Document](/docs/classes.md)
 
 
