@@ -6,7 +6,6 @@ import sqlite3 as sql
 import datetime
 
 # Switching path to master to get functions from utils folder
-# TODO get rid of pathlib once 'from system import utils as u' works
 import sys
 from pathlib import Path
 
@@ -129,6 +128,7 @@ class Schedule:
         '''
         Select all upcoming time offs (sick leave and time off) for a gp
         :param gp_id: gp_id that is stored in database/db_comp0066.db
+        :param type: timeframe of timeoffs ('all', 'past', 'upcoming')
         :return: DataFrame with upcoming timeoffs of a specific gp (non-formatted & formatted)
         '''
 
@@ -435,7 +435,6 @@ class Schedule:
                     # Execute query
                     u.db_execute(delete_timeoff_days_query)
 
-            # return 'timeoffs were deleted for your indicated time period'
 
         # Delete all upcoming timeoffs
         elif type == 'all':
@@ -489,7 +488,6 @@ class Schedule:
 ### DEVELOPMENT ###
 
 if __name__ == "__main__":
-    # Schedule.insert_timeoff(16, 'time off', '2020-12-23', '2020-12-25')
     pass
 
 ### TESTING ###
