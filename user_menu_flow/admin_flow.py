@@ -1247,62 +1247,52 @@ def schedules_section_menu(next_dict):
     return utils.display(view_schedule_flow)
 
 
+def view_schedule(frequency, next_dict):
+    """
+    View a GP's current schedule.
+    """
+    if frequency == 'day':
+        title = 'DAILY'
+    elif frequency == 'week':
+        title = 'WEEKLY'
+
+    start_date = utils.get_date()
+    sched = Schedule.select(gp_id_choice, frequency, start_date)
+    print("\n----------------------------------------------------\n"
+          "                ", '{} SCHEDULE'.format(title), "\n")
+    # Show Morning Schedule
+    print("\n【", start_date, "Morning】")
+    print(sched[2])
+    print("\nDo you want to view the schedule for the afternoon?")
+    print("[ 1 ] Yes")
+    print("[ 2 ] No")
+    halfday_choice = input("--> ")
+    while halfday_choice not in ["1", "2"]:
+        print("\n\U00002757 Invalid entry, please try again")
+        print("\nDo you want to view the schedule for the afternoon?")
+        print("[ 1 ] Yes")
+        print("[ 2 ] No")
+        halfday_choice = input("--> ")
+    else:
+        if halfday_choice == "1":
+            # Show Afternoon Schedule
+            print("\n【", start_date, "Afternoon】")
+            print(sched[3])
+    return utils.display(next_dict)
+    
+
 def view_schedule_day(next_dict):
     '''
     View a GP's current schedule for a day.
     '''
-    start_date = utils.get_date()
-    sched = Schedule.select(gp_id_choice, 'day', start_date)
-    print("\n----------------------------------------------------\n"
-          "                ", 'DAILY SCHEDULE', "\n")
-    # Show Morning Schedule
-    print("\n【", start_date, "Morning】")
-    print(sched[2])
-    print("\nDo you want to view the schedule for the afternoon?")
-    print("[ 1 ] Yes")
-    print("[ 2 ] No")
-    halfday_choice = input("--> ")
-    while halfday_choice not in ["1", "2"]:
-        print("\n\U00002757 Invalid entry, please try again")
-        print("\nDo you want to view the schedule for the afternoon?")
-        print("[ 1 ] Yes")
-        print("[ 2 ] No")
-        halfday_choice = input("--> ")
-    else:
-        if halfday_choice == "1":
-            # Show Afternoon Schedule
-            print("\n【", start_date, "Afternoon】")
-            print(sched[3])
-    return utils.display(next_dict)
+    view_schedule('day', next_dict)
 
-# TODO: merge with view_schedule_day
+
 def view_schedule_week(next_dict):
     '''
     View a GP's current schedule for a week.
     '''
-    start_date = utils.get_date()
-    sched = Schedule.select(gp_id_choice, 'week', start_date)
-    print("\n----------------------------------------------------\n"
-          "                ", 'WEEKLY SCHEDULE', "\n")
-    # Show Morning Schedule
-    print("\n【", start_date, "Morning】")
-    print(sched[2])
-    print("\nDo you want to view the schedule for the afternoon?")
-    print("[ 1 ] Yes")
-    print("[ 2 ] No")
-    halfday_choice = input("--> ")
-    while halfday_choice not in ["1", "2"]:
-        print("\n\U00002757 Invalid entry, please try again")
-        print("\nDo you want to view the schedule for the afternoon?")
-        print("[ 1 ] Yes")
-        print("[ 2 ] No")
-        halfday_choice = input("--> ")
-    else:
-        if halfday_choice == "1":
-            # Show Afternoon Schedule
-            print("\n【", start_date, "Afternoon】")
-            print(sched[3])
-    return utils.display(next_dict)
+    view_schedule('week', next_dict)
 
 
 def view_another_schedule(next_dict):
