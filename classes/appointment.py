@@ -600,10 +600,10 @@ class Appointment:
         print("\nAll appointments have been confirmed!\n")
 
     @staticmethod
-    """
-    :param gp_id: GP ID to confirm all of the appointments
-    """
     def get_gp_last_name(gp_id):
+        """
+        :param gp_id: GP ID to confirm all of the appointments
+        """
         gp_last_name_query = """SELECT gp_last_name FROM gp WHERE gp_id == {} """.format(gp_id)
         return u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
 
