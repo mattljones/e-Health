@@ -1367,10 +1367,34 @@ def view_time_off(next_dict):
     '''
     View a GP's current time off.
     '''
+
+    # Prompt user for type of time off
+    print("Please enter which timeoffs you would like to see: ")
+    print("\n [ 1 ] Past \n [ 2 ] Upcoming \n [ 3 ] All")
+    timeoff_time_input = input('\n--> ')
+
+    while timeoff_time_input not in ('1', '2', '3'):
+        print("\n\U00002757 Invalid entry, please try again")
+        timeoff_time_input = input('\n--> ')
+
+    if timeoff_time_input == '1':
+        time_off_type = 'past'
+    elif timeoff_time_input == '2':
+        time_off_type = 'upcoming'
+    elif timeoff_time_input == '3':
+        time_off_type = 'all'
+
+    off = Schedule.select_timeoff(gp_id_choice, time_off_type)
+
+    if len(off[0].index) == 0:
+        print("\n\U00002757 There are no {} timeoffs for this GP.".format(time_off_type))
+        utils.display(next_dict)
+
+
+
     print("\n----------------------------------------------------\n"
           "                ", 'TIME OFF', "\n")
-
-    off = Schedule.select_upcoming_timeoff(gp_id_choice)
+    off = Schedule.select_timeoff(gp_id_choice, time_off_type)
     print(off[1])
 
     return utils.display(next_dict)
@@ -1443,7 +1467,7 @@ def add_time_off_day(next_dict):
         # Add timeoff to db only if there is no conflict with an existing booking
         while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
             print(
-                "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
+                "\n\U00002757 You have appointments or existing timeoffs during the period and cannot add timeoff, please input the date again!")
             print("\n【Conflicts Table】")
             print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
             start_date = utils.get_start_date()
@@ -2461,7 +2485,7 @@ remove_time_off_final_actions = {
 }
 
 remove_time_off_flow = {
-    "title": "SELECT TIME OFF LENGTH",
+    "title": "SELECT TIME OFF LENGTH \n     time off is not added/removed on a gp's weekend",
     "type": "sub",
     "1": ("All (future)", remove_time_off_all, remove_time_off_final_actions),
     "2": ("Custom (past and future)", remove_time_off_custom, remove_time_off_final_actions),
@@ -2497,7 +2521,7 @@ view_time_off_final_actions = {
 }
 
 manage_time_off_flow = {
-    "title": "MANAGE TIME OFF \n     time off is not added on a gp's weekend",
+    "title": "MANAGE TIME OFF \n     time off is not added/removed on a gp's weekend",
     "type": "sub",
     "1": ("View", view_time_off, view_time_off_final_actions),
     "2": ("Add", add_time_off, add_time_off_flow),

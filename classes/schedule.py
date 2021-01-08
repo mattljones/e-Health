@@ -125,15 +125,27 @@ class Schedule:
         return df_object, df_print, df_print_morning, df_print_afternoon
 
     @staticmethod  # SELECT select_upcoming_timeoff - STATIC
-    def select_upcoming_timeoff(gp_id):
+    def select_timeoff(gp_id, type):
         '''
         Select all upcoming time offs (sick leave and time off) for a gp
         :param gp_id: gp_id that is stored in database/db_comp0066.db
         :return: DataFrame with upcoming timeoffs of a specific gp (non-formatted & formatted)
         '''
 
-        # Initialize query
-        upcoming_timeoff_query = '''
+        if type == 'all':
+            select_timeoff_query = '''
+                                SELECT DISTINCT
+                                    strftime('%Y-%m-%d', booking_start_time) AS 'Date',
+                                    booking_status AS 'Timeoff Type'
+                                FROM
+                                    booking
+                                WHERE
+                                    gp_id = {}
+                                AND
+                                    booking_status IN ('time off', 'sick leave');'''.format(gp_id)
+
+        elif type == 'upcoming':
+            select_timeoff_query = '''
                                 SELECT DISTINCT
                                     strftime('%Y-%m-%d', booking_start_time) AS 'Date',
                                     booking_status AS 'Timeoff Type'
@@ -147,9 +159,25 @@ class Schedule:
                                     booking_status IN ('time off', 'sick leave');'''.format(gp_id,
                                                                                             datetime.datetime.now().strftime(
                                                                                                 "%Y-%m-%d"))
+        elif type == 'past':
+            select_timeoff_query = '''
+                                SELECT DISTINCT
+                                    strftime('%Y-%m-%d', booking_start_time) AS 'Date',
+                                    booking_status AS 'Timeoff Type'
+                                FROM
+                                    booking
+                                WHERE
+                                    gp_id = {}
+                                AND
+                                    strftime('%Y-%m-%d', booking_start_time) < '{}'
+                                AND
+                                    booking_status IN ('time off', 'sick leave');'''.format(gp_id,
+                                                                                            datetime.datetime.now().strftime(
+                                                                                                "%Y-%m-%d"))
+
 
         # Execute query
-        df_object = u.db_read_query(upcoming_timeoff_query)
+        df_object = u.db_read_query(select_timeoff_query)
 
         # produce df_print
         df_print = df_object.to_markdown(tablefmt="grid", index=False)
