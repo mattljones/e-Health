@@ -1518,7 +1518,7 @@ def add_time_off_custom(next_dict):
         return add_time_off_redirect(next_dict)
 
 
-def remove_time_off(next_dict):
+def remove_time_off_redirect(next_dict):
     '''
     Returns menu to remove a custom amount of time off to a GP's schedule.
     '''
@@ -1531,12 +1531,12 @@ def remove_time_off(next_dict):
         return utils.display(remove_time_off_flow)
 
 
-def remove_time_off_custom(next_dict):
-    '''
+def remove_time_off(timeoff_type, next_dict):
+    """
     Remove a custom amount of time off to a GP's schedule.
-    '''
+    """
     print("\n----------------------------------------------------\n"
-          "                ", 'REMOVE TIME OFF - CUSTOM', "\n")
+          "                ", 'REMOVE TIME OFF - {}'.format(timeoff_type.upper()), "\n")
 
     # Prompt user for type of time off
     print("Please select the time off type: ")
@@ -1553,6 +1553,17 @@ def remove_time_off_custom(next_dict):
         timeoff_type = 'time off'
     elif timeoff_type_input == '3':
         timeoff_type = 'all time off (sick leave and time off)'
+    
+    return [timeoff_type_input, timeoff_type]
+
+
+def remove_time_off_custom(next_dict):
+    '''
+    Remove a custom amount of time off to a GP's schedule.
+    '''
+
+    timeoff_values = remove_time_off('custom', next_dict)
+    timeoff_type_input, timeoff_type = timeoff_values[0], timeoff_values[1] 
 
     # Prompt user for time off range
     start_date = utils.get_date()
@@ -1591,31 +1602,16 @@ def remove_time_off_custom(next_dict):
     elif user_confirmation == '2':
         # Return to main remove time off menu
         print("\n\U00002757 Action cancelled.")
-        return remove_time_off(next_dict)
+        return remove_time_off_redirect(next_dict)
 
-# TODO: merge with remove_time_off_custom
+
 def remove_time_off_all(next_dict):
     '''
     Remove time off from future GP's schedule.
     '''
-    print("\n----------------------------------------------------\n"
-          "                ", 'REMOVE TIME OFF - ALL', "\n")
 
-    # Prompt user for type of time off
-    print("Please select the time off type: ")
-    print("\n [ 1 ] Sick leave \n [ 2 ] General time off \n [ 3 ] Both")
-    timeoff_type_input = input('\n--> ')
-
-    while timeoff_type_input not in ('1', '2', '3'):
-        print("\n\U00002757 Invalid entry, please try again")
-        timeoff_type_input = input('\n--> ')
-
-    if timeoff_type_input == '1':
-        timeoff_type = 'sick leave'
-    elif timeoff_type_input == '2':
-        timeoff_type = 'time off'
-    elif timeoff_type_input == '3':
-        timeoff_type = 'all time off (sick leave and time off)'
+    timeoff_values = remove_time_off('all', next_dict)
+    timeoff_type_input, timeoff_type = timeoff_values[0], timeoff_values[1]
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1649,7 +1645,7 @@ def remove_time_off_all(next_dict):
     elif user_confirmation == '2':
         # Return to main remove time off menu
         print("\n\U00002757 Action cancelled.")
-        return remove_time_off(next_dict)
+        return remove_time_off_redirect(next_dict)
 
 
 def remove_more_time_off(next_dict):
@@ -2420,7 +2416,7 @@ add_time_off_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Add More time Off", add_time_off_redirect, empty_dict),
-    "2": ("Remove time Off", remove_time_off, remove_time_off_flow),
+    "2": ("Remove time Off", remove_time_off_redirect, remove_time_off_flow),
     "3": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
@@ -2438,7 +2434,7 @@ view_time_off_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Add time off", add_time_off_redirect, add_time_off_flow),
-    "2": ("Remove time off", remove_time_off, remove_time_off_flow),
+    "2": ("Remove time off", remove_time_off_redirect, remove_time_off_flow),
     "3": ("Manage GP availability", manage_more_availability, empty_dict),
     "4": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
@@ -2447,9 +2443,9 @@ view_time_off_final_menu = {
 manage_time_off_flow = {
     "title": "MANAGE TIME OFF \n     time off is not added/removed on a gp's weekend",
     "type": "sub",
-    "1": ("View", view_time_off, view_time_off_final_actions),
+    "1": ("View", view_time_off, view_time_off_final_menu),
     "2": ("Add", add_time_off_redirect, add_time_off_flow),
-    "3": ("Remove", remove_time_off, remove_time_off_flow),
+    "3": ("Remove", remove_time_off_redirect, remove_time_off_flow),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
 
