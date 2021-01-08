@@ -210,7 +210,9 @@ class GP(User):
                            COUNT(patient_id) AS "No. Patients"
                     FROM gp
                     LEFT JOIN patient ON gp.gp_id = patient.gp_id
-                    AND gp_status = 'active'
+                    WHERE gp_status = 'active'
+                    AND gp_department_id = '1'
+                    AND gp_specialisation_id = '1'
                     GROUP BY gp.gp_id
                     HAVING COUNT(patient_id) < '{}'
                     ORDER BY "No. Patients" ASC
