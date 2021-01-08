@@ -16,7 +16,6 @@ sys.path.insert(1, str(path_to_master_repo))
 from system import utils as u
 from classes.schedule import Schedule
 
-
 class Appointment:
     """
     Class defining all 'appointment' related methods.
@@ -153,11 +152,15 @@ class Appointment:
     def select_GP(select_type, gp_id, start_date):
 
         """
-        :param select_type: GP can select either the day view or the week view of their schedule
+        :param select_type: GP can select either the 'day' view or the 'week' view of their schedule
         :param gp_id: GP specific id that we can fetch from the  global variables
         :param start_date: GP can specify the first day of the week they wish to see
         :return: df_object is a raw dataframe that can be used to pull data from it
         :return: df_print is a user friendly DF that can be used to display information to the user
+        :return: df_print_morning is a user friendly DF that for the morning appointments
+        :return: df_print_afternoon is a user friendly DF that for the afternoon appointments
+        :return: raw_sql_df is a raw dataframe that we get from the DB before editing it, used to get certain values
+                    for the user flows to use
         """
         # this is in format '%Y-%m-%d'
         start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -241,6 +244,12 @@ class Appointment:
     @staticmethod
     def select_GP_appt(gp_id):
 
+        """
+        :param gp_id: GP id to get their data
+        :return: df_object is a raw dataframe that can be used to pull data from it
+        :return: df_print is a user friendly DF that can be used to display information to the user
+        """
+
         pending_query = """SELECT booking_id AS 'Apt. ID', p.patient_first_name AS 'Patient + ID',
                    p.patient_last_name AS 'P. Last Name', b.patient_id, booking_start_time AS 'Date', booking_status 
                    AS 'Status', booking_status_change_time AS 'Status change time',
@@ -248,13 +257,12 @@ class Appointment:
                    FROM booking b
                    JOIN patient p on b.patient_id = p.patient_id
                    WHERE b.gp_id =={} 
-                   AND b.booking_start_time >= '{}'""".format(gp_id,dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
+                   AND b.booking_start_time >= '{}'""".format(gp_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
 
         df_object = u.db_read_query(pending_query)
         df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
                                     df_object['P. Last Name'].astype(str) + ' (' + \
                                     df_object['patient_id'].astype(str) + ')'
-
 
         # Dropping no longer needed columns
         df_object = df_object.drop(columns=['P. Last Name', "patient_id"])
@@ -268,7 +276,6 @@ class Appointment:
     def select_GP_attended(gp_id):
         """
         :param gp_id: GP specific id that we can fetch from the  global variables
-        :return: df_object is a raw dataframe that can be used to pull data from it
         :return: df_print is a user friendly DF that can be used to display information to the user
         """
 
@@ -295,6 +302,12 @@ class Appointment:
     # Displays the DF of confirmed appointments for a specific GP after the current time
     @staticmethod
     def select_GP_confirmed(gp_id):
+        """
+        param gp_id: GP specific id that we can fetch from the  global variables
+        :return: df_object is a raw dataframe that can be used to pull data from it
+        :return: df_print is a user friendly DF that can be used to display information to the user
+        :return:df_with_p_id is the same as df_object but also contains a separate column with GP ids
+        """
 
         pending_query = """SELECT booking_id AS 'Apt. ID', b.patient_id, p.patient_first_name AS 'Patient + ID',
                    p.patient_last_name AS 'P. Last Name', booking_start_time AS 'Date', booking_status 
@@ -312,7 +325,6 @@ class Appointment:
         df_object['Patient + ID'] = df_object['Patient + ID'].astype(str) + ' ' + \
                                     df_object['P. Last Name'].astype(str) + ' (' + \
                                     df_object['patient_id'].astype(str) + ')'
-
 
         # Dropping no longer needed columns
         df_with_p_id = df_object
@@ -358,7 +370,7 @@ class Appointment:
     @staticmethod
     def select_patient(timeframe, patient_id, status=None):
         """"
-        param timeframe: previous or upcoming
+        :param timeframe: 'previous' or 'upcoming' appointments for a selected Patient
         :param patient_id: Patient specific id that we can fetch from the  global variables
         :param status: Optional, so for Patient's records to match with prescriptions
         :return: df_object = Raw Dataframe that can be used to manipulate the data
@@ -409,6 +421,8 @@ class Appointment:
         :param start_date: GP can specify the first day of the week they wish to see
         :return: df_object raw DataFrame containing all of the booking slots and their status
         :return: df_print user friendly DataFrame containing all of the booking slots and their status
+        :return: df_print_morning is a user friendly DF that for the morning appointments
+        :return: df_print_afternoon is a user friendly DF that for the afternoon appointments
         """
 
         if select_type == 'day':
@@ -450,8 +464,11 @@ class Appointment:
         :param start_date: GP can specify the first day of the week they wish to see or a day, depending on the input
         :return: df_object raw DataFrame containing all of the booking slots and their status
         :return: df_print user friendly DataFrame containing all of the booking slots and their status
+        :return: df_print_morning is a user friendly DF that for the morning appointments
+        :return: df_print_afternoon is a user friendly DF that for the afternoon appointments
         :return: other_gp_id return the ID of the other ID that was found having the fewest appointments on date range
-        :return:other_gp_last_name return the last name of that GP in the form "Dr.LastName"
+        :return: other_gp_last_name return the last name of that GP in the form "Dr.LastName"
+        :return: boolean_available returns whether there are any GPa with availability, boolean output
         """
 
         start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -497,8 +514,8 @@ class Appointment:
         df_object, df_print, df_print_morning, \
         df_print_afternoon = Appointment.select_availability(select_type, other_gp_id, str(start_date))
 
-        return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id, \
-               other_gp_last_name, boolean_available
+        return df_object, df_print, df_print_morning, df_print_afternoon, other_gp_id, other_gp_last_name,\
+               boolean_available
 
     # Change status of a specific appointment
     @staticmethod
@@ -512,7 +529,8 @@ class Appointment:
 
             query = """UPDATE booking SET booking_status = '{}', booking_agenda = '{}'
                        WHERE booking_id = {}
-                       AND booking_start_time > '{}';""".format(new_status, reject_reason, booking_id, dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
+                       AND booking_start_time > '{}';""".format(new_status, reject_reason, booking_id,
+                                                                dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
             # print(query)
             u.db_execute(query)
 
@@ -582,6 +600,9 @@ class Appointment:
         print("\nAll appointments have been confirmed!\n")
 
     @staticmethod
+    """"
+    :param gp_id: GP ID to confirm all of the appointments
+    """
     def get_gp_last_name(gp_id):
         gp_last_name_query = """SELECT gp_last_name FROM gp WHERE gp_id == {} """.format(gp_id)
         return u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
@@ -592,7 +613,7 @@ class Appointment:
 if __name__ == "__main__":
     # Appointment.change_status_batch_future(1, 'rejected')
     # Appointment.change_status(51, 'booked')
-    Appointment.change_status(52, 'confirmed')
+    # Appointment.change_status(52, 'confirmed')
     # print(Appointment.select_GP_appt(16))
 
     # Appointment.change_status_batch_future('2021-01-01', '2021-01-01', 1, 'rejected',"Test")
@@ -679,13 +700,12 @@ if __name__ == "__main__":
     # # print(Appointment.select_GP_confirmed(2)[0])
     # print(dt.datetime.strptime(dt.datetime.now().strftime("%Y-%m-%d %H:%M"), '%Y-%m-%d %H:%M'))
 
-    #@Zonguye, this is the code you need
+    # @Zonguye, this is the code you need
 
     # date_time_now = dt.date.today().strftime("%Y-%m-%d")
     # df = Schedule.select(1, 'day', date_time_now)[0]
     # without_lunch = df[df['Status'] != "LUNCH"]
     # final_df = without_lunch[without_lunch['Status'] != ""]
     # print(final_df.to_markdown(tablefmt="grid", index=False))
-
 
     # print(len(str(100)))
