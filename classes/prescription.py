@@ -46,13 +46,16 @@ class Prescription:
     def select_drug_list():
         '''
         Select all drugs from the drug table
-        :return: DataFrame with drugs list
+        :return: DataFrame with drugs list (non-formatted and formatted)
         '''
 
         # Initialize query
         select_drug_query = '''
-                            SELECT drug_id AS "Drug ID", drug_name AS "Drug Name"
-                            FROM drug'''
+                            SELECT
+                                drug_id AS "Drug ID",
+                                drug_name AS "Drug Name"
+                            FROM
+                                drug'''
         # Execute query
         df_object = u.db_read_query(select_drug_query)
 
@@ -66,7 +69,7 @@ class Prescription:
         '''
         Static Method that gets values from patient table based on a specific patient_id that was indicated
         :param patient_for_prescription: patient_id from database
-        :return:
+        :return: DataFrame with a patient's prescriptions (non-formatted and formatted)
         '''
 
         # Initialize query
@@ -99,7 +102,6 @@ class Prescription:
 ### DEVELOPMENT ###
 
 if __name__ == "__main__":
-    print(Prescription.select_patient(51)[1])
     pass
 
 ### TESTING ###

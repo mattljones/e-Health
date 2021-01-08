@@ -35,14 +35,20 @@ def edit_notes(next_dict):
     """
     record = Record.select(globals.patient_id)[0]
     print("\nPlease input the appointment id of the notes you want to change")
-    # TODO: validate the input
     apt_id = input("--> ")
-    print("\nPlease input the new note")
-    new_note = input("--> ")
-    record.appointment_notes[apt_id] = new_note
-    record.update()
-    print(Record.select(globals.patient_id)[4])
-    return display_next_menu(next_dict)
+    df_apps = Record.select(globals.patient_id)[3]
+    gp_id = int(df_apps.at[df_apps['ID'].eq(apt_id).idxmax(), 'GP'][-3:-1])
+    # validate if the gp is the creator of the note
+    if gp_id != globals.usr_id:
+        print("\n\U00002757 You are not the creator of this note and cannot edit it!")
+        return display_next_menu(flow_end)
+    else:
+        print("\nPlease input the new note")
+        new_note = input("--> ")
+        record.appointment_notes[apt_id] = new_note
+        record.update()
+        print(Record.select(globals.patient_id)[4])
+        return display_next_menu(next_dict)
 
 def simple_note(next_dict):
     flow_submit_note = {"title": "SUBMIT NOTES ?",
