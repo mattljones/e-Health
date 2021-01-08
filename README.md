@@ -1,4 +1,5 @@
 # Table of content
+- [Table of content](#table-of-content)
 - [Key information](#key-information)
   - [Library dependencies](#library-dependencies)
   - [Running the program](#running-the-program)
@@ -7,6 +8,7 @@
   - [User experience diagrams](#user-experience-diagrams)
   - [Entity relationship diagram](#entity-relationship-diagram)
   - [Class diagrams](#class-diagrams)
+  - [Extensibility](#extensibility)
 - [Program design](#program-design)
   - [Classes](#classes)
   - [Database](#database)
@@ -51,6 +53,19 @@ Database description + dummy data
 <br>
 
 ## Class diagrams
+
+<br>
+
+## Extensibility
+
+Implemented - 
+- Different GP types (for referrals in the future)
+- Patients can be deactivated (option in the DB)
+
+Future work - 
+- API to 3Ps e.g. for referring to other hospitals, disease management (anonymous data sharing), sending prescriptions to pharmacies
+- Adding 'treatments'/'procedures' functionality e.g. small in-house surgeries, vaccinations, etc.
+- Messaging from hospital to patient e.g. automated appointment reminders, notifications of e.g. lab results coming in, etc.
 
 <br><br>
 
