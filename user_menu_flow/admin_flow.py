@@ -472,30 +472,30 @@ def deactivate_delete_gp(action, next_dict):
     
         # Patients and appointments reallocated
         if status[0]:
-            print("""\n\U00002705 GP with ID 【{}】 has been deactivated.\n
+            print("""\n\U00002705 GP with ID 【{}】 has been {}d.\n
    \U00002705 Patients reallocated successfully.\n
-   \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id))
+   \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id, action))
 
         # Patients reallocated | Appointments *not* reallocated
         elif status[1] == 'apps':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been {}d.\n 
    \U00002705 Patients reallocated successfully.\n
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
-                  .format(gp_id, status[4]))
+                  .format(gp_id, action, status[4]))
 
         # Appointments reallocated | Patients *not* reallocated
         elif status[1] == 'patients':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been {}d.\n 
    \U00002705 Upcoming appointments reallocated successfully.\n
    \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
-                  .format(gp_id, status[2]))
+                  .format(gp_id, action, status[2]))
 
         # Patients and appointments *not* reallocated
         elif status[1] == 'both':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
+            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been {}d.\n 
    \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.\n
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
-                  .format(gp_id, status[2], status[4]))
+                  .format(gp_id, action, status[2], status[4]))
 
         return utils.display(next_dict)
 
@@ -1251,15 +1251,10 @@ def view_schedule(frequency, next_dict):
     """
     View a GP's current schedule.
     """
-    if frequency == 'day':
-        title = 'DAILY'
-    elif frequency == 'week':
-        title = 'WEEKLY'
-
     start_date = utils.get_date()
     sched = Schedule.select(gp_id_choice, frequency, start_date)
     print("\n----------------------------------------------------\n"
-          "                ", '{} SCHEDULE'.format(title), "\n")
+          "                ", '{}LY SCHEDULE'.format(frequency.upper()), "\n")
     # Show Morning Schedule
     print("\n【", start_date, "Morning】")
     print(sched[2])
@@ -1360,19 +1355,20 @@ def manage_more_time_off(next_dict):
     return utils.display(manage_time_off_flow)
 
 
-def add_time_off(next_dict):
+def add_time_off_redirect(next_dict):
     '''
     Returns menu to add time off to a GP's schedule.
     '''
     return utils.display(add_time_off_flow)
 
 
-def add_time_off_day(next_dict):
-    '''
-    Adds a day of time off to a GP's schedule.
-    '''
+def add_time_off(frequency, next_dict):
+    """
+    Adds time off to a GP's schedule.
+    """
+
     print("\n----------------------------------------------------\n"
-          "                ", 'ADD TIME OFF - DAY', "\n")
+          "                ", 'ADD TIME OFF - {}'.format(frequency.upper()), "\n")
 
     # Prompt user for type of time off
     print("Please select the time off type: ")
@@ -1388,18 +1384,25 @@ def add_time_off_day(next_dict):
     elif timeoff_type_input == '2':
         timeoff_type = 'time off'
 
+    # TODO: Function start_end_date()  
     # Prompt user for start date only
     start_date = utils.get_start_date()
 
-    # Add one day to start date
-    s = datetime.strptime(start_date, "%Y-%m-%d")
-    end_date = datetime.strftime(s, "%Y-%m-%d")
+    # Determine range depending on frequency
+    if frequency == 'day':
+        s = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date = datetime.strftime(s, "%Y-%m-%d")
+    elif frequency == 'week':
+        # Add one week to start date
+        s = datetime.strptime(start_date, "%Y-%m-%d")
+        e = s + timedelta(days=6)
+        end_date = datetime.strftime(e, "%Y-%m-%d")
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
           "                ", 'CONFIRM?', "\n")
 
-    print('\nDo you want to add one day of {} on {}?\n'.format(timeoff_type, start_date))
+    print('\nDo you want to add one {} of {} from {}?\n'.format(frequency, timeoff_type, start_date))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
@@ -1417,7 +1420,7 @@ def add_time_off_day(next_dict):
             print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
 
             # Input another day or back to previous menu 
-            print("\nDo you want to add timeoff to another day?\n")
+            print("\nDo you want to add timeoff to another {}?\n".format(frequency))
             print("[ 1 ] Yes\n[ 2 ] No")
 
             user_confirmation = input("\n--> ")
@@ -1427,100 +1430,42 @@ def add_time_off_day(next_dict):
                 user_confirmation = input("\n--> ")
 
             if user_confirmation == '1':
-                start_date = utils.get_start_date()
+                    start_date = utils.get_start_date()
+
+            # Determine range depending on frequency
+            if frequency == 'day':
                 s = datetime.strptime(start_date, "%Y-%m-%d")
                 end_date = datetime.strftime(s, "%Y-%m-%d")
-            else:
-                return utils.display(add_time_off_flow)
+            elif frequency == 'week':
+                # Add one week to start date
+                s = datetime.strptime(start_date, "%Y-%m-%d")
+                e = s + timedelta(days=6)
+                end_date = datetime.strftime(e, "%Y-%m-%d")
 
         else:
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-            print("\n\U00002705 Time off ({}) successfully added on {}.".format(timeoff_type, start_date))
+            print("\n\U00002705 Time off ({}) successfully added for a {} from {}.".format(timeoff_type, frequency, start_date))
             return utils.display(next_dict)
 
     else:
         # Return to main add time off menu
         return utils.display(add_time_off_flow)
 
-# TODO: merge with add_time_off_day
+
+def add_time_off_day(next_dict):
+    '''
+    Adds a day of time off to a GP's schedule.
+    '''
+    add_time_off('day', next_dict)
+
+
 def add_time_off_week(next_dict):
     '''
     Adds a week of time off to a GP's schedule.
     '''
-    print("\n----------------------------------------------------\n"
-          "                ", 'ADD TIME OFF - WEEK', "\n")
+    add_time_off('week', next_dict)
 
-    # Prompt user for type of time off
-    print("Please select the time off type: ")
-    print("\n [ 1 ] Sick leave \n [ 2 ] General time off")
-    timeoff_type_input = input('\n--> ')
 
-    while timeoff_type_input not in ('1', '2'):
-        print("\n\U00002757 Invalid entry, please try again")
-        timeoff_type_input = input('\n--> ')
-
-    if timeoff_type_input == '1':
-        timeoff_type = 'sick leave'
-    elif timeoff_type_input == '2':
-        timeoff_type = 'time off'
-
-    # Prompt user for start date only
-    start_date = utils.get_start_date()
-
-    # Add one day to start date
-    s = datetime.strptime(start_date, "%Y-%m-%d")
-    e = s + timedelta(days=6)
-    end_date = datetime.strftime(e, "%Y-%m-%d")
-
-    # Confirmation step
-    print("\n----------------------------------------------------\n"
-          "                ", 'CONFIRM?', "\n")
-
-    print('\nDo you want to add one week of {} starting from {}?\n'.format(timeoff_type, start_date))
-    print("[ 1 ] Yes")
-    print("[ 2 ] No")
-
-    user_confirmation = input("\n--> ")
-
-    while user_confirmation not in ('1', '2'):
-        print("\n\U00002757 Invalid entry, please try again")
-        user_confirmation = input("\n--> ")
-
-    if user_confirmation == '1':
-        # Add timeoff to db only if there is no conflict with an existing booking
-        while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
-            print("\n\U00002757 You have appointments or existing timeoffs in the week starting on {} and cannot add timeoff.".format(start_date))
-            print("\n【Conflicts Table | {} - {}】".format(start_date, end_date))
-            print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
-
-            # Input another day or back to previous menu 
-            print("\nDo you want to add timeoff to another week?\n")
-            print("[ 1 ] Yes\n[ 2 ] No")
-
-            user_confirmation = input("\n--> ")
-
-            while user_confirmation not in ('1', '2'):
-                print("\n\U00002757 Invalid entry, please try again")
-                user_confirmation = input("\n--> ")
-
-            if user_confirmation == '1':
-                start_date = utils.get_start_date()
-                s = datetime.strptime(start_date, "%Y-%m-%d")
-                e = s + timedelta(days=6)
-                end_date = datetime.strftime(e, "%Y-%m-%d")
-            else:
-                return utils.display(add_time_off_flow)
-
-        else:
-            Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-            print("\n\U00002705 Time off ({}) successfully added from {} to {}.".format(timeoff_type, start_date, end_date))
-            return utils.display(next_dict)
-
-    else:
-        # Return to main add time off menu
-        return add_time_off(next_dict)
-
-# TODO: merge with add_time_off_day
 def add_time_off_custom(next_dict):
     '''
     Adds a custom amount of time off to a GP's schedule.
@@ -1577,7 +1522,7 @@ def add_time_off_custom(next_dict):
 
     else:
         # Return to main add time off menu
-        return add_time_off(next_dict)
+        return add_time_off_redirect(next_dict)
 
 
 def remove_time_off(next_dict):
@@ -2481,7 +2426,7 @@ remove_time_off_flow = {
 add_time_off_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add More time Off", add_time_off, empty_dict),
+    "1": ("Add More time Off", add_time_off_redirect, empty_dict),
     "2": ("Remove time Off", remove_time_off, remove_time_off_flow),
     "3": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
@@ -2499,7 +2444,7 @@ add_time_off_flow = {
 view_time_off_final_actions = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Add time off", add_time_off, add_time_off_flow),
+    "1": ("Add time off", add_time_off_redirect, add_time_off_flow),
     "2": ("Remove time off", remove_time_off, remove_time_off_flow),
     "3": ("Manage GP availability", manage_more_availability, empty_dict),
     "4": ("Choose a different GP", choose_another_gp, empty_dict),
@@ -2510,7 +2455,7 @@ manage_time_off_flow = {
     "title": "MANAGE TIME OFF \n     time off is not added/removed on a gp's weekend",
     "type": "sub",
     "1": ("View", view_time_off, view_time_off_final_actions),
-    "2": ("Add", add_time_off, add_time_off_flow),
+    "2": ("Add", add_time_off_redirect, add_time_off_flow),
     "3": ("Remove", remove_time_off, remove_time_off_flow),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
 }
