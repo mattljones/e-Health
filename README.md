@@ -65,10 +65,18 @@ When downloading the zip file of this project, the database is already initializ
 
 ## User experience diagrams
 
+### Patient
+
+![Patient UX diagram](docs/diagrams/Patient_UX.html)
+
+### GP
+
+### Admin
+
 <br>
 
 ## Entity relationship diagram
-![Entity relationship diagram](docs/db_comp0066_erdiagram.png)
+![Entity relationship diagram](docs/diagrams/db_comp0066_erdiagram.png)
 
 <br>
 
