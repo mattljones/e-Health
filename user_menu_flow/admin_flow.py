@@ -586,6 +586,7 @@ def choose_patient(type, patient_last_name=None):
     else:
         print("\n----------------------------------------------------\n"
             "                 ", 'SELECT PATIENT', "\n")
+        print("\n 【Patient Table】(Alphabetical order by last name)")
         print(df[1])
         id_list = df[0]['Patient ID'].tolist()
         return True, id_list
@@ -2365,7 +2366,9 @@ def records_main(next_dict):
           "                ", 'SELECT PATIENT', "\n")
 
     # Filter by last name
-    last_name = input("Please enter the patient's last name:\n"
+    last_name = input("Please enter the patient's last name,\n"
+                      "Press enter directly to view all confirmed patients:\n"
+                      "Be aware that this will be a very big table!\n"
                       "--> ")
     non_empty, id_list = choose_patient('matching', patient_last_name=last_name)
     while non_empty == False:
@@ -2375,6 +2378,7 @@ def records_main(next_dict):
 
     # Select the ID of the patient whose records we want to access
     patient_id_input = input('\nPlease choose a patient ID \n--> ')
+    
 
     # Validate the input id
     while patient_id_input == "" or \
@@ -2386,7 +2390,13 @@ def records_main(next_dict):
         patient_id_input = input('\nPlease choose a patient ID \n--> ')
 
     # Display patient records
+    print("\n【Patient Table】")
     print(Record.select(patient_id_input)[2])
+    if Record.select(patient_id_input)[3].index.values.size == 0:
+        print("\nThis patient does not has any attended appointment, so there is no 【Prescription Table】.")
+    else:
+        print("\n【Appointment & Prescription Table】")
+        print(Record.select(patient_id_input)[4])
 
     return utils.display(next_dict)
 
@@ -2684,7 +2694,7 @@ main_flow_admin = {
     "3": ("Manage GP-patient pairings", empty_method, gp_patient_pair_flow),
     "4": ("Manage GP schedules", choose_gp, view_schedule_flow),
     "5": ("Manage upcoming appointments", empty_method, manage_appointment_flow),
-    "6": ("View appointment summaries", records_main, records_final_menu)
+    "6": ("View patient records", records_main, records_final_menu)
 }
 
 ############################# TESTING ###############################
