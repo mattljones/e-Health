@@ -20,6 +20,28 @@ from classes.schedule import Schedule
 from classes.appointment import Appointment
 
 
+# TODO: Inputs
+
+
+# TODO: Outputs
+
+
+
+# TODO: Commonly used vars
+
+# GP Profile
+profile = {
+    1: 'first_name',
+    2: 'last_name',
+    3: 'gender',
+    4: 'birth_date',
+    5: 'email',
+    6: 'working_days',
+    7: 'department_id',
+    8: 'specialisation_id',
+    9: 'status'
+}
+
 ############################### INPUT MENU PAGES ###########################
 
 ###### MANAGE GP ACCOUNTS FUNCTIONS ######
@@ -35,18 +57,6 @@ def view_edit_gp(next_dict):
     '''
     Select from a list of GPs and allows choice for viewing.
     '''
-
-    profile = {
-        1: 'first_name',
-        2: 'last_name',
-        3: 'gender',
-        4: 'birth_date',
-        5: 'email',
-        6: 'working_days',
-        7: 'department_id',
-        8: 'specialisation_id',
-        9: 'status'
-    }
 
     # Check if gp id already selected previously for reuse
     if 'gp_id_choice' not in globals():
@@ -265,7 +275,7 @@ def view_another_gp(next_dict):
     del gp_id_choice
     return view_edit_gp(view_edit_gp_accounts_final_menu)
 
-
+# TODO: see view_edit_gp()
 def add_gp(next_dict):
     '''
     Adds a new GP.
@@ -435,16 +445,16 @@ def add_another_gp(next_dict):
     return add_gp(add_new_gp_account_final_menu)
 
 
-def deactivate_gp(next_dict):
+def deactivate_delete_gp(action, next_dict):
     '''
-    Deactivates a GP (if patients + appointments can BOTH be reallocated).
+    Deactivate or delete GP (if patients + appointments can BOTH be reallocated).
     '''
     # List and prompt admin for a gp id
     gp_id = retrieve_gp('active')
 
     print("\n----------------------------------------------------\n"
           "                     ", 'CONFIRM?', "\n")
-    print("Do you want to deactivate GP with ID 【{}】?\n".format(gp_id))
+    print("Do you want to {} GP with ID 【{}】?\n".format(action, gp_id))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
@@ -455,41 +465,50 @@ def deactivate_gp(next_dict):
         y_n = input("\n--> ")
 
     if y_n == '1':
-
-        deactivate_status = GP.change_status(gp_id, 'inactive')
-
+        if action == 'deactivate':
+            status = GP.change_status(gp_id, 'inactive')
+        elif action == 'delete':
+            status = GP.delete(gp_id)
+    
         # Patients and appointments reallocated
-        if deactivate_status[0]:
+        if status[0]:
             print("""\n\U00002705 GP with ID 【{}】 has been deactivated.\n
    \U00002705 Patients reallocated successfully.\n
    \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id))
 
         # Patients reallocated | Appointments *not* reallocated
-        elif deactivate_status[1] == 'apps':
+        elif status[1] == 'apps':
             print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
    \U00002705 Patients reallocated successfully.\n
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
-                  .format(gp_id, deactivate_status[4]))
+                  .format(gp_id, status[4]))
 
         # Appointments reallocated | Patients *not* reallocated
-        elif deactivate_status[1] == 'patients':
+        elif status[1] == 'patients':
             print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
    \U00002705 Upcoming appointments reallocated successfully.\n
    \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
-                  .format(gp_id, deactivate_status[2]))
+                  .format(gp_id, status[2]))
 
         # Patients and appointments *not* reallocated
-        elif deactivate_status[1] == 'both':
+        elif status[1] == 'both':
             print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deactivated.\n 
    \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.\n
    \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
-                  .format(gp_id, deactivate_status[2], deactivate_status[4]))
+                  .format(gp_id, status[2], status[4]))
 
         return utils.display(next_dict)
 
     elif y_n == '2':
-        print("\n\U00002757 Deactivation cancelled.")
+        print("\n\U00002757 Action cancelled.")
         return utils.display(next_dict)
+
+
+def deactivate_gp(next_dict):
+    '''
+    Deactivates a GP (if patients + appointments can BOTH be reallocated).
+    '''
+    deactivate_delete_gp('deactivate', next_dict)
 
 
 def deactivate_another_gp(next_dict):
@@ -503,57 +522,7 @@ def delete_gp(next_dict):
     '''
     Deletes a GP (if patients + appointments can BOTH be reallocated).
     '''
-    # List and prompt admin for a gp id
-    gp_id = retrieve_gp('all')
-
-    print("\n----------------------------------------------------\n"
-          "                     ", 'CONFIRM?', "\n")
-    print("Do you want to delete GP with ID 【{}】?\n".format(gp_id))
-    print("[ 1 ] Yes")
-    print("[ 2 ] No")
-
-    y_n = input("\n--> ")
-
-    while not y_n.isnumeric() or y_n not in ('1', '2'):
-        print("\n\U00002757 Input not valid.")
-        y_n = input("\n--> ")
-
-    if y_n == '1':
-
-        delete_status = GP.delete(gp_id)
-
-        # Patients and appointments reallocated
-        if delete_status[0]:
-            print("""\n\U00002705 GP with ID 【{}】 has been deleted.\n
-   \U00002705 Patients reallocated successfully.\n
-   \U00002705 Upcoming appointments reallocated successfully.""".format(gp_id))
-
-        # Patients reallocated | Appointments *not* reallocated
-        elif delete_status[1] == 'apps':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted.\n 
-   \U00002705 Patients reallocated successfully.\n
-   \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
-                  .format(gp_id, delete_status[4]))
-
-        # Appointments reallocated | Patients *not* reallocated
-        elif delete_status[1] == 'patients':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted.\n
-   \U00002705 Upcoming appointments reallocated successfully.\n
-   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity."""
-                  .format(gp_id, delete_status[2]))
-
-        # Patients and appointments *not* reallocated
-        elif delete_status[1] == 'both':
-            print("""\n\U00002757 GP with ID 【{}】 has *NOT* been deleted.\n 
-   \U00002757 Patients *NOT* reallocated due to {} patients exceeding total hospital capacity.\n
-   \U00002757 Upcoming appointments *NOT* reallocated due to conflicts in the following appointments: \n\n{}"""
-                  .format(gp_id, delete_status[2], delete_status[4]))
-
-        return utils.display(next_dict)
-
-    elif y_n == '2':
-        print("\n\U00002757 Deletion cancelled.")
-        return utils.display(next_dict)
+    deactivate_delete_gp('delete', next_dict)
 
 
 def delete_another_gp(next_dict):
@@ -632,17 +601,6 @@ def view_edit_patient(next_dict):
     '''
     View a Patient Account.
     '''
-
-    profile = {
-        1: 'first_name',
-        2: 'last_name',
-        3: 'gender',
-        4: 'birth_date',
-        5: 'email',
-        6: 'NHS_blood_donor',
-        7: 'NHS_organ_donor',
-        8: 'status'
-    }
 
     if 'patient_id_choice' not in globals():
         global patient_id_choice
@@ -792,7 +750,7 @@ def view_another_patient(next_dict):
     del patient_id_choice
     return view_edit_patient(view_edit_patient_accounts_final_menu)
 
-
+# TODO
 def confirm_patient(next_dict):
     '''
     Confirm pending patient registrations.
@@ -906,7 +864,7 @@ def confirm_another_patient(next_dict):
     '''
     return confirm_patient(add_new_patient_account_final_menu)
 
-
+# TODO
 def delete_patient(next_dict):
     '''
     Delete a patient account
@@ -998,7 +956,7 @@ def pairings_section_menu(next_dict):
     '''
     return utils.display(gp_patient_pair_flow)
 
-
+# TODO
 def pairing_patient(next_dict):
     '''
     Search for a patient and pair them up with a GP.
@@ -1139,7 +1097,7 @@ class No_Patient_With_ID(Exception):
     """Raised when patient ID doesn't exist"""
     pass
 
-
+# TODO
 def pairing_gp(next_dict):
     '''
     Select a GP and pair patients to them if they are not full.
@@ -1271,13 +1229,11 @@ def pairing_gp(next_dict):
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
-
+# TODO: see retrieve_gp
 def choose_gp(next_dict):
     '''
     Returns the numbered list of GPs to choose from
     '''
-    # TODO: Restructure flow so that we only need retrieve_gp()
-    
     global gp_id_choice
     gp_id_choice = retrieve_gp('all')
 
@@ -1319,7 +1275,7 @@ def view_schedule_day(next_dict):
             print(sched[3])
     return utils.display(next_dict)
 
-
+# TODO: merge with view_schedule_day
 def view_schedule_week(next_dict):
     '''
     View a GP's current schedule for a week.
@@ -1496,7 +1452,7 @@ def add_time_off_day(next_dict):
         # Return to main add time off menu
         return utils.display(add_time_off_flow)
 
-
+# TODO: merge with add_time_off_day
 def add_time_off_week(next_dict):
     '''
     Adds a week of time off to a GP's schedule.
@@ -1574,7 +1530,7 @@ def add_time_off_week(next_dict):
         # Return to main add time off menu
         return add_time_off(next_dict)
 
-
+# TODO: merge with add_time_off_day
 def add_time_off_custom(next_dict):
     '''
     Adds a custom amount of time off to a GP's schedule.
@@ -1709,7 +1665,7 @@ def remove_time_off_custom(next_dict):
         print("\n\U00002757 Action cancelled.")
         return remove_time_off(next_dict)
 
-
+# TODO: merge with remove_time_off_custom
 def remove_time_off_all(next_dict):
     '''
     Remove time off from future GP's schedule.
@@ -2285,7 +2241,7 @@ def delete_appointment_gp(next_dict):
         print("\n\U00002757 Action cancelled.")
         utils.display(appointment_deleted_gp_final_actions)
 
-
+# TODO: see delete_appointment_gp
 def delete_appointment_patient(next_dict):
     '''
     Allows deleting of appointments for a specific Patient in a specified data range.
@@ -2356,7 +2312,7 @@ def delete_appointment_another_patient(next_dict):
 # with 'summaries' changed to 'records'. Now, only choice to be
 # made is selecting the patient, which is done within the one function.
 
-
+# TODO
 def records_main(next_dict):
     '''
     Allows the selection of a patient's medical records. 
