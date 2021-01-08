@@ -68,8 +68,14 @@ When downloading the zip file of this project, the database is already initializ
 ![Patient UX diagram](docs/diagrams/patient_UX.png)
 
 
+![GP UX diagram](docs/diagrams/GP_UX.png)
+
+
+![Admin UX diagram](docs/diagrams/admin_UX.png)
+
 
 ### Entity relationship diagram
+
 ![Entity relationship diagram](docs/diagrams/db_comp0066_erdiagram.png)
 
 
