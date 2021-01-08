@@ -508,28 +508,21 @@ def deactivate_gp(next_dict):
     '''
     Deactivates a GP (if patients + appointments can BOTH be reallocated).
     '''
-    deactivate_delete_gp('deactivate', next_dict)
-
-
-def deactivate_another_gp(next_dict):
-    '''
-    Allows cycling back to add_gp from final_menu.
-    '''
-    return deactivate_gp(deactivate_gp_account_final_menu)
+    if next_dict == empty_dict:
+        return deactivate_delete_gp('deactivate', deactivate_gp_account_final_menu)
+    else:
+        return deactivate_delete_gp('deactivate', next_dict)
 
 
 def delete_gp(next_dict):
     '''
     Deletes a GP (if patients + appointments can BOTH be reallocated).
     '''
-    deactivate_delete_gp('delete', next_dict)
+    if next_dict == empty_dict:
+        return deactivate_delete_gp('delete', delete_gp_account_final_menu)
+    else:
+        return deactivate_delete_gp('delete', next_dict)
 
-
-def delete_another_gp(next_dict):
-    '''
-    Allows cycling back to delete_gp from final_menu.
-    '''
-    return delete_gp(delete_gp_account_final_menu)
 
 
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
@@ -2386,14 +2379,14 @@ yes_no_flow = {
 delete_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Delete another GP", delete_another_gp, empty_dict),
+    "1": ("Delete another GP", delete_gp, empty_dict),
     "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
 deactivate_gp_account_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
-    "1": ("Deactivate another GP", deactivate_another_gp, empty_dict),
+    "1": ("Deactivate another GP", deactivate_gp, empty_dict),
     "S": ("Section Menu", gp_account_section_menu, empty_dict)
 }
 
