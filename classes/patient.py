@@ -185,7 +185,7 @@ class Patient(User):
                     WHERE UPPER(patient_last_name) LIKE UPPER('%{}%')
                     AND patient.gp_id = gp.gp_id
                     AND patient_status = 'confirmed'
-                    ORDER BY "First Name" ASC
+                    ORDER BY "Last Name" ASC
                     """.format(patient_last_name)
             df = u.db_read_query(query)
             # collecting GP information
