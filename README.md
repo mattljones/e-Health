@@ -2,6 +2,7 @@
 - [Key information](#key-information)
   - [Library dependencies](#library-dependencies)
   - [Running the program](#running-the-program)
+  - [Test accounts](#test-accounts)
   - [SQLite database](#sqlite-database)
 - [Development](#development)
   - [User experience diagrams](#user-experience-diagrams)
@@ -13,12 +14,15 @@
   - [Database](#database)
   - [Menu navigation](#menu-navigation)
 - [Documentation](#documentation)
-  
 - [Statistics](#statistics)
 
 <br><br>
  
 # Key information
+
+For a better reader experience, we recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
+
+<br>
 
 ## Library dependencies
 
@@ -30,6 +34,10 @@
 ## Running the program
 
 By using this project, run `python e_health_main.py` in your terminal.
+
+<br>
+
+## Test accounts
 
 <br>
 
