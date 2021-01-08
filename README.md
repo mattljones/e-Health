@@ -68,13 +68,15 @@ Open your terminal in full screen for a better user experience.
 
 ## Test accounts
 
+In order to 
+
 [Testing accounts' data](/docs/test_data.md)
 
 ## SQLite database
-When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. 
-- **Initializing the database**: please run [initialize_db.py](config/initialize_db.py)  
+When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. <br> 
+The database must be systematically taken down before being initialized.
 - **Taking the database down**: please run [down_db.py](config/down_db.py)
-
+- **Initializing the database**: please run [initialize_db.py](config/initialize_db.py)
 
 
 
@@ -263,10 +265,11 @@ but mvp also could be tested with hospital
 [stored here](config/dummy_data)
 
 ## Database execution
-### Initializing database
-please run [initialize_db.py](config/initialize_db.py)
+The database must be systematically taken down before being initialized.
 ### Taking database down
-please run [down_db.py](config/down_db.py)
+Please run [down_db.py](config/down_db.py)
+### Initializing database
+Please run [initialize_db.py](config/initialize_db.py)
 
 
 ## Menu navigation
