@@ -2578,15 +2578,15 @@ appointment_viewed_patient_final_menu = {
 delete_appointment_flow = {
     "title": "DELETE UPCOMING APPOINTMENTS",
     "type": "sub",
-    "1": ("Patient", delete_appointment_another_patient, appointment_deleted_patient_final_menu),
-    "2": ("GP", delete_appointment_another_gp, appointment_deleted_gp_final_menu)
+    "1": ("Patient", delete_appointment_patient, appointment_deleted_patient_final_menu),
+    "2": ("GP", delete_appointment_gp, appointment_deleted_gp_final_menu)
 }
 
 view_appointment_flow = {
     "title": "VIEW UPCOMING APPOINTMENTS",
     "type": "sub",
-    "1": ("Search by patient", view_appointment_by_another_patient, appointment_viewed_patient_final_menu),
-    "2": ("Search by GP", view_appointment_by_another_gp, appointment_viewed_gp_final_menu)
+    "1": ("Search by patient", view_appointment_by_patient, appointment_viewed_patient_final_menu),
+    "2": ("Search by GP", view_appointment_by_gp, appointment_viewed_gp_final_menu)
 }
 
 appointment_made_final_menu = {
@@ -2601,7 +2601,7 @@ manage_appointment_flow = {
     "title": "MANAGE APPOINTMENTS",
     "type": "sub",
     "1": ("View appointments", empty_method, view_appointment_flow),
-    "2": ("Add a new appointment", add_another_appointment_diff_patient, appointment_made_final_menu),
+    "2": ("Add a new appointment", add_appointment, appointment_made_final_menu),
     "3": ("Reject upcoming appointments", empty_method, delete_appointment_flow)
 }
 
