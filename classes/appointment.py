@@ -590,7 +590,7 @@ class Appointment:
     # Confirm all of the appointments for a specific GP
     @staticmethod
     def confirm_all_GP_pending(gp_id):
-        """"
+        """
         :param gp_id: GP ID to confirm all of the appointments
         """
         query = """UPDATE booking SET booking_status = 'confirmed' 
@@ -600,7 +600,7 @@ class Appointment:
         print("\nAll appointments have been confirmed!\n")
 
     @staticmethod
-    """"
+    """
     :param gp_id: GP ID to confirm all of the appointments
     """
     def get_gp_last_name(gp_id):
