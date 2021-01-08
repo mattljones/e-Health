@@ -46,6 +46,7 @@ By using this project, run `python e_health_main.py` in your terminal.
 <br>
 
 ## SQLite database
+When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. 
 - **Initializing the database**: please run [initialize_db.py](config/initialize_db.py)  
 - **Taking the database down**: please run [down_db.py](config/down_db.py)
 
