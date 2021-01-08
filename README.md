@@ -1,5 +1,4 @@
 # Table of content
-- [Table of content](#table-of-content)
 - [Key information](#key-information)
   - [Library dependencies](#library-dependencies)
   - [Running the program](#running-the-program)
@@ -14,6 +13,7 @@
   - [Database](#database)
   - [Menu navigation](#menu-navigation)
 - [Documentation](#documentation)
+  
 - [Statistics](#statistics)
 
 <br><br>
