@@ -383,13 +383,13 @@ def add_gp(next_dict):
     # SPECIALISATION: Input validation w/ dataframe
     ref_table = GP.select_table('specialisation')
     print("\n" + ref_table[1])
-    specialisation_id = input("\nEnter the ID of the GP\'s department: \n--> ")
+    specialisation_id = input("\nEnter the ID of the GP\'s specialisation: \n--> ")
     if specialisation_id == '#':
         return utils.display(next_dict)
     else:
         while not specialisation_id.isnumeric() or int(specialisation_id) not in ref_table[0].iloc[:, 0].tolist():
             print("\U00002757 Please enter an ID from the table above.")
-            specialisation_id = input("\nEnter the ID of GP\'s department: \n--> ")
+            specialisation_id = input("\nEnter the ID of GP\'s specialisation: \n--> ")
 
     # STATUS: active by default 
     status = 'active'
