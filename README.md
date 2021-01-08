@@ -1,80 +1,111 @@
----
-marp: true
-paginate: true
----
+# Prologue
 
-<style>
-h1 {color: #486BD3;
-    text-align: center
-}
-</style>
 
-# Table of content
+
+# Table of content 
+
+# (STRUCTURE PREVIEW NOW, NEED DELETION)
+
+- [Prologue](#prologue)
 - [Table of content](#table-of-content)
 - [Key information](#key-information)
-  - [Library dependencies](#library-dependencies)
-  - [Running the program](#running-the-program)
-  - [Test accounts](#test-accounts)
-  - [SQLite database](#sqlite-database)
+  * [Library dependencies](#library-dependencies)
+  * [Running the program](#running-the-program)
+  * [Test accounts](#test-accounts)
+  * [SQLite database](#sqlite-database)
 - [Development](#development)
-  - [User experience diagrams](#user-experience-diagrams)
-  - [Entity relationship diagram](#entity-relationship-diagram)
-  - [Class diagrams](#class-diagrams)
-  - [Extensibility](#extensibility)
+  * [User experience diagrams](#user-experience-diagrams)
+  * [Entity relationship diagram](#entity-relationship-diagram)
+  * [Class diagrams](#class-diagrams)
+  * [Extensibility](#extensibility)
 - [Program design](#program-design)
-  - [Classes](#classes)
-  - [Database](#database)
-  - [Menu navigation](#menu-navigation)
-- [Documentation](#documentation)
+  * [Classes](#classes)
+    + [Outline](#outline)
+      - [Return Variables](#return-variables)
+      - [Further Information](#further-information)
+    + [`Appointment`](#-appointment-)
+    + [`GP`](#-gp-)
+    + [`Patient`](#-patient-)
+    + [`Prescription`](#-prescription-)
+    + [`Record`](#-record-)
+    + [`Schedule`](#-schedule-)
+    + [`User`](#-user-)
+  * [Database](#database)
+    + [Why SQLite?](#why-sqlite-)
+    + [Database description](#database-description)
+    + [Dummy data](#dummy-data)
+  * [Database execution](#database-execution)
+    + [Initializing database](#initializing-database)
+    + [Taking database down](#taking-database-down)
+  * [Menu navigation](#menu-navigation)
+- [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
 
-<br><br>
+
+
+
 
 # Key information
 
-For a better reader experience, we recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/README.html).
+For a better reader experience, we recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
 
-<br>
+
 
 ## Library dependencies
 
 - Pandas
 - Tabulate
 
-<br>
+
 
 ## Running the program
 
 By using this project, run `python e_health_main.py` in your terminal.
 
-<br>
+Open your terminal in full screen for a better user experience.
+
+
 
 ## Test accounts
 
-<br>
+In order to 
+
+[Testing accounts' data](/docs/test_data.md)
 
 ## SQLite database
-When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. 
-- **Initializing the database**: please run [initialize_db.py](config/initialize_db.py)  
+When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. <br> 
+The database must be systematically taken down before being initialized.
 - **Taking the database down**: please run [down_db.py](config/down_db.py)
+- **Initializing the database**: please run [initialize_db.py](config/initialize_db.py)
 
-<br><br>
+
+
 
 
 # Development 
 
 ## User experience diagrams
 
-<br>
+
+
+![Patient UX diagram](docs/diagrams/patient_UX.png)
+
+
+![GP UX diagram](docs/diagrams/GP_UX.png)
+
+
+![Admin UX diagram](docs/diagrams/admin_UX.png)
+
 
 ## Entity relationship diagram
-![Entity relationship diagram](docs/db_comp0066_erdiagram.png)
 
-<br>
+![Entity relationship diagram](docs/diagrams/db_comp0066_erdiagram.png)
+
+
 
 ## Class diagrams
 
-<br>
+
 
 ## Extensibility
 
@@ -88,7 +119,9 @@ Future work -
 - Adding 'treatments'/'procedures' functionality e.g. small in-house surgeries, vaccinations, etc.
 - Messaging from hospital to patient e.g. automated appointment reminders, notifications of e.g. lab results coming in, etc.
 
-<br><br>
+
+
+
 
 
 # Program design
@@ -104,7 +137,7 @@ In the following section the different class methods are described in detail, in
 - Parameters
 - Return objects
 
-<br>
+
 
 #### Return Variables
 
@@ -122,7 +155,7 @@ Others (i.e. cRud) by definition do return something. For these:
   - df_object (raw dataframe, for use in user flows (e.g. validating user input))  
   - df_print (to_markdown formatted dataframe, for printing in the terminal)
 
-<br>
+
 
 #### Further Information
 
@@ -130,7 +163,9 @@ Consult the classes themselves for additional information.
 
 Each method has a docstring describing its purpose, parameters and return values, as well as how various <b>edge cases</b> are handled.  
 
-<br><br>
+
+
+
 
 ### `Appointment`
 
@@ -146,7 +181,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | select_other_availability | static | <li><b>Admin, Patient</b> <li> Getting alternative GP availabilities when a patient's own GP has none before booking an appointment | <li>type = day/week <li>gp_id <li>[time parameters] | <li>DF incl. indexing w/ <b>all other GPs'</b> (i.e. with gp_id not equal to the gp_id parameter passed) availability for an upcoming day (detailed) or week (less detailed per day) <br><i>NB: in user flow, to 'check' for availability count rows in DF |
 | change_status | static | <li><b>Admin, Patient, GP</b> <li> Changing status for different reasons e.g. cancelling, confirming, rejecting | <li>booking_id <li>new_status | - |
 | confirm_all_GP_pending | static | <li><b>GP</b> <li> Confirming all pending appointments | <li>gp_id | - |
-<br>
+
 
 ### `GP`
 
@@ -161,20 +196,20 @@ Each method has a docstring describing its purpose, parameters and return values
 | reallocate_appointments | static | <i>Used in GP.change_status() and GP.delete() methods</i> | <li>gp_id | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
 | change_status | static | <li><b>Admin</b> <li> Changing a GP's status (to inactive/active) | <li>gp_id <li>new_status | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
 | delete | static | <li><b>Admin</b> <li> Deleting a GP | <li>gp_id | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
-<br>
+
 
 ### `Patient`
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| update | instance | <li><b>Admin</b> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin, Patient</b> <li> Generating an instance of a patient to later update attributes based on user input | <li>patient_id | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
-| select_list | static | <li><b>Admin</b> <li> List of patients to choose from (used in multiple branches) | <li>type = pending/matching <li>if matching, patient_last_name | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
+| update | instance | <li><b>Admin</b></li> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
+| select | factory | <li><b>Admin, Patient</b> </li><li> Generating an instance of a patient to later update attributes based on user input</li> | <li>patient_id</li> | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
+| select_list | static | <li><b>Admin</b> </li><li> List of patients to choose from (used in multiple branches)</li> | <li>type = pending/matching</li> <li>if matching, patient_last_name</li> | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
 | select_gp_details | static | <li><b>Patient</b> <li> Retrieving a patient's default GP ID and name (for booking & sharing with patient) | <li>patient_id | <li>gp_id <li>gp_name |
 | change_gp | static | <li><b>Admin, Patient</b> <li> Changing a patient's default GP (checks GP not full first) | <li>type = auto (least full)/specific <li>patient_id <li>if specific, new_gp_id | <li>BOOL True (successful) or False (unsuccessful) <li>new_gp_name (=None if BOOL == False for simpler user flow coding) |
 | confirm | static | <li><b>Admin</b> <li> Confirming patients (currently no direct method to change status to 'inactive', but allowed in DB) | <li>type = all/single  <li>if single, patient_id | <i>NB: patients were automatically given a GP during registration to avoid allowing nulls in the DB </i> |
 | delete | static | <li><b>Admin</b> <li> Deleting a patient | <li>patient_id | - |
-<br>
+
 
 ### `Prescription`
 
@@ -183,7 +218,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | insert | instance | <li><b>GP</b> <li> Inserting a new prescription from an instance populated by user input (instance created in user flow) | - | - |
 | select_patient | static | <i>Used in Record.select() method</i> | <li>patient_id | Generally: DF with details of a patient's prescriptions {drug_name, drug_dosage, drug_frequency_dosage, prescription_expiry_date (YYYY-MM-DD), booking_id} whose booking status is "attending"<li> df_object <li> df_print |
 | select_drug_list | static | <li><b>GP</b> <li> Getting a list of drugs to choose from (for a prescription) | - | Generally: DF with all drugs {drug_id, drug_name} <li> df_object <li> df_print |
-<br>
+
 
 ### `Record`
 
@@ -192,7 +227,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | update | instance | <li><b>GP</b> <li>Updating a patient's medical record (technically overriding every DB attribute w/ instance values) | - | - |
 | select | factory | <li><b>Admin, GP</b> <li> Generating an instance of a patient record to later update attributes based on user input. <li> Whilst lots of patient information is displayed, only 'conditions' and 'appointment notes' are editable (assume prescriptions are non-editable/revokable) | <li>patient_id | <li>Record instance <br><br> Generally: <b>2 DFs</b> incl. indexing of all of a patient's 'medical'-related details: 1) attributes & medical conditions 2) previous appointments & corresponding prescriptions <li> df_patient_object <li> df_patient_print <li> df_apps_object <li> df_apps_print |
 | select_conditions | static | <li><b>GP</b> <li>List of possible medical conditions for reference when updating patient record | - | Generally: DF of all possible medical conditions <li> df_object <li> df_print |
-<br>
+
 
 ### `Schedule`
 
@@ -203,22 +238,22 @@ Each method has a docstring describing its purpose, parameters and return values
 | check_timeoff_conflict | static | <li><b>Admin, GP</b> <li> Checking proposed GP timeoff doesn't conflict with any appointments | <li>gp_id <li>date_start (YYYY-MM-DD) <li>date_end (YYYY-MM-DD) | BOOLean: 'True' if there was a conflict, 'False' is there was no conflict <ul><li> boolean</ul> <br /> DF of conflicting appointments {booking_id, booking_start_time, booking_status}    <li> df_object <li> df_print |
 | insert_timeoff | static | <li><b>Admin, GP</b> <li> Inserting GP time off (only whole days possible), if there is no conflict according to check_timeoff_conflict | <li>gp_id <li>timeoff_type = 'time off' or 'sick leave' <li>start_date (YYYY-MM-DD) <li>end_date (YYYY-MM-DD) | <li> same return as check_timeoff_conflict |
 | delete_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = 'all' dates or 'custom' date range <li>timeoff_type = 'time off', 'sick leave' or None = 'all' <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>no return, just deletion |
-<br>
+
 
 ### `User`
 - Currently no methods (shared GP/Patient instance attributes only)
-<br>
 
-<br>
+
 
 ## Database
+
 ### Why SQLite?
 scalability
 reliable data sources
 etc. in progress
 
 ### Database description
-see ER diagramm
+see ER diagram
 mention a gp is by default available,
 for weekend and lunch time is nothing in database as we did not want to fill it with unnecessary slots
 
@@ -229,25 +264,29 @@ but mvp also could be tested with hospital
 
 [stored here](config/dummy_data)
 
-### Database execution
-#### Initializing database
-please run [initialize_db.py](config/initialize_db.py)
-#### Taking database down
-please run [down_db.py](config/down_db.py)
-<br>
+## Database execution
+The database must be systematically taken down before being initialized.
+### Taking database down
+Please run [down_db.py](config/down_db.py)
+### Initializing database
+Please run [initialize_db.py](config/initialize_db.py)
+
 
 ## Menu navigation
 
-<br><br>
 
 
-# Documentation
+
+
+
+# Individual documentation
 
 - [Developing Guidance](/docs/developing.md)
-- [Testing accounts' data](/docs/test_data.md)
 - [Class Document](/docs/classes.md)
 
-<br><br>
+
+
+
 
 
 # Statistics

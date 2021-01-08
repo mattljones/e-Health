@@ -1085,7 +1085,7 @@ def pairing_patient(next_dict):
         if y_n == 1:
             new_gp = Patient.change_gp('auto', patient_id)
             if new_gp[0]:
-                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, new_gp[1]))
+                print("\n\U00002705 Patient with ID {} has been allocated to {}.".format(patient_id, new_gp[1]))
             else:
                 print("\n\U00002757 All GPs are full.")
 
@@ -1125,7 +1125,7 @@ def pairing_patient(next_dict):
         if y_n == 1:
             new_gp = Patient.change_gp('specific', int(patient_id), int(new_gp_id))
             if new_gp[0]:
-                print("\n\U00002705 Patient with ID {} has been allocated to Dr {}.".format(patient_id, gp_last_name))
+                print("\n\U00002705 Patient with ID {} has been allocated to {}.".format(patient_id, gp_last_name))
             else:
                 print("\n\U00002757 All GPs are full.")
 
