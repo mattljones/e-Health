@@ -1610,7 +1610,13 @@ def remove_time_off(next_dict):
     '''
     Returns menu to remove a custom amount of time off to a GP's schedule.
     '''
-    return utils.display(remove_time_off_flow)
+    off = Schedule.select_timeoff(gp_id_choice, 'all')
+
+    if len(off[0].index) == 0:
+        print("\n\U00002757 There are no timeoffs to delete for this GP.")
+        return utils.display(manage_time_off_flow)
+    else:
+        return utils.display(remove_time_off_flow)
 
 
 def remove_time_off_custom(next_dict):
@@ -1738,6 +1744,13 @@ def remove_more_time_off(next_dict):
     '''
     Allows cycling back to the remove_time_off menu from the final_menu.
     '''
+
+    off = Schedule.select_timeoff(gp_id_choice, 'all')
+
+    if len(off[0].index) == 0:
+        print("\n\U00002757 There are no timeoffs to delete for this GP.")
+        utils.display(manage_time_off_flow)
+
     return utils.display(remove_time_off_flow)
 
 
