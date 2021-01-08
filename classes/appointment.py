@@ -483,7 +483,7 @@ class Appointment:
                              JOIN gp ON gp.gp_id = b.gp_id
                              WHERE (date(booking_start_time) BETWEEN '{}' AND '{}')
                              AND (booking_status <> 'canceled' AND booking_status <>'rejected') AND (b.gp_id <> {})
-                             AND gp.gp_status == 'active'                             
+                             AND gp.gp_status == 'active' and gp.gp_specialisation_id == 1                           
                              GROUP BY b.gp_id
                              ORDER BY Bookings_Per_Day
                              LIMIT 1;""".format(start_date, end_date, gp_id)
