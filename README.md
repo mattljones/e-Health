@@ -23,20 +23,20 @@
     + [Outline](#outline)
       - [Return Variables](#return-variables)
       - [Further Information](#further-information)
-    + [`Appointment`](#-appointment-)
-    + [`GP`](#-gp-)
-    + [`Patient`](#-patient-)
-    + [`Prescription`](#-prescription-)
-    + [`Record`](#-record-)
-    + [`Schedule`](#-schedule-)
-    + [`User`](#-user-)
+    + [Appointment](#-appointment-)
+    + [GP](#-gp-)
+    + [Patient](#-patient-)
+    + [Prescription](#-prescription-)
+    + [Record](#-record-)
+    + [Schedule](#-schedule-)
+    + [User](#-user-)
   * [Database](#database)
     + [Why SQLite?](#why-sqlite-)
     + [Database description](#database-description)
     + [Dummy data](#dummy-data)
-  * [Database execution](#database-execution)
-    + [Initializing database](#initializing-database)
-    + [Taking database down](#taking-database-down)
+    + [Database execution](#database-execution)
+        - [Taking database down](#taking-database-down)
+        - [Initializing database](#initializing-database)
   * [Menu navigation](#menu-navigation)
 - [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
@@ -167,7 +167,7 @@ Each method has a docstring describing its purpose, parameters and return values
 
 
 
-### `Appointment`
+### Appointment
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -183,7 +183,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | confirm_all_GP_pending | static | <li><b>GP</b> <li> Confirming all pending appointments | <li>gp_id | - |
 
 
-### `GP`
+### GP
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -198,20 +198,20 @@ Each method has a docstring describing its purpose, parameters and return values
 | delete | static | <li><b>Admin</b> <li> Deleting a GP | <li>gp_id | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
 
 
-### `Patient`
+### Patient
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| update | instance | <li><b>Admin</b></li> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin, Patient</b> </li><li> Generating an instance of a patient to later update attributes based on user input</li> | <li>patient_id</li> | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
-| select_list | static | <li><b>Admin</b> </li><li> List of patients to choose from (used in multiple branches)</li> | <li>type = pending/matching</li> <li>if matching, patient_last_name</li> | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
+| update | instance | <li><b>Admin</b> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
+| select | factory | <li><b>Admin, Patient</b> <li> Generating an instance of a patient to later update attributes based on user input | <li>patient_id | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
+| select_list | static | <li><b>Admin</b> <li> List of patients to choose from (used in multiple branches) | <li>type = pending/matching <li>if matching, patient_last_name | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
 | select_gp_details | static | <li><b>Patient</b> <li> Retrieving a patient's default GP ID and name (for booking & sharing with patient) | <li>patient_id | <li>gp_id <li>gp_name |
 | change_gp | static | <li><b>Admin, Patient</b> <li> Changing a patient's default GP (checks GP not full first) | <li>type = auto (least full)/specific <li>patient_id <li>if specific, new_gp_id | <li>BOOL True (successful) or False (unsuccessful) <li>new_gp_name (=None if BOOL == False for simpler user flow coding) |
 | confirm | static | <li><b>Admin</b> <li> Confirming patients (currently no direct method to change status to 'inactive', but allowed in DB) | <li>type = all/single  <li>if single, patient_id | <i>NB: patients were automatically given a GP during registration to avoid allowing nulls in the DB </i> |
 | delete | static | <li><b>Admin</b> <li> Deleting a patient | <li>patient_id | - |
 
 
-### `Prescription`
+### Prescription
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -220,7 +220,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | select_drug_list | static | <li><b>GP</b> <li> Getting a list of drugs to choose from (for a prescription) | - | Generally: DF with all drugs {drug_id, drug_name} <li> df_object <li> df_print |
 
 
-### `Record`
+### Record
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -229,7 +229,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | select_conditions | static | <li><b>GP</b> <li>List of possible medical conditions for reference when updating patient record | - | Generally: DF of all possible medical conditions <li> df_object <li> df_print |
 
 
-### `Schedule`
+### Schedule
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -240,7 +240,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | delete_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = 'all' dates or 'custom' date range <li>timeoff_type = 'time off', 'sick leave' or None = 'all' <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>no return, just deletion |
 
 
-### `User`
+### User
 - Currently no methods (shared GP/Patient instance attributes only)
 
 
@@ -248,21 +248,35 @@ Each method has a docstring describing its purpose, parameters and return values
 ## Database
 
 ### Why SQLite?
-scalability
-reliable data sources
-etc. in progress
+We decided to rely on a SQLite database because of the following reasons:
+- Seamless functionality within python environment
+- Self-containing and serverless database within our project folder
+- Taking advantage of database features
+- Ensuring that our project is not only an MVP, but also can be used as a scalable foundation for the UCL Hospital
 
 ### Database description
-see ER diagram
-mention a gp is by default available,
-for weekend and lunch time is nothing in database as we did not want to fill it with unnecessary slots
+For a detailed description of our database, we would like to refer to our ER diagram.
+
+**Important points to mention:**
+- booking table  
+Used as a calendar for our system. This means that both appointments and time offs of gps get stored.
+By default all GPs are available unless they have their weekends (according to gp_working_days,
+which is chosen by while registering GPs) lunchtime (based on gp_id: if even lunchtime from 12:00 to 13:00,
+else: 13:00 to 14:00). To not unnecessarily fill the database with lunchtimes and weekends, we used an
+empty dataframe (for day and week) that accommodates these slots that are not available by default. Using an empty
+dataframe and merging it with potential existing appointments or time offs and only enable users in the front
+accessing available slots.
+- indexes  
+There are no separate indexes implemented, as SQLite indexes the primary key of a respective table by default.
+As we are using primary keys in our most-used queries, we did not 
+
 
 ### Dummy data
-We have created extensive dummy data so that 
-product tested and evaluated
-but mvp also could be tested with hospital
+We have created extensive dummy data so that our system can be:
+- excessively tested and evaluated by TA and Professor
+- our system is ready to showcase and tested by the actual users
 
-[stored here](config/dummy_data)
+Our dummy data is stored [here](config/dummy_data)
 
 ## Database execution
 The database must be systematically taken down before being initialized.
