@@ -1466,13 +1466,27 @@ def add_time_off_day(next_dict):
     if user_confirmation == '1':
         # Add timeoff to db only if there is no conflict with an existing booking
         while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
-            print(
-                "\n\U00002757 You have appointments or existing timeoffs during the period and cannot add timeoff, please input the date again!")
-            print("\n【Conflicts Table】")
+            print("\n\U00002757 You have appointments or existing timeoffs on {} and cannot add timeoff.".format(start_date))
+            print("\n【Conflicts Table - {}】".format(start_date))
             print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
-            start_date = utils.get_start_date()
-            s = datetime.strptime(start_date, "%Y-%m-%d")
-            end_date = datetime.strftime(s, "%Y-%m-%d")
+
+            # Input another day or back to previous menu 
+            print("\nDo you want to add timeoff to another day?\n")
+            print("[ 1 ] Yes\n[ 2 ] No")
+
+            user_confirmation = input("\n--> ")
+
+            while user_confirmation not in ('1', '2'):
+                print("\n\U00002757 Invalid entry, please try again")
+                user_confirmation = input("\n--> ")
+
+            if user_confirmation == '1':
+                start_date = utils.get_start_date()
+                s = datetime.strptime(start_date, "%Y-%m-%d")
+                end_date = datetime.strftime(s, "%Y-%m-%d")
+            else:
+                return utils.display(add_time_off_flow)
+
         else:
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
             print("\n\U00002705 Time off ({}) successfully added on {}.".format(timeoff_type, start_date))
@@ -1529,17 +1543,31 @@ def add_time_off_week(next_dict):
     if user_confirmation == '1':
         # Add timeoff to db only if there is no conflict with an existing booking
         while Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[0] == True:
-            print(
-                "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
-            print("\n【Conflicts Table】")
+            print("\n\U00002757 You have appointments or existing timeoffs in the week starting on {} and cannot add timeoff.".format(start_date))
+            print("\n【Conflicts Table | {} - {}】".format(start_date, end_date))
             print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
-            start_date = utils.get_start_date()
-            e = s + timedelta(days=6)
-            end_date = datetime.strftime(e, "%Y-%m-%d")
+
+            # Input another day or back to previous menu 
+            print("\nDo you want to add timeoff to another week?\n")
+            print("[ 1 ] Yes\n[ 2 ] No")
+
+            user_confirmation = input("\n--> ")
+
+            while user_confirmation not in ('1', '2'):
+                print("\n\U00002757 Invalid entry, please try again")
+                user_confirmation = input("\n--> ")
+
+            if user_confirmation == '1':
+                start_date = utils.get_start_date()
+                s = datetime.strptime(start_date, "%Y-%m-%d")
+                e = s + timedelta(days=6)
+                end_date = datetime.strftime(e, "%Y-%m-%d")
+            else:
+                return utils.display(add_time_off_flow)
+
         else:
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-            print("\n\U00002705 Time off ({}) successfully added for one week starting on {}.".format(timeoff_type,
-                                                                                                      start_date))
+            print("\n\U00002705 Time off ({}) successfully added from {} to {}.".format(timeoff_type, start_date, end_date))
             return utils.display(next_dict)
 
     else:
@@ -1744,7 +1772,6 @@ def remove_more_time_off(next_dict):
     '''
     Allows cycling back to the remove_time_off menu from the final_menu.
     '''
-
     off = Schedule.select_timeoff(gp_id_choice, 'all')
 
     if len(off[0].index) == 0:
