@@ -1,55 +1,76 @@
-# Title
+# Prologue
 
 
 
-## Table of content
+# Table of content 
 
+# (STRUCTURE PREVIEW NOW, NEED DELETION)
+
+- [Prologue](#prologue)
 - [Table of content](#table-of-content)
 - [Key information](#key-information)
-  - [Library dependencies](#library-dependencies)
-  - [Running the program](#running-the-program)
-  - [Test accounts](#test-accounts)
-  - [SQLite database](#sqlite-database)
+  * [Library dependencies](#library-dependencies)
+  * [Running the program](#running-the-program)
+  * [Test accounts](#test-accounts)
+  * [SQLite database](#sqlite-database)
 - [Development](#development)
-  - [User experience diagrams](#user-experience-diagrams)
-  - [Entity relationship diagram](#entity-relationship-diagram)
-  - [Class diagrams](#class-diagrams)
-  - [Extensibility](#extensibility)
+  * [User experience diagrams](#user-experience-diagrams)
+  * [Entity relationship diagram](#entity-relationship-diagram)
+  * [Class diagrams](#class-diagrams)
+  * [Extensibility](#extensibility)
 - [Program design](#program-design)
-  - [Classes](#classes)
-  - [Database](#database)
-  - [Menu navigation](#menu-navigation)
-- [Documentation](#documentation)
+  * [Classes](#classes)
+    + [Outline](#outline)
+      - [Return Variables](#return-variables)
+      - [Further Information](#further-information)
+    + [`Appointment`](#-appointment-)
+    + [`GP`](#-gp-)
+    + [`Patient`](#-patient-)
+    + [`Prescription`](#-prescription-)
+    + [`Record`](#-record-)
+    + [`Schedule`](#-schedule-)
+    + [`User`](#-user-)
+  * [Database](#database)
+    + [Why SQLite?](#why-sqlite-)
+    + [Database description](#database-description)
+    + [Dummy data](#dummy-data)
+  * [Database execution](#database-execution)
+    + [Initializing database](#initializing-database)
+    + [Taking database down](#taking-database-down)
+  * [Menu navigation](#menu-navigation)
+- [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
 
 
 
 
 
-## Key information
+# Key information
 
 For a better reader experience, we recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
 
 
 
-### Library dependencies
+## Library dependencies
 
 - Pandas
 - Tabulate
 
 
 
-### Running the program
+## Running the program
 
 By using this project, run `python e_health_main.py` in your terminal.
 
+Open your terminal in full screen for a better user experience.
 
 
-### Test accounts
+
+## Test accounts
 
 [Testing accounts' data](/docs/test_data.md)
 
-### SQLite database
+## SQLite database
 When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. 
 - **Initializing the database**: please run [initialize_db.py](config/initialize_db.py)  
 - **Taking the database down**: please run [down_db.py](config/down_db.py)
@@ -59,9 +80,9 @@ When downloading the zip file of this project, the database is already initializ
 
 
 
-## Development 
+# Development 
 
-### User experience diagrams
+## User experience diagrams
 
 
 
@@ -74,17 +95,17 @@ When downloading the zip file of this project, the database is already initializ
 ![Admin UX diagram](docs/diagrams/admin_UX.png)
 
 
-### Entity relationship diagram
+## Entity relationship diagram
 
 ![Entity relationship diagram](docs/diagrams/db_comp0066_erdiagram.png)
 
 
 
-### Class diagrams
+## Class diagrams
 
 
 
-### Extensibility
+## Extensibility
 
 Implemented - 
 - Different GP types (for referrals in the future)
@@ -101,11 +122,11 @@ Future work -
 
 
 
-## Program design
+# Program design
 
-### Classes
+## Classes
 
-#### Outline
+### Outline
 
 In the following section the different class methods are described in detail, including:
 - Name
@@ -116,7 +137,7 @@ In the following section the different class methods are described in detail, in
 
 
 
-##### Return Variables
+#### Return Variables
 
 Some methods (i.e. most CrUD methods) do not return anything. 
 
@@ -134,7 +155,7 @@ Others (i.e. cRud) by definition do return something. For these:
 
 
 
-##### Further Information
+#### Further Information
 
 Consult the classes themselves for additional information.
 
@@ -144,7 +165,7 @@ Each method has a docstring describing its purpose, parameters and return values
 
 
 
-#### `Appointment`
+### `Appointment`
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -160,7 +181,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | confirm_all_GP_pending | static | <li><b>GP</b> <li> Confirming all pending appointments | <li>gp_id | - |
 
 
-#### `GP`
+### `GP`
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -175,11 +196,11 @@ Each method has a docstring describing its purpose, parameters and return values
 | delete | static | <li><b>Admin</b> <li> Deleting a GP | <li>gp_id | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
 
 
-#### `Patient`
+### `Patient`
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| update | instance | <li><b>Admin</b></li> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values)</li> | - | - |
+| update | instance | <li><b>Admin</b></li> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
 | select | factory | <li><b>Admin, Patient</b> </li><li> Generating an instance of a patient to later update attributes based on user input</li> | <li>patient_id</li> | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
 | select_list | static | <li><b>Admin</b> </li><li> List of patients to choose from (used in multiple branches)</li> | <li>type = pending/matching</li> <li>if matching, patient_last_name</li> | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
 | select_gp_details | static | <li><b>Patient</b> <li> Retrieving a patient's default GP ID and name (for booking & sharing with patient) | <li>patient_id | <li>gp_id <li>gp_name |
@@ -188,7 +209,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | delete | static | <li><b>Admin</b> <li> Deleting a patient | <li>patient_id | - |
 
 
-#### `Prescription`
+### `Prescription`
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -197,7 +218,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | select_drug_list | static | <li><b>GP</b> <li> Getting a list of drugs to choose from (for a prescription) | - | Generally: DF with all drugs {drug_id, drug_name} <li> df_object <li> df_print |
 
 
-#### `Record`
+### `Record`
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -206,7 +227,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | select_conditions | static | <li><b>GP</b> <li>List of possible medical conditions for reference when updating patient record | - | Generally: DF of all possible medical conditions <li> df_object <li> df_print |
 
 
-#### `Schedule`
+### `Schedule`
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
@@ -217,47 +238,47 @@ Each method has a docstring describing its purpose, parameters and return values
 | delete_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = 'all' dates or 'custom' date range <li>timeoff_type = 'time off', 'sick leave' or None = 'all' <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>no return, just deletion |
 
 
-#### `User`
+### `User`
 - Currently no methods (shared GP/Patient instance attributes only)
 
 
 
-### Database
+## Database
+
 ### Why SQLite?
 scalability
 reliable data sources
 etc. in progress
 
-#### Database description
-see ER diagramm
+### Database description
+see ER diagram
 mention a gp is by default available,
 for weekend and lunch time is nothing in database as we did not want to fill it with unnecessary slots
 
-#### Dummy data
+### Dummy data
 We have created extensive dummy data so that 
 product tested and evaluated
 but mvp also could be tested with hospital
 
 [stored here](config/dummy_data)
 
-### Database execution
-#### Initializing database
+## Database execution
+### Initializing database
 please run [initialize_db.py](config/initialize_db.py)
-#### Taking database down
+### Taking database down
 please run [down_db.py](config/down_db.py)
 
 
-### Menu navigation
+## Menu navigation
 
 
 
 
 
 
-## Individual Documentation
+# Individual documentation
 
 - [Developing Guidance](/docs/developing.md)
-- 
 - [Class Document](/docs/classes.md)
 
 
@@ -265,7 +286,7 @@ please run [down_db.py](config/down_db.py)
 
 
 
-## Statistics
+# Statistics
 
 ```powershell
 -------------------------------------------------------------------------------
