@@ -65,13 +65,9 @@ When downloading the zip file of this project, the database is already initializ
 
 ## User experience diagrams
 
-### Patient
+<br>
 
 ![Patient UX diagram](docs/diagrams/patient_UX.png)
-
-### GP
-
-### Admin
 
 <br>
 
