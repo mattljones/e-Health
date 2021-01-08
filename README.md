@@ -1,5 +1,4 @@
 ---
-marp: true
 paginate: true
 ---
 
