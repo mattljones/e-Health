@@ -1,4 +1,5 @@
 ---
+marp: true
 paginate: true
 ---
 
@@ -31,7 +32,7 @@ h1 {color: #486BD3;
 
 # Key information
 
-For a better reader experience, we recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
+For a better reader experience, we recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/README.html).
 
 <br>
 
