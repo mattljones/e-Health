@@ -13,31 +13,39 @@ h1 {color: #486BD3;
 
 ## Outline
 
-- This document describes the different class methods in detail, including:
-  - Name
-  - Type
-  - User flow & purpose
-  - Parameters
-  - Return objects
-- It is a working document based on hypotheses about:
-  - Structure of user flows
-  - Best implementation method
-- Add, modify or remove methods as appropriate
+This document describes the different class methods in detail, including:
+- Name
+- Type
+- User flow & purpose
+- Parameters
+- Return objects
+
+<br>
 
 ## Return Variables
-Optional:
-- Instance for factory methods
-- Boolean for check functions such as check_timeoff_conflict() returned before 1. and 2.  
 
-Always:
-1. df_object (raw dataframe, for manipulation (e.g. deducing meaning of user input))  
-2. df_print (to_markdown formatted dataframe, for printing)
+Some methods (i.e. most CrUD methods) do not return anything. 
 
-Consult the code itself to see the objects returned. 
+Others (i.e. cRud) by definition do return something. For these:
 
-## User flow
-- The corresponding user flows/purposes are outlined, but the exact 'place' for each method to be used is not defined (hopefully it's clear)
-- Where user input selection is required based on a DF, the DF includes either an ID variable (e.g. booking_id) or an '[X]' index (if no ID available e.g. referring to an attribute, or to a free slot in a GP's schedule (non-availability is stored in DB, not availability))
+- <b>Optional:</b>
+  - Instance for factory methods
+  - Booleans describing whether something: 
+    - is possible <i>e.g. checking possibility of adding timeoff without conflict</i>
+    - was successful <i>e.g. deleting a GP given hospital must have capacity for their patients/upcoming confirmed appointments</i>
+
+- <b>Mandatory:</b>
+  - df_object (raw dataframe, for use in user flows (e.g. validating user input))  
+  - df_print (to_markdown formatted dataframe, for printing in the terminal)
+
+<br>
+
+## Further Information
+
+Consult the classes themselves for additional information.
+
+Each method has a docstring describing its purpose, parameters and return values, as well as how various <b>edge cases</b> are handled.  
+
 <br><br>
 
 # `Appointment`
@@ -76,7 +84,7 @@ Consult the code itself to see the objects returned.
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
 | update | instance | <li><b>Admin</b> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin</b> <li> Generating an instance of a patient to later update attributes based on user input | <li>patient_id | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
+| select | factory | <li><b>Admin, Patient</b> <li> Generating an instance of a patient to later update attributes based on user input | <li>patient_id | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
 | select_list | static | <li><b>Admin</b> <li> List of patients to choose from (used in multiple branches) | <li>type = pending/matching <li>if matching, patient_last_name | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
 | select_gp_details | static | <li><b>Patient</b> <li> Retrieving a patient's default GP ID and name (for booking & sharing with patient) | <li>patient_id | <li>gp_id <li>gp_name |
 | change_gp | static | <li><b>Admin, Patient</b> <li> Changing a patient's default GP (checks GP not full first) | <li>type = auto (least full)/specific <li>patient_id <li>if specific, new_gp_id | <li>BOOL True (successful) or False (unsuccessful) <li>new_gp_name (=None if BOOL == False for simpler user flow coding) |
