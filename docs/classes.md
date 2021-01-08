@@ -97,7 +97,7 @@ Each method has a docstring describing its purpose, parameters and return values
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
 | insert | instance | <li><b>GP</b> <li> Inserting a new prescription from an instance populated by user input (instance created in user flow) | - | - |
-| select_patient | static | <i>Used in Record.select() method</i> | <li>patient_id | Generally: DF with details of a patient's prescriptions {drug_name, drug_dosage, drug_frequency_dosage, prescription_expiry_date (YYYY-MM-DD), booking_id}  whose booking status is "attending"<li> df_object <li> df_print |
+| select_patient | static | <i>Used in Record.select() method</i> | <li>patient_id | Generally: DF with details of a patient's prescriptions {drug_name, drug_dosage, drug_frequency_dosage, prescription_expiry_date (YYYY-MM-DD), booking_id} whose booking status is "attending"<li> df_object <li> df_print |
 | select_drug_list | static | <li><b>GP</b> <li> Getting a list of drugs to choose from (for a prescription) | - | Generally: DF with all drugs {drug_id, drug_name} <li> df_object <li> df_print |
 <br>
 
@@ -114,11 +114,11 @@ Each method has a docstring describing its purpose, parameters and return values
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| select | static | <li><b>Admin, GP</b> <li> Viewing a GP's schedule | <li>gp_id <li>type = day/week <li>start_date (YYYY-MM-DD) | Generally: DF of a specific GP's schedule for a given day (detailed: booking_id, booking_agenda, booking_type, (patient_first_name, patient_last_name, patient_id)) or week (less detailed: x-axis: days, y-axis: timeslots) <li> df_object <li> df_print  |
-| select_upcoming_timeoff | static | <li><b>Admin</b> <li> Viewing a GP's upcoming timeoff | <li>gp_id | Generally: DF of a GP's upcoming time off {booking_start_time (YYYY-MM-DD), booking_status} <li> df_object <li> df_print |
-| check_timeoff_conflict | static | <li><b>Admin, GP</b> <li> Checking proposed GP timeoff doesn't conflict with any appointments | <li>gp_id <li>date_start (YYYY-MM-DD) <li>date_end (YYYY-MM-DD) | BOOLean: 'True' if there was a conflict, 'False' is there was no conflict <br /> DF of conflicting appointments {booking_id, booking_start_time, booking_status}    <li> df_object <li> df_print |
-| insert_timeoff | static | <li><b>Admin, GP</b> <li> Inserting GP time off (only whole days possible) | <li>gp_id <li> timeoff_type = time off/sick leave <li>start_date (YYYY-MM-DD) <li>end_date (YYYY-MM-DD) | <li> no return, just insertion |
-| delete_upcoming_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = all/custom <li>timeoff_type = time off/sick leave <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>no return, just deletion |
+| select | static | <li><b>Admin, GP</b> <li> Viewing a GP's schedule | <li>gp_id <li>type = 'day' or 'week' <li>start_date (YYYY-MM-DD) | Generally: DF of a specific GP's schedule for a given day (detailed: booking_id, booking_agenda, booking_type, (patient_first_name, patient_last_name, patient_id)) or week (less detailed: x-axis: days, y-axis: timeslots) <li> df_object <li> df_print <li> df_print_morning <li> df_print_afternoon  |
+| select_timeoff | static | <li><b>Admin</b> <li> Viewing a GP's upcoming timeoff | <li>gp_id <li>type= 'all', 'past' or 'upcoming'  | Generally: DF of a GP's upcoming time off {booking_start_time (YYYY-MM-DD), booking_status} <li> df_object <li> df_print |
+| check_timeoff_conflict | static | <li><b>Admin, GP</b> <li> Checking proposed GP timeoff doesn't conflict with any appointments | <li>gp_id <li>date_start (YYYY-MM-DD) <li>date_end (YYYY-MM-DD) | BOOLean: 'True' if there was a conflict, 'False' is there was no conflict <ul><li> boolean</ul> <br /> DF of conflicting appointments {booking_id, booking_start_time, booking_status}    <li> df_object <li> df_print |
+| insert_timeoff | static | <li><b>Admin, GP</b> <li> Inserting GP time off (only whole days possible), if there is no conflict according to check_timeoff_conflict | <li>gp_id <li>timeoff_type = 'time off' or 'sick leave' <li>start_date (YYYY-MM-DD) <li>end_date (YYYY-MM-DD) | <li> same return as check_timeoff_conflict |
+| delete_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = 'all' dates or 'custom' date range <li>timeoff_type = 'time off', 'sick leave' or None = 'all' <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>no return, just deletion |
 <br>
 
 # `User`
