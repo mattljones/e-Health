@@ -25,7 +25,7 @@ We recommend opening the following information on your browser by clicking [here
 - [Key information](#key-information)
   * [Library dependencies](#library-dependencies)
     + [Virtual environment](#virtual-environment)
-  * [Test accounts](#test-accounts)
+* [Test accounts](#test-accounts)
   * [SQLite database](#sqlite-database)
 - [Development](#development)
   * [User experience diagrams](#user-experience-diagrams)
@@ -442,10 +442,9 @@ For specific menus, the menu display and user input combined with input validati
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                          18           1505           2301           4227
-Markdown                         9            343              0            573
-XML                              6              0              0             95
+Python                          18           1506           2304           4241
+Markdown                         9            456              0            803
 -------------------------------------------------------------------------------
-SUM:                            33           1848           2301           4895
+SUM:                            27           1962           2304           5044
 -------------------------------------------------------------------------------
 ```
