@@ -10,21 +10,17 @@ For Windows users, we recommend using [Windows Terminal](https://devblogs.micros
 
 Open your terminal in **full screen** for a better user experience.
 
-**GitHub Page of this README**
+**GitHub Page of this project**
 
 We recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
 
 
-# Table of content 
-
-# (STRUCTURE PREVIEW NOW, NEED DELETION)
+# Table of content
 
 - [Prologue](#prologue)
 - [Table of content](#table-of-content)
-- [(STRUCTURE PREVIEW NOW, NEED DELETION)](#structure-preview-now-need-deletion)
 - [Key information](#key-information)
   - [Library dependencies](#library-dependencies)
-    - [Virtual environment](#virtual-environment)
   - [Test accounts](#test-accounts)
   - [SQLite database](#sqlite-database)
 - [Development](#development)
@@ -33,27 +29,9 @@ We recommend opening the following information on your browser by clicking [here
   - [Extensibility](#extensibility)
 - [Program design](#program-design)
   - [Classes](#classes)
-    - [Outline](#outline)
-      - [Return Variables](#return-variables)
-      - [Further Information](#further-information)
-    - [Appointment](#appointment)
-    - [GP](#gp)
-    - [Patient](#patient)
-    - [Prescription](#prescription)
-    - [Record](#record)
-    - [Schedule](#schedule)
-    - [User](#user)
   - [Database](#database)
-    - [Why SQLite?](#why-sqlite)
-    - [Database description](#database-description)
-    - [Dummy data](#dummy-data)
   - [Database execution](#database-execution)
-    - [Taking database down](#taking-database-down)
-    - [Initializing database](#initializing-database)
   - [Menu navigation](#menu-navigation)
-    - [Nested dictionaries](#nested-dictionaries)
-    - [Displaying menus](#displaying-menus)
-    - [User input menus](#user-input-menus)
 - [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
 
@@ -96,8 +74,6 @@ We recommend using the following credentials to login since:
 - Newly registered patient accounts must be approved by the admin.
 - Only the admin can register new GP accounts.
 
-
-
 **Admin**
 
 |  id  |    Name     |       Email       |  Password  |
@@ -129,10 +105,6 @@ When downloading the zip file of this project, the database is already initializ
 The database must be systematically **taken down before being initialized**.
 - **Taking the database down**: please run [down_db.py](config/down_db.py).
 - **Initializing the database**: please run [initialize_db.py](config/initialize_db.py).
-
-
-
-
 
 # Development 
 
@@ -167,10 +139,6 @@ Future work:
 - Space management for hospital on top of booking system, as of now assumption that every GP has his/her own office
 - Automatic creation of a Video & Telephone Conferencing Environment & for online meetings
 
-
-
-
-
 # Program design
 
 ## Classes
@@ -183,8 +151,6 @@ In the following section the different class methods are described in detail, in
 - User flow & purpose
 - Parameters
 - Return objects
-
-
 
 #### Return Variables
 
@@ -209,8 +175,6 @@ Others (i.e. CRUD) by definition do return something. For these:
 Consult the classes themselves for additional information.
 
 Each method has a docstring describing its purpose, parameters and return values, as well as how various <b>edge cases</b> are handled.  
-
-
 
 ### Appointment
 
@@ -288,8 +252,6 @@ Each method has a docstring describing its purpose, parameters and return values
 ### User
 - Currently no methods (shared GP/Patient instance attributes only)
 
-
-
 ## Database
 
 ### Why SQLite?
@@ -303,29 +265,29 @@ We decided to rely on a SQLite database because of the following reasons:
 For a detailed description of our database, we would like to refer to our [ER diagram](#entity-relationship-diagram).
 
 **Important points to mention:**
-- booking table  
+- booking table
 Used as a calendar for our system. This means that both appointments and time offs of GPs get stored.
 By default all GPs are available unless it is their weekend (according to gp_working_days,
 which is chosen while registering GPs) or lunchtime (based on gp_id: if even lunchtime from 12:00 to 13:00,
 else: 13:00 to 14:00). To not unnecessarily fill the database with lunchtimes and weekends, we used an
 empty dataframe (for day and week) that automatically populates these slots that are not available. Using an empty
 dataframe and merging it with potential existing appointments or time offs produces schedules and availability dataframes for use in different contexts in different user flows.
-- admin   
+- admin
 The system has only one admin and therefore we did not add admin_id as foreign key to respective
 tables. 
-- gp_department_id   
+- gp_department_id
 Normalization done for this table, so that the hospital can easily add new departments.
 This allows our system to scale more easily.
-- gp_specialisation_id   
+- gp_specialisation_id
 Normalization done for this table, so that the hospital can easily add new specialisations.
 This allows our system to scale more easily.
-- drug_id   
+- drug_id
 Normalization done for this table, so that the hospital can easily add new drugs.
 This allows our system to scale more easily.
-- patient_medical_condition_type & patient_medical_condition  
+- patient_medical_condition_type & patient_medical_condition
 Normalization done for these tables, so that new conditions can be added and a patient can have several conditions (as demonstrated in the GP user flow for patient medical records).
 This allows our system to scale more easily.
-- indexes   
+- indexes
 There are no separate indexes set, as SQLite indexes the primary key of a respective table by default.
 
 ### Dummy data
@@ -334,8 +296,6 @@ We have created extensive dummy data so that our system can be:
 - our system is ready to by showcased to, and tested by, the actual users
 
 Our dummy data is stored within the [config](config/dummy_data) folder.
-
-
 
 ## Database execution
 
@@ -347,8 +307,6 @@ The database must be systematically **taken down first before being initialized*
 Please run [down_db.py](config/down_db.py)
 ### Initializing database
 Please run [initialize_db.py](config/initialize_db.py)
-
-
 
 ## Menu navigation
 
@@ -418,14 +376,6 @@ The method `utils.display()` works the following way:
 However, some specific menus could not be generated by the `display()` method in the manner described above. To illustrate, it was the case for menus requiring specific user input such as the 'Register' menu.
 
 For specific menus, the menu display and user input combined with input validation are inserted within the 'corresponding method' of the previous menu dictionary. Once the task is completed, the method just has to call `utils.display(`[following dictionary]`)` just like the other methods.
-
-
-# Individual documentation
-
-- [Developing Guidance](/docs/developing.md)
-- [Class Document](/docs/classes.md)
-
-
 
 
 # Statistics
