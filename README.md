@@ -1,10 +1,11 @@
 # Prologue
 
-## Running the program
-
 By using this project, run `python e_health_main.py` in your terminal.
 
+For Windows users, we recommend using "Terminal" to run the program.
+
 Open your terminal in full screen for a better user experience.
+
 
 
 # Table of content 
@@ -52,20 +53,51 @@ Open your terminal in full screen for a better user experience.
 
 # Key information
 
-For a better reader experience, we recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
-
+We recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
 
 
 ## Library dependencies
 
-- Pandas
+
+- Pandas (`pip install pandas`)
 - Tabulate
 
 ## Test accounts
 
-In order to 
+In order to test and use the program, we registered multiple test accounts with known passwords.
 
-[Testing accounts' data](/docs/test_data.md)
+We recommend using the following credentials to login since:
+
+- passwords are hashed and can't be read from the database
+- newly registered patient accounts must be approved by the admin
+- only the admin can register new GP accounts
+
+
+
+**Admin**
+
+|  id  |    Name     |       Email       |  Password  |
+| :--: | :---------: | :---------------: | :--------: |
+|  1   | Admin Admin | admin@ehealth.com | root@EH_24 |
+
+**GP**
+
+|  id  |     Name      |        Email         |     Password     |
+| :--: | :-----------: | :------------------: | :--------------: |
+|  16  | Louis Pasteur |  louis.p@gmail.com   |   ferment1858    |
+|  17  | Edward Jenner |   edward.j@msn.com   |   17@vaCCi*98    |
+|  18  | Joseph Lister | joseph.l@outlook.com | anti&1865/septic |
+
+
+
+**Patient**
+
+|  id  |       Name       |           Email           |     Password      |
+| :--: | :--------------: | :-----------------------: | :---------------: |
+|  51  | Hermione Granger | hermione.g@gryffindor.com |   Lumos#9Reparo   |
+|  52  |   Ron Weasley    |     ron.w@weasley.com     |  wizardschess100  |
+|  53  |   Harry Potter   | harry.potter@hogwarts.com | Expecto^Patronum7 |
+
 
 ## SQLite database
 When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. <br> 
