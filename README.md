@@ -21,39 +21,39 @@ We recommend opening the following information on your browser by clicking [here
 
 - [Prologue](#prologue)
 - [Table of content](#table-of-content)
-- [(STRUCTURE PREVIEW NOW, NEED DELETION)](#-structure-preview-now--need-deletion-)
+- [(STRUCTURE PREVIEW NOW, NEED DELETION)](#structure-preview-now-need-deletion)
 - [Key information](#key-information)
-  * [Library dependencies](#library-dependencies)
-    + [Virtual environment](#virtual-environment)
-* [Test accounts](#test-accounts)
-  * [SQLite database](#sqlite-database)
+  - [Library dependencies](#library-dependencies)
+    - [Virtual environment](#virtual-environment)
+  - [Test accounts](#test-accounts)
+  - [SQLite database](#sqlite-database)
 - [Development](#development)
-  * [User experience diagrams](#user-experience-diagrams)
-  * [Entity relationship diagram](#entity-relationship-diagram)
-  * [Extensibility](#extensibility)
+  - [User experience diagrams](#user-experience-diagrams)
+  - [Entity relationship diagram](#entity-relationship-diagram)
+  - [Extensibility](#extensibility)
 - [Program design](#program-design)
-  * [Classes](#classes)
-    + [Outline](#outline)
+  - [Classes](#classes)
+    - [Outline](#outline)
       - [Return Variables](#return-variables)
       - [Further Information](#further-information)
-    + [Appointment](#appointment)
-    + [GP](#gp)
-    + [Patient](#patient)
-    + [Prescription](#prescription)
-    + [Record](#record)
-    + [Schedule](#schedule)
-    + [User](#user)
-  * [Database](#database)
-    + [Why SQLite?](#why-sqlite-)
-    + [Database description](#database-description)
-    + [Dummy data](#dummy-data)
-  * [Database execution](#database-execution)
-    + [Taking database down](#taking-database-down)
-    + [Initializing database](#initializing-database)
-  * [Menu navigation](#menu-navigation)
-    + [Nested dictionaries](#nested-dictionaries)
-    + [Displaying menus](#displaying-menus)
-    + [User input menus](#user-input-menus)
+    - [Appointment](#appointment)
+    - [GP](#gp)
+    - [Patient](#patient)
+    - [Prescription](#prescription)
+    - [Record](#record)
+    - [Schedule](#schedule)
+    - [User](#user)
+  - [Database](#database)
+    - [Why SQLite?](#why-sqlite)
+    - [Database description](#database-description)
+    - [Dummy data](#dummy-data)
+  - [Database execution](#database-execution)
+    - [Taking database down](#taking-database-down)
+    - [Initializing database](#initializing-database)
+  - [Menu navigation](#menu-navigation)
+    - [Nested dictionaries](#nested-dictionaries)
+    - [Displaying menus](#displaying-menus)
+    - [User input menus](#user-input-menus)
 - [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
 
@@ -364,19 +364,19 @@ Please run [initialize_db.py](config/initialize_db.py)
 
 The menu navigation was implemented using nested dictionaries. All dictionaries were formatted the same way in order to be read by a common method, following the below template:
 
-`dictionary = {"title" = ` [menu title] `,` \
+`dictionary = {"title" : ` [menu title] `,` \
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"type" = ` ["main" or "sub"] `,` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"type" : ` ["main" or "sub"] `,` \
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"1" = (` [Option 1 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"1" : (` [Option 1 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"2" = (` [Option 2 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"2" : (` [Option 2 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"3" = (` [Option 3 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"3" : (` [Option 3 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `... }`
