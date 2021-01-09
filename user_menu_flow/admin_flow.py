@@ -20,14 +20,135 @@ from classes.schedule import Schedule
 from classes.appointment import Appointment
 
 
-# TODO: Inputs
+############################### ADMIN - UTILS ###########################
+
+def get_start_end_date(date_range):
+    """
+    Returns start and end date depending on date range. 
+    """
+
+    start = utils.get_start_date()
+
+    # Determine range depending on date_range
+    if date_range == 'day':
+        s = datetime.strptime(start, "%Y-%m-%d")
+        end = datetime.strftime(s, "%Y-%m-%d")
+
+    elif date_range == 'week':
+        # Add one week to start date
+        s = datetime.strptime(start, "%Y-%m-%d")
+        e = s + timedelta(days=6)
+        end = datetime.strftime(e, "%Y-%m-%d")
+    
+    else: # For example 'custom'
+        start = utils.get_date()
+        end = utils.end_date(start)
+
+    return start, end
 
 
-# TODO: Outputs
+def retrieve_gp(type):
+    '''
+    Shows the list of GPs and allows choice from that list.
+    '''
+    # Prints a list of GPs (of specific type) using class method
+    df = GP.select_list(type)
+    df_show = df[1]
+    print("\n----------------------------------------------------\n"
+          "                     ", 'GP LIST', "\n")
+    print(df_show)
+
+    # User choice of GP from table printed above (incl. input validation)
+    choice = input("\nPlease select a GP ID: \n--> ")
+
+    valid = False
+    while valid == False:
+
+        if utils.validate(choice) == False or choice.isnumeric() == False:
+            valid = False
+            print("\U00002757 Invalid entry, please try again and enter your choice.")
+            choice = input("\nPlease select a GP ID: \n--> ")
+
+        else:
+            selected_gp = df[0].loc[df[0]['GP ID'] == int(choice)]
+
+            if len(selected_gp.index) != 1:
+                valid = False
+                print("\U00002757 Invalid entry, please try again and enter your choice.")
+                choice = input("\nPlease select a GP ID: \n--> ")
+
+            else:
+                choice = int(choice)
+                valid = True
+
+    return choice
 
 
+def retrieve_patient():
+    print("\n----------------------------------------------------\n"
+          "                ", 'ENTER LAST NAME')
+    
+    # LAST NAME (SEARCH TERM) INPUT & VALIDATION
+    valid_name = False
 
-# TODO: Commonly used vars
+    while valid_name == False:
+        last_name = input("\nPlease enter the patient's last name:\n--> ")
+
+        if not utils.validate_name(last_name):
+            valid_name = False
+
+        else: 
+            non_empty, id_list = choose_patient('matching', patient_last_name=last_name)
+            if not non_empty:
+                valid_name = False
+            else:
+                valid_name = True 
+                # ID (FROM TABLE) INPUT & VALIDATION
+                valid_id = False
+                while valid_id == False:
+                    selected_patient_id = input(
+                        '\nPlease select a patient ID,'
+                        '\nor enter \'#\' to search for a different patient. \n--> ')
+                    if selected_patient_id == '#':
+                        valid_id = True
+                        valid_name = False
+                    elif not selected_patient_id.isnumeric() or int(selected_patient_id) not in id_list:
+                        print("\U00002757 Please enter an ID from the table above!")
+                        valid_id = False 
+                    else:
+                        valid_id = True
+
+    return selected_patient_id
+
+
+def check_gp_id():
+    """
+    Check whether gp_id already in global variables. 
+    """
+    if 'gp_id_choice' not in globals():
+        global gp_id_choice
+        gp_id_choice = retrieve_gp('all')
+        gp_id = gp_id_choice
+
+    else:
+        gp_id = gp_id_choice
+
+    return gp_id
+
+
+def check_patient_id():
+    """
+    Check whether patient_id already in global variables.
+    """
+    if 'patient_id_choice' not in globals():
+        global patient_id_choice
+        patient_id_choice = retrieve_patient()
+        patient_id = patient_id_choice
+
+    else:
+        patient_id = patient_id_choice
+
+    return patient_id
 
 # GP Profile
 profile = {
@@ -42,7 +163,6 @@ profile = {
     9: 'status'
 }
 
-############################### INPUT MENU PAGES ###########################
 
 ###### MANAGE GP ACCOUNTS FUNCTIONS ######
 
@@ -58,16 +178,10 @@ def view_edit_gp(next_dict):
     Select from a list of GPs and allows choice for viewing.
     '''
 
-    # Check if gp id already selected previously for reuse
-    if 'gp_id_choice' not in globals():
-        global gp_id_choice
-        gp_id_choice = retrieve_gp('all')
-        choice = gp_id_choice
+    # Check whether gp_id already selected previously for reuse
+    gp_id = check_gp_id()
 
-    else:
-        choice = gp_id_choice
-
-    doctor_df = GP.select(choice)
+    doctor_df = GP.select(gp_id)
 
     print("\n----------------------------------------------------\n"
           "                    ", 'GP DETAILS', "\n")
@@ -220,43 +334,6 @@ def view_edit_gp(next_dict):
         return utils.display(next_dict)
 
 
-def retrieve_gp(type):
-    '''
-    Shows the list of GPs and allows choice from that list.
-    '''
-    # Prints a list of GPs (of specific type) using class method
-    df = GP.select_list(type)
-    df_show = df[1]
-    print("\n----------------------------------------------------\n"
-          "                     ", 'GP LIST', "\n")
-    print(df_show)
-
-    # User choice of GP from table printed above (incl. input validation)
-    choice = input("\nPlease select a GP ID: \n--> ")
-
-    valid = False
-    while valid == False:
-
-        if utils.validate(choice) == False or choice.isnumeric() == False:
-            valid = False
-            print("\U00002757 Invalid entry, please try again and enter your choice.")
-            choice = input("\nPlease select a GP ID: \n--> ")
-
-        else:
-            selected_gp = df[0].loc[df[0]['GP ID'] == int(choice)]
-
-            if len(selected_gp.index) != 1:
-                valid = False
-                print("\U00002757 Invalid entry, please try again and enter your choice.")
-                choice = input("\nPlease select a GP ID: \n--> ")
-
-            else:
-                choice = int(choice)
-                valid = True
-
-    return choice
-
-
 def view_same_gp(next_dict):
     '''
     Allows cycling back to the view_gp function for the same GP,
@@ -275,7 +352,7 @@ def view_another_gp(next_dict):
     del gp_id_choice
     return view_edit_gp(view_edit_gp_accounts_final_menu)
 
-# TODO: see view_edit_gp()
+
 def add_gp(next_dict):
     '''
     Adds a new GP.
@@ -524,7 +601,6 @@ def delete_gp(next_dict):
         return deactivate_delete_gp('delete', next_dict)
 
 
-
 ###### MANAGE PATIENT ACCOUNTS FUNCTIONS ######
 
 
@@ -553,55 +629,12 @@ def choose_patient(type, patient_last_name=None):
         return True, id_list
 
 
-def retrieve_patient():
-    print("\n----------------------------------------------------\n"
-          "                ", 'ENTER LAST NAME')
-    
-    # LAST NAME (SEARCH TERM) INPUT & VALIDATION
-    valid_name = False
-
-    while valid_name == False:
-        last_name = input("\nPlease enter the patient's last name:\n--> ")
-
-        if not utils.validate_name(last_name):
-            valid_name = False
-
-        else: 
-            non_empty, id_list = choose_patient('matching', patient_last_name=last_name)
-            if not non_empty:
-                valid_name = False
-            else:
-                valid_name = True 
-                # ID (FROM TABLE) INPUT & VALIDATION
-                valid_id = False
-                while valid_id == False:
-                    selected_patient_id = input(
-                        '\nPlease select a patient ID,'
-                        '\nor enter \'#\' to search for a different patient. \n--> ')
-                    if selected_patient_id == '#':
-                        valid_id = True
-                        valid_name = False
-                    elif not selected_patient_id.isnumeric() or int(selected_patient_id) not in id_list:
-                        print("\U00002757 Please enter an ID from the table above!")
-                        valid_id = False 
-                    else:
-                        valid_id = True
-
-    return selected_patient_id
-
-
 def view_edit_patient(next_dict):
     '''
     View a Patient Account.
     '''
 
-    if 'patient_id_choice' not in globals():
-        global patient_id_choice
-        patient_id_choice = retrieve_patient()
-        choice = patient_id_choice
-
-    else:
-        choice = patient_id_choice
+    choice = check_patient_id()
 
     selected_patient = Patient.select(choice)
     print("\n----------------------------------------------------\n"
@@ -743,7 +776,7 @@ def view_another_patient(next_dict):
     del patient_id_choice
     return view_edit_patient(view_edit_patient_accounts_final_menu)
 
-# TODO
+
 def confirm_patient(next_dict):
     '''
     Confirm pending patient registrations.
@@ -857,7 +890,7 @@ def confirm_another_patient(next_dict):
     '''
     return confirm_patient(confirm_patient_final_menu)
 
-# TODO
+
 def delete_patient(next_dict):
     '''
     Delete a patient account
@@ -949,7 +982,7 @@ def pairings_section_menu(next_dict):
     '''
     return utils.display(gp_patient_pair_flow)
 
-# TODO
+
 def pairing_patient(next_dict):
     '''
     Search for a patient and pair them up with a GP.
@@ -1090,7 +1123,7 @@ class No_Patient_With_ID(Exception):
     """Raised when patient ID doesn't exist"""
     pass
 
-# TODO
+
 def pairing_gp(next_dict):
     '''
     Select a GP and pair patients to them if they are not full.
@@ -1222,7 +1255,7 @@ def pairing_gp(next_dict):
 
 ###### MANAGE GP SCHEDULES FUNCTIONS ######
 
-# TODO: see retrieve_gp
+
 def choose_gp(next_dict):
     '''
     Returns the numbered list of GPs to choose from
@@ -1240,14 +1273,14 @@ def schedules_section_menu(next_dict):
     return utils.display(view_schedule_flow)
 
 
-def view_schedule(frequency, next_dict):
+def view_schedule(date_range, next_dict):
     """
     View a GP's current schedule.
     """
     start_date = utils.get_date()
-    sched = Schedule.select(gp_id_choice, frequency, start_date)
+    sched = Schedule.select(gp_id_choice, date_range, start_date)
     print("\n----------------------------------------------------\n"
-          "                ", '{}LY SCHEDULE'.format(frequency.upper()), "\n")
+          "                ", '{}LY SCHEDULE'.format(date_range.upper()), "\n")
     # Show Morning Schedule
     print("\n【", start_date, "Morning】")
     print(sched[2])
@@ -1355,13 +1388,13 @@ def add_time_off_redirect(next_dict):
     return utils.display(add_time_off_flow)
 
 
-def add_time_off(frequency, next_dict):
+def add_time_off(date_range, next_dict):
     """
     Adds time off to a GP's schedule.
     """
 
     print("\n----------------------------------------------------\n"
-          "                ", 'ADD TIME OFF - {}'.format(frequency.upper()), "\n")
+          "                ", 'ADD TIME OFF - {}'.format(date_range.upper()), "\n")
 
     # Prompt user for type of time off
     print("Please select the time off type: ")
@@ -1377,25 +1410,15 @@ def add_time_off(frequency, next_dict):
     elif timeoff_type_input == '2':
         timeoff_type = 'time off'
 
-    # TODO: Function start_end_date()  
-    # Prompt user for start date only
-    start_date = utils.get_start_date()
-
-    # Determine range depending on frequency
-    if frequency == 'day':
-        s = datetime.strptime(start_date, "%Y-%m-%d")
-        end_date = datetime.strftime(s, "%Y-%m-%d")
-    elif frequency == 'week':
-        # Add one week to start date
-        s = datetime.strptime(start_date, "%Y-%m-%d")
-        e = s + timedelta(days=6)
-        end_date = datetime.strftime(e, "%Y-%m-%d")
+    # Date range based on user input
+    date_rage_input = get_start_end_date(date_range)
+    start_date, end_date = date_rage_input[0], date_rage_input[1]
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
           "                ", 'CONFIRM?', "\n")
 
-    print('\nDo you want to add one {} of {} from {}?\n'.format(frequency, timeoff_type, start_date))
+    print('\nDo you want to add one {} of {} from {}?\n'.format(date_range, timeoff_type, start_date))
     print("[ 1 ] Yes")
     print("[ 2 ] No")
 
@@ -1413,7 +1436,7 @@ def add_time_off(frequency, next_dict):
             print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
 
             # Input another day or back to previous menu 
-            print("\nDo you want to add timeoff to another {}?\n".format(frequency))
+            print("\nDo you want to add timeoff to another {}?\n".format(date_range))
             print("[ 1 ] Yes\n[ 2 ] No")
 
             user_confirmation = input("\n--> ")
@@ -1425,11 +1448,11 @@ def add_time_off(frequency, next_dict):
             if user_confirmation == '1':
                     start_date = utils.get_start_date()
 
-            # Determine range depending on frequency
-            if frequency == 'day':
+            # Determine range depending on date_range
+            if date_range == 'day':
                 s = datetime.strptime(start_date, "%Y-%m-%d")
                 end_date = datetime.strftime(s, "%Y-%m-%d")
-            elif frequency == 'week':
+            elif date_range == 'week':
                 # Add one week to start date
                 s = datetime.strptime(start_date, "%Y-%m-%d")
                 e = s + timedelta(days=6)
@@ -1437,7 +1460,7 @@ def add_time_off(frequency, next_dict):
 
         else:
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
-            print("\n\U00002705 Time off ({}) successfully added for a {} from {}.".format(timeoff_type, frequency, start_date))
+            print("\n\U00002705 Time off ({}) successfully added for a {} from {}.".format(timeoff_type, date_range, start_date))
             return utils.display(next_dict)
 
     else:
@@ -1480,9 +1503,9 @@ def add_time_off_custom(next_dict):
     elif timeoff_type_input == '2':
         timeoff_type = 'time off'
 
-    # Prompt user for time off range
-    start_date = utils.get_date()
-    end_date = utils.end_date(start_date)
+    # Date range based on user input
+    date_rage_input = get_start_end_date('custom')
+    start_date, end_date = date_rage_input[0], date_rage_input[1]
 
     # Confirmation step
     print("\n----------------------------------------------------\n"
@@ -1675,13 +1698,7 @@ def add_appointment(next_dict):
     '''
     Choose the appointment from a day of available slots.
     '''
-    if 'patient_id_choice' not in globals():
-        global patient_id_choice
-        patient_id_choice = retrieve_patient()
-        choice = patient_id_choice
-
-    else:
-        choice = patient_id_choice
+    choice = check_patient_id()
 
     selected_patient = Patient.select(choice)
     patient_name = selected_patient[0].first_name + ' ' + selected_patient[0].last_name
@@ -2005,13 +2022,7 @@ def view_appointment_by_patient(next_dict):
     Find a patient's upcoming appointments.
     '''
 
-    if 'patient_id_choice' not in globals():
-        global patient_id_choice
-        patient_id_choice = retrieve_patient()
-        choice = patient_id_choice
-
-    else:
-        choice = patient_id_choice
+    choice = check_patient_id()
 
     # Select all upcoming appointments for this patient ID
     appts = Appointment.select_patient('upcoming', choice)
@@ -2096,13 +2107,7 @@ def delete_appointment_gp(next_dict):
     Allows deleting of appointments for a specific GP in a specified data range.
     '''
 
-    if 'gp_id_choice' not in globals():
-        global gp_id_choice
-        gp_id_choice = retrieve_gp('all')
-        gp_id = gp_id_choice
-
-    else:
-        gp_id = gp_id_choice
+    gp_id = check_gp_id()
 
     upcoming = Appointment.select_GP_appt(gp_id)
 
@@ -2163,21 +2168,15 @@ def delete_appointment_gp(next_dict):
 
     elif y_n == '2':
         print("\n\U00002757 Action cancelled.")
-        utils.display(appointment_deleted_gp_final_actions)
+        utils.display(appointment_deleted_gp_final_menu)
 
-# TODO: see delete_appointment_gp
+
 def delete_appointment_patient(next_dict):
     '''
     Allows deleting of appointments for a specific Patient in a specified data range.
     '''
 
-    if 'patient_id_choice' not in globals():
-        global patient_id_choice
-        patient_id_choice = retrieve_patient()
-        patient_id = patient_id_choice
-
-    else:
-        patient_id = patient_id_choice
+    patient_id = check_patient_id()
 
     upcoming = Appointment.select_patient('upcoming', patient_id)
 
@@ -2236,7 +2235,7 @@ def delete_appointment_another_patient(next_dict):
 # with 'summaries' changed to 'records'. Now, only choice to be
 # made is selecting the patient, which is done within the one function.
 
-# TODO
+
 def records_main(next_dict):
     '''
     Allows the selection of a patient's medical records. 
