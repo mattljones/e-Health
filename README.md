@@ -58,9 +58,10 @@ We recommend opening the following information on your browser by clicking [here
 
 ## Library dependencies
 
-
-- Pandas (`pip install pandas`)
-- Tabulate
+If you do not have the following libraries on your computer, you will have to install them to run the program:
+- Python v.3.8.5 or higher (click [here](https://www.python.org/downloads/) to download).
+- Pandas v.1.1.3 or higher (`pip install pandas`).
+- Tabulate v.0.8.7 or higher (`pip install tabulate`).
 
 ## Test accounts
 
