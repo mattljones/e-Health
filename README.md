@@ -4,7 +4,7 @@ By using this project, run `python e_health_main.py` in your terminal.
 
 For Windows users, we recommend using "Terminal" to run the program.
 
-Open your terminal in full screen for a better user experience.
+Open your terminal in **full screen** for a better user experience.
 
 
 
@@ -22,7 +22,6 @@ Open your terminal in full screen for a better user experience.
 - [Development](#development)
   - [User experience diagrams](#user-experience-diagrams)
   - [Entity relationship diagram](#entity-relationship-diagram)
-  - [Class diagrams](#class-diagrams)
   - [Extensibility](#extensibility)
 - [Program design](#program-design)
   - [Classes](#classes)
@@ -44,6 +43,9 @@ Open your terminal in full screen for a better user experience.
     - [Taking database down](#taking-database-down)
     - [Initializing database](#initializing-database)
   - [Menu navigation](#menu-navigation)
+    - [Nested dictionaries](#nested-dictionaries)
+    - [Displaying menus](#displaying-menus)
+    - [User input menus](#user-input-menus)
 - [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
 
@@ -59,19 +61,19 @@ We recommend opening the following information on your browser by clicking [here
 ## Library dependencies
 
 If you do not have the following libraries on your computer, you will have to install them to run the program:
-- Python v.3.8.5 or higher (click [here](https://www.python.org/downloads/) to download).
-- Pandas v.1.1.3 or higher (`pip install pandas`).
-- Tabulate v.0.8.7 or higher (`pip install tabulate`).
+- **Python** v.3.8.5 or higher (click [here](https://www.python.org/downloads/) to download).
+- **Pandas** v.1.1.3 or higher (`pip install pandas`).
+- **Tabulate** v.0.8.7 or higher (`pip install tabulate`).
 
 ## Test accounts
 
-In order to test and use the program, we registered multiple test accounts with known passwords.
+In order to use the program, we registered multiple **test accounts with known passwords**.
 
 We recommend using the following credentials to login since:
 
-- passwords are hashed and can't be read from the database
-- newly registered patient accounts must be approved by the admin
-- only the admin can register new GP accounts
+- Passwords are hashed and can't be read from the database.
+- Newly registered patient accounts must be approved by the admin.
+- Only the admin can register new GP accounts.
 
 
 
@@ -101,10 +103,11 @@ We recommend using the following credentials to login since:
 
 
 ## SQLite database
-When downloading the zip file of this project, the database is already initialized. However, it is possible to perform the below mentioned actions via running the explicit scripts. <br> 
-The database must be systematically taken down before being initialized.
-- **Taking the database down**: please run [down_db.py](config/down_db.py)
-- **Initializing the database**: please run [initialize_db.py](config/initialize_db.py)
+When downloading the zip file of this project, the database is already initialized and **no further action is required**. However, it is possible to perform the below mentioned actions via running the explicit scripts. 
+
+The database must be systematically **taken down before being initialized**.
+- **Taking the database down**: please run [down_db.py](config/down_db.py).
+- **Initializing the database**: please run [initialize_db.py](config/initialize_db.py).
 
 
 
@@ -129,9 +132,6 @@ The database must be systematically taken down before being initialized.
 
 ![Entity relationship diagram](docs/diagrams/db_comp0066_erdiagram.png)
 
-
-
-## Class diagrams
 
 
 
@@ -283,7 +283,7 @@ We decided to rely on a SQLite database because of the following reasons:
 - Ensuring that our project is not only an MVP, but also can be used as a scalable foundation for the UCL Hospital
 
 ### Database description
-For a detailed description of our database, we would like to refer to our ER diagram.
+For a detailed description of our database, we would like to refer to our [ER diagram](#entity-relationship-diagram).
 
 **Important points to mention:**
 - booking table  
@@ -308,18 +308,29 @@ We have created extensive dummy data so that our system can be:
 - excessively tested and evaluated by TA and Professor
 - our system is ready to showcase and tested by the actual users
 
-Our dummy data is stored [here](config/dummy_data)
+Our dummy data is stored [here](config/dummy_data).
 
 ## Database execution
-The database must be systematically taken down before being initialized.
+When downloading the zip file of this project, the database is already initialized and no further action is required. 
+However, it is possible to perform the below mentioned actions via running the explicit scripts. 
+
+The database must be systematically **taken down before being initialized**.
 ### Taking database down
 Please run [down_db.py](config/down_db.py)
 ### Initializing database
 Please run [initialize_db.py](config/initialize_db.py)
 
 
+
 ## Menu navigation
 
+Overall Strategy here...
+
+### Nested dictionaries
+
+### Displaying menus 
+
+### User input menus
 
 
 
