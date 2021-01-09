@@ -1,13 +1,17 @@
+[![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+
 # Prologue
 
-**Running this program**   
+**Running this program** 
+
 By using this project, run `python e_health_main.py` in your terminal.
 
-For Windows users, we recommend using "Terminal" to run the program.
+For Windows users, we recommend using [Windows Terminal](https://devblogs.microsoft.com/commandline/introducing-windows-terminal/) to run the program.
 
 Open your terminal in **full screen** for a better user experience.
 
-**GitHub Page of this README**   
+**GitHub Page of this README**
+
 We recommend opening the following information on your browser by clicking [`here`](https://mattljones.github.io/COMP0066_Coursework/).
 
 
