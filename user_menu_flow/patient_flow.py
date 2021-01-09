@@ -614,3 +614,9 @@ main_flow_patient = {"title": "PATIENT MAIN MENU",
                      "1":("Book & manage appointments", manage_appointment,flow_1),
                      "2":("Display & change default GP", display_default_GP, flow_2),
                      "3":("Display & change account details", display_account_details, flow_3)}
+
+
+############################# TESTING ###############################
+
+if __name__ == '__main__':
+    pass

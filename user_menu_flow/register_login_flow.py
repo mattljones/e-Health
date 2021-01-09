@@ -300,3 +300,9 @@ main_flow_register = {"title":"\U0001F3E5 WELCOME TO E-HEALTH!",
                       "type":"main",
                       "1":("Login",empty_method,flow_1),
                       "2":("Register as a patient",register_page,empty_dict)}
+
+
+############################# TESTING ###############################
+
+if __name__ == '__main__':
+    pass
