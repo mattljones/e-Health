@@ -2,6 +2,10 @@
 
 # Prologue
 
+**Video demonstration**
+
+To watch the video, click [here](https://mediacentral.ucl.ac.uk/Player/Fb6DEd60)
+
 **Running this program** 
 
 By using this project, run `python e_health_main.py` in your terminal.
@@ -10,21 +14,17 @@ For Windows users, we recommend using [Windows Terminal](https://devblogs.micros
 
 Open your terminal in **full screen** for a better user experience.
 
-**GitHub Page of this README**
+**GitHub Page of this project**
 
 We recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
 
 
-# Table of content 
-
-# (STRUCTURE PREVIEW NOW, NEED DELETION)
+# Table of content
 
 - [Prologue](#prologue)
 - [Table of content](#table-of-content)
-- [(STRUCTURE PREVIEW NOW, NEED DELETION)](#structure-preview-now-need-deletion)
 - [Key information](#key-information)
   - [Library dependencies](#library-dependencies)
-    - [Virtual environment](#virtual-environment)
   - [Test accounts](#test-accounts)
   - [SQLite database](#sqlite-database)
 - [Development](#development)
@@ -33,27 +33,9 @@ We recommend opening the following information on your browser by clicking [here
   - [Extensibility](#extensibility)
 - [Program design](#program-design)
   - [Classes](#classes)
-    - [Outline](#outline)
-      - [Return Variables](#return-variables)
-      - [Further Information](#further-information)
-    - [Appointment](#appointment)
-    - [GP](#gp)
-    - [Patient](#patient)
-    - [Prescription](#prescription)
-    - [Record](#record)
-    - [Schedule](#schedule)
-    - [User](#user)
   - [Database](#database)
-    - [Why SQLite?](#why-sqlite)
-    - [Database description](#database-description)
-    - [Dummy data](#dummy-data)
   - [Database execution](#database-execution)
-    - [Taking database down](#taking-database-down)
-    - [Initializing database](#initializing-database)
   - [Menu navigation](#menu-navigation)
-    - [Nested dictionaries](#nested-dictionaries)
-    - [Displaying menus](#displaying-menus)
-    - [User input menus](#user-input-menus)
 - [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
 
@@ -68,21 +50,23 @@ Except Python built-in packages, if you do not have the following libraries on y
 - **Pandas** v.1.1.3 or higher (`pip install pandas`).
 - **Tabulate** v.0.8.7 or higher (`pip install tabulate`).
 
+We add automatic check on required packages in `e_health_main.py` so basically you do not need to run `pip install -r requirements.txt` to install these packages by yourself. However we strongly recommend to create a virtual environment to install dependencies and run the program.
+
 ### Virtual environment
 
-We strongly recommend to create a virtual environment to install dependencies and run the program. Generally there are two approaches:
+Generally there are two approaches:
 
-- If you are using [conda](https://docs.conda.io/en/latest/), you can simply create an environment and activate it with this official [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). Run `pip install -r requirements.txt` to install all relevant dependencies.
+- If you are using [conda](https://docs.conda.io/en/latest/), you can simply create an environment and activate it with this official [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
 - Otherwise, if you choose **venv** to create an virtual environment, it will be a little complicated and we've written the steps for you to follow:
 
   1. In the project folder, create a new folder named like *env*；
   2. Run `cd env` in terminal;
   3. Run `python -m venv .`  (or `python3 -m venv .` , this depends on your aliases setting in your operating system, don't forget `.` at the end), and now you should have **pip** and a core python virtual environment;
-  4. Run `cd Scripts` (*Scripts* is already generated under *env*) and use the platform-specific script (as shown in the pic attached) to activate the environment;
-  5. Return to the project main directory and run `pip install -r requirements.txt` .
+  4. Run `cd Scripts` (*Scripts* is already generated under *env*) and use the platform-specific script (as shown in the pic attached) to activate the environment.
+  
 
-  If you no longer need this environment, run `deactivate` and just delete the `env` folder.
+If you no longer need this environment, run `deactivate` and just delete the `env` folder.
 
 <img src="docs/images/venv-scripts.png" style="zoom:75%;" />
 
@@ -95,8 +79,6 @@ We recommend using the following credentials to login since:
 - Passwords are hashed and can't be read from the database.
 - Newly registered patient accounts must be approved by the admin.
 - Only the admin can register new GP accounts.
-
-
 
 **Admin**
 
@@ -129,10 +111,6 @@ When downloading the zip file of this project, the database is already initializ
 The database must be systematically **taken down before being initialized**.
 - **Taking the database down**: please run [down_db.py](config/down_db.py).
 - **Initializing the database**: please run [initialize_db.py](config/initialize_db.py).
-
-
-
-
 
 # Development 
 
@@ -167,10 +145,6 @@ Future work:
 - Space management for hospital on top of booking system, as of now assumption that every GP has his/her own office
 - Automatic creation of a Video & Telephone Conferencing Environment & for online meetings
 
-
-
-
-
 # Program design
 
 ## Classes
@@ -183,8 +157,6 @@ In the following section the different class methods are described in detail, in
 - User flow & purpose
 - Parameters
 - Return objects
-
-
 
 #### Return Variables
 
@@ -209,8 +181,6 @@ Others (i.e. CRUD) by definition do return something. For these:
 Consult the classes themselves for additional information.
 
 Each method has a docstring describing its purpose, parameters and return values, as well as how various <b>edge cases</b> are handled.  
-
-
 
 ### Appointment
 
@@ -288,8 +258,6 @@ Each method has a docstring describing its purpose, parameters and return values
 ### User
 - Currently no methods (shared GP/Patient instance attributes only)
 
-
-
 ## Database
 
 ### Why SQLite?
@@ -303,29 +271,29 @@ We decided to rely on a SQLite database because of the following reasons:
 For a detailed description of our database, we would like to refer to our [ER diagram](#entity-relationship-diagram).
 
 **Important points to mention:**
-- booking table  
+- booking table
 Used as a calendar for our system. This means that both appointments and time offs of GPs get stored.
 By default all GPs are available unless it is their weekend (according to gp_working_days,
 which is chosen while registering GPs) or lunchtime (based on gp_id: if even lunchtime from 12:00 to 13:00,
 else: 13:00 to 14:00). To not unnecessarily fill the database with lunchtimes and weekends, we used an
 empty dataframe (for day and week) that automatically populates these slots that are not available. Using an empty
 dataframe and merging it with potential existing appointments or time offs produces schedules and availability dataframes for use in different contexts in different user flows.
-- admin   
+- admin
 The system has only one admin and therefore we did not add admin_id as foreign key to respective
 tables. 
-- gp_department_id   
+- gp_department_id
 Normalization done for this table, so that the hospital can easily add new departments.
 This allows our system to scale more easily.
-- gp_specialisation_id   
+- gp_specialisation_id
 Normalization done for this table, so that the hospital can easily add new specialisations.
 This allows our system to scale more easily.
-- drug_id   
+- drug_id
 Normalization done for this table, so that the hospital can easily add new drugs.
 This allows our system to scale more easily.
-- patient_medical_condition_type & patient_medical_condition  
+- patient_medical_condition_type & patient_medical_condition
 Normalization done for these tables, so that new conditions can be added and a patient can have several conditions (as demonstrated in the GP user flow for patient medical records).
 This allows our system to scale more easily.
-- indexes   
+- indexes
 There are no separate indexes set, as SQLite indexes the primary key of a respective table by default.
 
 ### Dummy data
@@ -334,8 +302,6 @@ We have created extensive dummy data so that our system can be:
 - our system is ready to by showcased to, and tested by, the actual users
 
 Our dummy data is stored within the [config](config/dummy_data) folder.
-
-
 
 ## Database execution
 
@@ -347,8 +313,6 @@ The database must be systematically **taken down first before being initialized*
 Please run [down_db.py](config/down_db.py)
 ### Initializing database
 Please run [initialize_db.py](config/initialize_db.py)
-
-
 
 ## Menu navigation
 
@@ -420,23 +384,15 @@ However, some specific menus could not be generated by the `display()` method in
 For specific menus, the menu display and user input combined with input validation are inserted within the 'corresponding method' of the previous menu dictionary. Once the task is completed, the method just has to call `utils.display(`[following dictionary]`)` just like the other methods.
 
 
-# Individual documentation
-
-- [Developing Guidance](/docs/developing.md)
-- [Class Document](/docs/classes.md)
-
-
-
-
 # Statistics
 
 ```powershell
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                          18           1506           2304           4241
-Markdown                         9            456              0            803
+Python                          18           1496           2301           4174
+Markdown                         9            421              0            784
 -------------------------------------------------------------------------------
-SUM:                            27           1962           2304           5044
+SUM:                            27           1917           2301           4958
 -------------------------------------------------------------------------------
 ```
