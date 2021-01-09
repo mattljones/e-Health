@@ -1,5 +1,10 @@
 # Prologue
 
+## Running the program
+
+By using this project, run `python e_health_main.py` in your terminal.
+
+Open your terminal in full screen for a better user experience.
 
 
 # Table of content 
@@ -11,7 +16,6 @@
 - [(STRUCTURE PREVIEW NOW, NEED DELETION)](#structure-preview-now-need-deletion)
 - [Key information](#key-information)
   - [Library dependencies](#library-dependencies)
-  - [Running the program](#running-the-program)
   - [Test accounts](#test-accounts)
   - [SQLite database](#sqlite-database)
 - [Development](#development)
@@ -56,16 +60,6 @@ For a better reader experience, we recommend opening the following information o
 
 - Pandas
 - Tabulate
-
-
-
-## Running the program
-
-By using this project, run `python e_health_main.py` in your terminal.
-
-Open your terminal in full screen for a better user experience.
-
-
 
 ## Test accounts
 
