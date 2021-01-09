@@ -12,7 +12,7 @@ Open your terminal in **full screen** for a better user experience.
 
 **GitHub Page of this README**
 
-We recommend opening the following information on your browser by clicking [`here`](https://mattljones.github.io/COMP0066_Coursework/).
+We recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
 
 
 # Table of content 
@@ -21,43 +21,41 @@ We recommend opening the following information on your browser by clicking [`her
 
 - [Prologue](#prologue)
 - [Table of content](#table-of-content)
-- [(STRUCTURE PREVIEW NOW, NEED DELETION)](#structure-preview-now-need-deletion)
+- [(STRUCTURE PREVIEW NOW, NEED DELETION)](#-structure-preview-now--need-deletion-)
 - [Key information](#key-information)
-  - [Library dependencies](#library-dependencies)
-  - [Test accounts](#test-accounts)
-  - [SQLite database](#sqlite-database)
+  * [Library dependencies](#library-dependencies)
+    + [Virtual environment](#virtual-environment)
+  * [Test accounts](#test-accounts)
+  * [SQLite database](#sqlite-database)
 - [Development](#development)
-  - [User experience diagrams](#user-experience-diagrams)
-  - [Entity relationship diagram](#entity-relationship-diagram)
-  - [Extensibility](#extensibility)
+  * [User experience diagrams](#user-experience-diagrams)
+  * [Entity relationship diagram](#entity-relationship-diagram)
+  * [Extensibility](#extensibility)
 - [Program design](#program-design)
-  - [Classes](#classes)
-    - [Outline](#outline)
+  * [Classes](#classes)
+    + [Outline](#outline)
       - [Return Variables](#return-variables)
       - [Further Information](#further-information)
-    - [Appointment](#appointment)
-    - [GP](#gp)
-    - [Patient](#patient)
-    - [Prescription](#prescription)
-    - [Record](#record)
-    - [Schedule](#schedule)
-    - [User](#user)
-  - [Database](#database)
-    - [Why SQLite?](#why-sqlite)
-    - [Database description](#database-description)
-    - [Dummy data](#dummy-data)
-  - [Database execution](#database-execution)
-    - [Taking database down](#taking-database-down)
-    - [Initializing database](#initializing-database)
-  - [Menu navigation](#menu-navigation)
-    - [Nested dictionaries](#nested-dictionaries)
-    - [Displaying menus](#displaying-menus)
-    - [User input menus](#user-input-menus)
+    + [Appointment](#appointment)
+    + [GP](#gp)
+    + [Patient](#patient)
+    + [Prescription](#prescription)
+    + [Record](#record)
+    + [Schedule](#schedule)
+    + [User](#user)
+  * [Database](#database)
+    + [Why SQLite?](#why-sqlite-)
+    + [Database description](#database-description)
+    + [Dummy data](#dummy-data)
+  * [Database execution](#database-execution)
+    + [Taking database down](#taking-database-down)
+    + [Initializing database](#initializing-database)
+  * [Menu navigation](#menu-navigation)
+    + [Nested dictionaries](#nested-dictionaries)
+    + [Displaying menus](#displaying-menus)
+    + [User input menus](#user-input-menus)
 - [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
-
-
-
 
 
 # Key information
@@ -86,7 +84,7 @@ We strongly recommend to create a virtual environment to install dependencies an
 
   If you no longer need this environment, run `deactivate` and just delete the `env` folder.
 
-<img src="D:\cloud\OneDrive\University Colloge London\OneDrive - University College London\modules\COMP0066\proj\COMP0066_Coursework\docs\images\venv-scripts.png" style="zoom:50%;" />
+<img src="/docs/images/venv-scripts.png" style="zoom:50%;" />
 
 ## Test accounts
 
@@ -338,8 +336,6 @@ This allows our system to scale more easily.
 - indexes   
 There are no separate indexes set, as SQLite indexes the primary key of a respective table by default.
 
-
-
 ### Dummy data
 We have created extensive dummy data so that our system can be:
 - excessively tested and evaluated by TA and Professor
@@ -347,7 +343,10 @@ We have created extensive dummy data so that our system can be:
 
 Our dummy data is stored within the [config](config/dummy_data) folder.
 
+
+
 ## Database execution
+
 When downloading the zip file of this project, the database is already initialized and **no further action is required**. 
 However, it is possible to perform the below mentioned actions via running the explicit scripts. 
 
@@ -433,8 +432,6 @@ For specific menus, the menu display and user input combined with input validati
 
 - [Developing Guidance](/docs/developing.md)
 - [Class Document](/docs/classes.md)
-
-
 
 
 
