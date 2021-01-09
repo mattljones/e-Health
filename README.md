@@ -84,7 +84,7 @@ We strongly recommend to create a virtual environment to install dependencies an
 
   If you no longer need this environment, run `deactivate` and just delete the `env` folder.
 
-<img src="docs/images/venv-scripts.png" style="zoom:50%;" />
+<img src="docs/images/venv-scripts.png" style="zoom:75%;" />
 
 ## Test accounts
 
@@ -138,37 +138,32 @@ The database must be systematically **taken down before being initialized**.
 
 ## User experience diagrams
 
-
-
-![Patient UX diagram](docs/diagrams/patient_UX.png)
-
-
-![GP UX diagram](docs/diagrams/GP_UX.png)
-
-
-![Admin UX diagram](docs/diagrams/admin_UX.png)
-
+<table>
+    <tr>
+        <td ><center><img src="docs/diagrams/patient_UX.png" style="zoom:25%;" >Patient User Journey </center></td>
+        <td ><center><img src="docs/diagrams/GP_UX.png" style="zoom:80%;" >GP User Journey</center></td>
+    </tr>
+        <td><center><img src="docs/diagrams/admin_UX.png" style="zoom:40%;" />Admin User Journey</center></td>
+    </tr>
+</table>
 
 ## Entity relationship diagram
 
-![Entity relationship diagram](docs/diagrams/ER_diagram.png)
-
-
-
+<img src="docs/diagrams/ER_diagram.png" style="zoom:40%;" />
 
 ## Extensibility
 
 Implemented:
 - Different GP types (for referrals in the future)
 - Different GP departments (allowing scalability in the future)
-- Patients & gps can be deactivated (option in the DB)
+- Patients & GPs can both be deactivated (option in the DB)
 
 Future work:
-- API to third parties e.g. for referring to other hospitals, disease management (anonymous data sharing), sending prescriptions to pharmacies
+- API to third parties e.g. for referring to other hospitals, disease management (anonymous data sharing), sending prescriptions to pharmacies, etc.
 - Adding 'treatments'/'procedures' functionality e.g. small in-house surgeries, vaccinations, etc.
 - Messaging from hospital to patient e.g. automated appointment reminders, notifications of e.g. lab results coming in, etc.
 - Messaging from patient to hospital for inquiries etc.
-- Allow for data exportation e.g. csv, pdf etc.
+- Allow for data exportation e.g. csv, pdf (for prescriptions) etc.
 - Space management for hospital on top of booking system, as of now assumption that every GP has his/her own office
 - Automatic creation of a Video & Telephone Conferencing Environment & for online meetings
 
@@ -214,8 +209,6 @@ Others (i.e. CRUD) by definition do return something. For these:
 Consult the classes themselves for additional information.
 
 Each method has a docstring describing its purpose, parameters and return values, as well as how various <b>edge cases</b> are handled.  
-
-
 
 
 
@@ -311,13 +304,12 @@ For a detailed description of our database, we would like to refer to our [ER di
 
 **Important points to mention:**
 - booking table  
-Used as a calendar for our system. This means that both appointments and time offs of gps get stored.
-By default all GPs are available unless they have their weekends (according to gp_working_days,
-which is chosen by while registering GPs) lunchtime (based on gp_id: if even lunchtime from 12:00 to 13:00,
+Used as a calendar for our system. This means that both appointments and time offs of GPs get stored.
+By default all GPs are available unless it is their weekend (according to gp_working_days,
+which is chosen while registering GPs) or lunchtime (based on gp_id: if even lunchtime from 12:00 to 13:00,
 else: 13:00 to 14:00). To not unnecessarily fill the database with lunchtimes and weekends, we used an
-empty dataframe (for day and week) that accommodates these slots that are not available by default. Using an empty
-dataframe and merging it with potential existing appointments or time offs and only enable users in the front
-accessing available slots.
+empty dataframe (for day and week) that automatically populates these slots that are not available. Using an empty
+dataframe and merging it with potential existing appointments or time offs produces schedules and availability dataframes for use in different contexts in different user flows.
 - admin   
 The system has only one admin and therefore we did not add admin_id as foreign key to respective
 tables. 
@@ -331,15 +323,15 @@ This allows our system to scale more easily.
 Normalization done for this table, so that the hospital can easily add new drugs.
 This allows our system to scale more easily.
 - patient_medical_condition_type & patient_medical_condition  
-Normalization done for these tables, so that new conditions can be added and a patient can have several conditions.
+Normalization done for these tables, so that new conditions can be added and a patient can have several conditions (as demonstrated in the GP user flow for patient medical records).
 This allows our system to scale more easily.
 - indexes   
 There are no separate indexes set, as SQLite indexes the primary key of a respective table by default.
 
 ### Dummy data
 We have created extensive dummy data so that our system can be:
-- excessively tested and evaluated by TA and Professor
-- our system is ready to showcase and tested by the actual users
+- extensively tested and evaluated by TA and Professor
+- our system is ready to by showcased to, and tested by, the actual users
 
 Our dummy data is stored within the [config](config/dummy_data) folder.
 
@@ -350,7 +342,7 @@ Our dummy data is stored within the [config](config/dummy_data) folder.
 When downloading the zip file of this project, the database is already initialized and **no further action is required**. 
 However, it is possible to perform the below mentioned actions via running the explicit scripts. 
 
-The database must be systematically **taken down before being initialized**.
+The database must be systematically **taken down first before being initialized**.
 ### Taking database down
 Please run [down_db.py](config/down_db.py)
 ### Initializing database
