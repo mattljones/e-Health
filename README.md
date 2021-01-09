@@ -130,23 +130,26 @@ The database must be systematically **taken down before being initialized**.
 
 ## Entity relationship diagram
 
-![Entity relationship diagram](docs/diagrams/db_comp0066_erdiagram.png)
+![Entity relationship diagram](docs/diagrams/ER_diagram.png)
 
 
 
 
 ## Extensibility
 
-Implemented - 
+Implemented:
 - Different GP types (for referrals in the future)
 - Different GP departments (allowing scalability in the future)
 - Patients & gps can be deactivated (option in the DB)
 
-Future work - 
-- API to 3Ps e.g. for referring to other hospitals, disease management (anonymous data sharing), sending prescriptions to pharmacies
+Future work:
+- API to third parties e.g. for referring to other hospitals, disease management (anonymous data sharing), sending prescriptions to pharmacies
 - Adding 'treatments'/'procedures' functionality e.g. small in-house surgeries, vaccinations, etc.
 - Messaging from hospital to patient e.g. automated appointment reminders, notifications of e.g. lab results coming in, etc.
-
+- Messaging from patient to hospital for inquiries etc.
+- Allow for data exportation e.g. csv, pdf etc.
+- Space management for hospital on top of booking system, as of now assumption that every GP has his/her own office
+- Automatic creation of a Video & Telephone Conferencing Environment & for online meetings
 
 
 
@@ -294,13 +297,24 @@ else: 13:00 to 14:00). To not unnecessarily fill the database with lunchtimes an
 empty dataframe (for day and week) that accommodates these slots that are not available by default. Using an empty
 dataframe and merging it with potential existing appointments or time offs and only enable users in the front
 accessing available slots.
-- indexes  
-There are no separate indexes implemented, as SQLite indexes the primary key of a respective table by default.
-As we are using primary keys in our most-used queries, we did not
-- admin
-explain we only have 1 admin
-- more tables
-explain that most of them are created due to scalability
+- admin   
+The system has only one admin and therefore we did not add admin_id as foreign key to respective
+tables. 
+- gp_department_id   
+Normalization done for this table, so that the hospital can easily add new departments.
+This allows our system to scale more easily.
+- gp_specialisation_id   
+Normalization done for this table, so that the hospital can easily add new specialisations.
+This allows our system to scale more easily.
+- drug_id   
+Normalization done for this table, so that the hospital can easily add new drugs.
+This allows our system to scale more easily.
+- patient_medical_condition_type & patient_medical_condition  
+Normalization done for these tables, so that new conditions can be added and a patient can have several conditions.
+This allows our system to scale more easily.
+- indexes   
+There are no separate indexes set, as SQLite indexes the primary key of a respective table by default.
+
 
 
 ### Dummy data
