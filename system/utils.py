@@ -97,6 +97,10 @@ def display(my_dict):
     functions corresponding to the user's choice.
     '''
 
+    # automatically direct to next flow
+    if my_dict["type"] == "auto":
+        return my_dict["next"][0](my_dict["next"][1])
+
     title = my_dict["title"]
     
     # checking if title has a subtitle
@@ -119,10 +123,6 @@ def display(my_dict):
     left_padding = ' ' * ((line_length - title_length) // 2)
 
     print("\n" + line + "\n" + left_padding + title + "\n")
-
-    # automatically direct to next flow
-    if my_dict["type"] == "auto":
-        return my_dict["next"][0](my_dict["next"][1])
 
     # Print user choices
     for key in my_dict:
@@ -148,10 +148,10 @@ def display(my_dict):
     if usr_choice == '#':
 
         if globals.usr_type == "patient":
-            return display(main_flow_patient)
+            display(main_flow_patient)
 
         elif globals.usr_type == "gp":
-            return display(main_flow_gp)
+            display(main_flow_gp)
 
         elif globals.usr_type == "admin":
 
@@ -160,15 +160,15 @@ def display(my_dict):
             admin_flow.gp_id_choice = ''
             del admin_flow.gp_id_choice
 
-            return display(admin_flow.main_flow_admin)
+            display(admin_flow.main_flow_admin)
 
         else:
-            return display(main_flow_register)
+            display(main_flow_register)
 
     # If "Logout"
     elif usr_choice in ('X', 'x'):
         logout()
-        return display(main_flow_register)
+        display(main_flow_register)
 
     # If user selected one of the options
     elif usr_choice.upper() in my_dict:
@@ -183,7 +183,7 @@ def display(my_dict):
     # If invalid entry
     else:
         print("\n\U00002757 Invalid entry, please try again and enter your choice.")
-        return display(my_dict)
+        display(my_dict)
 
 
 def hash_salt(password):
