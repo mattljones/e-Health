@@ -84,7 +84,7 @@ We strongly recommend to create a virtual environment to install dependencies an
 
   If you no longer need this environment, run `deactivate` and just delete the `env` folder.
 
-<img src="docs/images/venv-scripts.png" style="zoom:50%;" />
+<img src="docs/images/venv-scripts.png" style="zoom:75%;" />
 
 ## Test accounts
 
@@ -138,23 +138,18 @@ The database must be systematically **taken down before being initialized**.
 
 ## User experience diagrams
 
-
-
-![Patient UX diagram](docs/diagrams/patient_UX.png)
-
-
-![GP UX diagram](docs/diagrams/GP_UX.png)
-
-
-![Admin UX diagram](docs/diagrams/admin_UX.png)
-
+<table>
+    <tr>
+        <td ><center><img src="docs/diagrams/patient_UX.png" style="zoom:25%;" >Patient User Journey </center></td>
+        <td ><center><img src="docs/diagrams/GP_UX.png" style="zoom:80%;" >GP User Journey</center></td>
+    </tr>
+        <td><center><img src="docs/diagrams/admin_UX.png" style="zoom:40%;" />Admin User Journey</center></td>
+    </tr>
+</table>
 
 ## Entity relationship diagram
 
-![Entity relationship diagram](docs/diagrams/ER_diagram.png)
-
-
-
+<img src="docs/diagrams/ER_diagram.png" style="zoom:40%;" />
 
 ## Extensibility
 
@@ -214,8 +209,6 @@ Others (i.e. CRUD) by definition do return something. For these:
 Consult the classes themselves for additional information.
 
 Each method has a docstring describing its purpose, parameters and return values, as well as how various <b>edge cases</b> are handled.  
-
-
 
 
 
