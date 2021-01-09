@@ -1,11 +1,18 @@
+[![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+
 # Prologue
+
+**Running this program** 
 
 By using this project, run `python e_health_main.py` in your terminal.
 
-For Windows users, we recommend using "Terminal" to run the program.
+For Windows users, we recommend using [Windows Terminal](https://devblogs.microsoft.com/commandline/introducing-windows-terminal/) to run the program.
 
 Open your terminal in **full screen** for a better user experience.
 
+**GitHub Page of this README**
+
+We recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
 
 
 # Table of content 
@@ -17,6 +24,7 @@ Open your terminal in **full screen** for a better user experience.
 - [(STRUCTURE PREVIEW NOW, NEED DELETION)](#structure-preview-now-need-deletion)
 - [Key information](#key-information)
   - [Library dependencies](#library-dependencies)
+    - [Virtual environment](#virtual-environment)
   - [Test accounts](#test-accounts)
   - [SQLite database](#sqlite-database)
 - [Development](#development)
@@ -50,22 +58,33 @@ Open your terminal in **full screen** for a better user experience.
 - [Statistics](#statistics)
 
 
-
-
-
 # Key information
-
-We recommend opening the following information on your browser by clicking [here](https://mattljones.github.io/COMP0066_Coursework/).
-
 
 ## Library dependencies
 
-If you do not have the following libraries on your computer, you will have to install them to run the program:
-- **Python** v.3.8.5 or higher (click [here](https://www.python.org/downloads/) to download).
+The project is written with [Python](https://www.python.org/) and can be run with Python v.3.7.9 or higher (click [here](https://www.python.org/downloads/) to download).
+Except Python built-in packages, if you do not have the following libraries on your computer, you will have to install them to run the program:
+
 - **Pandas** v.1.1.3 or higher (`pip install pandas`).
 - **Tabulate** v.0.8.7 or higher (`pip install tabulate`).
 
-You can run `pip install -r requirements.txt` to install all relevant dependencies.
+### Virtual environment
+
+We strongly recommend to create a virtual environment to install dependencies and run the program. Generally there are two approaches:
+
+- If you are using [conda](https://docs.conda.io/en/latest/), you can simply create an environment and activate it with this official [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). Run `pip install -r requirements.txt` to install all relevant dependencies.
+
+- Otherwise, if you choose **venv** to create an virtual environment, it will be a little complicated and we've written the steps for you to follow:
+
+  1. In the project folder, create a new folder named like *env*；
+  2. Run `cd env` in terminal;
+  3. Run `python -m venv .`  (or `python3 -m venv .` , this depends on your aliases setting in your operating system, don't forget `.` at the end), and now you should have **pip** and a core python virtual environment;
+  4. Run `cd Scripts` (*Scripts* is already generated under *env*) and use the platform-specific script (as shown in the pic attached) to activate the environment;
+  5. Return to the project main directory and run `pip install -r requirements.txt` .
+
+  If you no longer need this environment, run `deactivate` and just delete the `env` folder.
+
+<img src="docs/images/venv-scripts.png" style="zoom:50%;" />
 
 ## Test accounts
 
@@ -174,9 +193,9 @@ In the following section the different class methods are described in detail, in
 
 #### Return Variables
 
-Some methods (i.e. most CrUD methods) do not return anything. 
+Some methods (i.e. most CRUD methods) do not return anything. 
 
-Others (i.e. cRud) by definition do return something. For these:
+Others (i.e. CRUD) by definition do return something. For these:
 
 - <b>Optional:</b>
   - Instance for factory methods
@@ -317,17 +336,18 @@ This allows our system to scale more easily.
 - indexes   
 There are no separate indexes set, as SQLite indexes the primary key of a respective table by default.
 
-
-
 ### Dummy data
 We have created extensive dummy data so that our system can be:
 - excessively tested and evaluated by TA and Professor
 - our system is ready to showcase and tested by the actual users
 
-Our dummy data is stored [here](config/dummy_data).
+Our dummy data is stored within the [config](config/dummy_data) folder.
+
+
 
 ## Database execution
-When downloading the zip file of this project, the database is already initialized and no further action is required. 
+
+When downloading the zip file of this project, the database is already initialized and **no further action is required**. 
 However, it is possible to perform the below mentioned actions via running the explicit scripts. 
 
 The database must be systematically **taken down before being initialized**.
@@ -340,16 +360,72 @@ Please run [initialize_db.py](config/initialize_db.py)
 
 ## Menu navigation
 
-Overall Strategy here...
-
 ### Nested dictionaries
+
+The menu navigation was implemented using nested dictionaries. All dictionaries were formatted the same way in order to be read by a common method, following the below template:
+
+`dictionary = {"title" : ` [menu title] `,` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"type" : ` ["main" or "sub"] `,` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"1" : (` [Option 1 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"2" : (` [Option 2 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `"3" : (` [Option 3 text] `,` [Corresponding method] `,` [Following dictionary] `),` \
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `... }`
+
+The dictionaries and corresponding methods are stored within the [user_menu_flow](user_menu_flow) folder.
+
 
 ### Displaying menus 
 
+A single and common method `display()` was designed to manage the entire system menus navigation. It is stored in `utils.py`.
+
+The method `utils.display()` works the following way:
+
+- Takes 1 dictionary as argument.
+  
+- Print the string associated to the `title` key of the dictionary as the menu title.
+  
+- Print the user options as the dictionary key followed by the option text: \
+  `[1] Option 1 text`\
+  `[2] Option 2 text`\
+  ...
+
+- If the dictionary `type` key is "sub", print the go back option:\
+  `[#] Go back to main menu`
+  
+- If the user is logged in, print the logout option:\
+  `[X] Logout`
+  
+- If the user is not logged in, print the exit system option:\
+  `[E] Exit the system`
+
+- Request user input, if the user input is invalid, print error message and request input again.
+
+- If the user input correspond to the dictionary key of one of the user choices:
+  - Call the 'corresponding method' with the 'following dictionary' as argument.
+  - The method will run and return `utils.display(`[following dictionary]`)` to proceed to the next menu.
+
+- If the user choice is to 'go back to main menu', execute a recursive call of the `display()` method with the correct main menu dictionary as argument.
+
+- If the user choice is to logout, call `logout()` and execute a recursive call of the `display()` method with the main register/login menu dictionary.
+
+- If the user choice is to 'exit the system', print the exit art and message and exit the system with `sys.exit()`.
+  
+
 ### User input menus
 
+However, some specific menus could not be generated by the `display()` method in the manner described above. To illustrate, it was the case for menus requiring specific user input such as the 'Register' menu.
 
-
+For specific menus, the menu display and user input combined with input validation are inserted within the 'corresponding method' of the previous menu dictionary. Once the task is completed, the method just has to call `utils.display(`[following dictionary]`)` just like the other methods.
 
 
 # Individual documentation
@@ -360,18 +436,15 @@ Overall Strategy here...
 
 
 
-
-
 # Statistics
 
 ```powershell
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                          18           1505           2301           4227
-Markdown                         9            343              0            573
-XML                              6              0              0             95
+Python                          18           1506           2304           4241
+Markdown                         9            456              0            803
 -------------------------------------------------------------------------------
-SUM:                            33           1848           2301           4895
+SUM:                            27           1962           2304           5044
 -------------------------------------------------------------------------------
 ```
