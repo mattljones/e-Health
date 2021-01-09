@@ -14,7 +14,7 @@ from email.mime.text import MIMEText
 
 # Import non built-in modules
 try:
-    import pandas 
+    import pandas as pd
 except ModuleNotFoundError:
     print("\nPandas module not found. Please install pandas >= 1.1.3 to run this program.")
     sys.exit()
