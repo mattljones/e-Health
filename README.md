@@ -2,6 +2,10 @@
 
 # Prologue
 
+**Video demonstration **
+
+To watch the video, click [here](https://mediacentral.ucl.ac.uk/Player/Fb6DEd60)
+
 **Running this program** 
 
 By using this project, run `python e_health_main.py` in your terminal.
