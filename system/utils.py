@@ -5,13 +5,21 @@ import os
 import sys
 import sqlite3
 import hashlib
-import pandas as pd
 import datetime as dt
 from system import asciiart
 import random
 import string
 import smtplib
 from email.mime.text import MIMEText
+
+# Import non built-in modules
+modules = ['pandas', 'tabulate']
+for m in modules:
+    try:
+        m = __import__(m)
+    except ModuleNotFoundError:
+        print("\n{} module not found. Please install {} to run this program.".format(m, m))
+        sys.exit()
 
 # Change python path for imports
 p = Path(__file__).parents[1]
