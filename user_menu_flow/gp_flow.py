@@ -24,15 +24,9 @@ globals.init()
 display_next_menu = lambda next_dict:utils.display(next_dict)
 
 ############################### INPUT MENU PAGES ###########################
+
+
 def edit_notes(next_dict):
-    """[summary]
-
-    Args:
-        next_dict (dict): [description]
-
-    Returns:
-        [type]: [description]
-    """
     record = Record.select(globals.patient_id)[0]
     print("\nPlease input the appointment id of the notes you want to change")
     apt_id = input("--> ")
@@ -49,6 +43,7 @@ def edit_notes(next_dict):
         record.update()
         print(Record.select(globals.patient_id)[4])
         return display_next_menu(next_dict)
+
 
 def simple_note(next_dict):
     flow_submit_note = {"title": "SUBMIT NOTES ?",
@@ -74,6 +69,7 @@ def simple_note(next_dict):
         return display_next_menu(flow_prescription)
     elif usr_choice == '2':
         return simple_note(flow_submit_note)
+
 
 def edit_cc(next_dict):
     record = Record.select(globals.patient_id)[0]
@@ -151,21 +147,24 @@ def edit_cc(next_dict):
             print(Record.select(globals.patient_id)[4])
     return display_next_menu(next_dict)
 
+
 def final_confirm_prescribe(next_dict):
     print(Prescription.select_patient(globals.patient_id)[1])
     return display_next_menu(next_dict)
 
+
 def no_attend(next_dict):
     Appointment.change_status(globals.appt_id, "cancelled")
     print("\nAppointment " + str(globals.appt_id) + " has been successfully cancelled!\n")
-    # TODO: delete at the final version
+    # to check status cahnge really happens
     # print(Appointment.select_GP_appt(globals.usr_id)[1])
     return display_next_menu(next_dict)
+
 
 def enter_note(next_dict):
     # confirm the attendance before entering note, VALUE constraint
     Appointment.change_status(globals.appt_id, "attended")
-    # TODO: delet in the final version
+    # to check status cahnge really happens
     # print(Appointment.select_GP_appt(globals.usr_id)[1])
     print("\nPlease enter your notes on the appointment")
     gp_note = input("--> ")
@@ -173,6 +172,7 @@ def enter_note(next_dict):
     print(Appointment.select(globals.appt_id)[3])
 
     return display_next_menu(next_dict)
+
 
 def enter_prescription(next_dict):
     flow_drug = {"title": "ADD ANOTHER PRESCRIPTION ?",
@@ -207,8 +207,8 @@ def enter_prescription(next_dict):
 
     return display_next_menu(flow_drug)
 
+
 def enter_appoint_id(next_dict):
-    # TODO: return to home page  
     print("\nPlease enter an appointment ID")
     appt_id = input("\n--> ")
     while appt_id == "" or appt_id.isspace() == True:
@@ -227,6 +227,7 @@ def enter_appoint_id(next_dict):
 
 ############################ SEQUENTIAL STEPS MENUS ########################
 
+
 def correct_note_change(next_dict):
     flow_record_edit = {"title": "EDIT WHAT PART OF THE RECORDS ?",
                  "type": "sub",
@@ -235,6 +236,7 @@ def correct_note_change(next_dict):
                 }
     return display_next_menu(flow_record_edit)
 
+
 def correct_cc_change(next_dict):
     flow_cc_edit = {"title": "EDIT CONDITION",
                  "type": "auto",
@@ -242,7 +244,6 @@ def correct_cc_change(next_dict):
                 }
     return display_next_menu(flow_cc_edit)
 
-# TODO: booking id input validation
 
 def display_confirmed_appt(next_dict):
     no_confirmed_flag = Appointment.select_GP_confirmed(globals.usr_id)[1].index.values.size
@@ -253,6 +254,7 @@ def display_confirmed_appt(next_dict):
     print(Appointment.select_GP_confirmed(globals.usr_id)[0])
     return display_next_menu(next_dict)
 
+
 def display_pending_appt(next_dict):
     no_pending_flag = Appointment.select_GP_pending(globals.usr_id)[0].index.values.size
     if no_pending_flag == 0:
@@ -262,6 +264,7 @@ def display_pending_appt(next_dict):
         print("\n【Your pending appointments】")
         print(Appointment.select_GP_pending(globals.usr_id)[1])
         return display_next_menu(next_dict)
+
 
 def another_confirm_rej(next_dict):
     flow_confirm_appoint = {"title": "CONFIRM APPOINTMENTS",
@@ -284,7 +287,7 @@ def another_confirm_rej(next_dict):
         reason = input("\n--> ")
     Appointment.change_status(confirm_id, "rejected", reason)
     print("\nAppointment " + confirm_id + " has been successfully rejected!")
-    # TODO: delete at the final version
+    # to check status cahnge really happens
     # print(Appointment.select_GP_appt(globals.usr_id)[1])
 
     print("\n----------------------------------------------------\n"
@@ -296,6 +299,7 @@ def another_confirm_rej(next_dict):
         return display_pending_appt(flow_confirm_appoint)
     elif usr_choice == '2':
         return display_next_menu(next_dict)
+
 
 def another_confirm_one(next_dict):
     flow_confirm_appoint = {"title": "CONFIRM APPOINTMENTS",
@@ -313,7 +317,7 @@ def another_confirm_one(next_dict):
         confirm_id = input("\n--> ")
     Appointment.change_status(confirm_id, "confirmed")
     print("\nAppointment " + confirm_id + " has been successfully confirmed!")
-    # TODO: delete at the final version
+    # to check status cahnge really happens
     # print(Appointment.select_GP_appt(globals.usr_id)[1])
 
     print("\n----------------------------------------------------\n"
@@ -326,11 +330,13 @@ def another_confirm_one(next_dict):
     elif usr_choice == '2':
         return display_next_menu(next_dict)
 
+
 def another_confirm_all(next_dict):
     Appointment.confirm_all_GP_pending(globals.usr_id)
-    # TODO: delete at the final version
+    # to check status cahnge really happens
     # print(Appointment.select_GP_appt(globals.usr_id)[1])
     return display_next_menu(next_dict)
+
 
 def remove_timeoff(next_dict):
     flow_timeoff = {"title": "MANAGE TIMEOFF",
@@ -355,6 +361,7 @@ def remove_timeoff(next_dict):
             return display_next_menu(flow_timeoff)
         elif usr_choice == '2':
             return display_next_menu(next_dict)
+
 
 def add_timeoff(next_dict):
     flow_timeoff = {"title": "VIEW SCHEDULE",
@@ -424,6 +431,7 @@ def add_timeoff(next_dict):
         elif usr_choice == '2':
             return display_next_menu(next_dict)
 
+
 def view_another_day(next_dict):
     flow_schedule = {"title": "VIEW SCHEDULE",
                  "type": "sub",
@@ -462,6 +470,7 @@ def view_another_day(next_dict):
                 return display_next_menu(next_dict)
             elif usr_choice == '#':
                 return display_next_menu(main_flow_gp)
+
 
 def view_another_week(next_dict):
     flow_schedule = {"title": "VIEW SCHEDULE",
@@ -502,13 +511,13 @@ def view_another_week(next_dict):
             elif usr_choice == '#':
                 return display_next_menu(main_flow_gp)
 
+
 def view_records(next_dict):
     # display today's schedule
     date_time_now = date.today().strftime("%Y-%m-%d")
     df = Schedule.select(globals.usr_id, 'day', date_time_now)[0]
     without_lunch = df[df['Status'] != "LUNCH"]
     final_df = without_lunch[without_lunch['Status'] != ""]
-    # TODO: if the schedule is empty, could the gp search?
     if final_df.index.values.size == 0:
         print("\nYour do not have any appointment today!")
         return display_next_menu(flow_end)
@@ -532,10 +541,12 @@ def view_records(next_dict):
         print(Record.select(patient_id)[4])
     return display_next_menu(next_dict)
 
+
 ########################## MENU NAVIGATION DICTIONARIES ######################
 
 # Empty nested dictionary to store in tuple for last menu
 # before going back to main page (for display function return parameter).
+
 flow_end = {"title": "CONTINUE E-HEALTH OR LOGOUT ?",
               "type":"sub"}
 
