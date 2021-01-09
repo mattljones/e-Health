@@ -527,7 +527,10 @@ def deactivate_delete_gp(action, next_dict):
     Deactivate or delete GP (if patients + appointments can BOTH be reallocated).
     '''
     # List and prompt admin for a gp id
-    gp_id = retrieve_gp('active')
+    if action == 'deactivate':
+        gp_id = retrieve_gp('active')
+    if action == 'delete':
+        gp_id = retrieve_gp('all')
 
     print("\n----------------------------------------------------\n"
           "                     ", 'CONFIRM?', "\n")
