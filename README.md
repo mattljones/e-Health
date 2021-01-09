@@ -60,12 +60,29 @@ We recommend opening the following information on your browser by clicking [here
 
 ## Library dependencies
 
-If you do not have the following libraries on your computer, you will have to install them to run the program:
-- **Python** v.3.8.5 or higher (click [here](https://www.python.org/downloads/) to download).
+The project is written with [Python](https://www.python.org/) and can be run with Python v.3.8.5 or higher (click [here](https://www.python.org/downloads/) to download).
+Except Python built-in packages, if you do not have the following libraries on your computer, you will have to install them to run the program:
+
 - **Pandas** v.1.1.3 or higher (`pip install pandas`).
 - **Tabulate** v.0.8.7 or higher (`pip install tabulate`).
 
-You can run `pip install -r requirements.txt` to install all relevant dependencies.
+### Virtual environment
+
+We strongly recommend to create a virtual environment to install dependencies and run the program. Generally there are two approaches:
+
+- If you are using [conda](https://docs.conda.io/en/latest/), you can simply create an environment and activate it with this official [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). Run `pip install -r requirements.txt` to install all relevant dependencies.
+
+- Otherwise, if you choose **venv** to create an virtual environment, it will be a little complicated and we've written the steps for you to follow:
+
+  1. In the project folder, create a new folder named like *env*；
+  2. Run `cd env` in terminal;
+  3. Run `python -m venv .`  (or `python3 -m venv .` , this depends on your aliases setting in your operating system, don't forget `.` at the end), and now you should have **pip** and a core python virtual environment;
+  4. Run `cd Scripts` (*Scripts* is already generated under *env*) and use the platform-specific script (as shown in the pic attached) to activate the environment;
+  5. Return to the project main directory and run `pip install -r requirements.txt` .
+
+  If you no longer need this environment, run `deactivate` and just delete the `env` folder.
+
+<img src="D:\cloud\OneDrive\University Colloge London\OneDrive - University College London\modules\COMP0066\proj\COMP0066_Coursework\docs\images\venv-scripts.png" style="zoom:50%;" />
 
 ## Test accounts
 
