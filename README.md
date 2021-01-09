@@ -65,6 +65,7 @@ Generally there are two approaches:
   3. Run `python -m venv .`  (or `python3 -m venv .` , this depends on your aliases setting in your operating system, don't forget `.` at the end), and now you should have **pip** and a core python virtual environment;
   4. Run `cd Scripts` (*Scripts* is already generated under *env*) and use the platform-specific script (as shown in the pic attached) to activate the environment.
   
+
 If you no longer need this environment, run `deactivate` and just delete the `env` folder.
 
 <img src="docs/images/venv-scripts.png" style="zoom:75%;" />
@@ -389,9 +390,9 @@ For specific menus, the menu display and user input combined with input validati
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                          18           1506           2304           4241
-Markdown                         9            456              0            803
+Python                          18           1496           2301           4174
+Markdown                         9            421              0            784
 -------------------------------------------------------------------------------
-SUM:                            27           1962           2304           5044
+SUM:                            27           1917           2301           4958
 -------------------------------------------------------------------------------
 ```
