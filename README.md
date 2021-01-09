@@ -84,7 +84,7 @@ We strongly recommend to create a virtual environment to install dependencies an
 
   If you no longer need this environment, run `deactivate` and just delete the `env` folder.
 
-<img src="/docs/images/venv-scripts.png" style="zoom:50%;" />
+<img src="docs/images/venv-scripts.png" style="zoom:50%;" />
 
 ## Test accounts
 
