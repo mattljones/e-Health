@@ -17,6 +17,7 @@ Open your terminal in **full screen** for a better user experience.
 - [(STRUCTURE PREVIEW NOW, NEED DELETION)](#structure-preview-now-need-deletion)
 - [Key information](#key-information)
   - [Library dependencies](#library-dependencies)
+    - [Virtual environment](#virtual-environment)
   - [Test accounts](#test-accounts)
   - [SQLite database](#sqlite-database)
 - [Development](#development)
