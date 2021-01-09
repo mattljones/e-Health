@@ -65,6 +65,8 @@ If you do not have the following libraries on your computer, you will have to in
 - **Pandas** v.1.1.3 or higher (`pip install pandas`).
 - **Tabulate** v.0.8.7 or higher (`pip install tabulate`).
 
+You can run `pip install -r requirements.txt` to install all relevant dependencies.
+
 ## Test accounts
 
 In order to use the program, we registered multiple **test accounts with known passwords**.
