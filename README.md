@@ -172,73 +172,73 @@ Each method has a docstring describing its purpose, parameters and return values
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| book | instance | <li><b>Admin, Patient</b> <li>Booking an appointment from an instance (instance created in user flow) | - | - |
-| update | instance | <li><b>Admin, GP</b> <li> Updating an appointment's details (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin, GP</b> <li> Generating an instance of an appointment to later update attributes based on user input | <li>booking_id | <li>Appointment instance <li>DF incl. indexing of all appointment attributes (not incl. prescription) |
-| select_GP | static | <li><b>Admin, GP</b> <li> Getting a list of a GP's appointments in a given time period | <li>type = day/week <li>gp_id <li>[time parameters] | <li>DF of a specific GP's appointments for an upcoming day (detailed) or week (less detailed per day) |
-| select_GP_pending | static | <li><b>GP</b> <li> Getting a list of a GP's pending (awaiting confirmation) appointments | <li>gp_id | <li>DF of a specific GP's pending appointments incl. all relevant attributes (sorted by booking_start_time ASC) |
-| select_patient | static | <i>Used in Record.select() method</i> | <li>patient_id <li>timeframe ('previous'/'upcoming') <li>status = None (can be 'confirmed' for a specific DF for Record) | <li>DF of a specific patient's previous and upcoming appointments depending which one we need. DF is displayed with Appointment relevant information for a specific Patient (incl. ID and other relevant attributes) |
-| select_availability | static | <li><b>Admin, Patient</b> <li> Getting a specific GP's availability before booking an appointment | <li>type = day/week <li>gp_id <li>[time parameters] start date specifically | <li>DF incl. indexing of a specific GP's availability for an upcoming day (detailed) or week (less detailed per day). DF shows times when the GP is unavailable and proved indexes to select from and book an appointment <br><i>NB: in user flow, to 'check' for availability count rows in DF</i> |
-| select_other_availability | static | <li><b>Admin, Patient</b> <li> Getting alternative GP availabilities when a patient's own GP has none before booking an appointment | <li>type = day/week <li>gp_id <li>[time parameters] | <li>DF incl. indexing w/ <b>all other GPs'</b> (i.e. with gp_id not equal to the gp_id parameter passed) availability for an upcoming day (detailed) or week (less detailed per day) <br><i>NB: in user flow, to 'check' for availability count rows in DF |
-| change_status | static | <li><b>Admin, Patient, GP</b> <li> Changing status for different reasons e.g. cancelling, confirming, rejecting | <li>booking_id <li>new_status | - |
-| confirm_all_GP_pending | static | <li><b>GP</b> <li> Confirming all pending appointments | <li>gp_id | - |
+| book | instance | - <b>Admin, Patient</b> <br/> - Booking an appointment from an instance (instance created in user flow) | - | - |
+| update | instance | - <b>Admin, GP</b> <br/> - Updating an appointment's details (technically overriding every DB attribute w/ instance values) | - | - |
+| select | factory | - <b>Admin, GP</b> <br/> - Generating an instance of an appointment to later update attributes based on user input | - booking_id | - Appointment instance <br/> - DF incl. indexing of all appointment attributes (not incl. prescription) |
+| select_GP | static | - <b>Admin, GP</b> <br/> - Getting a list of a GP's appointments in a given time period | - type = day/week <br/> - gp_id <br/> - [time parameters] | - DF of a specific GP's appointments for an upcoming day (detailed) or week (less detailed per day) |
+| select_GP_pending | static | - <b>GP</b> <br/> - Getting a list of a GP's pending (awaiting confirmation) appointments | - gp_id | - DF of a specific GP's pending appointments incl. all relevant attributes (sorted by booking_start_time ASC) |
+| select_patient | static | <i>Used in Record.select() method</i> | - patient_id <br/> - timeframe ('previous'/'upcoming') <br/> - status = None (can be 'confirmed' for a specific DF for Record) | - DF of a specific patient's previous and upcoming appointments depending which one we need. DF is displayed with Appointment relevant information for a specific Patient (incl. ID and other relevant attributes) |
+| select_availability | static | - <b>Admin, Patient</b> <br/> - Getting a specific GP's availability before booking an appointment | - type = day/week <br/> - gp_id <br/> - [time parameters] start date specifically | - DF incl. indexing of a specific GP's availability for an upcoming day (detailed) or week (less detailed per day). DF shows times when the GP is unavailable and proved indexes to select from and book an appointment <br><i>NB: in user flow, to 'check' for availability count rows in DF</i> |
+| select_other_availability | static | - <b>Admin, Patient</b> <br/> - Getting alternative GP availabilities when a patient's own GP has none before booking an appointment | - type = day/week <br/> - gp_id <br/> - [time parameters] | - DF incl. indexing w/ <b>all other GPs'</b> (i.e. with gp_id not equal to the gp_id parameter passed) availability for an upcoming day (detailed) or week (less detailed per day) <br><i>NB: in user flow, to 'check' for availability count rows in DF |
+| change_status | static | - <b>Admin, Patient, GP</b> <br/> - Changing status for different reasons e.g. cancelling, confirming, rejecting | - booking_id <br/> - new_status | - |
+| confirm_all_GP_pending | static | - <b>GP</b> <br/> - Confirming all pending appointments | - gp_id | - |
 
 
 ### GP
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| insert | instance | <li><b>Admin</b> <li> Inserting a new GP from an instance populated by user input (GPs cannot register themselves; instance created in user flow) | - | - |
-| update | instance | <li><b>Admin</b> <li> Updating a GP's details (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin</b> <li> Generating an instance of a GP to later update attributes based on user input | <li>gp_id | <li> GP instance <br><br> Generally: DF incl. indexing of all of a GP's attributes (except password) <li> df_object <li> df_print |
-| select_list | static | <li><b>Admin</b> <li>List of GPs to choose from (used in multiple branches) | <li>type = all/active/not_full | Generally: DF of all relevant GPs {gp_id, name (Dr. + gp_last_name), gp_birth_date, no. patients (if type = 'not_full'; sort column)} <li> df_object <li> df_print |
-| select_table | static | <li><b>Admin</b> <li> List of GP departments/specialisations for reference when updating | <li>type = department/specialisation | Generally: DF of relevant DB table <li> df_object <li> df_print |
-| reallocate_patients | static | <i>Used in GP.change_status() and GP.delete() methods</i> | <li>gp_id | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
-| reallocate_appointments | static | <i>Used in GP.change_status() and GP.delete() methods</i> | <li>gp_id | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
-| change_status | static | <li><b>Admin</b> <li> Changing a GP's status (to inactive/active) | <li>gp_id <li>new_status | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
-| delete | static | <li><b>Admin</b> <li> Deleting a GP | <li>gp_id | <li>BOOL True (successful) or False (unsuccessful) <li> Failure details (see docstring and method) |
+| insert | instance | - <b>Admin</b> <br/> - Inserting a new GP from an instance populated by user input (GPs cannot register themselves; instance created in user flow) | - | - |
+| update | instance | - <b>Admin</b> <br/> - Updating a GP's details (technically overriding every DB attribute w/ instance values) | - | - |
+| select | factory | - <b>Admin</b> <br/> - Generating an instance of a GP to later update attributes based on user input | - gp_id | - GP instance <br><br> Generally: DF incl. indexing of all of a GP's attributes (except password) <br/> - df_object <br/> - df_print |
+| select_list | static | - <b>Admin</b> <br/> - List of GPs to choose from (used in multiple branches) | - type = all/active/not_full | Generally: DF of all relevant GPs {gp_id, name (Dr. + gp_last_name), gp_birth_date, no. patients (if type = 'not_full'; sort column)} <br/> - df_object <br/> - df_print |
+| select_table | static | - <b>Admin</b> <br/> - List of GP departments/specialisations for reference when updating | - type = department/specialisation | Generally: DF of relevant DB table <br/> - df_object <br/> - df_print |
+| reallocate_patients | static | <i>Used in GP.change_status() and GP.delete() methods</i> | - gp_id | - BOOL True (successful) or False (unsuccessful) <br/> - Failure details (see docstring and method) |
+| reallocate_appointments | static | <i>Used in GP.change_status() and GP.delete() methods</i> | - gp_id | - BOOL True (successful) or False (unsuccessful) <br/> - Failure details (see docstring and method) |
+| change_status | static | - <b>Admin</b> <br/> - Changing a GP's status (to inactive/active) | - gp_id <br/> - new_status | - BOOL True (successful) or False (unsuccessful) <br/> - Failure details (see docstring and method) |
+| delete | static | - <b>Admin</b> <br/> - Deleting a GP | - gp_id | - BOOL True (successful) or False (unsuccessful) <br/> - Failure details (see docstring and method) |
 
 
 ### Patient
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| update | instance | <li><b>Admin</b> <li> Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin, Patient</b> <li> Generating an instance of a patient to later update attributes based on user input | <li>patient_id | <li>Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <li> df_object <li> df_print |
-| select_list | static | <li><b>Admin</b> <li> List of patients to choose from (used in multiple branches) | <li>type = pending/matching <li>if matching, patient_last_name | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <li> df_object <li> df_print |
-| select_gp_details | static | <li><b>Patient</b> <li> Retrieving a patient's default GP ID and name (for booking & sharing with patient) | <li>patient_id | <li>gp_id <li>gp_name |
-| change_gp | static | <li><b>Admin, Patient</b> <li> Changing a patient's default GP (checks GP not full first) | <li>type = auto (least full)/specific <li>patient_id <li>if specific, new_gp_id | <li>BOOL True (successful) or False (unsuccessful) <li>new_gp_name (=None if BOOL == False for simpler user flow coding) |
-| confirm | static | <li><b>Admin</b> <li> Confirming patients (currently no direct method to change status to 'inactive', but allowed in DB) | <li>type = all/single  <li>if single, patient_id | <i>NB: patients were automatically given a GP during registration to avoid allowing nulls in the DB </i> |
-| delete | static | <li><b>Admin</b> <li> Deleting a patient | <li>patient_id | - |
+| update | instance | - <b>Admin</b> <br/> - Updating a patient's details (technically overriding every DB attribute w/ instance values) | - | - |
+| select | factory | - <b>Admin, Patient</b> <br/> - Generating an instance of a patient to later update attributes based on user input | - patient_id | - Patient instance <br><br> Generally: DF incl. indexing of all of a patient's attributes (except password, and medical conditions neither as that's for GPs to edit) <br/> - df_object <br/> - df_print |
+| select_list | static | - <b>Admin</b> <br/> - List of patients to choose from (used in multiple branches) | - type = pending/matching <br/> - if matching, patient_last_name | Generally: DF of all relevant patients {patient_id, default GP (if type = 'matching'), patient_first_name, patient_last_name, patient_birth_date, patient_registration_date (if type = 'pending'; sort column)} <br/> - df_object <br/> - df_print |
+| select_gp_details | static | - <b>Patient</b> <br/> - Retrieving a patient's default GP ID and name (for booking & sharing with patient) | - patient_id | - gp_id <br/> - gp_name |
+| change_gp | static | - <b>Admin, Patient</b> <br/> - Changing a patient's default GP (checks GP not full first) | - type = auto (least full)/specific <br/> - patient_id <br/> - if specific, new_gp_id | - BOOL True (successful) or False (unsuccessful) <br/> - new_gp_name (=None if BOOL == False for simpler user flow coding) |
+| confirm | static | - <b>Admin</b> <br/> - Confirming patients (currently no direct method to change status to 'inactive', but allowed in DB) | - type = all/single  <br/> - if single, patient_id | <i>NB: patients were automatically given a GP during registration to avoid allowing nulls in the DB </i> |
+| delete | static | - <b>Admin</b> <br/> - Deleting a patient | - patient_id | - |
 
 
 ### Prescription
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| insert | instance | <li><b>GP</b> <li> Inserting a new prescription from an instance populated by user input (instance created in user flow) | - | - |
-| select_patient | static | <i>Used in Record.select() method</i> | <li>patient_id | Generally: DF with details of a patient's prescriptions {drug_name, drug_dosage, drug_frequency_dosage, prescription_expiry_date (YYYY-MM-DD), booking_id} whose booking status is "attending"<li> df_object <li> df_print |
-| select_drug_list | static | <li><b>GP</b> <li> Getting a list of drugs to choose from (for a prescription) | - | Generally: DF with all drugs {drug_id, drug_name} <li> df_object <li> df_print |
+| insert | instance | - <b>GP</b> <br/> - Inserting a new prescription from an instance populated by user input (instance created in user flow) | - | - |
+| select_patient | static | <i>Used in Record.select() method</i> | - patient_id | Generally: DF with details of a patient's prescriptions {drug_name, drug_dosage, drug_frequency_dosage, prescription_expiry_date (YYYY-MM-DD), booking_id} whose booking status is "attending" <br/> - df_object <br/> - df_print |
+| select_drug_list | static | - <b>GP</b> <br/> - Getting a list of drugs to choose from (for a prescription) | - | Generally: DF with all drugs {drug_id, drug_name} <br/> - df_object <br/> - df_print |
 
 
 ### Record
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| update | instance | <li><b>GP</b> <li>Updating a patient's medical record (technically overriding every DB attribute w/ instance values) | - | - |
-| select | factory | <li><b>Admin, GP</b> <li> Generating an instance of a patient record to later update attributes based on user input. <li> Whilst lots of patient information is displayed, only 'conditions' and 'appointment notes' are editable (assume prescriptions are non-editable/revokable) | <li>patient_id | <li>Record instance <br><br> Generally: <b>2 DFs</b> incl. indexing of all of a patient's 'medical'-related details: 1) attributes & medical conditions 2) previous appointments & corresponding prescriptions <li> df_patient_object <li> df_patient_print <li> df_apps_object <li> df_apps_print |
-| select_conditions | static | <li><b>GP</b> <li>List of possible medical conditions for reference when updating patient record | - | Generally: DF of all possible medical conditions <li> df_object <li> df_print |
+| update | instance | - <b>GP</b> <br/> - Updating a patient's medical record (technically overriding every DB attribute w/ instance values) | - | - |
+| select | factory | - <b>Admin, GP</b> <br/> - Generating an instance of a patient record to later update attributes based on user input. - Whilst lots of patient information is displayed, only 'conditions' and 'appointment notes' are editable (assume prescriptions are non-editable/revokable) | - patient_id | - Record instance <br><br> Generally: <b>2 DFs</b> incl. indexing of all of a patient's 'medical'-related details: 1) attributes & medical conditions 2) previous appointments & corresponding prescriptions <br/> - df_patient_object <br/> - df_patient_print <br/> - df_apps_object <br/> - df_apps_print |
+| select_conditions | static | - <b>GP</b> <br/> - List of possible medical conditions for reference when updating patient record | - | Generally: DF of all possible medical conditions <br/> - df_object <br/> - df_print |
 
 
 ### Schedule
 
 | Name | Type | User flow & purpose | Parameters | Returns |
 | ---- | ---- | ------------------- | ---------- | ------- |
-| select | static | <li><b>Admin, GP</b> <li> Viewing a GP's schedule | <li>gp_id <li>type = 'day' or 'week' <li>start_date (YYYY-MM-DD) | Generally: DF of a specific GP's schedule for a given day (detailed: booking_id, booking_agenda, booking_type, (patient_first_name, patient_last_name, patient_id)) or week (less detailed: x-axis: days, y-axis: timeslots) <li> df_object <li> df_print <li> df_print_morning <li> df_print_afternoon  |
-| select_timeoff | static | <li><b>Admin</b> <li> Viewing a GP's upcoming timeoff | <li>gp_id <li>type= 'all', 'past' or 'upcoming'  | Generally: DF of a GP's upcoming time off {booking_start_time (YYYY-MM-DD), booking_status} <li> df_object <li> df_print |
-| check_timeoff_conflict | static | <li><b>Admin, GP</b> <li> Checking proposed GP timeoff doesn't conflict with any appointments | <li>gp_id <li>date_start (YYYY-MM-DD) <li>date_end (YYYY-MM-DD) | BOOLean: 'True' if there was a conflict, 'False' is there was no conflict <ul><li> boolean</ul> <br /> DF of conflicting appointments {booking_id, booking_start_time, booking_status}    <li> df_object <li> df_print |
-| insert_timeoff | static | <li><b>Admin, GP</b> <li> Inserting GP time off (only whole days possible), if there is no conflict according to check_timeoff_conflict | <li>gp_id <li>timeoff_type = 'time off' or 'sick leave' <li>start_date (YYYY-MM-DD) <li>end_date (YYYY-MM-DD) | <li> same return as check_timeoff_conflict |
-| delete_timeoff | static | <li><b>Admin, GP</b> <li> Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | <li>gp_id <li>type = 'all' dates or 'custom' date range <li>timeoff_type = 'time off', 'sick leave' or None = 'all' <li>start_date (YYYY-MM-DD, None for type = all) <li>end_date (YYYY-MM-DD, None for type = all) | <li>no return, just deletion |
+| select | static | - <b>Admin, GP</b> <br/> - Viewing a GP's schedule | - gp_id <br/> - type = 'day' or 'week' <br/> - start_date (YYYY-MM-DD) | Generally: DF of a specific GP's schedule for a given day (detailed: booking_id, booking_agenda, booking_type, (patient_first_name, patient_last_name, patient_id)) or week (less detailed: x-axis: days, y-axis: timeslots) <br/> - df_object <br/> - df_print <br/> - df_print_morning <br/> - df_print_afternoon  |
+| select_timeoff | static | - <b>Admin</b> <br/> - Viewing a GP's upcoming timeoff | - gp_id <br/> - type= 'all', 'past' or 'upcoming'  | Generally: DF of a GP's upcoming time off {booking_start_time (YYYY-MM-DD), booking_status} <br/> - df_object <br/> - df_print |
+| check_timeoff_conflict | static | - <b>Admin, GP</b> <br/> - Checking proposed GP timeoff doesn't conflict with any appointments | - gp_id <br/> - date_start (YYYY-MM-DD) <br/> - date_end (YYYY-MM-DD) | BOOLean: 'True' if there was a conflict, 'False' is there was no conflict <br/> - boolean <br /> DF of conflicting appointments {booking_id, booking_start_time, booking_status} <br/> - df_object <br/> - df_print |
+| insert_timeoff | static | - <b>Admin, GP</b> <br/> - Inserting GP time off (only whole days possible), if there is no conflict according to check_timeoff_conflict | - gp_id <br/> - timeoff_type = 'time off' or 'sick leave' <br/> - start_date (YYYY-MM-DD) <br/> - end_date (YYYY-MM-DD) | - same return as check_timeoff_conflict |
+| delete_timeoff | static | - <b>Admin, GP</b> <br/> - Deleting a GP's upcoming time off (e.g if no longer sick, holiday cancelled) (only whole days possible) | - gp_id <br/> - type = 'all' dates or 'custom' date range <br/> - timeoff_type = 'time off', 'sick leave' or None = 'all' <br/> - start_date (YYYY-MM-DD, None for type = all) <br/> - end_date (YYYY-MM-DD, None for type = all) | - no return, just deletion |
 
 
 ### User
@@ -269,7 +269,11 @@ dataframe and merging it with potential existing appointments or time offs and o
 accessing available slots.
 - indexes  
 There are no separate indexes implemented, as SQLite indexes the primary key of a respective table by default.
-As we are using primary keys in our most-used queries, we did not 
+As we are using primary keys in our most-used queries, we did not
+- admin
+explain we only have 1 admin
+- more tables
+explain that most of them are created due to scalability
 
 
 ### Dummy data
