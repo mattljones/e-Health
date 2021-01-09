@@ -50,21 +50,22 @@ Except Python built-in packages, if you do not have the following libraries on y
 - **Pandas** v.1.1.3 or higher (`pip install pandas`).
 - **Tabulate** v.0.8.7 or higher (`pip install tabulate`).
 
+We add automatic check on required packages in `e_health_main.py` so basically you do not need to run `pip install -r requirements.txt` to install these packages by yourself. However we strongly recommend to create a virtual environment to install dependencies and run the program.
+
 ### Virtual environment
 
-We strongly recommend to create a virtual environment to install dependencies and run the program. Generally there are two approaches:
+Generally there are two approaches:
 
-- If you are using [conda](https://docs.conda.io/en/latest/), you can simply create an environment and activate it with this official [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). Run `pip install -r requirements.txt` to install all relevant dependencies.
+- If you are using [conda](https://docs.conda.io/en/latest/), you can simply create an environment and activate it with this official [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
 - Otherwise, if you choose **venv** to create an virtual environment, it will be a little complicated and we've written the steps for you to follow:
 
   1. In the project folder, create a new folder named like *env*；
   2. Run `cd env` in terminal;
   3. Run `python -m venv .`  (or `python3 -m venv .` , this depends on your aliases setting in your operating system, don't forget `.` at the end), and now you should have **pip** and a core python virtual environment;
-  4. Run `cd Scripts` (*Scripts* is already generated under *env*) and use the platform-specific script (as shown in the pic attached) to activate the environment;
-  5. Return to the project main directory and run `pip install -r requirements.txt` .
-
-  If you no longer need this environment, run `deactivate` and just delete the `env` folder.
+  4. Run `cd Scripts` (*Scripts* is already generated under *env*) and use the platform-specific script (as shown in the pic attached) to activate the environment.
+  
+If you no longer need this environment, run `deactivate` and just delete the `env` folder.
 
 <img src="docs/images/venv-scripts.png" style="zoom:75%;" />
 
