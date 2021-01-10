@@ -485,7 +485,7 @@ class Schedule:
                 u.db_execute(delete_timeoff_all_query)
 
 
-### DEVELOPMENT ###
+############################# TESTING ###############################
 
 if __name__ == "__main__":
 

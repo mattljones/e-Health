@@ -607,8 +607,7 @@ class Appointment:
         gp_last_name_query = """SELECT gp_last_name FROM gp WHERE gp_id == {} """.format(gp_id)
         return u.db_read_query(gp_last_name_query).loc[0, 'gp_last_name']
 
-
-# DEVELOPMENT
+############################# TESTING ###############################
 
 if __name__ == "__main__":
     pass

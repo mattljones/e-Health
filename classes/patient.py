@@ -321,8 +321,7 @@ class Patient(User):
         u.db_execute(query)
 
 
-
-
+############################# TESTING ###############################
 if __name__ == "__main__":
 
     pass
