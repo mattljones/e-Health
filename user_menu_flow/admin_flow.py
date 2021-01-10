@@ -2427,7 +2427,7 @@ remove_time_off_final_menu = {
     "title": "NEXT ACTIONS",
     "type": "sub",
     "1": ("Remove more time off", remove_more_time_off, empty_dict),
-    "2": ("Manage upcoming time off", manage_more_time_off, empty_dict),
+    "2": ("Manage time off", manage_more_time_off, empty_dict),
     "3": ("Manage GP availability", manage_more_availability, empty_dict),
     "4": ("Choose a different GP", choose_another_gp, empty_dict),
     "S": ("Section Menu", schedules_section_menu, empty_dict)
@@ -2482,7 +2482,7 @@ manage_availability_flow = {
     "title": "VIEW AND MANAGE AVAILABILITY",
     "type": "sub",
     "1": ("View upcoming appointments", view_appointment_by_same_gp, empty_dict),
-    "2": ("Manage upcoming time off", empty_method, manage_time_off_flow)
+    "2": ("Manage time off", empty_method, manage_time_off_flow)
 }
 
 view_schedule_final_menu = {
