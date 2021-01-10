@@ -102,30 +102,6 @@ class Prescription:
 ### DEVELOPMENT ###
 
 if __name__ == "__main__":
+
     pass
 
-### TESTING ###
-## testing prescription
-# call classes
-#ew_prescription = Prescription()
-# see patient records
-#df = new_prescription.select_patient(22)[1]
-# see drug list
-# df = new_prescription.select_drug_list()[1]
-
-
-## Insert new prescription
-# ask user to input the expiry date
-# new_prescription.prescription_expiry_date = input("Enter the expiry date (Format: YYYY-MM-DD): ")
-# new_prescription.drug_id = int(input("Enter the drug id: "))
-# new_prescription.booking_id = int(input("Enter the booking id: "))
-# new_prescription.drug_dosage = input("Enter the drug dosage: ")
-# new_prescription.drug_frequency_dosage = input("Enter the intake frequency: ")
-# new_prescription.insert()
-#
-# new_prescription.prescription_expiry_date = '2020-12-12'
-# new_prescription.drug_id = 1
-# new_prescription.booking_id = 2
-# new_prescription.drug_dosage = '12 mg'
-# new_prescription.drug_frequency_dosage = 'hallo'
-# new_prescription.insert()
