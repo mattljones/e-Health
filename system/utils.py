@@ -19,10 +19,12 @@ try:
     if pd.__version__ < '1.1.3':
         print("\n\U00002757 Pandas version not up to date.\n")
         print("Please upgrade to pandas >= 1.1.3 to run this program (e.g. pip install --upgrade pandas).\n")
+        sys.exit()
 
 except ModuleNotFoundError:
     print("\n\U00002757 Pandas module not found.\n")
     print("Please install pandas >= 1.1.3 to run this program (e.g. pip install pandas).\n")
+    sys.exit()
 
 try:
     import tabulate
