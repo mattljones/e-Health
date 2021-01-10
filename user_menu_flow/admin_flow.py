@@ -1746,6 +1746,7 @@ def add_appointment(next_dict):
         return add_appointment(next_dict)
 
     elif edit_choice in ('s', 'S'):
+        patient_id_choice = ''
         del patient_id_choice
         return utils.display(manage_appointment_flow)
 
