@@ -1451,6 +1451,9 @@ def add_time_off(date_range, next_dict):
 
             if user_confirmation == '1':
                     start_date = utils.get_start_date()
+            elif user_confirmation == '2':
+                # Return to main add time off menu
+                return utils.display(add_time_off_flow)
 
             # Determine range depending on date_range
             if date_range == 'day':
@@ -1466,10 +1469,6 @@ def add_time_off(date_range, next_dict):
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
             print("\n\U00002705 Time off ({}) successfully added for a {} from {}.".format(timeoff_type, date_range, start_date))
             return utils.display(next_dict)
-
-    else:
-        # Return to main add time off menu
-        return utils.display(add_time_off_flow)
 
 
 def add_time_off_day(next_dict):
@@ -1532,8 +1531,24 @@ def add_time_off_custom(next_dict):
                 "\n\U00002757 You have appointments during the period and cannot add timeoff, please input the date again!")
             print("\n【Conflicts Table】")
             print(Schedule.check_timeoff_conflict(gp_id_choice, start_date, end_date)[2])
-            start_date = utils.get_date()
-            end_date = utils.end_date(start_date)
+
+            # Input another day or back to previous menu
+            print("\nDo you want to add timeoff to another time period?\n")
+            print("[ 1 ] Yes\n[ 2 ] No")
+
+            user_confirmation = input("\n--> ")
+
+            while user_confirmation not in ('1', '2'):
+                print("\n\U00002757 Invalid entry, please try again")
+                user_confirmation = input("\n--> ")
+
+            if user_confirmation == '1':
+                start_date = utils.get_date()
+                end_date = utils.end_date(start_date)
+            elif user_confirmation == '2':
+                # Return to main add time off menu
+                return utils.display(add_time_off_flow)
+
         else:
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
             print("\n\U00002705 Time off ({}) successfully added from {} to {}.".format(timeoff_type, start_date,
