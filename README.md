@@ -49,7 +49,9 @@ Except Python built-in packages, if you do not have the following libraries on y
 - **Pandas** v.1.1.3 or higher (`pip install pandas`).
 - **Tabulate** v.0.8.7 or higher (`pip install tabulate`).
 
-We add automatic check on required packages in `e_health_main.py` so basically you do not need to run `pip install -r requirements.txt` to install these packages by yourself. However we strongly recommend to create a virtual environment to install dependencies and run the program.
+We implemented **error handling on library dependencies** when running `e_health_main.py`. The user will just have to follow the above or on screen instructions. 
+
+The user can also run **`pip install -r requirements.txt`** to install everything at once. However we strongly recommend to create a virtual environment to install dependencies and run the program.
 
 ### Virtual environment
 
