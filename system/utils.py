@@ -13,16 +13,27 @@ import smtplib
 from email.mime.text import MIMEText
 
 # Import non built-in modules
+# If modules not found or version not up to date, show message and instructions to user
 try:
     import pandas as pd
+    if pd.__version__ < '1.1.3':
+        print("\n\U00002757 Pandas version not up to date.\n")
+        print("Please upgrade to pandas >= 1.1.3 to run this program (e.g. pip install --upgrade pandas).\n")
+
 except ModuleNotFoundError:
-    print("\nPandas module not found. Please install pandas >= 1.1.3 to run this program.")
-    sys.exit()
+    print("\n\U00002757 Pandas module not found.\n")
+    print("Please install pandas >= 1.1.3 to run this program (e.g. pip install pandas).\n")
 
 try:
     import tabulate
+    if tabulate.__version__ < '0.8.7':
+        print("\n\U00002757 Tabulate version not up to date.\n")
+        print("Please upgrade to tabulate >= 0.8.7 to run this program (e.g. pip install --upgrade tabulate).\n")
+        sys.exit()
+
 except ModuleNotFoundError:
-    print("\nTabulate module not found. Please install tabulate >= 0.8.7 to run this program.")
+    print("\n\U00002757 Tabulate module not found.\n")
+    print("Please install tabulate >= 0.8.7 to run this program (e.g. pip install tabulate).\n")
     sys.exit()
 
 # Change python path for imports
