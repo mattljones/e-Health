@@ -1360,8 +1360,6 @@ def view_time_off(next_dict):
         print("\n\U00002757 There are no {} timeoffs for this GP.".format(time_off_type))
         utils.display(next_dict)
 
-
-
     print("\n----------------------------------------------------\n"
           "                ", 'TIME OFF', "\n")
     off = Schedule.select_timeoff(gp_id_choice, time_off_type)
@@ -1468,6 +1466,10 @@ def add_time_off(date_range, next_dict):
             Schedule.insert_timeoff(gp_id_choice, timeoff_type, start_date, end_date)
             print("\n\U00002705 Time off ({}) successfully added for a {} from {}.".format(timeoff_type, date_range, start_date))
             return utils.display(next_dict)
+
+    else:
+        # Return to main add time off menu
+        return utils.display(add_time_off_flow)
 
 
 def add_time_off_day(next_dict):
