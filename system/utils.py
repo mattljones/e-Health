@@ -494,7 +494,8 @@ def end_date(start_date):
     '''
     Get a date that is equal or later than specified start_date.
     '''
-    print("\nPlease enter the end date (YYYY-MM-DD)")
+    print("\nPlease enter the end date (YYYY-MM-DD)\n"
+          "Enter 'T' short for today")
     end_date = input("--> ")
     valid = False
     while valid == False:

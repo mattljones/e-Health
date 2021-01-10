@@ -26,16 +26,15 @@ def get_start_end_date(date_range):
     """
     Returns start and end date depending on date range. 
     """
-
-    start = utils.get_start_date()
-
     # Determine range depending on date_range
     if date_range == 'day':
+        start = utils.get_start_date()
         s = datetime.strptime(start, "%Y-%m-%d")
         end = datetime.strftime(s, "%Y-%m-%d")
 
     elif date_range == 'week':
         # Add one week to start date
+        start = utils.get_start_date()
         s = datetime.strptime(start, "%Y-%m-%d")
         e = s + timedelta(days=6)
         end = datetime.strftime(e, "%Y-%m-%d")
