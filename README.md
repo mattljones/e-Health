@@ -308,10 +308,8 @@ When downloading the zip file of this project, the database is already initializ
 However, it is possible to perform the below mentioned actions via running the explicit scripts. 
 
 The database must be systematically **taken down first before being initialized**.
-### Taking database down
-Please run [down_db.py](config/down_db.py)
-### Initializing database
-Please run [initialize_db.py](config/initialize_db.py)
+- **Taking the database down**: please run [down_db.py](config/down_db.py).
+- **Initializing the database**: please run [initialize_db.py](config/initialize_db.py).
 
 ## Menu navigation
 
