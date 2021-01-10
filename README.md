@@ -34,7 +34,6 @@ We recommend opening the following information on your browser by clicking [here
 - [Program design](#program-design)
   - [Classes](#classes)
   - [Database](#database)
-  - [Database execution](#database-execution)
   - [Menu navigation](#menu-navigation)
 - [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
@@ -301,18 +300,16 @@ We have created extensive dummy data so that our system can be:
 - extensively tested and evaluated by TA and Professor
 - our system is ready to by showcased to, and tested by, the actual users
 
-Our dummy data is stored within the [config](config/dummy_data) folder.
+Our dummy data is stored within the [dummy_data](config/dummy_data) folder.
 
-## Database execution
+### Database execution
 
 When downloading the zip file of this project, the database is already initialized and **no further action is required**. 
 However, it is possible to perform the below mentioned actions via running the explicit scripts. 
 
 The database must be systematically **taken down first before being initialized**.
-### Taking database down
-Please run [down_db.py](config/down_db.py)
-### Initializing database
-Please run [initialize_db.py](config/initialize_db.py)
+- **Taking the database down**: please run [down_db.py](config/down_db.py).
+- **Initializing the database**: please run [initialize_db.py](config/initialize_db.py).
 
 ## Menu navigation
 

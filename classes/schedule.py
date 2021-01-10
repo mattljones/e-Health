@@ -485,36 +485,10 @@ class Schedule:
                 u.db_execute(delete_timeoff_all_query)
 
 
-### DEVELOPMENT ###
+############################# TESTING ###############################
 
 if __name__ == "__main__":
+
     pass
 
-### TESTING ###
-# call classes
-# schedule = Schedule()
 
-## testing select day
-# df = schedule.select(16, 'day', '2020-12-24')[1]
-
-## testing select week
-# df = schedule.select(2, 'week', '2020-12-08')[2]
-
-## testing check_timeoff_conflict
-# df = schedule.check_timeoff_conflict(2, '2020-12-01', '2021-1-13')[2]
-
-## testing select_upcoming_timeoff
-# df = schedule.select_upcoming_timeoff(2)[1]
-
-## testing insert_timeoff_custom --> check_timeoff_conflict False
-# schedule.insert_timeoff(16, 'time off', '2021-12-26', '2021-12-29')
-
-## testing insert_timeoff_custom --> check_timeoff_conflict True
-# schedule.insert_timeoff(2, 'sick leave', '2020-12-1', '2021-12-23')
-
-## testing delete_timeoff custom
-# schedule.delete_timeoff(gp_id=16, type='custom', timeoff_type='time off', start_date='2021-12-27', end_date='2021-12-27')
-# schedule.delete_timeoff(gp_id=16, type='custom', timeoff_type='time off', start_date=u.get_start_date(), end_date=u.get_end_date())
-
-## testing delete_timeoff all
-# schedule.delete_timeoff(gp_id=16, type='all')

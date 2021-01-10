@@ -913,3 +913,10 @@ def change_password(user_type, user_email, random_string_password_reset):
         message = '\n\U00002757 Your password could not be changed\nbecause your key did not match.\nPlease start resetting your password again.'
 
     return True, message
+
+
+############################# TESTING ###############################
+
+if __name__ == "__main__":
+
+    pass
