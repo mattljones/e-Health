@@ -300,7 +300,7 @@ We have created extensive dummy data so that our system can be:
 - extensively tested and evaluated by TA and Professor
 - our system is ready to by showcased to, and tested by, the actual users
 
-Our dummy data is stored within the [config](config/dummy_data) folder.
+Our dummy data is stored within the [dummy_data](config/dummy_data) folder.
 
 ### Database execution
 
