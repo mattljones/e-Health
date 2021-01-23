@@ -35,7 +35,6 @@ We recommend opening the following information on your browser by clicking [here
   - [Classes](#classes)
   - [Database](#database)
   - [Menu navigation](#menu-navigation)
-- [Individual documentation](#individual-documentation)
 - [Statistics](#statistics)
 
 
